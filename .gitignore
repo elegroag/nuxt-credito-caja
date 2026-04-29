@@ -1,0 +1,38 @@
+# Nuxt dev/build outputs
+.output
+.data
+.nuxt
+.nitro
+.cache
+dist
+
+# Node dependencies
+node_modules
+
+# Logs
+logs
+*.log
+
+# Misc
+.DS_Store
+.fleet
+.idea
+
+# Local env files
+.env
+.env.production
+!.env.example
+
+/app/generated/prisma
+/prisma/generated/
+/prisma/migrations/
+pnpm-lock.yaml
+storage/
+.vscode/
+.windsurf/
+.dist/
+.nuxt/
+.assets/
+*.sql
+public/img
+*.ico

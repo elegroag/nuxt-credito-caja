@@ -1,0 +1,110 @@
+<template>
+  <div class="grid gap-4">
+    <label class="flex items-center gap-2 text-sm text-foreground">
+      <UInput
+        type="checkbox"
+        class="h-4 w-4 rounded border-input text-primary focus:ring-primary"
+        :checked="!!form.conyuge"
+        :disabled="loadingLocal"
+        @change="
+          (ev) => toggleConyugeHandler((ev.target as HTMLInputElement).checked)
+        "
+      />
+      <span class="flex items-center gap-2">
+        Incluir datos del cónyuge
+        <div
+          v-if="loadingLocal"
+          class="animate-spin h-4 w-4 border-2 border-primary border-t-transparent rounded-full"
+        ></div>
+      </span>
+    </label>
+
+    <!-- Mensaje de carga -->
+    <div
+      v-if="loadingLocal"
+      class="flex items-center gap-2 p-3 bg-blue-50 border border-blue-200 rounded-lg"
+    >
+      <div
+        class="animate-spin h-4 w-4 border-2 border-blue-600 border-t-transparent rounded-full"
+      ></div>
+      <span class="text-sm text-blue-700">Buscando datos del cónyuge...</span>
+    </div>
+
+    <div v-if="form.conyuge && !loadingLocal" class="grid gap-4 sm:grid-cols-2">
+      <FormField label="Identificación">
+        <UInput v-model="form.conyuge.identificacion" />
+      </FormField>
+      <FormField label="Nombres y apellidos">
+        <UInput v-model="form.conyuge.nombres_apellidos" />
+      </FormField>
+      <FormField label="Ingresos laborales">
+        <UInput
+          v-model.number="form.conyuge.ingresos_laborales"
+          type="number"
+          min="0"
+        />
+      </FormField>
+      <label class="flex items-center gap-2 text-sm text-foreground">
+        <UInput
+          v-model="form.conyuge.trabaja"
+          type="checkbox"
+          class="h-4 w-4 rounded border-input text-primary focus:ring-primary"
+        />
+        Trabaja
+      </label>
+      <FormField label="Teléfono móvil">
+        <UInput v-model="form.conyuge.telefono_movil" />
+      </FormField>
+
+      <div class="sm:col-span-2 mt-2 text-sm font-semibold text-foreground">
+        Empresa (opcional)
+      </div>
+      <label
+        class="sm:col-span-2 flex items-center gap-2 text-sm text-foreground"
+      >
+        <UInput
+          type="checkbox"
+          class="h-4 w-4 rounded border-input text-primary focus:ring-primary"
+          :checked="!!form.conyuge.empresa"
+          @change="
+            (ev) =>
+              toggleEmpresaConyuge((ev.target as HTMLInputElement).checked)
+          "
+        />
+        Incluir empresa
+      </label>
+
+      <template v-if="form.conyuge.empresa">
+        <FormField label="Nombre" class="sm:col-span-2">
+          <UInput v-model="form.conyuge.empresa.nombre" />
+        </FormField>
+        <FormField label="Dirección" class="sm:col-span-2">
+          <UInput v-model="form.conyuge.empresa.direccion" />
+        </FormField>
+        <FormField label="Teléfono">
+          <UInput v-model="form.conyuge.empresa.telefono" />
+        </FormField>
+        <FormField label="Email">
+          <UInput v-model="form.conyuge.empresa.email" type="email" />
+        </FormField>
+      </template>
+    </div>
+  </div>
+</template>
+
+<script setup lang="ts">
+import FormField from "~/components/shared/FormField.vue";
+import { useConyugeStep } from "~/composables/solicitud/useConyugeStep";
+import type { ConyugeProps } from "~~/shared/types/solicitud-credito";
+
+const props = defineProps<ConyugeProps>();
+
+const {
+  // Estado
+  loadingLocal,
+
+  // Funciones
+  toggleConyugeHandler,
+  toggleEmpresaConyuge,
+} = useConyugeStep(props);
+</script>
