@@ -64,18 +64,18 @@ export const useResumenSolicitud = () => {
 
   const handleNavigation = (step: string) => {
     if (step === "documentos") {
-      router.push(`/solicitud/documentos/${solicitudId}`);
+      router.push(`/dash/solicitud/documentos/${solicitudId}`);
     } else if (step === "formulario") {
-      router.push("/solicitud");
+      router.push(`/dash/solicitud/edit/${solicitudId}`);
     }
   };
 
   const handleBack = () => {
-    router.push(`/solicitud/documentos/${solicitudId}`);
+    router.push(`/dash/solicitud/documentos/${solicitudId}`);
   };
 
   const handleEdit = () => {
-    router.push("/solicitud");
+    router.push(`/dash/solicitud/edit/${solicitudId}`);
   };
 
   const handleEnviarValidacion = async () => {
@@ -97,7 +97,7 @@ export const useResumenSolicitud = () => {
 
       // Navegar a página de confirmación si el PDF se generó exitosamente
       if (response.success) {
-        router.push(`/solicitud/special_thanks/${solicitudId}`);
+        router.push(`/dash/solicitud/special_thanks/${solicitudId}`);
       } else {
         errorSolicitud.value = response.message || "Error al generar el PDF";
       }

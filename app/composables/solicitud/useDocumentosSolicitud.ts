@@ -250,15 +250,17 @@ export const useDocumentosSolicitud = () => {
   };
 
   const handleNavigation = (step: string) => {
-    // Navegación simple por ahora
     if (step === "formulario") {
-      // Ir atrás? Depende de si se puede editar
+      router.push(`/dash/solicitud/edit/${solicitudId}`);
+    } else if (step === "completado") {
+      router.push(`/dash/solicitud/resumen/${solicitudId}`);
     }
+    // 'documentos' es el paso actual, no navegamos
   };
 
   const handleBack = () => {
     // Volver a la lista de solicitudes o al paso anterior si fuera wizard
-    router.push("/solicitudes");
+    router.push("/dash/solicitudes");
   };
 
   const handleContinue = () => {

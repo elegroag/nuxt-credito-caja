@@ -191,7 +191,6 @@
         />
 
         <!-- Documentos Cargados -->
-        <DocumentosCard :documentos="solicitud.documentos || []" />
 
         <!-- Acciones -->
         <AccionesCard
@@ -227,7 +226,7 @@
               >Cancelar</UButton
             >
             <UButton
-              color="error"
+              color="destructive"
               :loading="eliminando"
               :disabled="eliminando"
               @click="eliminarSolicitud"
@@ -250,7 +249,6 @@ import DatosSolicitante from "@/components/solicitudes/DatosSolicitante.vue";
 import InfoLaboral from "@/components/solicitudes/InfoLaboral.vue";
 import InfoFinanciera from "@/components/solicitudes/InfoFinanciera.vue";
 import InfoEconomica from "@/components/solicitudes/InfoEconomica.vue";
-import DocumentosCard from "@/components/solicitudes/DocumentosCard.vue";
 import AccionesCard from "@/components/solicitudes/AccionesCard.vue";
 import { useSolicitudDetailsPage } from "~/composables/solicitud/useSolicitudDetailsPage";
 
