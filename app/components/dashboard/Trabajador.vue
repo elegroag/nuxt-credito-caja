@@ -136,7 +136,7 @@
         </div>
 
         <div class="flex justify-end">
-          <NuxtLink :to="`/solicitudes/${s.numero_solicitud}`">
+          <NuxtLink :to="`/dash/solicitudes/${s.numero_solicitud}`">
             <UButton size="sm" color="primary" variant="soft">
               <UIcon name="i-lucide-eye" class="w-4 h-4 mr-2" />
               Ver detalle

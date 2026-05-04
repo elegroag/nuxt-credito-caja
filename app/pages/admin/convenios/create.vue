@@ -38,11 +38,15 @@
           <UFormField label="NIT" required :error="errors.nit">
             <UInput
               v-model="form.nit"
-              placeholder="Ej: 123456789-0"
+              type="number"
+              placeholder="Ej: 123456789"
               icon="i-lucide-hash"
               :color="errors.nit ? 'destructive' : undefined"
               class="w-full"
             />
+            <template #error>
+              <span class="text-destructive">{{ errors.nit }}</span>
+            </template>
           </UFormField>
           <UFormField
             label="Razón Social"
@@ -56,6 +60,9 @@
               :color="errors.razon_social ? 'destructive' : undefined"
               class="w-full"
             />
+            <template #error>
+              <span class="text-destructive">{{ errors.razon_social }}</span>
+            </template>
           </UFormField>
         </div>
       </UPageCard>
@@ -74,6 +81,7 @@
           >
             <UInput
               v-model="form.representante_documento"
+              type="number"
               placeholder="Cédula o documento de identidad"
               icon="i-lucide-id-card"
               :color="
@@ -81,6 +89,11 @@
               "
               class="w-full"
             />
+            <template #error>
+              <span class="text-destructive">{{
+                errors.representante_documento
+              }}</span>
+            </template>
           </UFormField>
           <UFormField
             label="Nombre Representante"
@@ -94,6 +107,11 @@
               :color="errors.representante_nombre ? 'destructive' : undefined"
               class="w-full"
             />
+            <template #error>
+              <span class="text-destructive">{{
+                errors.representante_nombre
+              }}</span>
+            </template>
           </UFormField>
         </div>
       </UPageCard>
@@ -114,6 +132,9 @@
               :color="errors.telefono ? 'destructive' : undefined"
               class="w-full"
             />
+            <template #error>
+              <span class="text-destructive">{{ errors.telefono }}</span>
+            </template>
           </UFormField>
           <UFormField label="Correo Electrónico" :error="errors.correo">
             <UInput
@@ -124,6 +145,9 @@
               :color="errors.correo ? 'destructive' : undefined"
               class="w-full"
             />
+            <template #error>
+              <span class="text-destructive">{{ errors.correo }}</span>
+            </template>
           </UFormField>
         </div>
       </UPageCard>
@@ -146,6 +170,11 @@
               :color="errors.fecha_vencimiento ? 'destructive' : undefined"
               class="w-full"
             />
+            <template #error>
+              <span class="text-destructive">{{
+                errors.fecha_vencimiento
+              }}</span>
+            </template>
           </UFormField>
           <UFormField label="Estado Inicial" :error="errors.estado">
             <USelect
@@ -155,6 +184,9 @@
               label-key="label"
               class="w-full"
             />
+            <template #error>
+              <span class="text-destructive">{{ errors.estado }}</span>
+            </template>
           </UFormField>
         </div>
       </UPageCard>
@@ -220,19 +252,22 @@ const opcionesEstado = [
 const validateForm = (): boolean => {
   errors.value = {};
 
-  if (!form.nit.trim()) {
+  if (!form.nit) {
     errors.value.nit = "El NIT es requerido";
-  } else if (!/^\d{9,12}-?\d?$/.test(form.nit.replace(/\s/g, ""))) {
-    errors.value.nit = "El NIT no tiene un formato válido";
+  } else if (!/^\d{6,16}$/.test(form.nit.toString())) {
+    errors.value.nit = "El NIT debe ser un número de 6 a 16 dígitos";
   }
 
   if (!form.razon_social.trim()) {
     errors.value.razon_social = "La razón social es requerida";
   }
 
-  if (!form.representante_documento.trim()) {
+  if (!form.representante_documento) {
     errors.value.representante_documento =
       "El documento del representante es requerido";
+  } else if (!/^\d{5,15}$/.test(form.representante_documento.toString())) {
+    errors.value.representante_documento =
+      "El documento debe ser un número de 5 a 15 dígitos";
   }
 
   if (!form.representante_nombre.trim()) {
@@ -261,31 +296,31 @@ const handleSubmit = async () => {
   errors.value = {};
 
   try {
-    const api = useApi();
-    const response = await api.postJson(
-      "/api/admin/convenios/create",
-      {
-        nit: form.nit.replace(/\s/g, ""),
+    const response = await $fetch("/api/admin/convenios/create", {
+      method: "POST",
+      body: {
+        nit: form.nit.toString(),
         razon_social: form.razon_social.trim(),
-        representante_documento: form.representante_documento.trim(),
+        representante_documento: form.representante_documento.toString(),
         representante_nombre: form.representante_nombre.trim(),
         telefono: form.telefono.trim(),
         correo: form.correo.trim(),
         fecha_vencimiento: form.fecha_vencimiento || "",
         estado: form.estado,
       },
-      { auth: true },
-    );
+    });
 
-    if (response) {
+    if (response.success) {
       loading.value = false;
       router.push("/admin/convenios");
     }
   } catch (err: any) {
     console.error("Error al crear convenio:", err);
 
-    if (err.response?.data?.errors) {
-      errors.value = err.response.data.errors;
+    if (err.data?.errors) {
+      errors.value = err.data.errors;
+    } else if (err.data?.error) {
+      errors.value.general = err.data.error;
     } else {
       errors.value.general = err.message || "Error al crear el convenio";
     }
