@@ -14,10 +14,10 @@
       class="flex flex-col md:flex-row md:items-center justify-between gap-4"
     >
       <div>
-        <h1 class="text-3xl font-bold text-white mb-2">
+        <h1 class="text-3xl font-bold text-secondary mb-2">
           {{ numeroSolicitud }}
         </h1>
-        <p class="text-blue-100">
+        <p class="text-secondary-foreground">
           Información completa de la solicitud de crédito
         </p>
       </div>
@@ -35,7 +35,6 @@
 
 <script setup lang="ts">
 import { useRouter } from "vue-router";
-import { ChevronLeft } from "lucide-vue-next";
 
 import Badge from "@/components/shared/Badge.vue";
 
