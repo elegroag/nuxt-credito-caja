@@ -65,26 +65,13 @@
 
     <div class="grid gap-4 sm:grid-cols-2 mt-4">
       <FormField label="¿Ha tenido crédito con Comfaca?">
-        <div class="flex gap-4">
-          <label class="flex items-center gap-2 cursor-pointer">
-            <UInput
-              type="radio"
-              :value="true"
-              v-model="form.solicitud.ha_tenido_credito"
-              class="text-primary focus:ring-primary"
-            />
-            <span>SI</span>
-          </label>
-          <label class="flex items-center gap-2 cursor-pointer">
-            <UInput
-              type="radio"
-              :value="false"
-              v-model="form.solicitud.ha_tenido_credito"
-              class="text-primary focus:ring-primary"
-            />
-            <span>NO</span>
-          </label>
-        </div>
+        <URadioGroup
+          v-model="form.solicitud.ha_tenido_credito"
+          :items="[
+            { label: 'Sí', value: true },
+            { label: 'No', value: false },
+          ]"
+        />
       </FormField>
     </div>
   </div>

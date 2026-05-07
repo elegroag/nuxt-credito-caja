@@ -75,36 +75,13 @@
 
             <div class="space-y-2">
               <label class="text-sm font-medium">Tipo de tasa</label>
-              <div class="flex gap-4">
-                <div class="flex items-center space-x-2">
-                  <UInput
-                    id="tasaAnual"
-                    type="radio"
-                    :checked="tipoTasa === 'anual'"
-                    @change="cambiarTipoTasa('anual')"
-                    class="text-primary"
-                  />
-                  <label
-                    for="tasaAnual"
-                    class="text-sm font-normal cursor-pointer"
-                    >Anual (EA)</label
-                  >
-                </div>
-                <div class="flex items-center space-x-2">
-                  <UInput
-                    id="tasaMensual"
-                    type="radio"
-                    :checked="tipoTasa === 'mensual'"
-                    @change="cambiarTipoTasa('mensual')"
-                    class="text-primary"
-                  />
-                  <label
-                    for="tasaMensual"
-                    class="text-sm font-normal cursor-pointer"
-                    >Mensual</label
-                  >
-                </div>
-              </div>
+              <URadioGroup
+                v-model="tipoTasa"
+                :items="[
+                  { label: 'Anual (EA)', value: 'anual' },
+                  { label: 'Mensual', value: 'mensual' },
+                ]"
+              />
             </div>
           </div>
 

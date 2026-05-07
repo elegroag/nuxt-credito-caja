@@ -137,26 +137,13 @@
     </FormField>
 
     <FormField label="¿Vive con núcleo familiar?">
-      <div class="flex gap-4">
-        <label class="flex items-center gap-2 cursor-pointer">
-          <UInput
-            type="radio"
-            :value="true"
-            v-model="form.solicitante.vive_con_nucleo_familiar"
-            class="text-blue-600 focus:ring-blue-500"
-          />
-          <span>Sí</span>
-        </label>
-        <label class="flex items-center gap-2 cursor-pointer">
-          <UInput
-            type="radio"
-            :value="false"
-            v-model="form.solicitante.vive_con_nucleo_familiar"
-            class="text-blue-600 focus:ring-blue-500"
-          />
-          <span>No</span>
-        </label>
-      </div>
+      <URadioGroup
+        v-model="form.solicitante.vive_con_nucleo_familiar"
+        :items="[
+          { label: 'Sí', value: true },
+          { label: 'No', value: false },
+        ]"
+      />
     </FormField>
 
     <FormField label="Personas a cargo">
@@ -168,7 +155,7 @@
     </FormField>
 
     <FormField label="Cargo">
-      <UInput v-model="form.solicitante.cargo" :readonly="true" />
+      <UInput :model-value="cargoDisplay" :readonly="true" />
     </FormField>
 
     <FormField label="Salario (opcional)">
@@ -206,7 +193,9 @@
 import FormField from "~/components/shared/FormField.vue";
 import CustomSelect from "~/components/shared/CustomSelect.vue";
 import { useSolicitanteStep } from "~/composables/solicitud/useSolicitanteStep";
+import { useParametrosDetalles } from "~/composables/useParametrosDetalles";
 import type { SolocitanteProps } from "~~/shared/types/solicitud-credito";
+import { computed, onMounted } from "vue";
 
 const props = withDefaults(defineProps<SolocitanteProps>(), {
   ciudades: () => [],
@@ -235,4 +224,21 @@ const {
   // Event handlers
   handleCiudadChange,
 } = useSolicitanteStep(props);
+
+// Cargar parámetros para obtener nombres de cargos
+const { cargarParametros, buscarCargo } = useParametrosDetalles();
+
+// Computed para mostrar el nombre del cargo
+const cargoDisplay = computed(() => {
+  const cargoCode = props.form.solicitante.cargo;
+  if (!cargoCode) return "";
+  return buscarCargo(cargoCode);
+});
+
+// Cargar parámetros al montar
+onMounted(() => {
+  cargarParametros().catch(() => {
+    // Si falla, simplemente mostrar el código
+  });
+});
 </script>

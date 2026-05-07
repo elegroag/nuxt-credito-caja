@@ -4,8 +4,8 @@ import datosApiSisuwebService from "~~/server/services/shared/datos-api-sisuweb.
 import { z } from "zod";
 
 const bodySchema = z.object({
-  cedtra: z.number().min(3, "Username must be at least 3 characters"),
-  estado: z.number().min(8, "Password must be at least 8 characters"),
+  cedtra: z.string().min(3, "Cédula debe tener al menos 3 caracteres"),
+  estado: z.string().min(1, "Estado es requerido"),
 });
 
 export default defineEventHandler(async (event: H3Event) => {

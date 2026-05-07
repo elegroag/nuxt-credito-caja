@@ -42,7 +42,7 @@
 
           <div class="grid grid-cols-1 gap-2 pt-2">
             <UButton
-              variant="secondary"
+              variant="solid"
               class="w-full"
               @click="$emit('viewSolicitudes')"
             >

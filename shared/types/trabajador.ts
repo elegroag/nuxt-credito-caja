@@ -9,6 +9,7 @@ export type Empresa = {
 export type Trabajador = {
   cargo: string;
   cedula: string;
+  cedtra?: string;
   ciudad_codigo: string;
   ciudad_nacimiento: string;
   direccion: string;

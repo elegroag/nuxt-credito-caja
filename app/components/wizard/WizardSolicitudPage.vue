@@ -34,7 +34,7 @@
         <h3 class="mb-2 text-lg font-semibold">Error al cargar parámetros</h3>
         <p class="text-muted-foreground">{{ errorParametros }}</p>
         <div class="mt-4 flex gap-3">
-          <UButton variant="outline" @click="cargarParametros">
+          <UButton variant="outline" @click="handleRetryCargarParametros">
             Reintentar
           </UButton>
         </div>
@@ -71,6 +71,10 @@ const {
   parametrosCache,
   cargarParametros,
 } = useParametros();
+
+const handleRetryCargarParametros = async () => {
+  await cargarParametros();
+};
 
 onMounted(async () => {
   try {

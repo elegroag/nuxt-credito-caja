@@ -246,26 +246,13 @@
 
             <!-- Tipo de tasa -->
             <UFormField label="Tipo de tasa">
-              <div class="flex gap-4 mt-1">
-                <label class="flex items-center gap-2 cursor-pointer">
-                  <input
-                    type="radio"
-                    :checked="tipoTasa === 'anual'"
-                    @change="cambiarTipoTasa('anual')"
-                    class="text-primary"
-                  />
-                  <span class="text-sm">Anual (EA)</span>
-                </label>
-                <label class="flex items-center gap-2 cursor-pointer">
-                  <input
-                    type="radio"
-                    :checked="tipoTasa === 'mensual'"
-                    @change="cambiarTipoTasa('mensual')"
-                    class="text-primary"
-                  />
-                  <span class="text-sm">Mensual</span>
-                </label>
-              </div>
+              <URadioGroup
+                v-model="tipoTasa"
+                :items="[
+                  { label: 'Anual (EA)', value: 'anual' },
+                  { label: 'Mensual', value: 'mensual' },
+                ]"
+              />
             </UFormField>
           </div>
 

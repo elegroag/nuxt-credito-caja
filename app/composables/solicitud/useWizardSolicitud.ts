@@ -237,61 +237,109 @@ export function useWizardSolicitud(props?: WizardProps) {
       }
     }
 
-    if (session.value?.user?.trabajador) {
-      const trabajador = session.value.user.trabajador;
+    // Cargar datos del trabajador desde localStorage
+    let trabajador: any = null;
+    if (process.client) {
+      try {
+        const trabajadorStorage = localStorage.getItem(
+          "comfaca_credito_trabaajdor",
+        );
+        if (trabajadorStorage) {
+          trabajador = JSON.parse(trabajadorStorage);
+        }
+      } catch (error) {
+        console.error(
+          "Error leyendo datos del trabajador del localStorage:",
+          error,
+        );
+      }
+    }
 
+    // Si no hay datos en localStorage, usar los de la sesión
+    if (!trabajador && session.value?.user?.trabajador) {
+      trabajador = session.value.user.trabajador;
+    }
+
+    if (trabajador) {
       form.value.solicitante.tipo_persona = "natural";
       form.value.solicitante.tipo_documento =
-        trabajador.tipo_documento || form.value.solicitante.tipo_documento;
+        trabajador.coddoc ||
+        trabajador.tipo_documento ||
+        form.value.solicitante.tipo_documento;
       form.value.solicitante.numero_documento =
-        trabajador.cedula || form.value.solicitante.numero_documento;
+        trabajador.cedtra ||
+        trabajador.cedula ||
+        trabajador.numero_documento ||
+        form.value.solicitante.numero_documento;
       form.value.solicitante.nombres = [
-        trabajador.primer_nombre,
-        trabajador.segundo_nombre,
+        trabajador.prinom || trabajador.primer_nombre,
+        trabajador.segnom || trabajador.segundo_nombre,
       ]
         .filter(Boolean)
         .join(" ")
         .trim();
       form.value.solicitante.apellidos = [
-        trabajador.primer_apellido,
-        trabajador.segundo_apellido,
+        trabajador.priape || trabajador.primer_apellido,
+        trabajador.segape || trabajador.segundo_apellido,
       ]
         .filter(Boolean)
         .join(" ")
         .trim();
       form.value.solicitante.fecha_nacimiento =
-        trabajador.fecha_nacimiento || form.value.solicitante.fecha_nacimiento;
+        trabajador.fecnac ||
+        trabajador.fecha_nacimiento ||
+        form.value.solicitante.fecha_nacimiento;
       form.value.solicitante.genero =
-        trabajador.sexo || form.value.solicitante.genero;
+        trabajador.sexo || trabajador.genero || form.value.solicitante.genero;
       form.value.solicitante.estado_civil =
-        trabajador.estado_civil || form.value.solicitante.estado_civil;
+        trabajador.estciv ||
+        trabajador.estado_civil ||
+        form.value.solicitante.estado_civil;
       form.value.solicitante.nivel_educativo =
-        trabajador.nivel_educativo || form.value.solicitante.nivel_educativo;
+        trabajador.nivedu ||
+        trabajador.nivel_educativo ||
+        form.value.solicitante.nivel_educativo;
       form.value.solicitante.profesion =
-        trabajador.cargo || form.value.solicitante.profesion;
+        trabajador.cargo ||
+        trabajador.profesion ||
+        form.value.solicitante.profesion;
       form.value.solicitante.email =
         trabajador.email || form.value.solicitante.email;
       form.value.solicitante.telefono =
         trabajador.telefono || form.value.solicitante.telefono;
       form.value.solicitante.celular =
-        trabajador.telefono || form.value.solicitante.celular;
+        trabajador.telefono ||
+        trabajador.celular ||
+        form.value.solicitante.celular;
       form.value.solicitante.direccion =
         trabajador.direccion || form.value.solicitante.direccion;
       form.value.solicitante.barrio =
-        trabajador.direccion || form.value.solicitante.barrio;
+        trabajador.barrio ||
+        trabajador.direccion ||
+        form.value.solicitante.barrio;
       form.value.solicitante.ciudad =
-        trabajador.ciudad_codigo || form.value.solicitante.ciudad;
+        trabajador.codciu ||
+        trabajador.ciudad_codigo ||
+        trabajador.ciudad ||
+        form.value.solicitante.ciudad;
       form.value.solicitante.departamento =
-        form.value.solicitante.departamento || "Caquetá";
+        trabajador.departamento ||
+        form.value.solicitante.departamento ||
+        "Caquetá";
       form.value.solicitante.cargo =
         trabajador.cargo || form.value.solicitante.cargo;
       form.value.solicitante.salario =
         trabajador.salario || form.value.solicitante.salario;
       form.value.solicitante.codigo_categoria =
-        trabajador.codigo_categoria || form.value.solicitante.codigo_categoria;
+        trabajador.codcat ||
+        trabajador.codigo_categoria ||
+        form.value.solicitante.codigo_categoria;
       form.value.solicitud.categoria =
-        trabajador.codigo_categoria || form.value.solicitud.categoria;
-      form.value.solicitante.pais_residencia = "CO";
+        trabajador.codcat ||
+        trabajador.codigo_categoria ||
+        form.value.solicitud.categoria;
+      form.value.solicitante.pais_residencia =
+        trabajador.pais_residencia || "CO";
       form.value.solicitante.personas_a_cargo =
         trabajador.personas_a_cargo ||
         form.value.solicitante.personas_a_cargo ||
@@ -301,35 +349,48 @@ export function useWizardSolicitud(props?: WizardProps) {
         form.value.solicitante.antiguedad_meses ||
         0;
 
-      if (trabajador.empresa) {
-        form.value.solicitante.nit =
-          trabajador.empresa.nit || form.value.solicitante.nit;
+      // Datos de la empresa
+      const nit = trabajador.nit || trabajador.empresa_cedrep;
+      const razonSocial = trabajador.razsoc || trabajador.empresa_razsoc;
+      const empresaDireccion =
+        trabajador.empresa_direccion || trabajador.dirlab;
+      const empresaTelefono =
+        trabajador.empresa_telefono || trabajador.telefono;
+      const empresaCiudad = trabajador.empresa_codciu || trabajador.codciu;
+      const representanteLegal = trabajador.repleg || trabajador.empresa_repleg;
+      const representanteCedula = trabajador.empresa_cedrep;
+
+      if (nit) {
+        form.value.solicitante.nit = nit || form.value.solicitante.nit;
         form.value.solicitante.razon_social =
-          trabajador.empresa.razon_social ||
-          form.value.solicitante.razon_social;
+          razonSocial || form.value.solicitante.razon_social;
         form.value.informacion_laboral.empresa_razon_social =
-          trabajador.empresa.razon_social ||
-          form.value.informacion_laboral.empresa_razon_social;
+          razonSocial || form.value.informacion_laboral.empresa_razon_social;
         form.value.informacion_laboral.empresa_nit =
-          trabajador.empresa.nit || form.value.informacion_laboral.empresa_nit;
+          nit || form.value.informacion_laboral.empresa_nit;
         form.value.informacion_laboral.empresa_telefono =
-          trabajador.empresa.telefono ||
-          form.value.informacion_laboral.empresa_telefono;
+          empresaTelefono || form.value.informacion_laboral.empresa_telefono;
         form.value.informacion_laboral.empresa_direccion =
-          trabajador.empresa.direccion ||
-          form.value.informacion_laboral.empresa_direccion;
+          empresaDireccion || form.value.informacion_laboral.empresa_direccion;
         form.value.informacion_laboral.empresa_ciudad =
-          trabajador.empresa.ciudad_codigo ||
-          form.value.informacion_laboral.empresa_ciudad;
+          empresaCiudad || form.value.informacion_laboral.empresa_ciudad;
         form.value.informacion_laboral.cargo =
           trabajador.cargo || form.value.informacion_laboral.cargo;
         form.value.informacion_laboral.fecha_ingreso =
+          trabajador.fecafi ||
           trabajador.fecha_afiliacion ||
+          trabajador.fecha_ingreso ||
           form.value.informacion_laboral.fecha_ingreso;
         form.value.informacion_laboral.tiempo_servicio =
-          form.value.informacion_laboral.tiempo_servicio || 1;
+          trabajador.tiempo_servicio ||
+          form.value.informacion_laboral.tiempo_servicio ||
+          1;
         form.value.informacion_laboral.tiempo_servicio_unidad =
-          form.value.informacion_laboral.tiempo_servicio_unidad || "anios";
+          trabajador.tiempo_servicio_unidad ||
+          form.value.informacion_laboral.tiempo_servicio_unidad ||
+          "anios";
+        form.value.informacion_laboral.tipo_contrato =
+          trabajador.tipcon || form.value.informacion_laboral.tipo_contrato;
       }
 
       if (trabajador.salario) {

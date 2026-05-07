@@ -193,7 +193,7 @@ export const useSolicitudDetailsPage = () => {
       });
 
       // Redirigir a la página de solicitudes después de eliminar
-      router.push("/inicio");
+      router.push("/dash");
     } catch (e: any) {
       console.error("Error eliminando solicitud:", e);
       error.value = e.message || "No se pudo eliminar la solicitud.";

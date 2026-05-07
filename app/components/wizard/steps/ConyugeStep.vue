@@ -1,23 +1,22 @@
 <template>
   <div class="grid gap-4">
-    <label class="flex items-center gap-2 text-sm text-foreground">
-      <UInput
-        type="checkbox"
-        class="h-4 w-4 rounded border-input text-primary focus:ring-primary"
-        :checked="!!form.conyuge"
+    <FormField label="¿Incluir datos del cónyuge?">
+      <URadioGroup
+        :model-value="!!form.conyuge"
+        :items="[
+          { label: 'Sí', value: true },
+          { label: 'No', value: false },
+        ]"
         :disabled="loadingLocal"
-        @change="
-          (ev) => toggleConyugeHandler((ev.target as HTMLInputElement).checked)
-        "
+        @update:model-value="toggleConyugeHandler"
       />
-      <span class="flex items-center gap-2">
-        Incluir datos del cónyuge
+      <div v-if="loadingLocal" class="flex items-center gap-2 mt-2">
         <div
-          v-if="loadingLocal"
           class="animate-spin h-4 w-4 border-2 border-primary border-t-transparent rounded-full"
         ></div>
-      </span>
-    </label>
+        <span class="text-sm text-blue-700">Buscando datos del cónyuge...</span>
+      </div>
+    </FormField>
 
     <!-- Mensaje de carga -->
     <div
@@ -44,14 +43,15 @@
           min="0"
         />
       </FormField>
-      <label class="flex items-center gap-2 text-sm text-foreground">
-        <UInput
+      <FormField label="¿Trabaja?">
+        <URadioGroup
           v-model="form.conyuge.trabaja"
-          type="checkbox"
-          class="h-4 w-4 rounded border-input text-primary focus:ring-primary"
+          :items="[
+            { label: 'Sí', value: true },
+            { label: 'No', value: false },
+          ]"
         />
-        Trabaja
-      </label>
+      </FormField>
       <FormField label="Teléfono móvil">
         <UInput v-model="form.conyuge.telefono_movil" />
       </FormField>
@@ -59,20 +59,16 @@
       <div class="sm:col-span-2 mt-2 text-sm font-semibold text-foreground">
         Empresa (opcional)
       </div>
-      <label
-        class="sm:col-span-2 flex items-center gap-2 text-sm text-foreground"
-      >
-        <UInput
-          type="checkbox"
-          class="h-4 w-4 rounded border-input text-primary focus:ring-primary"
-          :checked="!!form.conyuge.empresa"
-          @change="
-            (ev) =>
-              toggleEmpresaConyuge((ev.target as HTMLInputElement).checked)
-          "
+      <FormField label="¿Incluir empresa?" class="sm:col-span-2">
+        <URadioGroup
+          :model-value="!!form.conyuge.empresa"
+          :items="[
+            { label: 'Sí', value: true },
+            { label: 'No', value: false },
+          ]"
+          @update:model-value="toggleEmpresaConyuge"
         />
-        Incluir empresa
-      </label>
+      </FormField>
 
       <template v-if="form.conyuge.empresa">
         <FormField label="Nombre" class="sm:col-span-2">
