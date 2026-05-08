@@ -7,7 +7,7 @@ import { useDocumentos } from "~/composables/solicitud/useDocumentos";
 export const useDocumentosSolicitud = () => {
   const route = useRoute();
   const router = useRouter();
-  const { getJson, urlFor } = useApi();
+  const { getJson, postJson, urlFor } = useApi();
   const { ready, authHeader } = useSession();
 
   const solicitudId = route.params.id as string;
@@ -263,9 +263,25 @@ export const useDocumentosSolicitud = () => {
     router.push("/dash/solicitudes");
   };
 
-  const handleContinue = () => {
-    if (puedeContinuar.value) {
+  const handleContinue = async () => {
+    if (!puedeContinuar.value) return;
+
+    try {
+      // Cambiar el estado de la solicitud a DOCUMENTOS_CARGADOS
+      await postJson(
+        `/api/solicitudes/${solicitudId}/cambiar-estado`,
+        {
+          estado: "DOCUMENTOS_CARGADOS",
+        },
+        { auth: true },
+      );
+
+      // Navegar al resumen
       router.push(`/dash/solicitud/resumen/${solicitudId}`);
+    } catch (e: any) {
+      console.error("Error al cambiar estado:", e);
+      errorSolicitud.value =
+        e.message || "Error al actualizar el estado de la solicitud";
     }
   };
 

@@ -1,22 +1,7 @@
 import type { H3Event } from "h3";
 import { defineEventHandler, getRouterParam, setResponseStatus } from "h3";
 import prisma from "~~/lib/prisma";
-
-// Helper para serializar datos y manejar BigInt
-const serializeResponse = (obj: any): any => {
-  if (obj === null || obj === undefined) return obj;
-  if (typeof obj === "bigint") return obj.toString();
-  if (obj instanceof Date) return obj.toISOString();
-  if (Array.isArray(obj)) return obj.map(serializeResponse);
-  if (typeof obj === "object") {
-    const result: any = {};
-    for (const key in obj) {
-      result[key] = serializeResponse(obj[key]);
-    }
-    return result;
-  }
-  return obj;
-};
+import { documentoStorage } from "~~/server/services/storage/documento-storage.service";
 
 export default defineEventHandler(async (event: H3Event) => {
   try {
@@ -51,6 +36,7 @@ export default defineEventHandler(async (event: H3Event) => {
       };
     }
 
+    // Verificar que el usuario sea el dueño
     if (solicitud.owner_username !== session.user.username) {
       setResponseStatus(event, 403);
       return {
@@ -58,18 +44,52 @@ export default defineEventHandler(async (event: H3Event) => {
       };
     }
 
+    // Verificar si existe el PDF en el storage
+    const existeEnStorage = await documentoStorage.existePdf(
+      solicitudId,
+      solicitud.pdfs_generados?.filename
+    );
+
+    // Verificar si existe en la ruta guardada
+    let existeEnRuta = false;
+    if (solicitud.pdfs_generados?.path && !existeEnStorage) {
+      try {
+        const { access } = await import("fs/promises");
+        await access(solicitud.pdfs_generados.path);
+        existeEnRuta = true;
+      } catch {
+        existeEnRuta = false;
+      }
+    }
+
+    const tienePdf = existeEnStorage || existeEnRuta;
+
     return {
       success: true,
-      data: serializeResponse(solicitud),
+      data: {
+        solicitud_id: solicitudId,
+        tiene_pdf: tienePdf,
+        pdf_generado: solicitud.pdfs_generados
+          ? {
+              filename: solicitud.pdfs_generados.filename,
+              generado_en: solicitud.pdfs_generados.generado_en,
+              archivo_existe: tienePdf,
+              path: solicitud.pdfs_generados.path,
+            }
+          : null,
+      },
+      message: tienePdf ? "PDF disponible" : "PDF no generado",
     };
   } catch (error: any) {
-    console.error("Error al obtener solicitud:", error);
+    console.error("Error al verificar estado del PDF:", error);
     const status = Number(error?.statusCode || error?.response?.status || 502);
     setResponseStatus(event, Number.isFinite(status) ? status : 502);
 
     return {
       error:
-        error?.data?.error || error?.message || "Error al obtener la solicitud",
+        error?.data?.error ||
+        error?.message ||
+        "Error al verificar el estado del PDF",
     };
   }
 });

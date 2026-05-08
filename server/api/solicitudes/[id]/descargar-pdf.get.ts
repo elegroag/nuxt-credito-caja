@@ -1,8 +1,7 @@
 import type { H3Event } from "h3";
-import { defineEventHandler, getRouterParam, setResponseStatus, sendStream } from "h3";
-import { createReadStream } from "fs";
-import { join } from "path";
+import { defineEventHandler, getRouterParam, setResponseStatus } from "h3";
 import prisma from "~~/lib/prisma";
+import { documentoStorage } from "~~/server/services/storage/documento-storage.service";
 
 export default defineEventHandler(async (event: H3Event) => {
   try {
@@ -44,22 +43,49 @@ export default defineEventHandler(async (event: H3Event) => {
       };
     }
 
-    const pdfPath = solicitud.pdfs_generados.path;
+    const pdfFilename = solicitud.pdfs_generados.filename;
+
+    // Intentar obtener el PDF desde el storage
+    let pdfContent = await documentoStorage.obtenerPdf(
+      solicitudId,
+      pdfFilename,
+    );
+
+    // Si no está en el storage, intentar leer desde la ruta guardada
+    if (!pdfContent && solicitud.pdfs_generados.path) {
+      try {
+        const { readFile } = await import("fs/promises");
+        const buffer = await readFile(solicitud.pdfs_generados.path);
+        pdfContent = buffer.toString("base64");
+      } catch (readError) {
+        console.error("Error leyendo archivo desde ruta:", readError);
+      }
+    }
+
+    if (!pdfContent) {
+      setResponseStatus(event, 404);
+      return {
+        error: "No se pudo leer el contenido del PDF",
+      };
+    }
+
+    // Convertir base64 a buffer
+    const pdfBuffer = Buffer.from(pdfContent, "base64");
 
     setResponseHeaders(event, {
       "Content-Type": "application/pdf",
-      "Content-Disposition": `attachment; filename="${solicitud.pdfs_generados.filename}"`,
+      "Content-Disposition": `attachment; filename="${pdfFilename}"`,
     });
 
-    const fileStream = createReadStream(pdfPath);
-    return sendStream(event, fileStream);
+    return pdfBuffer;
   } catch (error: any) {
     console.error("Error al descargar PDF:", error);
     const status = Number(error?.statusCode || error?.response?.status || 502);
     setResponseStatus(event, Number.isFinite(status) ? status : 502);
 
     return {
-      error: error?.data?.error || error?.message || "Error al descargar el PDF",
+      error:
+        error?.data?.error || error?.message || "Error al descargar el PDF",
     };
   }
 });

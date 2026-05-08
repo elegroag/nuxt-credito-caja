@@ -66,7 +66,7 @@
             solicitud.estado === 'DOCUMENTOS_CARGADOS' ||
             solicitud.estado === 'POSTULADO'
           "
-          :tiene-pdf="solicitud.estado === 'ENVIADO_VALIDACION'"
+          :tiene-pdf="tienePdf"
           @descargar-pdf="descargarPdf"
           @eliminar="mostrarModalEliminar = true"
         />
@@ -135,6 +135,7 @@ const {
   // Datos computados
   numeroSolicitudDisplay,
   estadosTimelineConFechas,
+  tienePdf,
 
   // Funciones de parámetros
   buscarTipoIdentificacion,

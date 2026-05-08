@@ -38,6 +38,11 @@ export const useSolicitudDetailsPage = () => {
     );
   });
 
+  // Verificar si tiene PDF generado
+  const tienePdf = computed(() => {
+    return !!solicitud.value?.pdfs_generados;
+  });
+
   // Estados base para el timeline
   const estadosTimelineBase = [
     {
@@ -127,7 +132,9 @@ export const useSolicitudDetailsPage = () => {
   };
 
   const descargarPdf = async () => {
-    if (solicitud.value?.estado !== "ENVIADO_VALIDACION") return;
+    // Permitir descarga si tiene PDF generado o si está en estado ENVIADO_VALIDACION
+    if (!tienePdf.value && solicitud.value?.estado !== "ENVIADO_VALIDACION")
+      return;
 
     try {
       const config = useRuntimeConfig();
@@ -220,6 +227,7 @@ export const useSolicitudDetailsPage = () => {
     // Datos computados
     numeroSolicitudDisplay,
     estadosTimelineConFechas,
+    tienePdf,
 
     // Funciones de parámetros
     buscarTipoIdentificacion,

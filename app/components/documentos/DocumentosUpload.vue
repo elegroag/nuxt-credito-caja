@@ -35,7 +35,7 @@
           <p class="text-xs text-muted-foreground">PDF, JPG o PNG (máx. 5MB)</p>
         </div>
       </div>
-      <UInput
+      <input
         ref="fileInput"
         type="file"
         class="hidden"

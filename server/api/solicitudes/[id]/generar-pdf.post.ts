@@ -2,6 +2,7 @@ import type { H3Event } from "h3";
 import { defineEventHandler, getRouterParam, setResponseStatus } from "h3";
 import prisma from "~~/lib/prisma";
 import apiFlaskPdf from "~~/server/services/api-flaskpdf";
+import { documentoStorage } from "~~/server/services/storage/documento-storage.service";
 
 // Helper para serializar datos antes de enviar a Flask PDF
 const serializeForPdf = (obj: any): any => {
@@ -288,12 +289,32 @@ export default defineEventHandler(async (event: H3Event) => {
 
     const pdfData = response.data as any;
 
+    // Usar api_path si está disponible, sino usar path
+    const pdfPath = pdfData.api_path || pdfData.path || "";
+    const pdfFilename = pdfData.api_filename || pdfData.filename || "";
+    const pdfContent = pdfData.api_content || pdfData.content || "";
+
+    // Guardar el PDF en storage si hay contenido base64
+    let storagePath = pdfPath;
+    if (pdfContent) {
+      try {
+        storagePath = await documentoStorage.guardarPdf(
+          solicitudId,
+          pdfContent,
+          pdfFilename,
+        );
+        console.log("PDF guardado en storage:", storagePath);
+      } catch (storageError) {
+        console.error("Error al guardar PDF en storage:", storageError);
+      }
+    }
+
     if (solicitud.pdfs_generados) {
       await prisma.pdfs_generados.update({
         where: { solicitud_id: solicitudId },
         data: {
-          path: pdfData.path,
-          filename: pdfData.filename,
+          path: storagePath,
+          filename: pdfFilename,
           generado_en: pdfData,
           updated_at: new Date(),
         },
@@ -302,8 +323,8 @@ export default defineEventHandler(async (event: H3Event) => {
       await prisma.pdfs_generados.create({
         data: {
           solicitud_id: solicitudId,
-          path: pdfData.path,
-          filename: pdfData.filename,
+          path: storagePath,
+          filename: pdfFilename,
           generado_en: pdfData,
           created_at: new Date(),
           updated_at: new Date(),
@@ -316,8 +337,8 @@ export default defineEventHandler(async (event: H3Event) => {
       message: "PDF generado exitosamente",
       data: {
         solicitud_id: solicitudId,
-        filename: pdfData.filename,
-        path: pdfData.path,
+        filename: pdfFilename,
+        path: pdfPath,
       },
     };
   } catch (error: any) {
