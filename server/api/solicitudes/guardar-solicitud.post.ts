@@ -77,29 +77,6 @@ const solicitanteSchema = z
   })
   .optional();
 
-/* const payloadDataSchema = z
-  .object({
-    informacion_laboral: z.any().optional(),
-    ingresos_descuentos: z.any().optional(),
-    informacion_economica: z.any().optional(),
-    propiedades: z.any().optional(),
-    deudas: z.any().optional(),
-    referencias: z.any().optional(),
-    linea_credito: z.any().optional(),
-  })
-  .optional(); */
-
-/* const firmanteSchema = z
-  .object({
-    orden: z.number().int().positive().optional(),
-    tipo: z.string().min(1, "El tipo de firmante es requerido"),
-    nombre_completo: z.string().min(1, "El nombre completo es requerido"),
-    numero_documento: z.string().min(1, "El número de documento es requerido"),
-    email: z.string().email("El email del firmante es inválido"),
-    rol: z.string().min(1, "El rol es requerido"),
-  })
-  .optional(); */
-
 const bodySchema = z.object({
   solicitud: solicitudSchema,
   solicitante: solicitanteSchema,

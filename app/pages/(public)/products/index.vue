@@ -98,7 +98,7 @@ const getColorClass = (color: string) => {
     <!-- Hero Section -->
     <section class="relative overflow-hidden pt-20 pb-16">
       <div
-        class="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-accent/5"
+        class="absolute inset-0 bg-linear-to-br from-primary/5 via-transparent to-accent/5"
       />
       <div class="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
         <h1
@@ -114,7 +114,7 @@ const getColorClass = (color: string) => {
         </p>
 
         <!-- Features -->
-        <div class="mt-12 grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="pt-12 grid grid-cols-2 lg:grid-cols-4 gap-4">
           <div
             v-for="feature in features"
             :key="feature.title"
@@ -134,7 +134,7 @@ const getColorClass = (color: string) => {
     </section>
 
     <!-- Products Grid -->
-    <section class="pb-20">
+    <section class="pb-20 mt-16">
       <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
           <div

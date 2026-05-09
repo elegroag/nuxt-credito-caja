@@ -104,7 +104,7 @@ export default defineNuxtConfig({
 
   nitro: {
     prerender: {
-      routes: ["/", "/about", "/contact", "/products"],
+      routes: ["/"],
       ignore: ["/dashboard", "/dashboard/**"],
       // Habilitar el crawling para descubrir enlaces automáticamente
       crawlLinks: true,

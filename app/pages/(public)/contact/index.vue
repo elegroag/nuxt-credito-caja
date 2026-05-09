@@ -93,7 +93,7 @@ const socialLinks = [
     <!-- Hero Header -->
     <div class="relative overflow-hidden">
       <div
-        class="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-accent/5"
+        class="absolute inset-0 bg-linear-to-br from-primary/5 via-transparent to-accent/5"
       />
       <div
         class="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-12 text-center"
@@ -110,7 +110,7 @@ const socialLinks = [
       </div>
     </div>
 
-    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pb-20">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pb-20 mt-10">
       <!-- Contact Cards -->
       <div class="grid sm:grid-cols-3 gap-4 mb-12">
         <a

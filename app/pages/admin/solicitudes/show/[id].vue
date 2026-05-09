@@ -299,10 +299,7 @@ const handleIniciarFirmado = async () => {
               Ciudad de Residencia
             </p>
             <p class="text-base text-foreground mt-0.5">
-              {{
-                getCiudadDescripcion(solicitud.solicitante?.pais_residencia) ||
-                "-"
-              }}
+              {{ getCiudadDescripcion(solicitud.solicitante?.ciudad) || "-" }}
             </p>
           </div>
           <div>

@@ -84,8 +84,32 @@ export const useResumenSolicitud = () => {
     try {
       enviando.value = true;
 
+      // Primero cambiar el estado a ENVIADO_VALIDACION
+      const estadoResponse = await postJson<{
+        success: boolean;
+        message?: string;
+      }>(
+        `/api/solicitudes/${solicitudId}/cambiar-estado`,
+        {
+          estado: "ENVIADO_VALIDACION",
+        },
+        { auth: true },
+      );
+
+      if (!estadoResponse.success) {
+        errorSolicitud.value =
+          estadoResponse.message ||
+          "Error al cambiar el estado de la solicitud";
+        return;
+      }
+
+      console.log("Estado cambiado a ENVIADO_VALIDACION:", estadoResponse);
+
       // Generar oficio PDF usando el endpoint existente
-      const response = await postJson<{ success: boolean; message?: string }>(
+      const pdfResponse = await postJson<{
+        success: boolean;
+        message?: string;
+      }>(
         `/api/solicitudes/${solicitudId}/generar-pdf`,
         {
           fecha_envio: new Date().toISOString(),
@@ -93,13 +117,13 @@ export const useResumenSolicitud = () => {
         { auth: true },
       );
 
-      console.log("Response generacion PDF:", response);
+      console.log("Response generacion PDF:", pdfResponse);
 
       // Navegar a página de confirmación si el PDF se generó exitosamente
-      if (response.success) {
+      if (pdfResponse.success) {
         router.push(`/dash/solicitud/special_thanks/${solicitudId}`);
       } else {
-        errorSolicitud.value = response.message || "Error al generar el PDF";
+        errorSolicitud.value = pdfResponse.message || "Error al generar el PDF";
       }
     } catch (e: any) {
       console.error(e);

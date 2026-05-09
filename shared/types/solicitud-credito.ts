@@ -302,6 +302,7 @@ export interface SolicitanteBasic {
   pais_residencia?: string;
   personas_a_cargo?: number;
   tipo_vivienda?: string;
+  ciudad?: string;
 }
 
 export interface SolicitudCredito {

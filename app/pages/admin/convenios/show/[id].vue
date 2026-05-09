@@ -1,28 +1,31 @@
 <template>
-  <div class="container mx-auto py-8 px-4 max-w-6xl">
+  <div class="mx-auto max-w-6xl px-4 py-6 sm:py-8 space-y-6">
     <!-- Header -->
-    <div class="mb-6">
-      <div class="flex items-center gap-4 mb-4">
-        <UButton variant="outline" @click="goBack()">
-          <ChevronLeftIcon class="w-4 h-4 mr-2" />
-          Volver
-        </UButton>
-        <div>
-          <h1 class="text-2xl font-bold text-gray-900 flex items-center gap-2">
-            <BuildingOfficeIcon class="w-8 h-8 text-blue-500" />
-            Detalle del Convenio
-          </h1>
-          <p class="text-sm text-gray-500">
-            Información completa del convenio con {{ convenio?.razon_social }}
-          </p>
-        </div>
+    <div class="flex items-center gap-4 mb-6">
+      <UButton variant="outline" @click="goBack()">
+        <UIcon name="i-lucide-arrow-left" class="w-4 h-4 mr-2" />
+        Volver
+      </UButton>
+      <div>
+        <h1
+          class="text-2xl font-semibold text-foreground flex items-center gap-2"
+        >
+          <UIcon name="i-lucide-building-2" class="w-8 h-8 text-primary" />
+          Detalle del Convenio
+        </h1>
+        <p class="text-sm text-muted-foreground">
+          Información completa del convenio con {{ convenio?.razon_social }}
+        </p>
       </div>
     </div>
 
     <!-- Loading State -->
     <div v-if="loading" class="flex flex-col items-center justify-center py-16">
-      <ArrowPathIcon class="w-10 h-10 animate-spin text-blue-500 mb-4" />
-      <p class="text-gray-500">Cargando información del convenio...</p>
+      <UIcon
+        name="i-lucide-loader-2"
+        class="w-10 h-10 animate-spin text-primary mb-4"
+      />
+      <p class="text-muted-foreground">Cargando información del convenio...</p>
     </div>
 
     <!-- Error State -->
@@ -30,40 +33,49 @@
       v-else-if="error"
       class="flex flex-col items-center justify-center py-16"
     >
-      <NoSymbolIcon class="w-10 h-10 text-red-500 mb-4" />
-      <p class="text-red-600 mb-4">{{ error }}</p>
+      <UIcon name="i-lucide-x-circle" class="w-10 h-10 text-destructive mb-4" />
+      <p class="text-destructive mb-4">{{ error }}</p>
       <UButton variant="outline" @click="cargarConvenio">Reintentar</UButton>
     </div>
 
     <!-- Convenio Details -->
     <div v-else-if="convenio" class="space-y-6">
       <!-- Información Principal -->
-      <div class="bg-white rounded-lg border border-gray-200 shadow-sm">
+      <UPageCard>
+        <template #title>
+          <span class="flex items-center gap-2">
+            <UIcon name="i-lucide-building-2" class="w-5 h-5 text-primary" />
+            Información Principal
+          </span>
+        </template>
         <div class="p-6">
           <div class="flex items-start justify-between">
             <div class="flex items-center gap-6">
               <!-- Logo/Empresa -->
               <div class="flex-shrink-0">
                 <div
-                  class="h-20 w-20 rounded-lg bg-blue-100 flex items-center justify-center"
+                  class="h-20 w-20 rounded-lg bg-primary/10 flex items-center justify-center"
                 >
-                  <BuildingOfficeIcon class="w-10 h-10 text-blue-600" />
+                  <UIcon
+                    name="i-lucide-building-2"
+                    class="w-10 h-10 text-primary"
+                  />
                 </div>
               </div>
 
               <!-- Info Principal -->
               <div>
-                <h2 class="text-2xl font-bold text-gray-900">
+                <h2 class="text-2xl font-semibold text-foreground">
                   {{ convenio.razon_social }}
                 </h2>
-                <p class="text-lg text-gray-600 mt-1">
+                <p class="text-lg text-muted-foreground mt-1">
                   NIT: {{ convenio.nit }}
                 </p>
                 <div class="flex items-center gap-4 mt-2">
-                  <Badge :variant="getEstadoVariant(convenio.estado)">
+                  <UBadge :variant="getEstadoVariant(convenio.estado)">
                     {{ getEstadoLabel(convenio.estado) }}
-                  </Badge>
-                  <span class="text-sm text-gray-500">
+                  </UBadge>
+                  <span class="text-sm text-muted-foreground">
                     Convenio creado: {{ formatDate(convenio.fecha_convenio) }}
                   </span>
                 </div>
@@ -74,7 +86,7 @@
             <div class="flex items-center gap-2">
               <NuxtLink :to="`/admin/convenios/edit/${convenio.id}`">
                 <UButton variant="outline" size="sm">
-                  <PencilIcon class="w-4 h-4 mr-2" />
+                  <UIcon name="i-lucide-pencil" class="w-4 h-4 mr-2" />
                   Editar
                 </UButton>
               </NuxtLink>
@@ -82,182 +94,209 @@
                 variant="outline"
                 size="sm"
                 @click="toggleEstado"
-                :class="
-                  convenio.estado === 'Activo'
-                    ? 'text-red-600 hover:text-red-700'
-                    : 'text-green-600 hover:text-green-700'
+                :color="
+                  convenio.estado === 'Activo' ? 'destructive' : 'primary'
                 "
               >
-                <NoSymbolIcon
+                <UIcon
                   v-if="convenio.estado === 'Activo'"
+                  name="i-lucide-x"
                   class="w-4 h-4 mr-2"
                 />
-                <CheckIcon v-else class="w-4 h-4 mr-2" />
+                <UIcon v-else name="i-lucide-check" class="w-4 h-4 mr-2" />
                 {{ convenio.estado === "Activo" ? "Desactivar" : "Activar" }}
               </UButton>
             </div>
           </div>
         </div>
-      </div>
+      </UPageCard>
 
       <!-- Información Detallada -->
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <!-- Información del Representante -->
-        <div class="bg-white rounded-lg border border-gray-200 shadow-sm">
-          <div class="p-6">
-            <h3
-              class="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2"
-            >
-              <UserCircleIcon class="w-5 h-5 text-blue-500" />
+        <UPageCard>
+          <template #title>
+            <span class="flex items-center gap-2">
+              <UIcon name="i-lucide-user" class="w-5 h-5 text-primary" />
               Información del Representante
-            </h3>
-            <div class="space-y-3">
-              <div class="flex items-center gap-3">
-                <IdentificationIcon class="w-5 h-5 text-gray-400" />
-                <div>
-                  <p class="text-sm text-gray-500">Documento</p>
-                  <p class="font-medium text-gray-900">
-                    {{ convenio.representante_documento }}
-                  </p>
-                </div>
+            </span>
+          </template>
+          <div class="p-6 space-y-4">
+            <div class="flex items-center gap-3">
+              <UIcon
+                name="i-lucide-id-card"
+                class="w-5 h-5 text-muted-foreground"
+              />
+              <div>
+                <p class="text-sm text-muted-foreground">Documento</p>
+                <p class="font-medium text-foreground">
+                  {{ convenio.representante_documento }}
+                </p>
               </div>
-              <div class="flex items-center gap-3">
-                <UserCircleIcon class="w-5 h-5 text-gray-400" />
-                <div>
-                  <p class="text-sm text-gray-500">Nombre Completo</p>
-                  <p class="font-medium text-gray-900">
-                    {{ convenio.representante_nombre }}
-                  </p>
-                </div>
+            </div>
+            <div class="flex items-center gap-3">
+              <UIcon
+                name="i-lucide-user"
+                class="w-5 h-5 text-muted-foreground"
+              />
+              <div>
+                <p class="text-sm text-muted-foreground">Nombre Completo</p>
+                <p class="font-medium text-foreground">
+                  {{ convenio.representante_nombre }}
+                </p>
               </div>
             </div>
           </div>
-        </div>
+        </UPageCard>
 
         <!-- Información de Contacto -->
-        <div class="bg-white rounded-lg border border-gray-200 shadow-sm">
-          <div class="p-6">
-            <h3
-              class="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2"
-            >
-              <PhoneIcon class="w-5 h-5 text-blue-500" />
+        <UPageCard>
+          <template #title>
+            <span class="flex items-center gap-2">
+              <UIcon name="i-lucide-phone" class="w-5 h-5 text-primary" />
               Información de Contacto
-            </h3>
-            <div class="space-y-3">
-              <div class="flex items-center gap-3">
-                <PhoneIcon class="w-5 h-5 text-gray-400" />
-                <div>
-                  <p class="text-sm text-gray-500">Teléfono</p>
-                  <p class="font-medium text-gray-900">
-                    {{ convenio.telefono || "No registrado" }}
-                  </p>
-                </div>
+            </span>
+          </template>
+          <div class="p-6 space-y-4">
+            <div class="flex items-center gap-3">
+              <UIcon
+                name="i-lucide-phone"
+                class="w-5 h-5 text-muted-foreground"
+              />
+              <div>
+                <p class="text-sm text-muted-foreground">Teléfono</p>
+                <p class="font-medium text-foreground">
+                  {{ convenio.telefono || "No registrado" }}
+                </p>
               </div>
-              <div class="flex items-center gap-3">
-                <EnvelopeIcon class="w-5 h-5 text-gray-400" />
-                <div>
-                  <p class="text-sm text-gray-500">Correo Electrónico</p>
-                  <p class="font-medium text-gray-900">
-                    {{ convenio.correo || "No registrado" }}
-                  </p>
-                </div>
+            </div>
+            <div class="flex items-center gap-3">
+              <UIcon
+                name="i-lucide-mail"
+                class="w-5 h-5 text-muted-foreground"
+              />
+              <div>
+                <p class="text-sm text-muted-foreground">Correo Electrónico</p>
+                <p class="font-medium text-foreground">
+                  {{ convenio.correo || "No registrado" }}
+                </p>
               </div>
             </div>
           </div>
-        </div>
+        </UPageCard>
 
         <!-- Fechas del Convenio -->
-        <div class="bg-white rounded-lg border border-gray-200 shadow-sm">
-          <div class="p-6">
-            <h3
-              class="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2"
-            >
-              <CalendarIcon class="w-5 h-5 text-blue-500" />
+        <UPageCard>
+          <template #title>
+            <span class="flex items-center gap-2">
+              <UIcon name="i-lucide-calendar" class="w-5 h-5 text-primary" />
               Fechas del Convenio
-            </h3>
-            <div class="space-y-3">
-              <div class="flex items-center gap-3">
-                <CalendarIcon class="w-5 h-5 text-gray-400" />
-                <div>
-                  <p class="text-sm text-gray-500">Fecha de Creación</p>
-                  <p class="font-medium text-gray-900">
-                    {{ formatDate(convenio.fecha_convenio) }}
-                  </p>
-                </div>
+            </span>
+          </template>
+          <div class="p-6 space-y-4">
+            <div class="flex items-center gap-3">
+              <UIcon
+                name="i-lucide-calendar"
+                class="w-5 h-5 text-muted-foreground"
+              />
+              <div>
+                <p class="text-sm text-muted-foreground">Fecha de Creación</p>
+                <p class="font-medium text-foreground">
+                  {{ formatDate(convenio.fecha_convenio) }}
+                </p>
               </div>
-              <div class="flex items-center gap-3">
-                <CalendarIcon class="w-5 h-5 text-gray-400" />
-                <div>
-                  <p class="text-sm text-gray-500">Fecha de Vencimiento</p>
-                  <p class="font-medium text-gray-900">
-                    {{
-                      convenio.fecha_vencimiento
-                        ? formatDate(convenio.fecha_vencimiento)
-                        : "No definida"
-                    }}
-                  </p>
-                </div>
+            </div>
+            <div class="flex items-center gap-3">
+              <UIcon
+                name="i-lucide-calendar"
+                class="w-5 h-5 text-muted-foreground"
+              />
+              <div>
+                <p class="text-sm text-muted-foreground">
+                  Fecha de Vencimiento
+                </p>
+                <p class="font-medium text-foreground">
+                  {{
+                    convenio.fecha_vencimiento
+                      ? formatDate(convenio.fecha_vencimiento)
+                      : "No definida"
+                  }}
+                </p>
               </div>
-              <div class="flex items-center gap-3">
-                <CheckIcon class="w-5 h-5 text-gray-400" />
-                <div>
-                  <p class="text-sm text-gray-500">Estado Actual</p>
-                  <Badge :variant="getEstadoVariant(convenio.estado)">
-                    {{ getEstadoLabel(convenio.estado) }}
-                  </Badge>
-                </div>
+            </div>
+            <div class="flex items-center gap-3">
+              <UIcon
+                name="i-lucide-info"
+                class="w-5 h-5 text-muted-foreground"
+              />
+              <div>
+                <p class="text-sm text-muted-foreground">Estado Actual</p>
+                <UBadge :variant="getEstadoVariant(convenio.estado)">
+                  {{ getEstadoLabel(convenio.estado) }}
+                </UBadge>
               </div>
             </div>
           </div>
-        </div>
+        </UPageCard>
 
         <!-- Información del Sistema -->
-        <div class="bg-white rounded-lg border border-gray-200 shadow-sm">
-          <div class="p-6">
-            <h3
-              class="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2"
-            >
-              <CogIcon class="w-5 h-5 text-blue-500" />
+        <UPageCard>
+          <template #title>
+            <span class="flex items-center gap-2">
+              <UIcon name="i-lucide-cog" class="w-5 h-5 text-primary" />
               Información del Sistema
-            </h3>
-            <div class="space-y-3">
-              <div class="flex items-center gap-3">
-                <IdentificationIcon class="w-5 h-5 text-gray-400" />
-                <div>
-                  <p class="text-sm text-gray-500">ID Interno</p>
-                  <p class="font-medium text-gray-900 font-mono text-sm">
-                    {{ convenio.id }}
-                  </p>
-                </div>
+            </span>
+          </template>
+          <div class="p-6 space-y-4">
+            <div class="flex items-center gap-3">
+              <UIcon
+                name="i-lucide-hash"
+                class="w-5 h-5 text-muted-foreground"
+              />
+              <div>
+                <p class="text-sm text-muted-foreground">ID Interno</p>
+                <p class="font-medium text-foreground font-mono text-sm">
+                  {{ convenio.id }}
+                </p>
               </div>
-              <div class="flex items-center gap-3">
-                <CalendarIcon class="w-5 h-5 text-gray-400" />
-                <div>
-                  <p class="text-sm text-gray-500">Última Actualización</p>
-                  <p class="font-medium text-gray-900">
-                    {{ formatDate(convenio.updatedAt) }}
-                  </p>
-                </div>
+            </div>
+            <div class="flex items-center gap-3">
+              <UIcon
+                name="i-lucide-calendar"
+                class="w-5 h-5 text-muted-foreground"
+              />
+              <div>
+                <p class="text-sm text-muted-foreground">
+                  Última Actualización
+                </p>
+                <p class="font-medium text-foreground">
+                  {{ formatDate(convenio.updatedAt) }}
+                </p>
               </div>
             </div>
           </div>
-        </div>
-      </div>
+        </UPageCard>
 
-      <!-- Historial de Actividad (Placeholder) -->
-      <div class="bg-white rounded-lg border border-gray-200 shadow-sm">
-        <div class="p-6">
-          <h3
-            class="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2"
-          >
-            <ClockIcon class="w-5 h-5 text-blue-500" />
-            Historial de Actividad
-          </h3>
-          <div class="text-center py-8 text-gray-500">
-            <ClockIcon class="w-12 h-12 mx-auto mb-4 text-gray-300" />
-            <p>El historial de actividad estará disponible próximamente</p>
+        <!-- Historial de Actividad (Placeholder) -->
+        <UPageCard>
+          <template #title>
+            <span class="flex items-center gap-2">
+              <UIcon name="i-lucide-clock" class="w-5 h-5 text-primary" />
+              Historial de Actividad
+            </span>
+          </template>
+          <div class="p-6">
+            <div class="text-center py-8">
+              <UIcon
+                name="i-lucide-clock"
+                class="w-12 h-12 mx-auto mb-4 text-muted-foreground"
+              />
+              <p class="text-muted-foreground">
+                El historial de actividad estará disponible próximamente
+              </p>
+            </div>
           </div>
-        </div>
+        </UPageCard>
       </div>
     </div>
   </div>
@@ -267,23 +306,6 @@
 import { ref, onMounted } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import { useApi } from "~/composables/useApi";
-
-import Badge from "@/components/shared/Badge.vue";
-import {
-  ChevronLeftIcon,
-  BuildingOfficeIcon,
-  ArrowPathIcon,
-  NoSymbolIcon,
-  PencilIcon,
-  CheckIcon,
-  UserCircleIcon,
-  IdentificationIcon,
-  PhoneIcon,
-  EnvelopeIcon,
-  CalendarIcon,
-  CogIcon,
-  ClockIcon,
-} from "@heroicons/vue/24/outline";
 
 definePageMeta({
   layout: "dashboard",
@@ -304,7 +326,7 @@ const cargarConvenio = async () => {
   try {
     const api = useApi();
     const response = await api.getJson<any>(
-      `/api/admin/empresas-convenios/${route.params.id}`,
+      `/api/admin/convenios/${route.params.id}`,
       {
         auth: true,
       },
@@ -336,7 +358,7 @@ const toggleEstado = async () => {
   try {
     const api = useApi();
     await api.putJson(
-      `/api/admin/empresas-convenios/${convenio.value.id}/estado`,
+      `/api/admin/convenios/${convenio.value.id}/estado`,
       {
         estado: nuevoEstado,
       },

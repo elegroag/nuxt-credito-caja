@@ -76,6 +76,9 @@ const opcionesTipoDoc = [
               :color="errors.username ? 'destructive' : undefined"
               class="w-full"
             />
+            <template #error>
+              <span class="text-destructive">{{ errors.username }}</span>
+            </template>
           </UFormField>
 
           <UFormField label="Email" required :error="errors.email">
@@ -87,6 +90,9 @@ const opcionesTipoDoc = [
               :color="errors.email ? 'destructive' : undefined"
               class="w-full"
             />
+            <template #error>
+              <span class="text-destructive">{{ errors.email }}</span>
+            </template>
           </UFormField>
 
           <UFormField label="Contraseña" required :error="errors.password">
@@ -98,6 +104,9 @@ const opcionesTipoDoc = [
               :color="errors.password ? 'destructive' : undefined"
               class="w-full"
             />
+            <template #error>
+              <span class="text-destructive">{{ errors.password }}</span>
+            </template>
           </UFormField>
 
           <UFormField
@@ -113,6 +122,9 @@ const opcionesTipoDoc = [
               :color="errors.confirmPassword ? 'destructive' : undefined"
               class="w-full"
             />
+            <template #error>
+              <span class="text-destructive">{{ errors.confirmPassword }}</span>
+            </template>
           </UFormField>
 
           <UFormField label="Roles" required :error="errors.roles">
@@ -125,6 +137,9 @@ const opcionesTipoDoc = [
               placeholder="Seleccione roles..."
               class="w-full"
             />
+            <template #error>
+              <span class="text-destructive">{{ errors.roles }}</span>
+            </template>
           </UFormField>
 
           <UFormField label="Estado">
@@ -154,6 +169,9 @@ const opcionesTipoDoc = [
               :color="errors.nombre ? 'destructive' : undefined"
               class="w-full"
             />
+            <template #error>
+              <span class="text-destructive">{{ errors.nombre }}</span>
+            </template>
           </UFormField>
 
           <UFormField label="Apellidos" required :error="errors.apellido">
@@ -164,6 +182,9 @@ const opcionesTipoDoc = [
               :color="errors.apellido ? 'destructive' : undefined"
               class="w-full"
             />
+            <template #error>
+              <span class="text-destructive">{{ errors.apellido }}</span>
+            </template>
           </UFormField>
 
           <UFormField label="Tipo de Documento">
@@ -187,6 +208,11 @@ const opcionesTipoDoc = [
               :color="errors.numero_documento ? 'destructive' : undefined"
               class="w-full"
             />
+            <template #error>
+              <span class="text-destructive">{{
+                errors.numero_documento
+              }}</span>
+            </template>
           </UFormField>
 
           <UFormField
@@ -202,6 +228,9 @@ const opcionesTipoDoc = [
               :color="errors.phone ? 'destructive' : undefined"
               class="w-full"
             />
+            <template #error>
+              <span class="text-destructive">{{ errors.phone }}</span>
+            </template>
           </UFormField>
         </div>
       </UPageCard>

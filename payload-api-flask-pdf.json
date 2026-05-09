@@ -1,0 +1,164 @@
+{
+  "solicitud_id": "000001-202605-01",
+  "solicitud": {
+    "fecha_radicado": "2026-05-05T00:00:00.000000Z",
+    "numero_solicitud": "000001-202605-01",
+    "valor_solicitud": "5000000.00",
+    "plazo_meses": 60,
+    "numero_comprobante": 0,
+    "rol_en_solicitud": "T",
+    "categoria": "B",
+    "producto_tipo": "",
+    "ha_tenido_credito_comfaca": false,
+    "tipo_credito": "01"
+  },
+  "solicitante": {
+    "fecha_vinculacion": "2026-05-05",
+    "tipo_documento": "1",
+    "numero_documento": "1110491951",
+    "fecha_nacimiento": "1989-12-19",
+    "pais_nacimiento": "",
+    "nombre_completo": "CAJA DE COMPENSACION FAMILIAR DEL CAQUETA",
+    "fecha_expedicion_documento": null,
+    "profesion_ocupacion": "2519",
+    "sexo": "M",
+    "nivel_educativo": "11",
+    "barrio_residencia": "CR 2 G 13 49 BRR ABBAS TURBAY",
+    "ciudad_residencia": "18001",
+    "pais_residencia": "CO",
+    "telefono_fijo": "",
+    "telefono_movil": "",
+    "email": "maxedwwin@gmail.com",
+    "tipo_vivienda": "",
+    "vive_con_nucleo_familiar": false,
+    "personas_a_cargo": 0,
+    "direccion_residencia": "CR 2 G 13 49 BRR ABBAS TURBAY"
+  },
+  "laboral": {
+    "cargo": "2519",
+    "empresa_nit": "891190047",
+    "fecha_ingreso": "2026-01-13",
+    "tipo_contrato": null,
+    "empresa_ciudad": "18001",
+    "tiempo_servicio": 1,
+    "empresa_telefono": "6084366300",
+    "empresa_direccion": "CR 11 10 34 BRR LA COOPERATIVA",
+    "empresa_razon_social": "CAJA DE COMPENSACION FAMILIAR DEL CAQUETA",
+    "nombramiento_o_pagador": null,
+    "tiempo_servicio_unidad": "meses"
+  },
+  "economica": {
+    "otros": 0,
+    "moneda": "COP",
+    "descripcion": null,
+    "total_gastos": 0,
+    "total_activos": 0,
+    "total_pasivos": 0,
+    "arrendamientos": 0,
+    "gastos_descripcion": null
+  },
+  "ingresos": {
+    "moneda": "COP",
+    "comisiones": 0,
+    "horas_extras": 0,
+    "otros_ingresos": 0,
+    "total_ingresos": 4790200,
+    "total_neto_recibido": 4406984,
+    "salario_basico_mensual": 4790200
+  },
+  "descuentos": {
+    "judiciales": 0,
+    "salud_pension": 383216,
+    "otras_libranzas": 0,
+    "total_descuentos": 383216,
+    "libranzas_comfaca": 0,
+    "otras_deducciones": 0,
+    "subsidio_transporte": 0,
+    "total_neto_recibido": 4406984
+  },
+  "conyuge": [],
+  "referencias": {
+    "familiares": [],
+    "personales": []
+  },
+  "deudas": [],
+  "propiedades": [],
+  "firmantes": [
+    {
+      "tipo": "natural",
+      "rol": "SOLICITANTE",
+      "nombre_completo": "EDWIN ANDRES LEGRO AGUDELO",
+      "numero_documento": "1110491951",
+      "email": "maxedwwin@gmail.com",
+      "orden": 1
+    },
+    {
+      "tipo": "EMPRESA_CONVENIO",
+      "rol": "EMPRESA_PATROCINADORA",
+      "nombre_completo": "CAJA DE COMPENSACION FAMILIAR DEL CAQUETA",
+      "numero_documento": "891190047",
+      "email": "logistica@transporterapida.com",
+      "orden": 2
+    }
+  ],
+  "convenio": {
+    "representante_documento": "17689152",
+    "representante_nombre": "GUILLERMO ALFONSO PERDOMO ROJAS\"",
+    "fecha_vencimiento": "2028-09-01",
+    "fecha_convenio": "2021-09-01",
+    "nit": 891190047,
+    "razon_social": "CAJA DE COMPENSACION FAMILIAR DEL CAQUETA",
+    "estado": "Activo"
+  },
+  "proceso_firmado": {
+    "proveedor": "CAJA DE COMPENSACIÓN FAMILIAR DEL CAQUETÁ",
+    "estado": "POSTULADO",
+    "transaccion_id": "0",
+    "fecha_inicio": "2026-05-05 20:27:11"
+  },
+  "encabezado": {
+    "fecha_radicado": "2026-05-05T00:00:00.000000Z",
+    "solicitud_id": "000001-202605-01"
+  },
+  "pdf_metadata": {
+    "fecha_generacion": "2026-05-05 20:27:11",
+    "solicitud_id": "000001-202605-01",
+    "version": "2.0"
+  },
+  "trabajador": {
+    "cedula": "1110491951",
+    "tipo_documento": "1",
+    "primer_apellido": "LEGRO",
+    "segundo_apellido": "AGUDELO",
+    "primer_nombre": "EDWIN",
+    "segundo_nombre": "ANDRES",
+    "direccion": "CR 2 G 13 49 BRR ABBAS TURBAY",
+    "ciudad_codigo": "18001",
+    "telefono": "3157145942",
+    "email": "maxedwwin@gmail.com",
+    "salario": 4790200,
+    "fecha_salario": "2026-02-01",
+    "sexo": "M",
+    "estado_civil": "4",
+    "fecha_nacimiento": "1989-12-19",
+    "ciudad_nacimiento": "73001",
+    "nivel_educativo": "11",
+    "codigo_categoria": "B",
+    "empresa": {
+      "nit": "891190047",
+      "razon_social": "CAJA DE COMPENSACION FAMILIAR DEL CAQUETA",
+      "direccion": "CR 11 10 34 BRR LA COOPERATIVA",
+      "telefono": "6084366300",
+      "ciudad_codigo": "18001",
+      "representante_legal": "GUILLERMO ALFONSO PERDOMO ROJAS",
+      "representante_cedula": "17689152",
+      "estado": "A"
+    },
+    "estado": "A",
+    "fecha_afiliacion": "2026-01-13",
+    "cargo": "2519",
+    "tipo_contrato": "I",
+    "personas_a_cargo": 2,
+    "antiguedad_meses": 4
+  }
+}

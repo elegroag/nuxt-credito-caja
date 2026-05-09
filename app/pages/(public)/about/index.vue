@@ -37,7 +37,13 @@ const values = [
   },
 ];
 
-const team = [
+interface TeamMember {
+  name: string;
+  role: string;
+  description: string;
+}
+
+const team: TeamMember[] = [
   {
     name: "Equipo Comfaca",
     role: "Tu aliado financiero",
@@ -52,7 +58,7 @@ const team = [
     <!-- Hero Section -->
     <section class="relative overflow-hidden pt-20 pb-16">
       <div
-        class="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-accent/5"
+        class="absolute inset-0 bg-linear-to-br from-primary/5 via-transparent to-accent/5"
       />
       <div class="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
         <h1
@@ -70,7 +76,7 @@ const team = [
     </section>
 
     <!-- Stats Section -->
-    <section class="pb-20">
+    <section class="pb-20 mt-10">
       <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
           <div
@@ -125,17 +131,17 @@ const team = [
         <div class="bg-card rounded-3xl p-8 sm:p-12 border border-border/50">
           <div class="flex flex-col sm:flex-row items-center gap-8">
             <div
-              class="w-32 h-32 rounded-full bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center shrink-0"
+              class="w-32 h-32 rounded-full bg-linear-to-br from-primary/20 to-accent/20 flex items-center justify-center shrink-0"
             >
               <UIcon name="i-lucide-users" class="w-12 h-12 text-primary" />
             </div>
             <div class="text-center sm:text-left">
               <h2 class="text-2xl font-semibold text-foreground mb-2">
-                {{ team[0].name }}
+                {{ team[0]?.name }}
               </h2>
-              <p class="text-primary font-medium mb-3">{{ team[0].role }}</p>
+              <p class="text-primary font-medium mb-3">{{ team[0]?.role }}</p>
               <p class="text-muted-foreground leading-relaxed">
-                {{ team[0].description }}
+                {{ team[0]?.description }}
               </p>
             </div>
           </div>

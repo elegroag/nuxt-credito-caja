@@ -102,4 +102,19 @@ const productosOptions = computed<SelectOption[]>(() => {
     value: tipo.tipinv,
   }));
 });
+
+// Watcher para transformar producto_tipo si es un objeto
+watch(
+  () => props.form.solicitud.producto_tipo,
+  (newValue) => {
+    if (
+      typeof newValue === "object" &&
+      newValue !== null &&
+      "value" in newValue
+    ) {
+      props.form.solicitud.producto_tipo = String(newValue.value);
+    }
+  },
+  { immediate: true, deep: true },
+);
 </script>

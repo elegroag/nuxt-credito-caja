@@ -11,6 +11,7 @@
       :placeholder="placeholder"
       :disabled="disabled"
       :searchable="searchable"
+      by="value"
       class="w-full"
     />
 
@@ -77,7 +78,16 @@ const emit = defineEmits<Emits>();
 // Computed properties
 const selectedValue = computed<SelectValue>({
   get: () => props.modelValue,
-  set: (value) => emit("update:modelValue", value),
+  set: (value) => {
+    // Si es un objeto con propiedad value, extraer solo el valor
+    if (typeof value === "object" && value !== null && "value" in value) {
+      emit("update:modelValue", String(value.value));
+    } else if (value !== undefined && value !== null) {
+      emit("update:modelValue", String(value));
+    } else {
+      emit("update:modelValue", value);
+    }
+  },
 });
 
 const hasError = computed(() => Boolean(props.errorMessage));

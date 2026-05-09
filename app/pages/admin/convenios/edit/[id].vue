@@ -1,25 +1,37 @@
 <template>
-  <div class="container mx-auto py-8 px-4 max-w-4xl">
+  <div class="mx-auto max-w-3xl px-4 py-6 sm:py-8 space-y-6">
     <!-- Header -->
-    <div class="mb-6">
-      <div class="flex items-center gap-4 mb-4">
-        <UButton variant="outline" @click="goBack()">
-          <ChevronLeftIcon class="w-4 h-4 mr-2" />
-          Volver
-        </UButton>
-        <div>
-          <h1 class="text-2xl font-bold text-gray-900">Editar Convenio</h1>
-          <p class="text-sm text-gray-500">
-            Modifique la información del convenio empresarial
-          </p>
-        </div>
+    <div class="flex items-center gap-4">
+      <UButton
+        variant="ghost"
+        color="neutral"
+        icon="i-lucide-arrow-left"
+        @click="goBack()"
+      />
+      <div>
+        <h1 class="text-xl font-semibold text-foreground">Editar Convenio</h1>
+        <p class="text-sm text-muted-foreground">
+          Modifique la información del convenio empresarial
+        </p>
       </div>
     </div>
 
+    <!-- Error general -->
+    <UAlert
+      v-if="errors.general"
+      color="destructive"
+      variant="subtle"
+      icon="i-lucide-triangle-alert"
+      :title="errors.general"
+    />
+
     <!-- Loading State -->
     <div v-if="loading" class="flex flex-col items-center justify-center py-16">
-      <ArrowPathIcon class="w-10 h-10 animate-spin text-blue-500 mb-4" />
-      <p class="text-gray-500">Cargando información del convenio...</p>
+      <UIcon
+        name="i-lucide-loader-2"
+        class="w-10 h-10 animate-spin text-primary mb-4"
+      />
+      <p class="text-muted-foreground">Cargando información del convenio...</p>
     </div>
 
     <!-- Error State -->
@@ -27,241 +39,208 @@
       v-else-if="error"
       class="flex flex-col items-center justify-center py-16"
     >
-      <NoSymbolIcon class="w-10 h-10 text-red-500 mb-4" />
-      <p class="text-red-600 mb-4">{{ error }}</p>
+      <UIcon name="i-lucide-x-circle" class="w-10 h-10 text-destructive mb-4" />
+      <p class="text-destructive mb-4">{{ error }}</p>
       <UButton variant="outline" @click="cargarConvenio">Reintentar</UButton>
     </div>
 
     <!-- Formulario -->
-    <div
-      v-else-if="convenio"
-      class="bg-white rounded-lg border border-gray-200 shadow-sm"
-    >
-      <form @submit.prevent="handleSubmit" class="p-6 space-y-6">
-        <!-- Información de la Empresa -->
-        <div class="border-b border-gray-200 pb-6">
-          <h2
-            class="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2"
-          >
-            <BuildingOfficeIcon class="w-5 h-5 text-blue-500" />
-            Información de la Empresa
-          </h2>
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label
-                class="block text-sm font-medium text-gray-700 mb-2 flex items-center gap-1"
-              >
-                <IdentificationIcon class="w-4 h-4 text-gray-400" />
-                NIT <span class="text-red-500">*</span>
-              </label>
-              <UInput
-                v-model="form.nit"
-                type="text"
-                required
-                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                :class="{ 'border-red-500': errors.nit }"
-                placeholder="Ej: 123456789-0"
-              />
-              <p v-if="errors.nit" class="mt-1 text-sm text-red-600">
-                {{ errors.nit }}
-              </p>
-            </div>
-            <div>
-              <label
-                class="block text-sm font-medium text-gray-700 mb-2 flex items-center gap-1"
-              >
-                <BuildingOfficeIcon class="w-4 h-4 text-gray-400" />
-                Razón Social <span class="text-red-500">*</span>
-              </label>
-              <UInput
-                v-model="form.razon_social"
-                type="text"
-                required
-                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                :class="{ 'border-red-500': errors.razon_social }"
-                placeholder="Nombre completo de la empresa"
-              />
-              <p v-if="errors.razon_social" class="mt-1 text-sm text-red-600">
-                {{ errors.razon_social }}
-              </p>
-            </div>
-          </div>
-        </div>
+    <form v-else-if="convenio" @submit.prevent="handleSubmit" class="space-y-6">
+      <!-- Información de la Empresa -->
+      <UPageCard
+        title="Información de la Empresa"
+        description="Datos de identificación de la empresa."
+        :ui="{ container: 'sm:p-6' }"
+      >
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <UFormField label="NIT" required :error="errors.nit">
+            <UInput
+              v-model="form.nit"
+              type="number"
+              placeholder="Ej: 123456789"
+              icon="i-lucide-hash"
+              :color="errors.nit ? 'destructive' : undefined"
+              class="w-full"
+            />
+            <template #error>
+              <span class="text-destructive">{{ errors.nit }}</span>
+            </template>
+          </UFormField>
 
-        <!-- Información del Representante -->
-        <div class="border-b border-gray-200 pb-6">
-          <h2
-            class="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2"
+          <UFormField
+            label="Razón Social"
+            required
+            :error="errors.razon_social"
           >
-            <UserCircleIcon class="w-5 h-5 text-blue-500" />
-            Información del Representante
-          </h2>
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label
-                class="block text-sm font-medium text-gray-700 mb-2 flex items-center gap-1"
-              >
-                <IdentificationIcon class="w-4 h-4 text-gray-400" />
-                Documento Representante <span class="text-red-500">*</span>
-              </label>
-              <UInput
-                v-model="form.representante_documento"
-                type="text"
-                required
-                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                :class="{ 'border-red-500': errors.representante_documento }"
-                placeholder="Cédula o documento de identidad"
-              />
-              <p
-                v-if="errors.representante_documento"
-                class="mt-1 text-sm text-red-600"
-              >
-                {{ errors.representante_documento }}
-              </p>
-            </div>
-            <div>
-              <label
-                class="block text-sm font-medium text-gray-700 mb-2 flex items-center gap-1"
-              >
-                <UserCircleIcon class="w-4 h-4 text-gray-400" />
-                Nombre Representante <span class="text-red-500">*</span>
-              </label>
-              <UInput
-                v-model="form.representante_nombre"
-                type="text"
-                required
-                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                :class="{ 'border-red-500': errors.representante_nombre }"
-                placeholder="Nombre completo del representante legal"
-              />
-              <p
-                v-if="errors.representante_nombre"
-                class="mt-1 text-sm text-red-600"
-              >
-                {{ errors.representante_nombre }}
-              </p>
-            </div>
-          </div>
+            <UInput
+              v-model="form.razon_social"
+              type="text"
+              placeholder="Nombre completo de la empresa"
+              icon="i-lucide-building-2"
+              :color="errors.razon_social ? 'destructive' : undefined"
+              class="w-full"
+            />
+            <template #error>
+              <span class="text-destructive">{{ errors.razon_social }}</span>
+            </template>
+          </UFormField>
         </div>
+      </UPageCard>
 
-        <!-- Información de Contacto -->
-        <div class="border-b border-gray-200 pb-6">
-          <h2
-            class="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2"
+      <!-- Información del Representante -->
+      <UPageCard
+        title="Información del Representante"
+        description="Datos del representante legal de la empresa."
+        :ui="{ container: 'sm:p-6' }"
+      >
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <UFormField
+            label="Documento Representante"
+            required
+            :error="errors.representante_documento"
           >
-            <PhoneIcon class="w-5 h-5 text-blue-500" />
-            Información de Contacto
-          </h2>
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label
-                class="block text-sm font-medium text-gray-700 mb-2 flex items-center gap-1"
-              >
-                <PhoneIcon class="w-4 h-4 text-gray-400" />
-                Teléfono
-              </label>
-              <UInput
-                v-model="form.telefono"
-                type="tel"
-                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                :class="{ 'border-red-500': errors.telefono }"
-                placeholder="Ej: 3001234567"
-              />
-              <p v-if="errors.telefono" class="mt-1 text-sm text-red-600">
-                {{ errors.telefono }}
-              </p>
-            </div>
-            <div>
-              <label
-                class="block text-sm font-medium text-gray-700 mb-2 flex items-center gap-1"
-              >
-                <EnvelopeIcon class="w-4 h-4 text-gray-400" />
-                Correo Electrónico
-              </label>
-              <UInput
-                v-model="form.correo"
-                type="email"
-                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                :class="{ 'border-red-500': errors.correo }"
-                placeholder="correo@empresa.com"
-              />
-              <p v-if="errors.correo" class="mt-1 text-sm text-red-600">
-                {{ errors.correo }}
-              </p>
-            </div>
-          </div>
-        </div>
+            <UInput
+              v-model="form.representante_documento"
+              type="text"
+              placeholder="Cédula o documento de identidad"
+              icon="i-lucide-id-card"
+              :color="
+                errors.representante_documento ? 'destructive' : undefined
+              "
+              class="w-full"
+            />
+            <template #error>
+              <span class="text-destructive">{{
+                errors.representante_documento
+              }}</span>
+            </template>
+          </UFormField>
 
-        <!-- Fechas y Estado -->
-        <div>
-          <h2
-            class="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2"
+          <UFormField
+            label="Nombre Representante"
+            required
+            :error="errors.representante_nombre"
           >
-            <CalendarIcon class="w-5 h-5 text-blue-500" />
-            Fechas y Estado
-          </h2>
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label
-                class="block text-sm font-medium text-gray-700 mb-2 flex items-center gap-1"
-              >
-                <CalendarIcon class="w-4 h-4 text-gray-400" />
-                Fecha de Vencimiento
-              </label>
-              <UInput
-                v-model="form.fecha_vencimiento"
-                type="date"
-                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                :class="{ 'border-red-500': errors.fecha_vencimiento }"
-              />
-              <p
-                v-if="errors.fecha_vencimiento"
-                class="mt-1 text-sm text-red-600"
-              >
-                {{ errors.fecha_vencimiento }}
-              </p>
-            </div>
-            <div>
-              <label
-                class="block text-sm font-medium text-gray-700 mb-2 flex items-center gap-1"
-              >
-                <CheckIcon class="w-4 h-4 text-gray-400" />
-                Estado
-              </label>
-              <select
-                v-model="form.estado"
-                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                :class="{ 'border-red-500': errors.estado }"
-              >
-                <option value="Activo">Activo</option>
-                <option value="Inactivo">Inactivo</option>
-              </select>
-              <p v-if="errors.estado" class="mt-1 text-sm text-red-600">
-                {{ errors.estado }}
-              </p>
-            </div>
-          </div>
+            <UInput
+              v-model="form.representante_nombre"
+              type="text"
+              placeholder="Nombre completo del representante legal"
+              icon="i-lucide-user"
+              :color="errors.representante_nombre ? 'destructive' : undefined"
+              class="w-full"
+            />
+            <template #error>
+              <span class="text-destructive">{{
+                errors.representante_nombre
+              }}</span>
+            </template>
+          </UFormField>
         </div>
+      </UPageCard>
 
-        <!-- Botones de Acción -->
-        <div
-          class="flex items-center justify-end gap-3 pt-6 border-t border-gray-200"
+      <!-- Información de Contacto -->
+      <UPageCard
+        title="Información de Contacto"
+        description="Datos de contacto de la empresa."
+        :ui="{ container: 'sm:p-6' }"
+      >
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <UFormField label="Teléfono" :error="errors.telefono">
+            <UInput
+              v-model="form.telefono"
+              type="tel"
+              placeholder="Ej: 3001234567"
+              icon="i-lucide-phone"
+              :color="errors.telefono ? 'destructive' : undefined"
+              class="w-full"
+            />
+            <template #error>
+              <span class="text-destructive">{{ errors.telefono }}</span>
+            </template>
+          </UFormField>
+
+          <UFormField label="Correo Electrónico" :error="errors.correo">
+            <UInput
+              v-model="form.correo"
+              type="email"
+              placeholder="correo@empresa.com"
+              icon="i-lucide-mail"
+              :color="errors.correo ? 'destructive' : undefined"
+              class="w-full"
+            />
+            <template #error>
+              <span class="text-destructive">{{ errors.correo }}</span>
+            </template>
+          </UFormField>
+        </div>
+      </UPageCard>
+
+      <!-- Fechas y Estado -->
+      <UPageCard
+        title="Vigencia y Estado"
+        description="Fecha de vencimiento y estado inicial del convenio."
+        :ui="{ container: 'sm:p-6' }"
+      >
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <UFormField
+            label="Fecha de Vencimiento"
+            :error="errors.fecha_vencimiento"
+          >
+            <UInput
+              v-model="form.fecha_vencimiento"
+              type="date"
+              icon="i-lucide-calendar"
+              :color="errors.fecha_vencimiento ? 'destructive' : undefined"
+              class="w-full"
+            />
+            <template #error>
+              <span class="text-destructive">{{
+                errors.fecha_vencimiento
+              }}</span>
+            </template>
+          </UFormField>
+
+          <UFormField label="Estado" :error="errors.estado">
+            <USelectMenu
+              v-model="form.estado"
+              :items="[
+                { label: 'Activo', value: 'Activo' },
+                { label: 'Inactivo', value: 'Inactivo' },
+              ]"
+              placeholder="Seleccionar estado"
+              by="value"
+              class="w-full"
+            />
+            <template #error>
+              <span class="text-destructive">{{ errors.estado }}</span>
+            </template>
+          </UFormField>
+        </div>
+      </UPageCard>
+
+      <!-- Acciones -->
+      <div class="flex justify-end gap-3">
+        <UButton
+          type="button"
+          variant="outline"
+          color="neutral"
+          icon="i-lucide-x"
+          :disabled="loading"
+          @click="goBack()"
         >
-          <UButton
-            type="button"
-            variant="outline"
-            @click="goBack()"
-            :disabled="loading"
-          >
-            Cancelar
-          </UButton>
-          <UButton type="submit" :disabled="loading" class="min-w-[120px]">
-            <ArrowPathIcon v-if="loading" class="w-4 h-4 mr-2 animate-spin" />
-            {{ loading ? "Guardando..." : "Actualizar Convenio" }}
-          </UButton>
-        </div>
-      </form>
-    </div>
+          Cancelar
+        </UButton>
+        <UButton
+          type="submit"
+          color="primary"
+          icon="i-lucide-save"
+          :loading="loading"
+          :disabled="loading"
+        >
+          {{ loading ? "Guardando..." : "Actualizar Convenio" }}
+        </UButton>
+      </div>
+    </form>
   </div>
 </template>
 
@@ -269,19 +248,6 @@
 import { ref, reactive, onMounted } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import { useApi } from "~/composables/useApi";
-
-import {
-  ChevronLeftIcon,
-  BuildingOfficeIcon,
-  IdentificationIcon,
-  UserCircleIcon,
-  PhoneIcon,
-  EnvelopeIcon,
-  CalendarIcon,
-  CheckIcon,
-  ArrowPathIcon,
-  NoSymbolIcon,
-} from "@heroicons/vue/24/outline";
 
 definePageMeta({
   layout: "dashboard",
@@ -315,7 +281,7 @@ const cargarConvenio = async () => {
   try {
     const api = useApi();
     const response = await api.getJson<any>(
-      `/api/admin/empresas-convenios/${route.params.id}`,
+      `/api/admin/convenios/${route.params.id}`,
       {
         auth: true,
       },
@@ -408,7 +374,7 @@ const handleSubmit = async () => {
   try {
     const api = useApi();
     const response = await api.putJson(
-      `/api/admin/empresas-convenios/${route.params.id}`,
+      `/api/admin/convenios/${route.params.id}`,
       {
         nit: form.nit.replace(/\s/g, ""),
         razon_social: form.razon_social.trim(),

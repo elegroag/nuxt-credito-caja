@@ -3,16 +3,37 @@ import { z } from "zod";
 
 // Schema de validación para crear usuario
 const createUserSchema = z.object({
-  username: z.string().min(1, "El username es requerido").max(255, "El username no puede exceder 255 caracteres"),
-  email: z.string().email("El email no es válido").max(255, "El email no puede exceder 255 caracteres"),
+  username: z
+    .string()
+    .min(1, "El username es requerido")
+    .max(255, "El username no puede exceder 255 caracteres"),
+  email: z
+    .string()
+    .email("El email no es válido")
+    .max(255, "El email no puede exceder 255 caracteres"),
   password: z.string().min(8, "La contraseña debe tener al menos 8 caracteres"),
-  nombre: z.string().min(1, "El nombre es requerido").max(100, "El nombre no puede exceder 100 caracteres"),
-  apellido: z.string().min(1, "El apellido es requerido").max(100, "El apellido no puede exceder 100 caracteres"),
+  nombre: z
+    .string()
+    .min(1, "El nombre es requerido")
+    .max(100, "El nombre no puede exceder 100 caracteres"),
+  apellido: z
+    .string()
+    .min(1, "El apellido es requerido")
+    .max(100, "El apellido no puede exceder 100 caracteres"),
   roles: z.array(z.string()).optional(),
   disabled: z.boolean().optional(),
-  tipo_documento: z.string().max(20, "El tipo de documento no puede exceder 20 caracteres").optional(),
-  numero_documento: z.string().max(20, "El número de documento no puede exceder 20 caracteres").optional(),
-  telefono: z.string().max(20, "El teléfono no puede exceder 20 caracteres").optional(),
+  tipo_documento: z
+    .string()
+    .max(20, "El tipo de documento no puede exceder 20 caracteres")
+    .optional(),
+  numero_documento: z
+    .string()
+    .max(20, "El número de documento no puede exceder 20 caracteres")
+    .optional(),
+  telefono: z
+    .string()
+    .max(20, "El teléfono no puede exceder 20 caracteres")
+    .optional(),
 });
 
 interface CreateUserParams {
@@ -133,7 +154,7 @@ const usersAdmService = () => {
 
   // Obtener usuario por ID
   const getUserById = async (id: number) => {
-    return await prisma.users.findUnique({
+    const user = await prisma.users.findUnique({
       where: { id },
       select: {
         id: true,
@@ -152,6 +173,16 @@ const usersAdmService = () => {
         updated_at: true,
       },
     });
+
+    // Convertir BigInt a string para evitar errores de serialización
+    if (user) {
+      return {
+        ...user,
+        id: String(user.id),
+      };
+    }
+
+    return user;
   };
 
   // Listar usuarios con paginación
