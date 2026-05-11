@@ -27,7 +27,7 @@ logs
 /prisma/generated/
 /prisma/migrations/
 pnpm-lock.yaml
-storage/
+/storage
 .vscode/
 .windsurf/
 .dist/

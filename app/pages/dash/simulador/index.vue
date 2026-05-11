@@ -9,7 +9,7 @@
       </p>
 
       <UButton
-        variant="secondary"
+        variant="soft"
         class="mt-3"
         size="lg"
         @click="navigateToLineas"
@@ -271,11 +271,11 @@
 
         <div class="flex gap-3">
           <NuxtLink to="/solicitud" class="flex-1">
-            <UButton variant="primary" class="w-full" size="lg">
+            <UButton variant="soft" class="w-full" size="lg">
               Continuar con solicitud
             </UButton>
           </NuxtLink>
-          <UButton variant="default" size="lg" @click="reset">
+          <UButton variant="outline" size="lg" @click="reset">
             Restablecer
           </UButton>
         </div>

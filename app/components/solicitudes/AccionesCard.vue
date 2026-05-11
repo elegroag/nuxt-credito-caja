@@ -41,7 +41,7 @@
         Descargar PDF
       </UButton>
 
-      <UButton @click="$emit('eliminar')" variant="destructive" class="gap-2">
+      <UButton @click="$emit('eliminar')" color="destructive" variant="outline" class="gap-2">
         <Trash2 class="h-4 w-4" />
         Eliminar Solicitud
       </UButton>

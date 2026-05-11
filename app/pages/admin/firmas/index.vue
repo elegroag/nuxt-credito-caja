@@ -173,7 +173,7 @@
           <!-- Acciones -->
           <div class="lg:col-span-2 flex flex-col gap-2">
             <UButton
-              variant="default"
+              variant="solid"
               size="sm"
               class="w-full gap-2"
               @click="verDetalles(solicitud.numero_solicitud)"

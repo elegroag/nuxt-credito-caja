@@ -247,15 +247,15 @@ export function useAdminConvenios() {
 
   const getEstadoVariant = (
     estado: string,
-  ): "default" | "destructive" | "outline" | "secondary" => {
+  ): "solid" | "outline" | "soft" | "subtle" => {
     const variants: Record<
       string,
-      "default" | "destructive" | "outline" | "secondary"
+      "solid" | "outline" | "soft" | "subtle"
     > = {
-      Activo: "default",
-      Inactivo: "destructive",
+      Activo: "solid",
+      Inactivo: "outline",
     };
-    return variants[estado] || "default";
+    return variants[estado] || "soft";
   };
 
   const formatDate = (dateString: string): string => {

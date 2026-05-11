@@ -236,16 +236,16 @@ export function useAdminUsers() {
 
   const getRolVariant = (
     rol: string,
-  ): "default" | "destructive" | "outline" | "secondary" => {
+  ): "solid" | "outline" | "soft" | "subtle" => {
     const variants: Record<
       string,
-      "default" | "destructive" | "outline" | "secondary"
+      "solid" | "outline" | "soft" | "subtle"
     > = {
-      administrator: "destructive",
-      user_trabajador: "default",
-      user_empresa: "secondary",
+      administrator: "solid",
+      user_trabajador: "soft",
+      user_empresa: "outline",
     };
-    return variants[rol] || "default";
+    return variants[rol] || "soft";
   };
 
   const getEstadoLabel = (estado: string) => {
@@ -259,16 +259,16 @@ export function useAdminUsers() {
 
   const getEstadoVariant = (
     estado: string,
-  ): "default" | "destructive" | "outline" | "secondary" => {
+  ): "solid" | "outline" | "soft" | "subtle" => {
     const variants: Record<
       string,
-      "default" | "destructive" | "outline" | "secondary"
+      "solid" | "outline" | "soft" | "subtle"
     > = {
-      active: "default",
-      inactive: "secondary",
-      suspended: "destructive",
+      active: "soft",
+      inactive: "outline",
+      suspended: "solid",
     };
-    return variants[estado] || "default";
+    return variants[estado] || "soft";
   };
 
   const formatDate = (dateString: string) => {

@@ -40,15 +40,6 @@
 
       <!-- Form -->
       <form @submit.prevent="handleSubmit" class="space-y-5">
-        <!-- Error -->
-        <div
-          v-if="error"
-          class="rounded-xl bg-red-50 border border-red-200 p-3 text-sm text-red-600 flex items-center gap-2"
-        >
-          <UIcon name="i-lucide-circle-alert" class="w-4 h-4" />
-          {{ error }}
-        </div>
-
         <!-- Step 1: Personal Info -->
         <div v-if="pasoActual === 1" class="space-y-4">
           <div class="grid grid-cols-2 gap-4">
@@ -259,10 +250,34 @@
         </NuxtLink>
       </div>
     </div>
+
+    <UModal
+      v-model:open="isModalOpen"
+      title="Error en el registro"
+      :description="errorMsg"
+      :close="{
+        color: 'destructive',
+        variant: 'outline',
+        class: 'rounded-full',
+      }"
+    >
+      <template #body>
+        <div class="text-center">
+          <UIcon
+            name="i-lucide-alert-triangle"
+            class="w-12 h-12 text-red-500 mx-auto mb-4"
+          />
+          <p class="text-sm text-muted-foreground">
+            Por favor, verifica la información e intenta nuevamente.
+          </p>
+        </div>
+      </template>
+    </UModal>
   </div>
 </template>
 
 <script setup lang="ts">
+import { ref, watch } from "vue";
 import { useRegistro } from "~/composables/auth/useRegistro";
 import { cn } from "@/lib/utils";
 
@@ -273,7 +288,7 @@ definePageMeta({
 const {
   formData,
   loading,
-  error,
+  errorMsg,
   pasoActual,
   tiposDocumento,
   validarPaso1,
@@ -283,6 +298,14 @@ const {
   pasoAnterior,
   registrar,
 } = useRegistro();
+
+const isModalOpen = ref(false);
+
+watch(errorMsg, (newVal) => {
+  if (newVal) {
+    isModalOpen.value = true;
+  }
+});
 
 const handleSubmit = async () => {
   if (pasoActual.value === 3) {

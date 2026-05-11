@@ -10,6 +10,7 @@ import {
 export function useRegistro() {
   const router = useRouter();
   const { postJson } = useApi();
+  const errorMsg = ref("");
 
   const formData = ref<RegistroData>({
     tipo_documento: getDefaultTipoDocumento(), // Cédula de Ciudadanía por defecto
@@ -89,6 +90,8 @@ export function useRegistro() {
   const registrar = async () => {
     if (pasoActual.value !== 3) return false;
 
+    errorMsg.value = "";
+
     if (formData.value.password !== formData.value.confirmar_password) {
       error.value = "Las contraseñas no coinciden";
       return false;
@@ -122,10 +125,9 @@ export function useRegistro() {
         await navigateTo(`/verify?${q.toString()}`);
         return true;
       }
-      error.value = "Error en el registro. Por favor, inténtalo de nuevo.";
+      errorMsg.value = "Error en el registro. Por favor, inténtalo de nuevo.";
       return false;
     } catch (err: any) {
-      console.error("Error en el registro:", err);
       if (err.response?.status === 409) {
         error.value =
           "El usuario ya existe. Por favor, usa otro nombre de usuario o inicia sesión.";
@@ -134,6 +136,11 @@ export function useRegistro() {
       } else {
         error.value = "Error en el registro. Por favor, inténtalo de nuevo.";
       }
+
+      errorMsg.value =
+        err?.data?.error ||
+        err?.message ||
+        "No fue posible registrar el usuario";
       return false;
     } finally {
       loading.value = false;
@@ -144,6 +151,7 @@ export function useRegistro() {
     formData,
     loading,
     error,
+    errorMsg,
     success,
     pasoActual,
     tiposDocumento,

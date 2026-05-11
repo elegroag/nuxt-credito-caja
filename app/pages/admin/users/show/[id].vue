@@ -44,7 +44,7 @@
           <div class="flex items-start justify-between">
             <div class="flex items-center gap-6">
               <!-- Avatar -->
-              <div class="flex-shrink-0">
+              <div class="shrink-0">
                 <div
                   class="h-20 w-20 rounded-full bg-gray-300 flex items-center justify-center"
                 >
@@ -87,9 +87,8 @@
               </UButton>
               <UButton
                 @click="toggleEstadoUsuario"
-                :variant="
-                  usuario.estado === 'active' ? 'destructive' : 'default'
-                "
+                :color="usuario.estado === 'active' ? 'destructive' : 'primary'"
+                variant="outline"
               >
                 <NoSymbolIcon
                   v-if="usuario.estado === 'active'"

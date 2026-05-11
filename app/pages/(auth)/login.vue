@@ -5,7 +5,7 @@
       <form @submit.prevent="login" class="space-y-5">
         <!-- Username -->
         <div class="space-y-2">
-          <label class="text-sm font-medium text-foreground">Usuario</label>
+          <label class="text-sm font-medium text-foreground p-2">Usuario</label>
           <div class="relative">
             <UIcon
               name="i-lucide-user"
@@ -25,7 +25,9 @@
 
         <!-- Password -->
         <div class="space-y-2">
-          <label class="text-sm font-medium text-foreground">Contraseña</label>
+          <label class="text-sm font-medium text-foreground p-2"
+            >Contraseña</label
+          >
           <div class="relative">
             <UIcon
               name="i-lucide-lock"
@@ -41,15 +43,6 @@
               required
             />
           </div>
-        </div>
-
-        <!-- Error -->
-        <div
-          v-if="errorMsg"
-          class="rounded-xl bg-red-50 border border-red-200 p-3 text-sm text-red-600 flex items-center gap-2"
-        >
-          <UIcon name="i-lucide-circle-alert" class="w-4 h-4" />
-          {{ errorMsg }}
         </div>
 
         <!-- Submit -->
@@ -114,11 +107,33 @@
       />
       <span>{{ connectionMessage }}</span>
     </div>
+    <UModal
+      v-model:open="isModalOpen"
+      title="Error de inicio de sesión"
+      :description="errorMsg"
+      :close="{
+        color: 'destructive',
+        variant: 'outline',
+        class: 'rounded-full',
+      }"
+    >
+      <template #body>
+        <div class="text-center">
+          <UIcon
+            name="i-lucide-alert-triangle"
+            class="w-12 h-12 text-red-500 mx-auto mb-4"
+          />
+          <p class="text-sm text-muted-foreground">
+            Por favor, verifica tus credenciales e intenta nuevamente.
+          </p>
+        </div>
+      </template>
+    </UModal>
   </div>
 </template>
 
 <script setup lang="ts">
-import { onMounted } from "#imports";
+import { ref, watch, onMounted } from "#imports";
 import { useLogin } from "~/composables/auth/useLogin";
 import { useHealthCheck } from "~/composables/useHealthCheck";
 import { cn } from "@/lib/utils";
@@ -136,6 +151,14 @@ const {
   connectionStatusClass,
   checkConnection,
 } = useHealthCheck();
+
+const isModalOpen = ref(false);
+
+watch(errorMsg, (newVal) => {
+  if (newVal) {
+    isModalOpen.value = true;
+  }
+});
 
 onMounted(async () => {
   await checkConnection();

@@ -1,4 +1,5 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
+import { resolve } from "node:path";
 import { env } from "node:process";
 import { fileURLToPath } from "node:url";
 
@@ -117,6 +118,14 @@ export default defineNuxtConfig({
       env: env.DATABASE_ENV || "dev",
       url_pro: env.DATABASE_URL_PRO || "",
       url_dev: env.DATABASE_URL_DEV || "",
+    },
+    storage: {
+      documentsPath: resolve(
+        __dirname,
+        env.STORAGE_DOCUMENTS_PATH || "storage/",
+      ),
+      logs: resolve(__dirname, env.STORAGE_LOGS_PATH || "storage/"),
+      uploads: resolve(__dirname, env.STORAGE_UPLOADS_PATH || "storage/"),
     },
     apiSISU: {
       env: env.API_SISU_ENV || "dev",

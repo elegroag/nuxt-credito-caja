@@ -14,7 +14,7 @@
     <!-- Estado de carga -->
     <div
       v-if="loadingParametros"
-      class="flex justify-center items-center min-h-[400px]"
+      class="flex justify-center items-center min-h-400"
     >
       <div class="text-center">
         <div
@@ -27,7 +27,7 @@
     <!-- Mensaje de error -->
     <div
       v-else-if="errorParametros"
-      class="flex justify-center items-center min-h-[400px]"
+      class="flex justify-center items-center min-h-400"
     >
       <UCard
         class="border-destructive/50 bg-destructive/5 max-w-md text-center"
@@ -36,7 +36,14 @@
         <h3 class="text-lg font-semibold mb-2">Error al cargar parámetros</h3>
         <p class="text-muted-foreground">{{ errorParametros }}</p>
         <div class="flex gap-3 mt-4">
-          <UButton @click="cargarParametros" variant="outline">
+          <UButton
+            @click="
+              () => {
+                cargarParametros();
+              }
+            "
+            variant="outline"
+          >
             Reintentar
           </UButton>
         </div>
