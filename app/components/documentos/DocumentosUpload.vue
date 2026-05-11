@@ -128,10 +128,10 @@ const props = defineProps<{
 }>();
 
 const emit = defineEmits<{
-  (e: "update:modelValue", value: DocumentoCargado | undefined): void;
-  (e: "upload", file: File): void;
-  (e: "delete", id: string): void;
-  (e: "download", id: string): void;
+  "upload": [file: File];
+  "delete": [id: string];
+  "download": [id: string];
+  "update:modelValue": [value: DocumentoCargado | undefined];
 }>();
 
 const fileInput = ref<HTMLInputElement | null>(null);
@@ -143,8 +143,9 @@ const triggerFileInput = () => {
 
 const handleFileSelect = (event: Event) => {
   const input = event.target as HTMLInputElement;
-  if (input.files && input.files.length > 0) {
-    emit("upload", input.files[0]);
+  const file = input.files?.[0];
+  if (file) {
+    emit("upload", file);
     // Reset value to allow selecting the same file again if needed (e.g. after error)
     input.value = "";
   }
@@ -152,9 +153,9 @@ const handleFileSelect = (event: Event) => {
 
 const handleDrop = (event: DragEvent) => {
   isDragging.value = false;
-  const files = event.dataTransfer?.files;
-  if (files && files.length > 0) {
-    emit("upload", files[0]);
+  const file = event.dataTransfer?.files?.[0];
+  if (file) {
+    emit("upload", file);
   }
 };
 
