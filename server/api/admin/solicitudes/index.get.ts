@@ -1,6 +1,7 @@
 import type { H3Event } from "h3";
 import { defineEventHandler, getQuery, setResponseStatus } from "h3";
 import solicitudService from "~~/server/services/solicitud.service";
+import { CustomResponse } from "~~/server/utils/customResponse";
 import { z } from "zod";
 
 // Schema de validación para query params
@@ -24,20 +25,14 @@ export default defineEventHandler(async (event: H3Event) => {
       estado,
     });
 
-    return {
-      success: true,
-      data: result,
-    };
+    return CustomResponse.success(result, "Solicitudes obtenidas exitosamente");
   } catch (e: any) {
     const status = Number(e?.statusCode || e?.response?.status || 502);
     setResponseStatus(event, Number.isFinite(status) ? status : 502);
 
-    if (e?.data && typeof e.data === "object") {
-      return e.data;
-    }
-
-    return {
-      error: e?.data?.error || e?.message || "Error conectando con backend",
-    };
+    return CustomResponse.error(
+      e?.data?.error || e?.message || "Error conectando con backend",
+      "Error al obtener solicitudes.",
+    );
   }
 });

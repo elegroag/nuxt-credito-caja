@@ -3,7 +3,12 @@ dotenv.config();
 import { PrismaClient } from "../prisma/generated/prisma/client";
 import { PrismaMariaDb } from "@prisma/adapter-mariadb";
 
-const adapter = new PrismaMariaDb(process.env.DATABASE_URL!);
+let url =
+  process.env.DATABASE_ENV === "dev"
+    ? process.env.DATABASE_URL_DEV
+    : process.env.DATABASE_URL_PRO;
+
+const adapter = new PrismaMariaDb(url!);
 
 const prismaClientSingleton = () => {
   return new PrismaClient({

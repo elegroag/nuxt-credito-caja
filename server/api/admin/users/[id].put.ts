@@ -6,6 +6,7 @@ import {
   setResponseStatus,
 } from "h3";
 import usersAdmService from "~~/server/services/admin/users-adm.service";
+import { CustomResponse } from "~~/server/utils/customResponse";
 import { z } from "zod";
 
 // Schema de validación para actualizar usuario
@@ -57,17 +58,13 @@ export default defineEventHandler(async (event: H3Event) => {
 
     if (!id) {
       setResponseStatus(event, 400);
-      return {
-        error: "ID de usuario no proporcionado",
-      };
+      return CustomResponse.error("ID de usuario no proporcionado", "Error de validación");
     }
 
     const userId = parseInt(id, 10);
     if (isNaN(userId)) {
       setResponseStatus(event, 400);
-      return {
-        error: "ID de usuario inválido",
-      };
+      return CustomResponse.error("ID de usuario inválido", "Error de validación");
     }
 
     const payload = await readValidatedBody(event, updateUserSchema.parse);
@@ -95,27 +92,23 @@ export default defineEventHandler(async (event: H3Event) => {
 
     const user = await service.updateUser(userId, updateParams);
 
-    return {
-      success: true,
-      message: "Usuario actualizado exitosamente",
-      data: {
+    return CustomResponse.success(
+      {
         id: Number(user.id),
         username: user.username,
         email: user.email,
         full_name: user.full_name,
         roles: user.roles,
       },
-    };
+      "Usuario actualizado exitosamente",
+    );
   } catch (e: any) {
     const status = Number(e?.statusCode || e?.response?.status || 502);
     setResponseStatus(event, Number.isFinite(status) ? status : 502);
 
-    if (e?.data && typeof e.data === "object") {
-      return e.data;
-    }
-
-    return {
-      error: e?.data?.error || e?.message || "Error conectando con backend",
-    };
+    return CustomResponse.error(
+      e?.data?.error || e?.message || "Error conectando con backend",
+      "Error al actualizar usuario.",
+    );
   }
 });

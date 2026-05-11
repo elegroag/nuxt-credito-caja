@@ -1,17 +1,18 @@
 import type { H3Event } from "h3";
 import { defineEventHandler, readBody, setResponseStatus } from "h3";
 import authService from "~~/server/services/auth.service";
+import { CustomResponse } from "~~/server/utils/customResponse";
 import { z } from "zod";
 
 const bodySchema = z.object({
-  tipo_documento: z.string(),
-  numero_documento: z.string(),
-  nombres: z.string().max(80),
-  apellidos: z.string().max(80),
+  tipo_documento: z.string().max(3),
+  numero_documento: z.string().max(16),
+  nombres: z.string().max(80).toUpperCase(),
+  apellidos: z.string().max(80).toUpperCase(),
   telefono: z.string().max(10),
   email: z
     .string()
-    .toLowerCase()
+    .toUpperCase()
     .trim()
     .refine((val) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val), {
       message: "Email is not valid",
@@ -27,17 +28,14 @@ export default defineEventHandler(async (event: H3Event) => {
 
   try {
     const result = await authSrv.register(event, payload);
-    return result;
+    return CustomResponse.success(result);
   } catch (e: any) {
     const status = Number(e?.statusCode || e?.response?.status || 502);
     setResponseStatus(event, Number.isFinite(status) ? status : 502);
 
-    if (e?.data && typeof e.data === "object") {
-      return e.data;
-    }
-
-    return {
-      error: e?.data?.error || e?.message || "Error conectando con backend",
-    };
+    return CustomResponse.error(
+      e?.data?.error || e?.message || "Error conectando con backend",
+      "Error en registro.",
+    );
   }
 });

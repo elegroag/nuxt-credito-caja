@@ -1,6 +1,12 @@
 import type { H3Event } from "h3";
-import { defineEventHandler, getRouterParam, setResponseStatus, readBody } from "h3";
+import {
+  defineEventHandler,
+  getRouterParam,
+  setResponseStatus,
+  readBody,
+} from "h3";
 import prisma from "~~/lib/prisma";
+import { CustomResponse } from "~~/server/utils/customResponse";
 
 // Estados permitidos para el usuario
 const ESTADOS_PERMITIDOS = [
@@ -16,16 +22,18 @@ export default defineEventHandler(async (event: H3Event) => {
 
     if (!session?.user?.username) {
       setResponseStatus(event, 401);
-      return {
-        error: "No hay sesión activa",
-      };
+      return CustomResponse.error(
+        "No hay sesión activa",
+        "Error de autenticación",
+      );
     }
 
     if (!solicitudId) {
       setResponseStatus(event, 400);
-      return {
-        error: "ID de solicitud no proporcionado",
-      };
+      return CustomResponse.error(
+        "ID de solicitud no proporcionado",
+        "Error de validación",
+      );
     }
 
     const body = await readBody(event);
@@ -33,39 +41,40 @@ export default defineEventHandler(async (event: H3Event) => {
 
     if (!estado) {
       setResponseStatus(event, 400);
-      return {
-        error: "Estado no proporcionado",
-      };
+      return CustomResponse.error(
+        "Estado no proporcionado",
+        "Error de validación",
+      );
     }
 
-    // Validar que el estado esté permitido
     if (!ESTADOS_PERMITIDOS.includes(estado)) {
       setResponseStatus(event, 403);
-      return {
-        error: "Estado no permitido para este usuario",
-      };
+      return CustomResponse.error(
+        "Estado no permitido para este usuario",
+        "Acceso denegado",
+      );
     }
 
-    // Verificar que la solicitud existe y pertenece al usuario
     const solicitud = await prisma.solicitudes_credito.findUnique({
       where: { numero_solicitud: solicitudId },
     });
 
     if (!solicitud) {
       setResponseStatus(event, 404);
-      return {
-        error: "Solicitud no encontrada",
-      };
+      return CustomResponse.error(
+        "Solicitud no encontrada",
+        "Recurso no encontrado",
+      );
     }
 
     if (solicitud.owner_username !== session.user.username) {
       setResponseStatus(event, 403);
-      return {
-        error: "No tienes permiso para modificar esta solicitud",
-      };
+      return CustomResponse.error(
+        "No tienes permiso para modificar esta solicitud",
+        "Acceso denegado",
+      );
     }
 
-    // Actualizar el estado de la solicitud
     const solicitudActualizada = await prisma.solicitudes_credito.update({
       where: { numero_solicitud: solicitudId },
       data: {
@@ -74,22 +83,22 @@ export default defineEventHandler(async (event: H3Event) => {
       },
     });
 
-    return {
-      success: true,
-      message: "Estado actualizado exitosamente",
-      data: {
+    return CustomResponse.success(
+      {
         solicitud_id: solicitudId,
         estado: solicitudActualizada.estado,
         updated_at: solicitudActualizada.updated_at,
       },
-    };
+      "Estado actualizado exitosamente",
+    );
   } catch (error: any) {
     console.error("Error al cambiar estado:", error);
     const status = Number(error?.statusCode || error?.response?.status || 502);
     setResponseStatus(event, Number.isFinite(status) ? status : 502);
 
-    return {
-      error: error?.data?.error || error?.message || "Error al cambiar el estado",
-    };
+    return CustomResponse.error(
+      error?.data?.error || error?.message || "Error al cambiar el estado",
+      "Error al cambiar estado.",
+    );
   }
 });

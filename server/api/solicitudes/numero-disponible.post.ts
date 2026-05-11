@@ -1,6 +1,7 @@
 import type { H3Event } from "h3";
 import { defineEventHandler, readBody, setResponseStatus } from "h3";
 import { prisma } from "~~/lib/prisma";
+import { CustomResponse } from "~~/server/utils/customResponse";
 
 export default defineEventHandler(async (event: H3Event) => {
   try {
@@ -19,21 +20,14 @@ export default defineEventHandler(async (event: H3Event) => {
     const vigencia = parseInt(now.toISOString().slice(0, 7).replace("-", ""));
     const radicado = `${String(nuevaSecuencia).padStart(6, "0")}-${vigencia}-${linea_credito}`;
 
-    return {
-      success: true,
-      message: "Proceso de verificación completado.",
-      data: radicado,
-    };
+    return CustomResponse.success(radicado, "Verificación completado.");
   } catch (e: any) {
     const status = Number(e?.statusCode || e?.response?.status || 502);
     setResponseStatus(event, Number.isFinite(status) ? status : 502);
 
-    if (e?.data && typeof e.data === "object") {
-      return e.data;
-    }
-
-    return {
-      error: e?.data?.error || e?.message || "Error conectando con backend",
-    };
+    return CustomResponse.error(
+      e?.data?.error || e?.message || "Error conectando con backend",
+      "Error al obtener número disponible.",
+    );
   }
 });

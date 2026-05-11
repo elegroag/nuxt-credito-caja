@@ -2,6 +2,7 @@ import type { H3Event } from "h3";
 import { defineEventHandler, readValidatedBody, setResponseStatus } from "h3";
 import bcrypt from "bcryptjs";
 import prisma from "~~/lib/prisma";
+import { CustomResponse } from "~~/server/utils/customResponse";
 import { z } from "zod";
 
 const bodySchema = z.object({
@@ -22,9 +23,10 @@ export default defineEventHandler(async (event: H3Event) => {
 
     if (!session?.user?.id) {
       setResponseStatus(event, 401);
-      return {
-        error: "No hay sesión activa",
-      };
+      return CustomResponse.error(
+        "No hay sesión activa",
+        "Error de autenticación",
+      );
     }
 
     const user = await prisma.users.findUnique({
@@ -33,9 +35,10 @@ export default defineEventHandler(async (event: H3Event) => {
 
     if (!user) {
       setResponseStatus(event, 404);
-      return {
-        error: "Usuario no encontrado",
-      };
+      return CustomResponse.error(
+        "Usuario no encontrado",
+        "Recurso no encontrado",
+      );
     }
 
     const isPasswordValid = bcrypt.compareSync(
@@ -45,9 +48,10 @@ export default defineEventHandler(async (event: H3Event) => {
 
     if (!isPasswordValid) {
       setResponseStatus(event, 400);
-      return {
-        error: "La contraseña actual es incorrecta",
-      };
+      return CustomResponse.error(
+        "La contraseña actual es incorrecta",
+        "Validación fallida",
+      );
     }
 
     const newPasswordHash = bcrypt.hashSync(new_password, 10);
@@ -60,25 +64,16 @@ export default defineEventHandler(async (event: H3Event) => {
       },
     });
 
-    return {
-      success: true,
-      message: "Contraseña actualizada exitosamente",
-    };
+    return CustomResponse.ok(null, "Contraseña actualizada exitosamente");
   } catch (error: any) {
     console.error("Error en endpoint /api/user/password-change (PUT):", error);
 
     const status = Number(error?.statusCode || error?.response?.status || 502);
     setResponseStatus(event, Number.isFinite(status) ? status : 502);
 
-    if (error?.data && typeof error.data === "object") {
-      return error.data;
-    }
-
-    return {
-      error:
-        error?.data?.error ||
-        error?.message ||
-        "Error al cambiar la contraseña",
-    };
+    return CustomResponse.error(
+      error?.data?.error || error?.message || "Error al cambiar la contraseña",
+      "Error al cambiar contraseña.",
+    );
   }
 });

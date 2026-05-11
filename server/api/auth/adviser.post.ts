@@ -1,6 +1,7 @@
 import type { H3Event } from "h3";
 import { defineEventHandler, readBody, setResponseStatus } from "h3";
 import authService from "~~/server/services/auth.service";
+import { CustomResponse } from "~~/server/utils/customResponse";
 
 export default defineEventHandler(async (event: H3Event) => {
   const authSrv = authService();
@@ -8,20 +9,14 @@ export default defineEventHandler(async (event: H3Event) => {
 
   try {
     const result = await authSrv.adviser(event, payload);
-    return {
-      success: true,
-      ...result,
-    };
+    return CustomResponse.success(result);
   } catch (e: any) {
     const status = Number(e?.statusCode || e?.response?.status || 502);
     setResponseStatus(event, Number.isFinite(status) ? status : 502);
 
-    if (e?.data && typeof e.data === "object") {
-      return e.data;
-    }
-
-    return {
-      error: e?.data?.error || e?.message || "Error conectando con backend",
-    };
+    return CustomResponse.error(
+      e?.data?.error || e?.message || "Error conectando con backend",
+      "Error en adviser.",
+    );
   }
 });

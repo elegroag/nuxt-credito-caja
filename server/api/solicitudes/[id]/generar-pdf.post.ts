@@ -3,6 +3,7 @@ import { defineEventHandler, getRouterParam, setResponseStatus } from "h3";
 import prisma from "~~/lib/prisma";
 import apiFlaskPdf from "~~/server/services/api-flaskpdf";
 import { documentoStorage } from "~~/server/services/storage/documento-storage.service";
+import { CustomResponse } from "~~/server/utils/customResponse";
 
 // Helper para serializar datos antes de enviar a Flask PDF
 const serializeForPdf = (obj: any): any => {
@@ -28,9 +29,10 @@ export default defineEventHandler(async (event: H3Event) => {
 
     if (!solicitudId) {
       setResponseStatus(event, 400);
-      return {
-        error: "ID de solicitud no proporcionado",
-      };
+      return CustomResponse.error(
+        "ID de solicitud no proporcionado",
+        "Error de validación",
+      );
     }
 
     const solicitud = await prisma.solicitudes_credito.findUnique({
@@ -50,9 +52,10 @@ export default defineEventHandler(async (event: H3Event) => {
 
     if (!solicitud) {
       setResponseStatus(event, 404);
-      return {
-        error: "Solicitud no encontrada",
-      };
+      return CustomResponse.error(
+        "Solicitud no encontrada",
+        "Recurso no encontrado",
+      );
     }
 
     const flaskPdf = apiFlaskPdf();
@@ -282,9 +285,10 @@ export default defineEventHandler(async (event: H3Event) => {
 
     if (!response.success) {
       setResponseStatus(event, 500);
-      return {
-        error: response.message || "Error al generar el PDF",
-      };
+      return CustomResponse.error(
+        response.message || "Error al generar el PDF",
+        "Error en Flask PDF",
+      );
     }
 
     const pdfData = response.data as any;
@@ -332,22 +336,22 @@ export default defineEventHandler(async (event: H3Event) => {
       });
     }
 
-    return {
-      success: true,
-      message: "PDF generado exitosamente",
-      data: {
+    return CustomResponse.success(
+      {
         solicitud_id: solicitudId,
         filename: pdfFilename,
         path: pdfPath,
       },
-    };
+      "PDF generado exitosamente",
+    );
   } catch (error: any) {
     console.error("Error al generar PDF:", error);
     const status = Number(error?.statusCode || error?.response?.status || 502);
     setResponseStatus(event, Number.isFinite(status) ? status : 502);
 
-    return {
-      error: error?.data?.error || error?.message || "Error al generar el PDF",
-    };
+    return CustomResponse.error(
+      error?.data?.error || error?.message || "Error al generar el PDF",
+      "Error al generar PDF.",
+    );
   }
 });

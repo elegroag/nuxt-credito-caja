@@ -1,6 +1,7 @@
 import type { H3Event } from "h3";
 import { defineEventHandler, getRouterParam, setResponseStatus } from "h3";
 import convenioService from "~~/server/services/convenio.service";
+import { CustomResponse } from "~~/server/utils/customResponse";
 
 export default defineEventHandler(async (event: H3Event) => {
   try {
@@ -9,34 +10,24 @@ export default defineEventHandler(async (event: H3Event) => {
 
     if (!id) {
       setResponseStatus(event, 400);
-      return {
-        error: "ID de convenio no proporcionado",
-      };
+      return CustomResponse.error("ID de convenio no proporcionado", "Error de validación");
     }
 
     const convenio = await service.obtenerConvenioPorId(Number(id));
 
     if (!convenio) {
       setResponseStatus(event, 404);
-      return {
-        error: "Convenio no encontrado",
-      };
+      return CustomResponse.error("Convenio no encontrado", "Recurso no encontrado");
     }
 
-    return {
-      success: true,
-      data: convenio,
-    };
+    return CustomResponse.success(convenio);
   } catch (e: any) {
     const status = Number(e?.statusCode || e?.response?.status || 502);
     setResponseStatus(event, Number.isFinite(status) ? status : 502);
 
-    if (e?.data && typeof e.data === "object") {
-      return e.data;
-    }
-
-    return {
-      error: e?.data?.error || e?.message || "Error conectando con backend",
-    };
+    return CustomResponse.error(
+      e?.data?.error || e?.message || "Error conectando con backend",
+      "Error al obtener convenio.",
+    );
   }
 });

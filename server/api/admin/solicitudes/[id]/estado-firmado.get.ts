@@ -1,6 +1,7 @@
 import type { H3Event } from "h3";
 import { defineEventHandler, getRouterParam, setResponseStatus } from "h3";
 import prisma from "~~/lib/prisma";
+import { CustomResponse } from "~~/server/utils/customResponse";
 
 export default defineEventHandler(async (event: H3Event) => {
   try {
@@ -8,12 +9,9 @@ export default defineEventHandler(async (event: H3Event) => {
 
     if (!id) {
       setResponseStatus(event, 400);
-      return {
-        error: "ID de solicitud no proporcionado",
-      };
+      return CustomResponse.error("ID de solicitud no proporcionado", "Error de validación");
     }
 
-    // Buscar la solicitud con información de firmantes
     const solicitud = await prisma.solicitudes_credito.findUnique({
       where: { numero_solicitud: id },
       include: {
@@ -23,19 +21,15 @@ export default defineEventHandler(async (event: H3Event) => {
 
     if (!solicitud) {
       setResponseStatus(event, 404);
-      return {
-        error: "Solicitud no encontrada",
-      };
+      return CustomResponse.error("Solicitud no encontrada", "Recurso no encontrado");
     }
 
-    // Calcular estado de firmado basado en los firmantes
     const totalFirmantes = solicitud.firmantes_solicitud.length;
     const firmantesCompletados = solicitud.firmantes_solicitud.filter(
       (f) => f.tipo === "FIRMADO" || f.tipo === "COMPLETADO",
     ).length;
     const firmantesPendientes = totalFirmantes - firmantesCompletados;
 
-    // Determinar estado del proceso
     let estadoFirmado = "PENDIENTE_FIRMADO";
     if (firmantesPendientes === 0 && totalFirmantes > 0) {
       estadoFirmado = "FIRMADO";
@@ -43,30 +37,23 @@ export default defineEventHandler(async (event: H3Event) => {
       estadoFirmado = "SIN_FIRMANTES";
     }
 
-    // Aquí se podría agregar lógica para consultar el estado actual con el proveedor de firmas
-    // Por ahora retornamos el estado calculado de la base de datos
-
-    return {
-      success: true,
-      message: "Estado de firmado consultado",
-      data: {
+    return CustomResponse.success(
+      {
         solicitud_id: solicitud.numero_solicitud,
-        transaccion_id: solicitud.numero_solicitud, // Usamos el número de solicitud como ID de transacción
+        transaccion_id: solicitud.numero_solicitud,
         estado: estadoFirmado,
         firmantes_completados: firmantesCompletados,
         firmantes_pendientes: firmantesPendientes,
       },
-    };
+      "Estado de firmado consultado",
+    );
   } catch (e: any) {
     const status = Number(e?.statusCode || e?.response?.status || 502);
     setResponseStatus(event, Number.isFinite(status) ? status : 502);
 
-    if (e?.data && typeof e.data === "object") {
-      return e.data;
-    }
-
-    return {
-      error: e?.data?.error || e?.message || "Error conectando con backend",
-    };
+    return CustomResponse.error(
+      e?.data?.error || e?.message || "Error conectando con backend",
+      "Error al consultar estado de firmado.",
+    );
   }
 });

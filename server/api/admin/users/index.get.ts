@@ -1,6 +1,7 @@
 import type { H3Event } from "h3";
 import { defineEventHandler, getQuery, setResponseStatus } from "h3";
 import usersAdmService from "~~/server/services/admin/users-adm.service";
+import { CustomResponse } from "~~/server/utils/customResponse";
 import { z } from "zod";
 
 // Schema de validación para query params
@@ -98,25 +99,22 @@ export default defineEventHandler(async (event: H3Event) => {
       telefono: user.phone,
     }));
 
-    return {
-      success: true,
-      data: {
+    return CustomResponse.success(
+      {
         usuarios: usuariosTransformados,
         total: result.total,
         conteo_roles: conteoRoles,
         conteo_estados: conteoEstados,
       },
-    };
+      "Usuarios obtenidos exitosamente",
+    );
   } catch (e: any) {
     const status = Number(e?.statusCode || e?.response?.status || 502);
     setResponseStatus(event, Number.isFinite(status) ? status : 502);
 
-    if (e?.data && typeof e.data === "object") {
-      return e.data;
-    }
-
-    return {
-      error: e?.data?.error || e?.message || "Error conectando con backend",
-    };
+    return CustomResponse.error(
+      e?.data?.error || e?.message || "Error conectando con backend",
+      "Error al obtener usuarios.",
+    );
   }
 });

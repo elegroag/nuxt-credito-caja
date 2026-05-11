@@ -1,6 +1,7 @@
 import type { H3Event } from "h3";
 import { defineEventHandler, getRouterParam, setResponseStatus } from "h3";
 import prisma from "~~/lib/prisma";
+import { CustomResponse } from "~~/server/utils/customResponse";
 
 export default defineEventHandler(async (event: H3Event) => {
   try {
@@ -10,23 +11,26 @@ export default defineEventHandler(async (event: H3Event) => {
 
     if (!session?.user?.username) {
       setResponseStatus(event, 401);
-      return {
-        error: "No hay sesión activa",
-      };
+      return CustomResponse.error(
+        "No hay sesión activa",
+        "Error de autenticación",
+      );
     }
 
     if (!solicitudId) {
       setResponseStatus(event, 400);
-      return {
-        error: "ID de solicitud no proporcionado",
-      };
+      return CustomResponse.error(
+        "ID de solicitud no proporcionado",
+        "Error de validación",
+      );
     }
 
     if (!documentoId) {
       setResponseStatus(event, 400);
-      return {
-        error: "ID de documento no proporcionado",
-      };
+      return CustomResponse.error(
+        "ID de documento no proporcionado",
+        "Error de validación",
+      );
     }
 
     const solicitud = await prisma.solicitudes_credito.findUnique({
@@ -35,16 +39,18 @@ export default defineEventHandler(async (event: H3Event) => {
 
     if (!solicitud) {
       setResponseStatus(event, 404);
-      return {
-        error: "Solicitud no encontrada",
-      };
+      return CustomResponse.error(
+        "Solicitud no encontrada",
+        "Recurso no encontrado",
+      );
     }
 
     if (solicitud.owner_username !== session.user.username) {
       setResponseStatus(event, 403);
-      return {
-        error: "No tienes permiso para eliminar documentos de esta solicitud",
-      };
+      return CustomResponse.error(
+        "No tienes permiso para eliminar documentos de esta solicitud",
+        "Acceso denegado",
+      );
     }
 
     const documento = await prisma.documentos_postulantes.findFirst({
@@ -56,26 +62,25 @@ export default defineEventHandler(async (event: H3Event) => {
 
     if (!documento) {
       setResponseStatus(event, 404);
-      return {
-        error: "Documento no encontrado",
-      };
+      return CustomResponse.error(
+        "Documento no encontrado",
+        "Recurso no encontrado",
+      );
     }
 
     await prisma.documentos_postulantes.delete({
       where: { id: BigInt(documentoId) },
     });
 
-    return {
-      success: true,
-      message: "Documento eliminado exitosamente",
-    };
+    return CustomResponse.ok(null, "Documento eliminado exitosamente");
   } catch (error: any) {
     console.error("Error al eliminar documento:", error);
     const status = Number(error?.statusCode || error?.response?.status || 502);
     setResponseStatus(event, Number.isFinite(status) ? status : 502);
 
-    return {
-      error: error?.data?.error || error?.message || "Error al eliminar documento",
-    };
+    return CustomResponse.error(
+      error?.data?.error || error?.message || "Error al eliminar documento",
+      "Error al eliminar documento.",
+    );
   }
 });

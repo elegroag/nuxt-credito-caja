@@ -8,6 +8,7 @@ import {
 import prisma from "~~/lib/prisma";
 import { writeFile, mkdir } from "fs/promises";
 import { join } from "path";
+import { CustomResponse } from "~~/server/utils/customResponse";
 
 // Helper para serializar fechas y BigInt
 const serializeData = (obj: any): any => {
@@ -50,16 +51,18 @@ export default defineEventHandler(async (event: H3Event) => {
 
     if (!session?.user?.username) {
       setResponseStatus(event, 401);
-      return {
-        error: "No hay sesión activa",
-      };
+      return CustomResponse.error(
+        "No hay sesión activa",
+        "Error de autenticación",
+      );
     }
 
     if (!solicitudId) {
       setResponseStatus(event, 400);
-      return {
-        error: "ID de solicitud no proporcionado",
-      };
+      return CustomResponse.error(
+        "ID de solicitud no proporcionado",
+        "Error de validación",
+      );
     }
 
     const solicitud = await prisma.solicitudes_credito.findUnique({
@@ -68,25 +71,28 @@ export default defineEventHandler(async (event: H3Event) => {
 
     if (!solicitud) {
       setResponseStatus(event, 404);
-      return {
-        error: "Solicitud no encontrada",
-      };
+      return CustomResponse.error(
+        "Solicitud no encontrada",
+        "Recurso no encontrado",
+      );
     }
 
     if (solicitud.owner_username !== session.user.username) {
       setResponseStatus(event, 403);
-      return {
-        error: "No tienes permiso para subir documentos a esta solicitud",
-      };
+      return CustomResponse.error(
+        "No tienes permiso para subir documentos a esta solicitud",
+        "Acceso denegado",
+      );
     }
 
     const formData = await readMultipartFormData(event);
 
     if (!formData) {
       setResponseStatus(event, 400);
-      return {
-        error: "No se recibieron datos del formulario",
-      };
+      return CustomResponse.error(
+        "No se recibieron datos del formulario",
+        "Error de validación",
+      );
     }
 
     const file = formData.find((item) => item.name === "documento");
@@ -96,16 +102,18 @@ export default defineEventHandler(async (event: H3Event) => {
 
     if (!file) {
       setResponseStatus(event, 400);
-      return {
-        error: "No se recibió el archivo del documento",
-      };
+      return CustomResponse.error(
+        "No se recibió el archivo del documento",
+        "Error de validación",
+      );
     }
 
     if (!documentoRequeridoId) {
       setResponseStatus(event, 400);
-      return {
-        error: "ID de documento requerido no proporcionado",
-      };
+      return CustomResponse.error(
+        "ID de documento requerido no proporcionado",
+        "Error de validación",
+      );
     }
 
     const filename = file.filename || "documento.pdf";
@@ -159,20 +167,18 @@ export default defineEventHandler(async (event: H3Event) => {
     // Mapear documentos al formato esperado por el frontend
     const documentosMapeados = documentosActualizados.map(mapDocumentoCargado);
 
-    return {
-      success: true,
-      message: "Documento subido exitosamente",
-      data: {
-        documentos: documentosMapeados,
-      },
-    };
+    return CustomResponse.success(
+      { documentos: documentosMapeados },
+      "Documento subido exitosamente",
+    );
   } catch (error: any) {
     console.error("Error al subir documento:", error);
     const status = Number(error?.statusCode || error?.response?.status || 502);
     setResponseStatus(event, Number.isFinite(status) ? status : 502);
 
-    return {
-      error: error?.data?.error || error?.message || "Error al subir documento",
-    };
+    return CustomResponse.error(
+      error?.data?.error || error?.message || "Error al subir documento",
+      "Error al subir documento.",
+    );
   }
 });

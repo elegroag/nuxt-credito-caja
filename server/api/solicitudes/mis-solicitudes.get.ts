@@ -1,6 +1,7 @@
 import type { H3Event } from "h3";
 import { defineEventHandler, setResponseStatus, getQuery } from "h3";
 import solicitudService from "~~/server/services/solicitud.service";
+import { CustomResponse } from "~~/server/utils/customResponse";
 
 export default defineEventHandler(async (event: H3Event) => {
   const solicitudSrv = solicitudService();
@@ -25,24 +26,17 @@ export default defineEventHandler(async (event: H3Event) => {
       offset,
     );
 
-    return {
-      success: true,
-      message: "Solicitudes obtenidas exitosamente",
-      data: result.data,
-      total: result.total,
-      limit: result.limit,
-      offset: result.offset,
-    };
+    return CustomResponse.success(
+      { data: result.data, total: result.total, limit: result.limit, offset: result.offset },
+      "Solicitudes obtenidas exitosamente",
+    );
   } catch (e: any) {
     const status = Number(e?.statusCode || e?.response?.status || 502);
     setResponseStatus(event, Number.isFinite(status) ? status : 502);
 
-    if (e?.data && typeof e.data === "object") {
-      return e.data;
-    }
-
-    return {
-      error: e?.data?.error || e?.message || "Error conectando con backend",
-    };
+    return CustomResponse.error(
+      e?.data?.error || e?.message || "Error conectando con backend",
+      "Error al obtener solicitudes.",
+    );
   }
 });

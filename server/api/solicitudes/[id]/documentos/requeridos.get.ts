@@ -2,6 +2,7 @@ import type { H3Event } from "h3";
 import { defineEventHandler, getRouterParam, setResponseStatus } from "h3";
 import prisma from "~~/lib/prisma";
 import apiSisuweb from "~~/server/services/api-sisuweb";
+import { CustomResponse } from "~~/server/utils/customResponse";
 
 export default defineEventHandler(async (event: H3Event) => {
   try {
@@ -10,16 +11,18 @@ export default defineEventHandler(async (event: H3Event) => {
 
     if (!session?.user?.username) {
       setResponseStatus(event, 401);
-      return {
-        error: "No hay sesión activa",
-      };
+      return CustomResponse.error(
+        "No hay sesión activa",
+        "Error de autenticación",
+      );
     }
 
     if (!solicitudId) {
       setResponseStatus(event, 400);
-      return {
-        error: "ID de solicitud no proporcionado",
-      };
+      return CustomResponse.error(
+        "ID de solicitud no proporcionado",
+        "Error de validación",
+      );
     }
 
     const solicitud = await prisma.solicitudes_credito.findUnique({
@@ -28,44 +31,41 @@ export default defineEventHandler(async (event: H3Event) => {
 
     if (!solicitud) {
       setResponseStatus(event, 404);
-      return {
-        error: "Solicitud no encontrada",
-      };
+      return CustomResponse.error(
+        "Solicitud no encontrada",
+        "Recurso no encontrado",
+      );
     }
 
     if (solicitud.owner_username !== session.user.username) {
       setResponseStatus(event, 403);
-      return {
-        error:
-          "No tienes permiso para ver los documentos requeridos de esta solicitud",
-      };
+      return CustomResponse.error(
+        "No tienes permiso para ver los documentos requeridos de esta solicitud",
+        "Acceso denegado",
+      );
     }
 
     if (!solicitud.tipo_credito) {
       setResponseStatus(event, 400);
-      return {
-        error: "La solicitud no tiene tipo de crédito asignado",
-      };
+      return CustomResponse.error(
+        "La solicitud no tiene tipo de crédito asignado",
+        "Error de validación",
+      );
     }
 
     const sisuweb = apiSisuweb();
     const response = await sisuweb.postJson<any>(
       "creditos/tipo-creditos",
       {},
-      {
-        auth: true,
-      },
+      { auth: true },
     );
-
-    console.log("Respuesta de SISUWEB:", JSON.stringify(response, null, 2));
-    console.log("Tipo de crédito de la solicitud:", solicitud.tipo_credito);
 
     if (!response.success || !response.data) {
       setResponseStatus(event, 500);
-      return {
-        error: "Error al obtener tipos de crédito desde SISUWEB",
-        details: response,
-      };
+      return CustomResponse.error(
+        "Error al obtener tipos de crédito desde SISUWEB",
+        "Error en SISUWEB",
+      );
     }
 
     const tipoCredito = response.data.find(
@@ -74,12 +74,12 @@ export default defineEventHandler(async (event: H3Event) => {
 
     if (!tipoCredito) {
       setResponseStatus(event, 404);
-      return {
-        error: "Tipo de crédito no encontrado en SISUWEB",
-      };
+      return CustomResponse.error(
+        "Tipo de crédito no encontrado en SISUWEB",
+        "Recurso no encontrado",
+      );
     }
 
-    // Transformar documentos de SISUWEB al formato DocumentoRequerido[]
     const documentosRequeridos = (tipoCredito.documentos || []).map(
       (doc: any) => ({
         id: doc.tipdoc,
@@ -90,21 +90,20 @@ export default defineEventHandler(async (event: H3Event) => {
       }),
     );
 
-    return {
-      success: true,
-      data: documentosRequeridos,
-      count: documentosRequeridos.length,
-    };
+    return CustomResponse.success(
+      { documentos: documentosRequeridos, count: documentosRequeridos.length },
+      "Documentos requeridos obtenidos exitosamente",
+    );
   } catch (error: any) {
     console.error("Error al obtener documentos requeridos:", error);
     const status = Number(error?.statusCode || error?.response?.status || 502);
     setResponseStatus(event, Number.isFinite(status) ? status : 502);
 
-    return {
-      error:
-        error?.data?.error ||
+    return CustomResponse.error(
+      error?.data?.error ||
         error?.message ||
         "Error al obtener documentos requeridos",
-    };
+      "Error al obtener documentos requeridos.",
+    );
   }
 });

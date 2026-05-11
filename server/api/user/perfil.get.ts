@@ -1,6 +1,7 @@
 import type { H3Event } from "h3";
 import { defineEventHandler } from "h3";
 import prisma from "~~/lib/prisma";
+import { CustomResponse } from "~~/server/utils/customResponse";
 
 export default defineEventHandler(async (event: H3Event) => {
   try {
@@ -37,13 +38,10 @@ export default defineEventHandler(async (event: H3Event) => {
       });
     }
 
-    return {
-      success: true,
-      data: {
-        ...user,
-        id: Number(user.id),
-      },
-    };
+    return CustomResponse.success(
+      { ...user, id: Number(user.id) },
+      "Perfil obtenido exitosamente",
+    );
   } catch (error: any) {
     if (error.statusCode) throw error;
     throw createError({

@@ -1,6 +1,7 @@
 import type { H3Event } from "h3";
 import { defineEventHandler, readValidatedBody, setResponseStatus } from "h3";
 import postulacionSolicitudService from "~~/server/services/postulacion-solicitud.service";
+import { CustomResponse } from "~~/server/utils/customResponse";
 import { z } from "zod";
 
 // Schema de validación para la solicitud
@@ -96,9 +97,10 @@ export default defineEventHandler(async (event: H3Event) => {
 
     if (!session?.user?.username) {
       setResponseStatus(event, 401);
-      return {
-        error: "No hay sesión activa",
-      };
+      return CustomResponse.error(
+        "No hay sesión activa",
+        "Error de autenticación",
+      );
     }
 
     const payload = await readValidatedBody(event, bodySchema.parse);
@@ -112,17 +114,14 @@ export default defineEventHandler(async (event: H3Event) => {
 
     const resultado = await service.guardarSolicitudCompleta(payload);
 
-    return resultado;
+    return CustomResponse.success(resultado);
   } catch (e: any) {
     const status = Number(e?.statusCode || e?.response?.status || 502);
     setResponseStatus(event, Number.isFinite(status) ? status : 502);
 
-    if (e?.data && typeof e.data === "object") {
-      return e.data;
-    }
-
-    return {
-      error: e?.data?.error || e?.message || "Error conectando con backend",
-    };
+    return CustomResponse.error(
+      e?.data?.error || e?.message || "Error conectando con backend",
+      "Error al guardar solicitud.",
+    );
   }
 });

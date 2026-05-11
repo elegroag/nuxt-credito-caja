@@ -1,6 +1,7 @@
 import type { H3Event } from "h3";
 import { defineEventHandler, getRouterParam, readValidatedBody, setResponseStatus } from "h3";
 import prisma from "~~/lib/prisma";
+import { CustomResponse } from "~~/server/utils/customResponse";
 import { z } from "zod";
 
 // Schema de validación para actualizar solicitud
@@ -24,9 +25,7 @@ export default defineEventHandler(async (event: H3Event) => {
 
     if (!id) {
       setResponseStatus(event, 400);
-      return {
-        error: "ID de solicitud no proporcionado",
-      };
+      return CustomResponse.error("ID de solicitud no proporcionado", "Error de validación");
     }
 
     const payload = await readValidatedBody(event, updateSolicitudSchema.parse);
@@ -50,25 +49,21 @@ export default defineEventHandler(async (event: H3Event) => {
       data: updateData,
     });
 
-    return {
-      success: true,
-      message: "Solicitud actualizada exitosamente",
-      data: {
+    return CustomResponse.success(
+      {
         numero_solicitud: solicitud.numero_solicitud,
         estado: solicitud.estado,
         valor_solicitud: String(solicitud.valor_solicitud),
       },
-    };
+      "Solicitud actualizada exitosamente",
+    );
   } catch (e: any) {
     const status = Number(e?.statusCode || e?.response?.status || 502);
     setResponseStatus(event, Number.isFinite(status) ? status : 502);
 
-    if (e?.data && typeof e.data === "object") {
-      return e.data;
-    }
-
-    return {
-      error: e?.data?.error || e?.message || "Error conectando con backend",
-    };
+    return CustomResponse.error(
+      e?.data?.error || e?.message || "Error conectando con backend",
+      "Error al actualizar solicitud.",
+    );
   }
 });

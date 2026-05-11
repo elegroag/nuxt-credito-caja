@@ -1,6 +1,7 @@
 import type { H3Event } from "h3";
 import { defineEventHandler, getQuery, setResponseStatus } from "h3";
 import prisma from "~~/lib/prisma";
+import { CustomResponse } from "~~/server/utils/customResponse";
 
 export default defineEventHandler(async (event: H3Event) => {
   try {
@@ -9,9 +10,7 @@ export default defineEventHandler(async (event: H3Event) => {
 
     if (!session?.user?.username) {
       setResponseStatus(event, 401);
-      return {
-        error: "No hay sesión activa",
-      };
+      return CustomResponse.error("No hay sesión activa", "Error de autenticación");
     }
 
     const onlyUnread = query.unread === "true";
@@ -44,21 +43,18 @@ export default defineEventHandler(async (event: H3Event) => {
       },
     });
 
-    return {
-      success: true,
-      data: {
-        notifications,
-        unread_count: unreadCount,
-        total,
-      },
-    };
+    return CustomResponse.success(
+      { notifications, unread_count: unreadCount, total },
+      "Notificaciones obtenidas exitosamente",
+    );
   } catch (error: any) {
     console.error("Error al cargar notificaciones:", error);
     const status = Number(error?.statusCode || error?.response?.status || 502);
     setResponseStatus(event, Number.isFinite(status) ? status : 502);
 
-    return {
-      error: error?.data?.error || error?.message || "Error al cargar notificaciones",
-    };
+    return CustomResponse.error(
+      error?.data?.error || error?.message || "Error al cargar notificaciones",
+      "Error al obtener notificaciones.",
+    );
   }
 });

@@ -1,6 +1,7 @@
 import type { H3Event } from "h3";
 import { defineEventHandler, getRouterParam, setResponseStatus } from "h3";
 import prisma from "~~/lib/prisma";
+import { CustomResponse } from "~~/server/utils/customResponse";
 
 // Helper para serializar datos y manejar BigInt
 const serializeResponse = (obj: any): any => {
@@ -25,16 +26,12 @@ export default defineEventHandler(async (event: H3Event) => {
 
     if (!session?.user?.username) {
       setResponseStatus(event, 401);
-      return {
-        error: "No hay sesión activa",
-      };
+      return CustomResponse.error("No hay sesión activa", "Error de autenticación");
     }
 
     if (!solicitudId) {
       setResponseStatus(event, 400);
-      return {
-        error: "ID de solicitud no proporcionado",
-      };
+      return CustomResponse.error("ID de solicitud no proporcionado", "Error de validación");
     }
 
     const solicitud = await prisma.solicitudes_credito.findUnique({
@@ -46,30 +43,23 @@ export default defineEventHandler(async (event: H3Event) => {
 
     if (!solicitud) {
       setResponseStatus(event, 404);
-      return {
-        error: "Solicitud no encontrada",
-      };
+      return CustomResponse.error("Solicitud no encontrada", "Recurso no encontrado");
     }
 
     if (solicitud.owner_username !== session.user.username) {
       setResponseStatus(event, 403);
-      return {
-        error: "No tienes permiso para ver esta solicitud",
-      };
+      return CustomResponse.error("No tienes permiso para ver esta solicitud", "Acceso denegado");
     }
 
-    return {
-      success: true,
-      data: serializeResponse(solicitud),
-    };
+    return CustomResponse.success(serializeResponse(solicitud));
   } catch (error: any) {
     console.error("Error al obtener solicitud:", error);
     const status = Number(error?.statusCode || error?.response?.status || 502);
     setResponseStatus(event, Number.isFinite(status) ? status : 502);
 
-    return {
-      error:
-        error?.data?.error || error?.message || "Error al obtener la solicitud",
-    };
+    return CustomResponse.error(
+      error?.data?.error || error?.message || "Error al obtener la solicitud",
+      "Error al obtener solicitud.",
+    );
   }
 });

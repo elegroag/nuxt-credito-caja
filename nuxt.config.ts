@@ -1,4 +1,5 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
+import { env } from "node:process";
 import { fileURLToPath } from "node:url";
 
 export default defineNuxtConfig({
@@ -112,36 +113,41 @@ export default defineNuxtConfig({
   },
 
   runtimeConfig: {
+    database: {
+      env: env.DATABASE_ENV || "dev",
+      url_pro: env.DATABASE_URL_PRO || "",
+      url_dev: env.DATABASE_URL_DEV || "",
+    },
     apiSISU: {
-      env: process.env.API_SISU_ENV || "dev",
-      url_pro: process.env.API_SISU_URL_PRO || "http://127.0.0.1:5000",
-      url_dev: process.env.API_SISU_URL_DEV || "http://127.0.0.1:5001",
-      client_id: process.env.API_SISU_CLIENT_ID || "",
-      password: process.env.API_SISU_PASSWORD || "",
-      type_auth: process.env.API_SISU_TYPE_AUTH || "Bearer",
-      basic_user: process.env.API_SISU_BASIC_USER || "",
-      basic_password: process.env.API_SISU_BASIC_PASSWORD || "",
+      env: env.API_SISU_ENV || "dev",
+      url_pro: env.API_SISU_URL_PRO || "http://127.0.0.1:5000",
+      url_dev: env.API_SISU_URL_DEV || "http://127.0.0.1:5001",
+      client_id: env.API_SISU_CLIENT_ID || "",
+      password: env.API_SISU_PASSWORD || "",
+      type_auth: env.API_SISU_TYPE_AUTH || "Bearer",
+      basic_user: env.API_SISU_BASIC_USER || "",
+      basic_password: env.API_SISU_BASIC_PASSWORD || "",
     },
     apiFIRMA: {
-      env: process.env.API_FIRMA_ENV || "dev",
-      url_pro: process.env.API_FIRMA_URL_PRO || "",
-      url_dev: process.env.API_FIRMA_URL_DEV || "",
-      type_auth: process.env.API_FIRMA_TYPE_AUTH || "Bearer",
-      basic_user: process.env.API_FIRMA_BASIC_USER || "",
-      basic_password: process.env.API_FIRMA_BASIC_PASSWORD || "",
-      client_id: process.env.API_SISU_CLIENT_ID || "",
-      password: process.env.API_SISU_PASSWORD || "",
+      env: env.API_FIRMA_ENV || "dev",
+      url_pro: env.API_FIRMA_URL_PRO || "",
+      url_dev: env.API_FIRMA_URL_DEV || "",
+      type_auth: env.API_FIRMA_TYPE_AUTH || "Bearer",
+      basic_user: env.API_FIRMA_BASIC_USER || "",
+      basic_password: env.API_FIRMA_BASIC_PASSWORD || "",
+      client_id: env.API_FIRMA_CLIENT_ID || "",
+      password: env.API_FIRMA_PASSWORD || "",
     },
     apiFLASKPDF: {
-      basic_user: process.env.API_FLASKPDF_USER || "",
-      basic_password: process.env.API_FLASKPDF_PASSWORD || "",
-      url: process.env.API_FLASKPDF_URL || "",
+      env: env.API_FLASKPDF_ENV || "dev",
+      basic_user: env.API_FLASKPDF_USER || "",
+      basic_password: env.API_FLASKPDF_PASSWORD || "",
+      url_pro: env.API_FLASKPDF_URL_PRO || "",
+      url_dev: env.API_FLASKPDF_URL_DEV || "",
     },
     backendBaseUrl:
-      process.env.NUXT_BACKEND_BASE_URL +
-      ":" +
-      process.env.NUXT_BACKEND_BASE_PORT,
-    jwtSecret: process.env.NUXT_JWT_SECRET || "",
+      env.NUXT_BACKEND_BASE_URL + ":" + env.NUXT_BACKEND_BASE_PORT,
+    jwtSecret: env.NUXT_JWT_SECRET || "",
   },
   auth: {
     session: {

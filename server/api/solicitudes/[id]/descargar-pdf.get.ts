@@ -2,6 +2,7 @@ import type { H3Event } from "h3";
 import { defineEventHandler, getRouterParam, setResponseStatus } from "h3";
 import prisma from "~~/lib/prisma";
 import { documentoStorage } from "~~/server/services/storage/documento-storage.service";
+import { CustomResponse } from "~~/server/utils/customResponse";
 
 export default defineEventHandler(async (event: H3Event) => {
   try {
@@ -10,16 +11,12 @@ export default defineEventHandler(async (event: H3Event) => {
 
     if (!session?.user?.username) {
       setResponseStatus(event, 401);
-      return {
-        error: "No hay sesión activa",
-      };
+      return CustomResponse.error("No hay sesión activa", "Error de autenticación");
     }
 
     if (!solicitudId) {
       setResponseStatus(event, 400);
-      return {
-        error: "ID de solicitud no proporcionado",
-      };
+      return CustomResponse.error("ID de solicitud no proporcionado", "Error de validación");
     }
 
     const solicitud = await prisma.solicitudes_credito.findUnique({
@@ -31,27 +28,18 @@ export default defineEventHandler(async (event: H3Event) => {
 
     if (!solicitud) {
       setResponseStatus(event, 404);
-      return {
-        error: "Solicitud no encontrada",
-      };
+      return CustomResponse.error("Solicitud no encontrada", "Recurso no encontrado");
     }
 
     if (!solicitud.pdfs_generados || !solicitud.pdfs_generados.path) {
       setResponseStatus(event, 404);
-      return {
-        error: "PDF no generado para esta solicitud",
-      };
+      return CustomResponse.error("PDF no generado para esta solicitud", "Recurso no disponible");
     }
 
     const pdfFilename = solicitud.pdfs_generados.filename;
 
-    // Intentar obtener el PDF desde el storage
-    let pdfContent = await documentoStorage.obtenerPdf(
-      solicitudId,
-      pdfFilename,
-    );
+    let pdfContent = await documentoStorage.obtenerPdf(solicitudId, pdfFilename);
 
-    // Si no está en el storage, intentar leer desde la ruta guardada
     if (!pdfContent && solicitud.pdfs_generados.path) {
       try {
         const { readFile } = await import("fs/promises");
@@ -64,12 +52,9 @@ export default defineEventHandler(async (event: H3Event) => {
 
     if (!pdfContent) {
       setResponseStatus(event, 404);
-      return {
-        error: "No se pudo leer el contenido del PDF",
-      };
+      return CustomResponse.error("No se pudo leer el contenido del PDF", "Error al obtener archivo");
     }
 
-    // Convertir base64 a buffer
     const pdfBuffer = Buffer.from(pdfContent, "base64");
 
     setResponseHeaders(event, {
@@ -83,9 +68,9 @@ export default defineEventHandler(async (event: H3Event) => {
     const status = Number(error?.statusCode || error?.response?.status || 502);
     setResponseStatus(event, Number.isFinite(status) ? status : 502);
 
-    return {
-      error:
-        error?.data?.error || error?.message || "Error al descargar el PDF",
-    };
+    return CustomResponse.error(
+      error?.data?.error || error?.message || "Error al descargar el PDF",
+      "Error al descargar PDF.",
+    );
   }
 });

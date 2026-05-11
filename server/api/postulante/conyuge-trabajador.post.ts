@@ -1,6 +1,7 @@
 import type { H3Event } from "h3";
-import { defineEventHandler, setResponseStatus } from "h3";
+import { defineEventHandler, readValidatedBody, setResponseStatus } from "h3";
 import datosApiSisuwebService from "~~/server/services/shared/datos-api-sisuweb.service";
+import { CustomResponse } from "~~/server/utils/customResponse";
 import { z } from "zod";
 
 const bodySchema = z.object({
@@ -17,21 +18,14 @@ export default defineEventHandler(async (event: H3Event) => {
       estado,
     });
 
-    return {
-      success: true,
-      message: "Solicitudes obtenidas exitosamente",
-      data: conyugeTrabajador,
-    };
+    return CustomResponse.success(conyugeTrabajador, "Solicitudes obtenidas exitosamente");
   } catch (e: any) {
     const status = Number(e?.statusCode || e?.response?.status || 502);
     setResponseStatus(event, Number.isFinite(status) ? status : 502);
 
-    if (e?.data && typeof e.data === "object") {
-      return e.data;
-    }
-
-    return {
-      error: e?.data?.error || e?.message || "Error conectando con backend",
-    };
+    return CustomResponse.error(
+      e?.data?.error || e?.message || "Error conectando con backend",
+      "Error al obtener conyuge trabajador.",
+    );
   }
 });

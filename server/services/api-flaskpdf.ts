@@ -3,9 +3,13 @@ import { ofetch } from "ofetch";
 
 const apiFlaskPdf = () => {
   const config = useRuntimeConfig();
-  const basic_user = config.apiFLASKPDF?.basic_user;
-  const basic_password = config.apiFLASKPDF?.basic_password;
-  const baseUrl = config.apiFLASKPDF?.url;
+  const env = config.apiFLASKPDF.env;
+  const basic_user = config.apiFLASKPDF.basic_user;
+  const basic_password = config.apiFLASKPDF.basic_password;
+  const baseUrl = {
+    pro: config.apiFLASKPDF.url_pro,
+    dev: config.apiFLASKPDF.url_dev,
+  };
 
   const authHeader = (basicToken: string) => {
     return {
@@ -62,7 +66,8 @@ const apiFlaskPdf = () => {
       Object.assign(headers, authHeader(token as string));
     }
 
-    const response = await ofetch<T>(`${baseUrl}/${path}`, {
+    const url = env === "pro" ? baseUrl.pro : baseUrl.dev;
+    const response = await ofetch<T>(`${url}/${path}`, {
       method: "POST",
       headers,
       body,

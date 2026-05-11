@@ -30,7 +30,7 @@ async function main() {
   await seedUsers();
   await seedSessions();
   await seedPersonalAccessTokens();
-  await seedNotifications();
+  //await seedNotifications();
   await seedNumeroSolicitudes();
   await seedSolicitudesCredito();
   await seedSolicitudSolicitante();

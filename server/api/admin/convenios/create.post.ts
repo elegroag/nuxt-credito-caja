@@ -1,6 +1,7 @@
 import type { H3Event } from "h3";
 import { defineEventHandler, readValidatedBody, setResponseStatus } from "h3";
 import convenioService from "~~/server/services/convenio.service";
+import { CustomResponse } from "~~/server/utils/customResponse";
 import { z } from "zod";
 
 // Schema de validación para crear convenio
@@ -30,26 +31,22 @@ export default defineEventHandler(async (event: H3Event) => {
 
     const convenio = await service.crearConvenio(payload);
 
-    return {
-      success: true,
-      message: "Convenio creado exitosamente",
-      data: {
+    return CustomResponse.success(
+      {
         id: String(convenio.id),
         nit: String(convenio.nit),
         razon_social: convenio.razon_social,
         estado: convenio.estado,
       },
-    };
+      "Convenio creado exitosamente",
+    );
   } catch (e: any) {
     const status = Number(e?.statusCode || e?.response?.status || 502);
     setResponseStatus(event, Number.isFinite(status) ? status : 502);
 
-    if (e?.data && typeof e.data === "object") {
-      return e.data;
-    }
-
-    return {
-      error: e?.data?.error || e?.message || "Error conectando con backend",
-    };
+    return CustomResponse.error(
+      e?.data?.error || e?.message || "Error conectando con backend",
+      "Error al crear convenio.",
+    );
   }
 });

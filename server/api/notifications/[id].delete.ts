@@ -1,6 +1,7 @@
 import type { H3Event } from "h3";
 import { defineEventHandler, getRouterParam, setResponseStatus } from "h3";
 import prisma from "~~/lib/prisma";
+import { CustomResponse } from "~~/server/utils/customResponse";
 
 export default defineEventHandler(async (event: H3Event) => {
   try {
@@ -9,16 +10,12 @@ export default defineEventHandler(async (event: H3Event) => {
 
     if (!session?.user?.username) {
       setResponseStatus(event, 401);
-      return {
-        error: "No hay sesión activa",
-      };
+      return CustomResponse.error("No hay sesión activa", "Error de autenticación");
     }
 
     if (!id) {
       setResponseStatus(event, 400);
-      return {
-        error: "ID de notificación no proporcionado",
-      };
+      return CustomResponse.error("ID de notificación no proporcionado", "Error de validación");
     }
 
     const notification = await prisma.notifications.findUnique({
@@ -27,33 +24,27 @@ export default defineEventHandler(async (event: H3Event) => {
 
     if (!notification) {
       setResponseStatus(event, 404);
-      return {
-        error: "Notificación no encontrada",
-      };
+      return CustomResponse.error("Notificación no encontrada", "Recurso no encontrado");
     }
 
     if (notification.owner_username !== session.user.username) {
       setResponseStatus(event, 403);
-      return {
-        error: "No tienes permiso para eliminar esta notificación",
-      };
+      return CustomResponse.error("No tienes permiso para eliminar esta notificación", "Acceso denegado");
     }
 
     await prisma.notifications.delete({
       where: { id },
     });
 
-    return {
-      success: true,
-      message: "Notificación eliminada exitosamente",
-    };
+    return CustomResponse.ok(null, "Notificación eliminada exitosamente");
   } catch (error: any) {
     console.error("Error al eliminar notificación:", error);
     const status = Number(error?.statusCode || error?.response?.status || 502);
     setResponseStatus(event, Number.isFinite(status) ? status : 502);
 
-    return {
-      error: error?.data?.error || error?.message || "Error al eliminar notificación",
-    };
+    return CustomResponse.error(
+      error?.data?.error || error?.message || "Error al eliminar notificación",
+      "Error al eliminar notificación.",
+    );
   }
 });

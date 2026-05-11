@@ -1,6 +1,7 @@
 import type { H3Event } from "h3";
 import { defineEventHandler, setResponseStatus } from "h3";
 import convenioService from "~~/server/services/convenio.service";
+import { CustomResponse } from "~~/server/utils/customResponse";
 
 export default defineEventHandler(async (event: H3Event) => {
   const convenioSrv = convenioService();
@@ -19,21 +20,14 @@ export default defineEventHandler(async (event: H3Event) => {
       session.user.username,
     );
 
-    return {
-      success: true,
-      message: "Convenios obtenidos exitosamente",
-      data: convenios,
-    };
+    return CustomResponse.success(convenios, "Convenios obtenidos exitosamente");
   } catch (e: any) {
     const status = Number(e?.statusCode || e?.response?.status || 502);
     setResponseStatus(event, Number.isFinite(status) ? status : 502);
 
-    if (e?.data && typeof e.data === "object") {
-      return e.data;
-    }
-
-    return {
-      error: e?.data?.error || e?.message || "Error conectando con backend",
-    };
+    return CustomResponse.error(
+      e?.data?.error || e?.message || "Error conectando con backend",
+      "Error al obtener convenios.",
+    );
   }
 });

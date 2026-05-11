@@ -36,3 +36,4 @@ storage/
 *.sql
 public/img
 *.ico
+*session-*

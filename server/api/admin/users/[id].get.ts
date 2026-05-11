@@ -1,6 +1,7 @@
 import type { H3Event } from "h3";
 import { defineEventHandler, getRouterParam, setResponseStatus } from "h3";
 import usersAdmService from "~~/server/services/admin/users-adm.service";
+import { CustomResponse } from "~~/server/utils/customResponse";
 
 export default defineEventHandler(async (event: H3Event) => {
   try {
@@ -9,42 +10,30 @@ export default defineEventHandler(async (event: H3Event) => {
 
     if (!id) {
       setResponseStatus(event, 400);
-      return {
-        error: "ID de usuario no proporcionado",
-      };
+      return CustomResponse.error("ID de usuario no proporcionado", "Error de validación");
     }
 
     const userId = parseInt(id, 10);
     if (isNaN(userId)) {
       setResponseStatus(event, 400);
-      return {
-        error: "ID de usuario inválido",
-      };
+      return CustomResponse.error("ID de usuario inválido", "Error de validación");
     }
 
     const user = await service.getUserById(userId);
 
     if (!user) {
       setResponseStatus(event, 404);
-      return {
-        error: "Usuario no encontrado",
-      };
+      return CustomResponse.error("Usuario no encontrado", "Recurso no encontrado");
     }
 
-    return {
-      success: true,
-      data: user,
-    };
+    return CustomResponse.success(user);
   } catch (e: any) {
     const status = Number(e?.statusCode || e?.response?.status || 502);
     setResponseStatus(event, Number.isFinite(status) ? status : 502);
 
-    if (e?.data && typeof e.data === "object") {
-      return e.data;
-    }
-
-    return {
-      error: e?.data?.error || e?.message || "Error conectando con backend",
-    };
+    return CustomResponse.error(
+      e?.data?.error || e?.message || "Error conectando con backend",
+      "Error al obtener usuario.",
+    );
   }
 });

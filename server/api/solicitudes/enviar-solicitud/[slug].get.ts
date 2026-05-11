@@ -1,5 +1,6 @@
 import prisma from "~~/lib/prisma";
 import datosApiSisuwebService from "~~/server/services/shared/datos-api-sisuweb.service";
+import { CustomResponse } from "~~/server/utils/customResponse";
 
 export default defineEventHandler(async (event) => {
   const datosApi = datosApiSisuwebService();
@@ -109,8 +110,5 @@ export default defineEventHandler(async (event) => {
     });
   }
 
-  return {
-    success: true,
-    data: solicitudCredito,
-  };
+  return CustomResponse.success(solicitudCredito);
 });
