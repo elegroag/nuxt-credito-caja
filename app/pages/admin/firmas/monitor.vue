@@ -194,7 +194,7 @@
                   <div class="flex items-center gap-2 text-gray-600">
                     <Icon name="lucide:building" class="h-3.5 w-3.5" />
                     <span>{{
-                      solicitud.convenio?.nombre_convenio || "Sin convenio"
+                      convenioActivo?.razon_social || "Sin convenio"
                     }}</span>
                   </div>
                   <div class="flex items-center gap-2 text-gray-600">
@@ -325,6 +325,7 @@ import { onMounted } from "vue";
 import EstadisticasCard from "@/components/admin/firmas/EstadisticasCard.vue";
 import CambiosRecientesPanel from "@/components/admin/firmas/CambiosRecientesPanel.vue";
 import { useMonitoreoFirmasRealTime } from "~/composables/admin/useMonitoreoFirmasRealTime";
+import { a } from "vue-router/dist/index-D_VEAp3P.js";
 
 definePageMeta({
   layout: "dashboard",
@@ -358,6 +359,8 @@ const {
   getEstadoIcon,
   iniciarPolling,
   togglePolling,
+  convenioActivo,
+  cargarConvenio,
 } = useMonitoreoFirmasRealTime();
 
 const handleConsultarEstado = async (solicitudId: string) => {
@@ -368,6 +371,7 @@ const handleConsultarEstado = async (solicitudId: string) => {
 };
 
 onMounted(async () => {
+  cargarConvenio();
   await cargarSolicitudes();
   iniciarPolling();
 });

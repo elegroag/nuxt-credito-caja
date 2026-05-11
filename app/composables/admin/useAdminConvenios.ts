@@ -187,12 +187,14 @@ export function useAdminConvenios() {
 
       // Actualizar estado localmente
       const index = empresas.value.findIndex((e) => e.id === empresa.id);
-      if (index !== -1) {
-        empresas.value[index].estado = nuevoEstado;
+      const empresaIndex = empresas.value[index];
+      if (index !== -1 && empresaIndex) {
+        empresaIndex.estado = nuevoEstado;
 
         // Actualizar conteos
-        conteoEstados.value[empresa.estado] =
-          (conteoEstados.value[empresa.estado] || 0) - 1;
+        const estadoAnterior = empresa.estado || "unknown";
+        conteoEstados.value[estadoAnterior] =
+          (conteoEstados.value[estadoAnterior] || 0) - 1;
         conteoEstados.value[nuevoEstado] =
           (conteoEstados.value[nuevoEstado] || 0) + 1;
       }

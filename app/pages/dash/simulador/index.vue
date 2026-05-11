@@ -8,12 +8,7 @@
         Estima la cuota mensual, intereses y capacidad de pago.
       </p>
 
-      <UButton
-        variant="soft"
-        class="mt-3"
-        size="lg"
-        @click="navigateToLineas"
-      >
+      <UButton variant="soft" class="mt-3" size="lg" @click="navigateToLineas">
         Ver líneas de crédito
       </UButton>
     </div>

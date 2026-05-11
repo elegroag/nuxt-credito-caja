@@ -113,9 +113,11 @@
         </label>
         <USelectMenu
           v-model="nuevoFirmante.tipo_documento"
-          :items="getTiposDocumentoOptions()"
+          :items="getTiposDocumentoOptions() as any[]"
           placeholder="Seleccionar tipo"
           by="value"
+          option-attribute="label"
+          value-attribute="value"
         />
       </div>
 
@@ -133,14 +135,18 @@
         <label class="text-sm font-medium text-foreground"> Rol </label>
         <USelectMenu
           v-model="nuevoFirmante.rol"
-          :items="[
-            { label: 'Solicitante', value: 'Solicitante' },
-            { label: 'Codeudor', value: 'Codeudor' },
-            { label: 'Empleador', value: 'Empleador' },
-            { label: 'Firmante', value: 'Firmante' },
-          ]"
+          :items="
+            <any>[
+              { label: 'Solicitante', value: 'Solicitante' },
+              { label: 'Codeudor', value: 'Codeudor' },
+              { label: 'Empleador', value: 'Empleador' },
+              { label: 'Firmante', value: 'Firmante' },
+            ]
+          "
           placeholder="Seleccionar rol"
           by="value"
+          option-attribute="label"
+          value-attribute="value"
         />
       </div>
 

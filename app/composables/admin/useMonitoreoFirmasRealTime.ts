@@ -33,6 +33,7 @@ export function useMonitoreoFirmasRealTime() {
   const { getJson } = useApi();
   const { ready } = useSession();
 
+  const convenioActivo = ref<ConvenioActivo | null>(null);
   const solicitudes = ref<SolicitudConFirma[]>([]);
   const loading = ref(false);
   const error = ref<string | null>(null);
@@ -404,6 +405,27 @@ export function useMonitoreoFirmasRealTime() {
     return iconos[estado] || "lucide:help-circle";
   };
 
+  const cargarConvenio = async () => {
+    try {
+      const response = await getJson<{
+        success: boolean;
+        data: EmpresaConvenio | null;
+        message: string;
+      }>(`/api/convenios/activo`, {
+        auth: true,
+      });
+
+      if (response.success) {
+        convenioActivo.value = response.data;
+      } else {
+        throw new Error(response.message || "Error al cargar convenio activo");
+      }
+    } catch (e: any) {
+      console.error("Error al cargar convenio activo:", e);
+      convenioActivo.value = null;
+    }
+  };
+
   // Limpiar al desmontar
   onUnmounted(() => {
     detenerPolling();
@@ -423,6 +445,7 @@ export function useMonitoreoFirmasRealTime() {
     pollingEnabled,
     pollingInterval,
     cambiosRecientes,
+    convenioActivo,
 
     // Computadas
     totalPages,
@@ -446,5 +469,6 @@ export function useMonitoreoFirmasRealTime() {
     iniciarPolling,
     detenerPolling,
     togglePolling,
+    cargarConvenio,
   };
 }

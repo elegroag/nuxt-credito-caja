@@ -48,7 +48,7 @@ const opcionesLimite = [
   { label: "100 / pág", value: 100 },
 ];
 
-const opcionesEstadoModal = ESTADOS_DISPONIBLES.map((e) => ({
+const opcionesEstadoModal: { label: string; value: string }[] = ESTADOS_DISPONIBLES.map((e) => ({
   label: e,
   value: e,
 }));

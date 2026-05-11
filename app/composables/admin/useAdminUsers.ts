@@ -161,7 +161,7 @@ export function useAdminUsers() {
       if (response.success) {
         // Actualizar el usuario localmente
         const index = usuarios.value.findIndex((u) => u.id === usuario.id);
-        if (index !== -1) {
+        if (index !== -1 && usuarios.value[index]) {
           usuarios.value[index].estado = nuevoEstado;
 
           // Actualizar conteos

@@ -107,7 +107,7 @@
               <div class="flex items-center gap-2 text-gray-600">
                 <Icon name="lucide:building" class="h-4 w-4" />
                 <span>{{
-                  solicitud.convenio?.nombre_convenio || "Sin convenio"
+                  convenioActivo?.razon_social || "Sin convenio"
                 }}</span>
               </div>
               <div class="flex items-center gap-2 text-gray-600">
@@ -261,6 +261,8 @@ const {
   formatearFecha,
   getEstadoColor,
   getEstadoIcon,
+  convenioActivo,
+  cargarConvenio,
 } = useSeguimientoFirmas();
 
 const handleConsultarEstado = async (solicitudId: string) => {
@@ -274,5 +276,6 @@ const handleConsultarEstado = async (solicitudId: string) => {
 
 onMounted(() => {
   cargarSolicitudes();
+  cargarConvenio();
 });
 </script>

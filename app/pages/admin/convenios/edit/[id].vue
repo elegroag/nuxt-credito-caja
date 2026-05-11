@@ -207,8 +207,8 @@
                 { label: 'Activo', value: 'Activo' },
                 { label: 'Inactivo', value: 'Inactivo' },
               ]"
+              value-key="value"
               placeholder="Seleccionar estado"
-              by="value"
               class="w-full"
             />
             <template #error>
@@ -270,7 +270,7 @@ const form = reactive({
   telefono: "",
   correo: "",
   fecha_vencimiento: "",
-  estado: "Activo",
+  estado: "Activo" as "Activo" | "Inactivo",
 });
 
 // Cargar datos del convenio
@@ -309,7 +309,9 @@ const cargarConvenio = async () => {
             .toISOString()
             .split("T")[0] || ""
         : "";
-      form.estado = String(convenio.value.estado || "Activo");
+      form.estado = (convenio.value.estado === "Activo" || convenio.value.estado === "Inactivo")
+        ? convenio.value.estado as "Activo" | "Inactivo"
+        : "Activo";
     } else {
       throw new Error("Estructura de respuesta inválida");
     }

@@ -31,14 +31,22 @@ export const useSimuladorConLineaPage = () => {
   const lineasCache = ref<Map<string, any>>(new Map());
 
   // Objeto reactive para el input de monto con validación
-  const montoInput = reactive({
+  const montoInput = reactive<{
+    val: string;
+    valid: boolean;
+    cls: string;
+    hint: string;
+    hintClass: string;
+    pct: number;
+    pctColor: "primary" | "secondary" | "accent" | "destructive" | "muted" | "neutral";
+  }>({
     val: "",
     valid: false,
     cls: "",
     hint: "Ingresa un monto entre 200.000 y el máximo permitido",
     hintClass: "",
     pct: 0,
-    pctColor: "#d1d5db",
+    pctColor: "neutral",
   });
 
   // Usar el hook especializado para líneas de crédito
@@ -114,7 +122,7 @@ export const useSimuladorConLineaPage = () => {
       montoInput.hint = "Ingresa un monto entre 200.000 y el máximo permitido";
       montoInput.hintClass = "";
       montoInput.pct = 0;
-      montoInput.pctColor = "#d1d5db";
+      montoInput.pctColor = "neutral";
       monto.value = 0;
     } else if (isNaN(v) || v < minimo) {
       montoInput.cls = "invalid";
@@ -122,7 +130,7 @@ export const useSimuladorConLineaPage = () => {
       montoInput.hint = `✗ Mínimo permitido: ${fmt(minimo)}`;
       montoInput.hintClass = "error";
       montoInput.pct = 1;
-      montoInput.pctColor = "#ef4444";
+      montoInput.pctColor = "destructive";
       monto.value = 0;
     } else if (v > valmax) {
       montoInput.cls = "invalid";
@@ -130,7 +138,7 @@ export const useSimuladorConLineaPage = () => {
       montoInput.hint = `✗ Máximo permitido: ${fmt(valmax)}`;
       montoInput.hintClass = "error";
       montoInput.pct = 100;
-      montoInput.pctColor = "#ef4444";
+      montoInput.pctColor = "destructive";
       monto.value = valmax;
     } else {
       montoInput.cls = "valid";
@@ -140,10 +148,10 @@ export const useSimuladorConLineaPage = () => {
       montoInput.pct = Math.round((v / valmax) * 100);
       montoInput.pctColor =
         v < valmax * 0.33
-          ? "#10b981"
+          ? "primary"
           : v < valmax * 0.66
-            ? "#f59e0b"
-            : "#3b82f6";
+            ? "secondary"
+            : "accent";
       monto.value = v;
     }
   };

@@ -14,24 +14,52 @@ export function useSimuladorConConvenio() {
   const cedulaTrabajador = ref("");
 
   // Estados
-  const convenioVerificado = ref(false);
   const loadingConvenio = ref(false);
   const errorConvenio = ref<string | null>(null);
   const convenio = ref<ConvenioActivo | null>(null);
+  const convenioVerificado = ref(false);
 
   // Computed
   const isElegible = computed(
     () => !!convenio.value && convenio.value.estado === "Activo",
   );
 
+  // Mensaje de éxito cuando hay convenio con beneficios
+  const mensajeBeneficios = computed(() => {
+    if (!convenio.value || !isElegible.value) return null;
+    return {
+      titulo: "¡Tienes convenio con COMFACA!",
+      empresa: convenio.value.razon_social,
+      items: getBeneficiosFromConvenio(convenio.value),
+    };
+  });
+
+  // Mensaje de error cuando no hay convenio o no es elegible
   const getMensajeError = computed(() => {
     if (!errorConvenio.value) return null;
     return {
       titulo: "Sin convenio empresarial",
-      descripcion: "No se encontró un convenio activo para tu empresa.",
+      descripcion: errorConvenio.value,
       tipo: "info" as const,
     };
   });
+
+  /**
+   * Obtiene los beneficios disponibles del convenio
+   */
+  const getBeneficiosFromConvenio = (conv: ConvenioActivo): string[] => {
+    const beneficios: string[] = [];
+    if (conv.estado === "Activo") {
+      beneficios.push("Descuento en nómina");
+    }
+    if (conv.fecha_vencimiento) {
+      beneficios.push(`Válido hasta ${conv.fecha_vencimiento}`);
+    }
+    if (!beneficios.length) {
+      beneficios.push("Beneficios aplicados según convenio");
+    }
+    return beneficios;
+  };
 
   /**
    * Valida el convenio consultando /api/convenios/activo
@@ -68,7 +96,7 @@ export function useSimuladorConConvenio() {
               String(c.nit) === String(nitEmpresa.value),
           ) || response.data[0]; // Si no coincide el NIT, tomar el primero
 
-        convenio.value = convenioEncontrado;
+        convenio.value = convenioEncontrado ?? null;
         convenioVerificado.value = true;
 
         console.log("Convenio encontrado:", convenio.value);
@@ -78,7 +106,8 @@ export function useSimuladorConConvenio() {
       // No hay convenios
       convenio.value = null;
       convenioVerificado.value = true;
-      errorConvenio.value = "No tienes convenios activos";
+      errorConvenio.value =
+        "No se encontró un convenio activo para tu empresa.";
 
       return false;
     } catch (err: any) {
@@ -116,6 +145,9 @@ export function useSimuladorConConvenio() {
 
     // Datos del convenio
     convenio,
+
+    // Mensajes
+    mensajeBeneficios,
     getMensajeError,
 
     // Métodos

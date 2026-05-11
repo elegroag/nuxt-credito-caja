@@ -330,6 +330,11 @@ export interface SolicitudCredito {
     fecha: string;
     detalle: string;
   }>;
+  pdfs_generados?: {
+    filename: string;
+    path: string;
+    generado_en: string;
+  };
 }
 
 // Tipo para respuesta del API de consulta de solicitudes

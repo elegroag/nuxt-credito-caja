@@ -29,7 +29,7 @@ const focusedField = ref<string | null>(null);
 const validateField = (field: keyof typeof form.value) => {
   const result = formSchema.safeParse({ ...form.value });
   if (!result.success) {
-    const fieldError = result.error.errors.find((e) => e.path[0] === field);
+    const fieldError = result.error.issues.find((e) => e.path[0] === field);
     if (fieldError) {
       errors.value[field] = fieldError.message;
     } else {
@@ -44,7 +44,7 @@ const submitForm = async () => {
   const result = formSchema.safeParse(form.value);
   if (!result.success) {
     errors.value = {};
-    result.error.errors.forEach((e) => {
+    result.error.issues.forEach((e) => {
       errors.value[e.path[0] as string] = e.message;
     });
     return;

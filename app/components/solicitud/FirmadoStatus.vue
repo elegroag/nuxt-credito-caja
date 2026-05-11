@@ -45,7 +45,7 @@
       <!-- Error -->
       <UAlert
         v-if="error"
-        color="error"
+        color="destructive"
         :description="error"
         icon="i-lucide-x-circle"
       />
@@ -134,7 +134,7 @@ const {
 
 let pollingIntervalId: number | null = null;
 
-type UAlertColor = "error" | "primary" | "neutral";
+type UAlertColor = "primary" | "secondary" | "accent" | "destructive" | "muted" | "neutral";
 
 const alertColor = computed((): UAlertColor => {
   if (!mensajeEstado.value) return "neutral";
@@ -142,7 +142,7 @@ const alertColor = computed((): UAlertColor => {
     case "success":
       return "primary";
     case "error":
-      return "error";
+      return "destructive";
     case "warning":
     case "info":
     default:

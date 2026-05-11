@@ -1,4 +1,4 @@
-export type TipoIdentificacionExtendido = '1' | '3' | '4' | '6' | '8' | '9' | '10' | '11' | '12' | '13' | '14';
+export type TipoIdentificacionExtendido = '1' | '3' | '4' | '6' | '8' | '9' | '10' | '11' | '12' | '13' | '14' | 'CC' | 'NIT' | 'CE' | 'PAS';
 
 export interface EntidadDigitalBasicData {
     tipoIdentificacion: TipoIdentificacionExtendido;

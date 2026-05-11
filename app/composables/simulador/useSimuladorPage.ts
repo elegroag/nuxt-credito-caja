@@ -3,6 +3,7 @@ import { useSimulador } from "./useSimulador";
 import { useSimuladorConConvenio } from "./useSimuladorConConvenio";
 import { useTrabajador } from "~/composables/useTrabajador";
 import { useSimuladorStorage } from "~/composables/useSimuladorStorage";
+import type { LineaCreditoSimulador } from "#shared/types/simulador";
 
 export const useSimuladorPage = () => {
   const { trabajador } = useTrabajador();
@@ -15,9 +16,9 @@ export const useSimuladorPage = () => {
     loadingConvenio,
     convenioVerificado,
     isElegible,
-    mensajeBeneficios,
     getMensajeError,
     validarConvenioAntesDSimular,
+    mensajeBeneficios,
   } = useSimuladorConConvenio();
 
   // Composable principal del simulador
@@ -114,7 +115,7 @@ export const useSimuladorPage = () => {
           nitEmpresa: nitEmpresa.value,
           cedulaTrabajador: cedulaTrabajador.value,
           // Sin línea de crédito específica
-          lineaCredito: null,
+          lineaCredito: undefined as unknown as LineaCreditoSimulador,
         });
       }
     }, 500);
@@ -180,6 +181,5 @@ export const useSimuladorPage = () => {
     // Computed y funciones específicas de la página
     tasaInput,
     navigateToLineas,
-    saveData,
   };
 };

@@ -179,8 +179,9 @@ export function useNotifications() {
         const index = notifications.value.findIndex(
           (n) => n.id === notificationId,
         );
-        if (index !== -1) {
-          const wasUnread = !notifications.value[index].read_at;
+        const notification = notifications.value[index];
+        if (index !== -1 && notification) {
+          const wasUnread = !notification.read_at;
           notifications.value.splice(index, 1);
 
           if (wasUnread && unreadCount.value > 0) {

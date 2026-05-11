@@ -2,6 +2,7 @@ import { ref, computed } from "vue";
 import { useRouter } from "vue-router";
 import { useApi } from "~/composables/useApi";
 import { useSession } from "~/composables/useSession";
+import type { ConvenioActivo } from "#shared/types/trabajador";
 
 interface ProcesoFirmado {
   transaccion_id: string;
@@ -27,6 +28,7 @@ export function useSeguimientoFirmas() {
   const loading = ref(false);
   const error = ref<string | null>(null);
   const totalSolicitudes = ref(0);
+  const convenioActivo = ref<ConvenioActivo | null>(null);
 
   // Paginación
   const currentPage = ref(1);
@@ -228,6 +230,27 @@ export function useSeguimientoFirmas() {
     return iconos[estado] || "lucide:help-circle";
   };
 
+  const cargarConvenio = async () => {
+    try {
+      const response = await getJson<{
+        success: boolean;
+        data: EmpresaConvenio | null;
+        message: string;
+      }>(`/api/convenios/activo`, {
+        auth: true,
+      });
+
+      if (response.success) {
+        convenioActivo.value = response.data;
+      } else {
+        throw new Error(response.message || "Error al cargar convenio activo");
+      }
+    } catch (e: any) {
+      console.error("Error al cargar convenio activo:", e);
+      convenioActivo.value = null;
+    }
+  };
+
   return {
     // Estado
     solicitudes,
@@ -238,6 +261,7 @@ export function useSeguimientoFirmas() {
     pageSize,
     estadoFiltro,
     estadosDisponibles,
+    convenioActivo,
 
     // Computadas
     totalPages,
@@ -246,6 +270,7 @@ export function useSeguimientoFirmas() {
 
     // Funciones
     cargarSolicitudes,
+    cargarConvenio,
     consultarEstado,
     refrescarTodos,
     irAPagina,
