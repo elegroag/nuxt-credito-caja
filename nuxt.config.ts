@@ -15,6 +15,7 @@ export default defineNuxtConfig({
     "@nuxt/icon",
     "@nuxt/fonts",
     "nuxt-auth-utils",
+    "@nuxt/test-utils/module",
   ],
   alias: {
     "@": fileURLToPath(new URL("./app", import.meta.url)),
@@ -105,6 +106,9 @@ export default defineNuxtConfig({
   },
 
   nitro: {
+    experimental: {
+      asyncContext: true,
+    },
     prerender: {
       routes: ["/"],
       ignore: ["/dashboard", "/dashboard/**"],

@@ -37,3 +37,5 @@ pnpm-lock.yaml
 public/img
 *.ico
 *session-*
+AGENTS.md
+payload-api-flask-pdf.json

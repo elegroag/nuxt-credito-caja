@@ -15,7 +15,16 @@
     "db:pull": "prisma db pull",
     "db:migrate": "prisma migrate dev --schema=./prisma/schema.prisma",
     "db:reset": "prisma migrate reset --schema=./prisma/schema.prisma",
-    "db:seed": "prisma db seed"
+    "db:seed": "prisma db seed",
+    "test": "vitest",
+    "test:ui": "vitest --ui",
+    "test:unit": "vitest run --project server-unit --project client-unit",
+    "test:unit:server": "vitest run --project server-unit",
+    "test:unit:client": "vitest run --project client-unit",
+    "test:integration": "vitest run --project integration",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
+    "test:coverage": "vitest run --coverage"
   },
   "dependencies": {
     "@heroicons/vue": "^2.2.0",
@@ -44,14 +53,21 @@
   },
   "devDependencies": {
     "@nuxt/eslint": "^1.15.2",
+    "@nuxt/test-utils": "^4.0.3",
+    "@playwright/test": "^1.60.0",
     "@types/node": "^25.6.0",
+    "@vitest/coverage-v8": "^4.1.6",
+    "@vue/test-utils": "^2.4.10",
     "autoprefixer": "^10.5.0",
     "dotenv": "^17.4.2",
     "eslint": "^10.2.1",
+    "happy-dom": "^20.9.0",
+    "msw": "^2.14.6",
     "prisma": "^7.8.0",
     "ts-node": "^10.9.2",
     "tsx": "^4.21.0",
     "typescript": "^6.0.3",
+    "vitest": "^4.1.6",
     "vue-tsc": "^3.2.7"
   },
   "resolutions": {
