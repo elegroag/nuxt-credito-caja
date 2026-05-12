@@ -1,16 +1,17 @@
 import { describe, it, expect, vi } from "vitest";
-import mockDatosGenerales from "../../../../tests/mocks/api-creditos-datos-generales.json";
+//@ts-ignore
+import mockDatosGenerales from "@tests/mocks/api-creditos-datos-generales.json";
 
-vi.mock("~/server/services/api-sisuweb", () => ({
+vi.mock("~~/server/services/api-sisuweb", () => ({
   default: vi.fn(() => ({
     postJson: vi.fn(),
   })),
 }));
 
 //@ts-ignore
-import datosApiSisuwebService from "~/server/services/shared/datos-api-sisuweb.service";
+import datosApiSisuwebService from "~~/server/services/shared/datos-api-sisuweb.service";
 //@ts-ignore
-import apiSisuweb from "~/server/services/api-sisuweb";
+import apiSisuweb from "~~/server/services/api-sisuweb";
 
 describe("datosApiSisuwebService", () => {
   describe("dataGeneral", () => {

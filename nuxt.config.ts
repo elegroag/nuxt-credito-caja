@@ -22,6 +22,9 @@ export default defineNuxtConfig({
     "~": fileURLToPath(new URL("./app", import.meta.url)),
     ".prisma/client/index-browser":
       "./node_modules/.prisma/client/index-browser.js",
+    "@tests": fileURLToPath(new URL("./tests/", import.meta.url)),
+    "@tests/**": fileURLToPath(new URL("./tests/", import.meta.url)),
+    "~~": fileURLToPath(new URL("./", import.meta.url)),
   },
 
   devtools: {
@@ -79,6 +82,9 @@ export default defineNuxtConfig({
           "./node_modules/.prisma/client/index-browser.js",
         "@": fileURLToPath(new URL("./app", import.meta.url)),
         "~": fileURLToPath(new URL("./app", import.meta.url)),
+        "~~": fileURLToPath(new URL("./", import.meta.url)),
+        "@tests": fileURLToPath(new URL("./tests/", import.meta.url)),
+        "@tests/**": fileURLToPath(new URL("./tests/", import.meta.url)),
       },
     },
     optimizeDeps: {

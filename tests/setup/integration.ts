@@ -4,6 +4,6 @@ beforeAll(async () => {
   await setup({
     rootDir: '.',
     server: true,
-    port: 4001,
+    port: 4000,
   })
 })
