@@ -23,7 +23,7 @@ export default defineNuxtConfig({
     ".prisma/client/index-browser":
       "./node_modules/.prisma/client/index-browser.js",
     "@tests": fileURLToPath(new URL("./tests/", import.meta.url)),
-    "@tests/**": fileURLToPath(new URL("./tests/", import.meta.url)),
+    "@tests/*": fileURLToPath(new URL("./tests/", import.meta.url)),
     "~~": fileURLToPath(new URL("./", import.meta.url)),
   },
 
