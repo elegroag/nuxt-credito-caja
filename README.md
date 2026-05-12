@@ -211,3 +211,9 @@ nuxt-creditos/
 ---
 
 **Desarrollado con ❤️ para Comfaca**
+
+```bash
+curl -X 'POST' \
+  'https://comfacaenlinea.com.co:9000/api/creditos/datos-generales' \
+  -H 'accept: application/json'
+```
