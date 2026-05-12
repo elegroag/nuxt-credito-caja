@@ -3,11 +3,11 @@ import { useTerminos } from "@/composables/terminos/useTerminos";
 
 definePageMeta({
   layout: "dashboard",
-  middleware: ["auth"],
+  middleware: ["auth"]
 });
 
-const { loadingParametros, errorParametros, motivosRechazo, cargarTerminos } =
-  useTerminos();
+const { loadingParametros, errorParametros, motivosRechazo, cargarTerminos }
+  = useTerminos();
 </script>
 
 <template>
@@ -47,7 +47,10 @@ const { loadingParametros, errorParametros, motivosRechazo, cargarTerminos } =
         v-if="loadingParametros"
         class="flex items-center justify-center py-10 gap-2 text-muted-foreground"
       >
-        <UIcon name="i-lucide-loader-circle" class="w-5 h-5 animate-spin" />
+        <UIcon
+          name="i-lucide-loader-circle"
+          class="w-5 h-5 animate-spin"
+        />
         <span class="text-sm">Cargando…</span>
       </div>
 
@@ -74,7 +77,9 @@ const { loadingParametros, errorParametros, motivosRechazo, cargarTerminos } =
               {{ index + 1 }}
             </span>
             <div class="flex-1 min-w-0">
-              <p class="text-sm font-medium text-foreground">{{ m.detalle }}</p>
+              <p class="text-sm font-medium text-foreground">
+                {{ m.detalle }}
+              </p>
               <p class="mt-0.5 text-xs text-muted-foreground">
                 Código: {{ m.modrec }}
               </p>

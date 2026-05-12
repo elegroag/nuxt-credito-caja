@@ -16,7 +16,7 @@ const updateSolicitudSchema = z.object({
   tipo_credito: z.string().max(3).optional(),
   moneda: z.string().max(3).optional(),
   cuota_mensual: z.number().nonnegative().optional(),
-  fecha_radicado: z.string().optional(),
+  fecha_radicado: z.string().optional()
 });
 
 export default defineEventHandler(async (event: H3Event) => {
@@ -46,16 +46,16 @@ export default defineEventHandler(async (event: H3Event) => {
 
     const solicitud = await prisma.solicitudes_credito.update({
       where: { numero_solicitud: id },
-      data: updateData,
+      data: updateData
     });
 
     return CustomResponse.success(
       {
         numero_solicitud: solicitud.numero_solicitud,
         estado: solicitud.estado,
-        valor_solicitud: String(solicitud.valor_solicitud),
+        valor_solicitud: String(solicitud.valor_solicitud)
       },
-      "Solicitud actualizada exitosamente",
+      "Solicitud actualizada exitosamente"
     );
   } catch (e: any) {
     const status = Number(e?.statusCode || e?.response?.status || 502);
@@ -63,7 +63,7 @@ export default defineEventHandler(async (event: H3Event) => {
 
     return CustomResponse.error(
       e?.data?.error || e?.message || "Error conectando con backend",
-      "Error al actualizar solicitud.",
+      "Error al actualizar solicitud."
     );
   }
 });

@@ -13,7 +13,7 @@ export default defineEventHandler(async (event: H3Event) => {
       setResponseStatus(event, 401);
       return CustomResponse.error(
         "No hay sesión activa",
-        "Error de autenticación",
+        "Error de autenticación"
       );
     }
 
@@ -21,19 +21,19 @@ export default defineEventHandler(async (event: H3Event) => {
       setResponseStatus(event, 400);
       return CustomResponse.error(
         "ID de solicitud no proporcionado",
-        "Error de validación",
+        "Error de validación"
       );
     }
 
     const solicitud = await prisma.solicitudes_credito.findUnique({
-      where: { numero_solicitud: solicitudId },
+      where: { numero_solicitud: solicitudId }
     });
 
     if (!solicitud) {
       setResponseStatus(event, 404);
       return CustomResponse.error(
         "Solicitud no encontrada",
-        "Recurso no encontrado",
+        "Recurso no encontrado"
       );
     }
 
@@ -41,7 +41,7 @@ export default defineEventHandler(async (event: H3Event) => {
       setResponseStatus(event, 403);
       return CustomResponse.error(
         "No tienes permiso para ver los documentos requeridos de esta solicitud",
-        "Acceso denegado",
+        "Acceso denegado"
       );
     }
 
@@ -49,7 +49,7 @@ export default defineEventHandler(async (event: H3Event) => {
       setResponseStatus(event, 400);
       return CustomResponse.error(
         "La solicitud no tiene tipo de crédito asignado",
-        "Error de validación",
+        "Error de validación"
       );
     }
 
@@ -57,26 +57,26 @@ export default defineEventHandler(async (event: H3Event) => {
     const response = await sisuweb.postJson<any>(
       "creditos/tipo-creditos",
       {},
-      { auth: true },
+      { auth: true }
     );
 
     if (!response.success || !response.data) {
       setResponseStatus(event, 500);
       return CustomResponse.error(
         "Error al obtener tipos de crédito desde SISUWEB",
-        "Error en SISUWEB",
+        "Error en SISUWEB"
       );
     }
 
     const tipoCredito = response.data.find(
-      (tc: any) => tc.tipcre === solicitud.tipo_credito,
+      (tc: any) => tc.tipcre === solicitud.tipo_credito
     );
 
     if (!tipoCredito) {
       setResponseStatus(event, 404);
       return CustomResponse.error(
         "Tipo de crédito no encontrado en SISUWEB",
-        "Recurso no encontrado",
+        "Recurso no encontrado"
       );
     }
 
@@ -86,13 +86,13 @@ export default defineEventHandler(async (event: H3Event) => {
         nombre: doc.detalle,
         tipo: doc.tipdoc,
         obligatorio: doc.obliga === "S",
-        descripcion: doc.detalle,
-      }),
+        descripcion: doc.detalle
+      })
     );
 
     return CustomResponse.success(
       { documentos: documentosRequeridos, count: documentosRequeridos.length },
-      "Documentos requeridos obtenidos exitosamente",
+      "Documentos requeridos obtenidos exitosamente"
     );
   } catch (error: any) {
     console.error("Error al obtener documentos requeridos:", error);
@@ -100,10 +100,10 @@ export default defineEventHandler(async (event: H3Event) => {
     setResponseStatus(event, Number.isFinite(status) ? status : 502);
 
     return CustomResponse.error(
-      error?.data?.error ||
-        error?.message ||
-        "Error al obtener documentos requeridos",
-      "Error al obtener documentos requeridos.",
+      error?.data?.error
+      || error?.message
+      || "Error al obtener documentos requeridos",
+      "Error al obtener documentos requeridos."
     );
   }
 });

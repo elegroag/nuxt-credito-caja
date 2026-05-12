@@ -7,10 +7,10 @@ export const pdfsGenerados = [
     generado_en: {
       fecha: "2026-03-18",
       usuario: "elegro",
-      version: "1.0",
+      version: "1.0"
     },
     created_at: "2026-03-18 02:02:04.0",
-    updated_at: "2026-03-18 02:02:04.0",
+    updated_at: "2026-03-18 02:02:04.0"
   },
   {
     id: 2,
@@ -20,9 +20,9 @@ export const pdfsGenerados = [
     generado_en: {
       fecha: "2026-03-18",
       usuario: "elegro",
-      version: "1.0",
+      version: "1.0"
     },
     created_at: "2026-03-18 02:02:04.0",
-    updated_at: "2026-03-18 02:02:04.0",
-  },
+    updated_at: "2026-03-18 02:02:04.0"
+  }
 ];

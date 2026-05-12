@@ -3,46 +3,46 @@ import { useApi } from "~/composables/useApi";
 
 // Interfaces para los parámetros según la estructura real de la API
 interface ParametroBase {
-  id: string;
-  nombre: string;
-  descripcion?: string;
+  id: string
+  nombre: string
+  descripcion?: string
 }
 
 interface TipoIdentificacion {
-  coddoc: string;
-  detdoc: string;
-  coddoc_circular?: string;
-  codrua?: string;
+  coddoc: string
+  detdoc: string
+  coddoc_circular?: string
+  codrua?: string
 }
 
 interface Ciudad {
-  codigo_dane: string;
-  nombre: string;
-  departamento?: string;
+  codigo_dane: string
+  nombre: string
+  departamento?: string
 }
 
 interface Cargo {
-  codocu: string;
-  detalle: string;
+  codocu: string
+  detalle: string
 }
 
 interface TipoVivienda {
-  vivienda: string;
-  detalle: string;
+  vivienda: string
+  detalle: string
 }
 
 interface TipoContrato {
-  tipcon: string;
-  detalle: string;
+  tipcon: string
+  detalle: string
 }
 
 interface ParametrosDetalles {
-  tipos_identificacion: TipoIdentificacion[];
-  ciudades: Ciudad[];
-  cargos: Cargo[];
-  tipos_vivienda: TipoVivienda[];
-  tipos_contrato: TipoContrato[];
-  estados_solicitud: EstadoSolicitudData[];
+  tipos_identificacion: TipoIdentificacion[]
+  ciudades: Ciudad[]
+  cargos: Cargo[]
+  tipos_vivienda: TipoVivienda[]
+  tipos_contrato: TipoContrato[]
+  estados_solicitud: EstadoSolicitudData[]
 }
 
 export function useParametrosDetalles() {
@@ -66,14 +66,14 @@ export function useParametrosDetalles() {
       // Cargar parámetros principales y estados en paralelo
       const [parametrosRes, estadosRes] = await Promise.all([
         getJson<ParametrosResponse>("/api/lineas_credito/parametros", {
-          auth: true,
+          auth: true
         }),
         getJson<{ data: EstadoSolicitudData[] }>(
           "/api/solicitudes/estados-solicitud",
           {
-            auth: true,
-          },
-        ),
+            auth: true
+          }
+        )
       ]);
 
       // Extraer datos de la respuesta existente
@@ -86,13 +86,13 @@ export function useParametrosDetalles() {
         cargos: datosParametros.ocupaciones || [],
         tipos_vivienda: datosParametros.tipo_vivienda || [],
         tipos_contrato: datosParametros.tipo_contrato || [],
-        estados_solicitud: estadosRes.data || [],
+        estados_solicitud: estadosRes.data || []
       };
 
       return parametrosCache.value;
     } catch (e: any) {
-      const errorMessage =
-        e?.message || "Error cargando parámetros de detalles";
+      const errorMessage
+        = e?.message || "Error cargando parámetros de detalles";
       error.value = errorMessage;
       console.error("Error en useParametrosDetalles:", errorMessage, e);
       throw e;
@@ -104,35 +104,35 @@ export function useParametrosDetalles() {
   // Funciones de búsqueda optimizadas
   const getTipoIdentificacion = computed(() => {
     const tipos = parametrosCache.value?.tipos_identificacion || [];
-    return new Map(tipos.map((tipo) => [tipo.coddoc, tipo.detdoc]));
+    return new Map(tipos.map(tipo => [tipo.coddoc, tipo.detdoc]));
   });
 
   const getCiudadDescripcion = computed(() => {
     const ciudades = parametrosCache.value?.ciudades || [];
     return new Map(
-      ciudades.map((ciudad) => [ciudad.codigo_dane, ciudad.nombre]),
+      ciudades.map(ciudad => [ciudad.codigo_dane, ciudad.nombre])
     );
   });
 
   const getCargoDescripcion = computed(() => {
     const cargos = parametrosCache.value?.cargos || [];
-    return new Map(cargos.map((cargo) => [cargo.codocu, cargo.detalle]));
+    return new Map(cargos.map(cargo => [cargo.codocu, cargo.detalle]));
   });
 
   const getTipoVivienda = computed(() => {
     const tipos = parametrosCache.value?.tipos_vivienda || [];
-    return new Map(tipos.map((tipo) => [tipo.vivienda, tipo.detalle]));
+    return new Map(tipos.map(tipo => [tipo.vivienda, tipo.detalle]));
   });
 
   const getTipoContrato = computed(() => {
     const tipos = parametrosCache.value?.tipos_contrato || [];
-    return new Map(tipos.map((tipo) => [tipo.tipcon, tipo.detalle]));
+    return new Map(tipos.map(tipo => [tipo.tipcon, tipo.detalle]));
   });
 
   // Funciones para estados
   const getEstadoData = computed(() => {
     const estados = parametrosCache.value?.estados_solicitud || [];
-    return new Map(estados.map((estado) => [estado.id, estado]));
+    return new Map(estados.map(estado => [estado.id, estado]));
   });
 
   const getEstadoColor = (estadoId: string): string => {
@@ -155,7 +155,7 @@ export function useParametrosDetalles() {
       "#10B981": "bg-emerald-100 text-emerald-700",
       "#EF4444": "bg-red-100 text-red-700",
       "#8B5CF6": "bg-purple-100 text-purple-700",
-      "#F97316": "bg-orange-100 text-orange-700",
+      "#F97316": "bg-orange-100 text-orange-700"
     };
     return colorMap[color] || "bg-gray-100 text-gray-700";
   };
@@ -164,9 +164,9 @@ export function useParametrosDetalles() {
   const flujoAprobacion = computed(() => {
     const estados = parametrosCache.value?.estados_solicitud || [];
     return estados
-      .filter((estado) => estado.activo)
+      .filter(estado => estado.activo)
       .sort((a, b) => a.orden - b.orden)
-      .map((estado) => estado.id);
+      .map(estado => estado.id);
   });
 
   const estadoProgressPercent = (estadoId: string): number => {
@@ -233,6 +233,6 @@ export function useParametrosDetalles() {
     buscarCiudad,
     buscarCargo,
     buscarTipoVivienda,
-    buscarTipoContrato,
+    buscarTipoContrato
   };
 }

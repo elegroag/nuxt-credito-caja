@@ -2,30 +2,30 @@
 declare module "#auth-utils" {
   // Define the structure of your user object
   interface User {
-    id: string;
-    email: string;
-    name: string;
-    roles: string[];
-    username: string;
+    id: string
+    email: string
+    name: string
+    roles: string[]
+    username: string
     trabajador?: {
-      nit: string;
-      estado: string;
-      sucursal: string;
-      phone: string;
-      email: string;
-    } | null;
+      nit: string
+      estado: string
+      sucursal: string
+      phone: string
+      email: string
+    } | null
     adviser?: {
-      estado: string;
-      phone: string;
-      email: string;
-      codigo_funcionario: string;
-      tipo_funcionario: string;
-    } | null;
+      estado: string
+      phone: string
+      email: string
+      codigo_funcionario: string
+      tipo_funcionario: string
+    } | null
   }
 
   // Define any additional data you want to store in the session
   interface UserSession {
-    loggedInAt: Date;
+    loggedInAt: Date
     // Add other session-specific data here if needed
   }
 

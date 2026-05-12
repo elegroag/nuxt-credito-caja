@@ -2,7 +2,7 @@ import { ref, computed } from "vue";
 import { useApi } from "~/composables/useApi";
 
 export function useHealthCheck(): HealthStatus & {
-  checkConnection: () => Promise<void>;
+  checkConnection: () => Promise<void>
 } {
   const { baseUrl } = useApi();
   const isConnected = ref(false);
@@ -42,8 +42,8 @@ export function useHealthCheck(): HealthStatus & {
       isConnected.value = true;
     } catch (error: any) {
       isConnected.value = false;
-      connectionError.value =
-        error?.message || "No se puede conectar al servidor";
+      connectionError.value
+        = error?.message || "No se puede conectar al servidor";
     } finally {
       checkingConnection.value = false;
     }
@@ -55,6 +55,6 @@ export function useHealthCheck(): HealthStatus & {
     checkingConnection: checkingConnection as any,
     connectionMessage: connectionMessage as any,
     connectionStatusClass: connectionStatusClass as any,
-    checkConnection,
+    checkConnection
   };
 }

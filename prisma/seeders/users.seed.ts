@@ -19,7 +19,7 @@ export const users = [
     created_at: "2026-02-25T02:06:13.000Z",
     updated_at: "2026-02-25T02:06:13.000Z",
     pin_verification: "1234",
-    password_hardcoded: "Admin123$.",
+    password_hardcoded: "Admin123$."
   },
   {
     id: 2,
@@ -41,7 +41,7 @@ export const users = [
     created_at: "2026-02-25 02:06:12.0",
     updated_at: "2026-02-25 02:06:12.0",
     pin_verification: "1234",
-    password_hardcoded: "Admin123$.",
+    password_hardcoded: "Admin123$."
   },
   {
     id: 3,
@@ -63,7 +63,7 @@ export const users = [
     created_at: "2026-02-25 02:06:12.0",
     updated_at: "2026-02-25 02:06:12.0",
     pin_verification: "1234",
-    password_hardcoded: "Admin123$.",
+    password_hardcoded: "Admin123$."
   },
   {
     id: 4,
@@ -85,7 +85,7 @@ export const users = [
     created_at: "2026-02-25 02:06:12.0",
     updated_at: "2026-02-25 02:06:12.0",
     pin_verification: "1234",
-    password_hardcoded: "Admin123$.",
+    password_hardcoded: "Admin123$."
   },
   {
     id: 5,
@@ -107,7 +107,7 @@ export const users = [
     created_at: "2026-02-25 02:06:12.0",
     updated_at: "2026-02-25 02:06:12.0",
     pin_verification: "1234",
-    password_hardcoded: "Admin123$.",
+    password_hardcoded: "Admin123$."
   },
   {
     id: 6,
@@ -129,7 +129,7 @@ export const users = [
     created_at: "2026-02-25T02:06:13.000Z",
     updated_at: "2026-02-25T02:06:13.000Z",
     pin_verification: "1234",
-    password_hardcoded: "Admin123$.",
+    password_hardcoded: "Admin123$."
   },
   {
     id: 7,
@@ -151,7 +151,7 @@ export const users = [
     created_at: "2026-02-25T02:06:13.000Z",
     updated_at: "2026-02-25T02:06:13.000Z",
     pin_verification: "1234",
-    password_hardcoded: "Admin123$.",
+    password_hardcoded: "Admin123$."
   },
   {
     id: 8,
@@ -173,7 +173,7 @@ export const users = [
     created_at: "2026-02-25 02:06:14.0",
     updated_at: "2026-02-25 02:06:14.0",
     pin_verification: "1234",
-    password_hardcoded: "Admin123$.",
+    password_hardcoded: "Admin123$."
   },
   {
     id: 9,
@@ -195,6 +195,6 @@ export const users = [
     created_at: "2026-02-25 02:06:14.0",
     updated_at: "2026-02-25 02:06:14.0",
     pin_verification: "1234",
-    password_hardcoded: "Admin123$.",
-  },
+    password_hardcoded: "Admin123$."
+  }
 ];

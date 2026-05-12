@@ -12,7 +12,7 @@
           ? 'max-w-md lg:max-w-lg xl:max-w-xl'
           : $route.path.includes('registro')
             ? 'max-w-4xl lg:max-w-5xl xl:max-w-6xl'
-            : 'max-w-md lg:max-w-lg xl:max-w-xl',
+            : 'max-w-md lg:max-w-lg xl:max-w-xl'
       ]"
     >
       <AuthHeader />

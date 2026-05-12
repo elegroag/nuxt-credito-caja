@@ -4,14 +4,14 @@ const solicitudService = () => {
   const getSolicitudesByUser = async (
     username: string,
     limit: number = 20,
-    offset: number = 0,
+    offset: number = 0
   ) => {
     const solicitudes = await prisma.solicitudes_credito.findMany({
       where: {
-        owner_username: username,
+        owner_username: username
       },
       orderBy: {
-        created_at: "desc",
+        created_at: "desc"
       },
       take: limit,
       skip: offset,
@@ -20,16 +20,16 @@ const solicitudService = () => {
           select: {
             id: true,
             nombre: true,
-            color: true,
-          },
-        },
-      },
+            color: true
+          }
+        }
+      }
     });
 
     const total = await prisma.solicitudes_credito.count({
       where: {
-        owner_username: username,
-      },
+        owner_username: username
+      }
     });
 
     return {
@@ -51,34 +51,34 @@ const solicitudService = () => {
           ? String(solicitud.cuota_mensual)
           : null,
         created_at: solicitud.created_at?.toISOString() || null,
-        updated_at: solicitud.updated_at?.toISOString() || null,
+        updated_at: solicitud.updated_at?.toISOString() || null
       })),
       total: String(total),
       limit: String(limit),
-      offset: String(offset),
+      offset: String(offset)
     };
   };
 
   const getSolicitudById = async (id: string) => {
     const solicitud = await prisma.solicitudes_credito.findUnique({
       where: {
-        numero_solicitud: id,
+        numero_solicitud: id
       },
       include: {
         estados_solicitud: {
           select: {
             id: true,
             nombre: true,
-            color: true,
-          },
+            color: true
+          }
         },
         users: {
           select: {
             username: true,
             full_name: true,
             email: true,
-            phone: true,
-          },
+            phone: true
+          }
         },
         solicitud_solicitante: {
           select: {
@@ -101,8 +101,8 @@ const solicitudService = () => {
             razon_social: true,
             codigo_categoria: true,
             nit: true,
-            tipo_vivienda: true,
-          },
+            tipo_vivienda: true
+          }
         },
         solicitud_documentos: {
           select: {
@@ -115,8 +115,8 @@ const solicitudService = () => {
             ruta_archivo: true,
             activo: true,
             created_at: true,
-            updated_at: true,
-          },
+            updated_at: true
+          }
         },
         solicitud_payload: {
           select: {
@@ -130,10 +130,10 @@ const solicitudService = () => {
             referencias: true,
             linea_credito: true,
             created_at: true,
-            updated_at: true,
-          },
-        },
-      },
+            updated_at: true
+          }
+        }
+      }
     });
 
     if (!solicitud) {
@@ -156,7 +156,7 @@ const solicitudService = () => {
         fecha_radicado: solicitud.fecha_radicado?.toISOString() || null,
         producto_tipo: solicitud.producto_tipo,
         ha_tenido_credito: solicitud.ha_tenido_credito,
-        tipo_credito: solicitud.tipo_credito,
+        tipo_credito: solicitud.tipo_credito
       },
       linea_credito: solicitud.solicitud_payload?.[0]?.linea_credito || {
         detalle_modalidad: solicitud.detalle_modalidad,
@@ -166,7 +166,7 @@ const solicitudService = () => {
           ? Number(solicitud.tasa_interes)
           : 0,
         total_intereses: 0,
-        total_pagar: 0,
+        total_pagar: 0
       },
       solicitante: solicitud.solicitud_solicitante?.[0] || null,
       informacion_laboral:
@@ -177,7 +177,7 @@ const solicitudService = () => {
         solicitud.solicitud_payload?.[0]?.informacion_economica || null,
       propiedades: solicitud.solicitud_payload?.[0]?.propiedades || null,
       deudas: solicitud.solicitud_payload?.[0]?.deudas || null,
-      referencias: solicitud.solicitud_payload?.[0]?.referencias || null,
+      referencias: solicitud.solicitud_payload?.[0]?.referencias || null
     };
 
     return {
@@ -224,29 +224,29 @@ const solicitudService = () => {
             nit: solicitud.solicitud_solicitante[0].nit,
             codigo_categoria:
               solicitud.solicitud_solicitante[0].codigo_categoria,
-            tipo_vivienda: solicitud.solicitud_solicitante[0].tipo_vivienda,
+            tipo_vivienda: solicitud.solicitud_solicitante[0].tipo_vivienda
           }
         : null,
       payload,
       documentos:
-        solicitud.solicitud_documentos?.map((doc) => ({
+        solicitud.solicitud_documentos?.map(doc => ({
           ...doc,
           id: String(doc.id),
-          tamano_bytes: doc.tamano_bytes ? String(doc.tamano_bytes) : null,
+          tamano_bytes: doc.tamano_bytes ? String(doc.tamano_bytes) : null
         })) || [],
       payload_raw: solicitud.solicitud_payload?.[0]
         ? {
             ...solicitud.solicitud_payload[0],
-            id: String(solicitud.solicitud_payload[0].id),
+            id: String(solicitud.solicitud_payload[0].id)
           }
-        : null,
+        : null
     };
   };
 
   const getAllSolicitudes = async (limit: number = 20, offset: number = 0) => {
     const solicitudes = await prisma.solicitudes_credito.findMany({
       orderBy: {
-        created_at: "desc",
+        created_at: "desc"
       },
       take: limit,
       skip: offset,
@@ -255,17 +255,17 @@ const solicitudService = () => {
           select: {
             id: true,
             nombre: true,
-            color: true,
-          },
+            color: true
+          }
         },
         users: {
           select: {
             username: true,
             full_name: true,
-            email: true,
-          },
-        },
-      },
+            email: true
+          }
+        }
+      }
     });
 
     const total = await prisma.solicitudes_credito.count();
@@ -290,18 +290,18 @@ const solicitudService = () => {
           : null,
         created_at: solicitud.created_at?.toISOString() || null,
         updated_at: solicitud.updated_at?.toISOString() || null,
-        user: solicitud.users,
+        user: solicitud.users
       })),
       total: String(total),
       limit: String(limit),
-      offset: String(offset),
+      offset: String(offset)
     };
   };
 
   const getSolicitudesPaginadas = async (params: {
-    limit: number;
-    skip: number;
-    estado?: string;
+    limit: number
+    skip: number
+    estado?: string
   }) => {
     const { limit, skip, estado } = params;
 
@@ -315,7 +315,7 @@ const solicitudService = () => {
       prisma.solicitudes_credito.findMany({
         where,
         orderBy: {
-          created_at: "desc",
+          created_at: "desc"
         },
         take: limit,
         skip: skip,
@@ -324,20 +324,20 @@ const solicitudService = () => {
             select: {
               id: true,
               nombre: true,
-              color: true,
-            },
+              color: true
+            }
           },
           solicitud_solicitante: {
             select: {
               nombres: true,
               apellidos: true,
               numero_documento: true,
-              email: true,
-            },
-          },
-        },
+              email: true
+            }
+          }
+        }
       }),
-      prisma.solicitudes_credito.count({ where }),
+      prisma.solicitudes_credito.count({ where })
     ]);
 
     return {
@@ -360,11 +360,11 @@ const solicitudService = () => {
           : null,
         created_at: solicitud.created_at?.toISOString() || null,
         updated_at: solicitud.updated_at?.toISOString() || null,
-        solicitante: solicitud.solicitud_solicitante?.[0] || null,
+        solicitante: solicitud.solicitud_solicitante?.[0] || null
       })),
       pagination: {
-        total,
-      },
+        total
+      }
     };
   };
 
@@ -372,7 +372,7 @@ const solicitudService = () => {
     getSolicitudesByUser,
     getSolicitudById,
     getAllSolicitudes,
-    getSolicitudesPaginadas,
+    getSolicitudesPaginadas
   };
 };
 

@@ -9,6 +9,6 @@ export const personalAccessTokens = [
     last_used_at: "2026-03-18 10:30:00.0",
     expires_at: "2027-03-18 00:00:00.0",
     created_at: "2026-03-18 02:06:11.0",
-    updated_at: "2026-03-18 10:30:00.0",
-  },
+    updated_at: "2026-03-18 10:30:00.0"
+  }
 ];

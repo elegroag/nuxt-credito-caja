@@ -28,7 +28,7 @@ export function useCreateUser() {
     apellido: "",
     tipo_documento: getDefaultTipoDocumento(), // Cédula de Ciudadanía
     numero_documento: "",
-    phone: "",
+    phone: ""
   });
 
   // Validaciones
@@ -39,8 +39,8 @@ export function useCreateUser() {
     if (!form.username.trim()) {
       errors.value.username = "El nombre de usuario es requerido";
     } else if (form.username.length < 3) {
-      errors.value.username =
-        "El nombre de usuario debe tener al menos 3 caracteres";
+      errors.value.username
+        = "El nombre de usuario debe tener al menos 3 caracteres";
     }
 
     // Validar email
@@ -60,8 +60,8 @@ export function useCreateUser() {
 
     // Validar confirmación de contraseña
     if (!form.confirmPassword) {
-      errors.value.confirmPassword =
-        "La confirmación de contraseña es requerida";
+      errors.value.confirmPassword
+        = "La confirmación de contraseña es requerida";
     } else if (form.password !== form.confirmPassword) {
       errors.value.confirmPassword = "Las contraseñas no coinciden";
     }
@@ -83,8 +83,8 @@ export function useCreateUser() {
 
     // Validar número de documento si se proporciona tipo
     if (form.tipo_documento && !form.numero_documento.trim()) {
-      errors.value.numero_documento =
-        "El número de documento es requerido cuando se especifica el tipo";
+      errors.value.numero_documento
+        = "El número de documento es requerido cuando se especifica el tipo";
     }
 
     return Object.keys(errors.value).length === 0;
@@ -113,13 +113,13 @@ export function useCreateUser() {
         disabled: form.disabled,
         tipo_documento: form.tipo_documento,
         numero_documento: form.numero_documento.trim(),
-        phone: form.phone.trim(),
+        phone: form.phone.trim()
       };
 
       const response = await postJson<{
-        success: boolean;
-        message: string;
-        data?: any;
+        success: boolean
+        message: string
+        data?: any
       }>("/api/admin/users/create", payload, { auth: true });
 
       if (response.success) {
@@ -158,7 +158,7 @@ export function useCreateUser() {
       apellido: "",
       tipo_documento: getDefaultTipoDocumento(), // Cédula de Ciudadanía
       numero_documento: "",
-      phone: "",
+      phone: ""
     });
     errors.value = {};
   };
@@ -179,6 +179,6 @@ export function useCreateUser() {
     validateForm,
     handleSubmit,
     resetForm,
-    goBack,
+    goBack
   };
 }

@@ -1,5 +1,9 @@
 <template>
-  <UPopover v-model:open="isOpen" arrow :ui="{ content: 'w-[350px] p-4' }">
+  <UPopover
+    v-model:open="isOpen"
+    arrow
+    :ui="{ content: 'w-[350px] p-4' }"
+  >
     <UButton
       variant="ghost"
       color="neutral"
@@ -7,9 +11,15 @@
       @click="toggleDropdown"
     >
       <template #leading>
-        <UIcon name="i-lucide-bell" class="w-5 h-5" />
+        <UIcon
+          name="i-lucide-bell"
+          class="w-5 h-5"
+        />
       </template>
-      <template #trailing v-if="hasUnread">
+      <template
+        v-if="hasUnread"
+        #trailing
+      >
         <UBadge
           color="destructive"
           variant="solid"
@@ -56,7 +66,7 @@ const {
   deleteNotification,
   startPolling,
   stopPolling,
-  updateUnreadCount,
+  updateUnreadCount
 } = useNotifications();
 
 const toggleDropdown = async () => {

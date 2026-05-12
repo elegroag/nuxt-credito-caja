@@ -7,7 +7,7 @@ import { z } from "zod";
 // Schema de validación para cambiar estado
 const cambiarEstadoSchema = z.object({
   estado: z.string().min(1, "El estado es requerido"),
-  descripcion: z.string().optional(),
+  descripcion: z.string().optional()
 });
 
 export default defineEventHandler(async (event: H3Event) => {
@@ -22,7 +22,7 @@ export default defineEventHandler(async (event: H3Event) => {
     const payload = await readValidatedBody(event, cambiarEstadoSchema.parse);
 
     const solicitud = await prisma.solicitudes_credito.findUnique({
-      where: { numero_solicitud: id },
+      where: { numero_solicitud: id }
     });
 
     if (!solicitud) {
@@ -33,16 +33,16 @@ export default defineEventHandler(async (event: H3Event) => {
     const solicitudActualizada = await prisma.solicitudes_credito.update({
       where: { numero_solicitud: id },
       data: {
-        estado: payload.estado,
-      },
+        estado: payload.estado
+      }
     });
 
     return CustomResponse.success(
       {
         numero_solicitud: solicitudActualizada.numero_solicitud,
-        estado: solicitudActualizada.estado,
+        estado: solicitudActualizada.estado
       },
-      "Estado actualizado exitosamente",
+      "Estado actualizado exitosamente"
     );
   } catch (e: any) {
     const status = Number(e?.statusCode || e?.response?.status || 502);
@@ -50,7 +50,7 @@ export default defineEventHandler(async (event: H3Event) => {
 
     return CustomResponse.error(
       e?.data?.error || e?.message || "Error conectando con backend",
-      "Error al actualizar estado.",
+      "Error al actualizar estado."
     );
   }
 });

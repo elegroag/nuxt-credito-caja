@@ -8,10 +8,10 @@ export const notifications = [
       url: "/admin/solicitudes/show/TEST-001",
       titulo: "Notificación de Prueba",
       mensaje: "Esta es una notificación de prueba para el sistema",
-      solicitud_id: "TEST-001",
+      solicitud_id: "TEST-001"
     },
     read_at: null,
     created_at: "2026-02-25 02:06:10.0",
-    updated_at: "2026-02-25 02:06:10.0",
-  },
+    updated_at: "2026-02-25 02:06:10.0"
+  }
 ];

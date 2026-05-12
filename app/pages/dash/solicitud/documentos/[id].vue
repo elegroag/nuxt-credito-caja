@@ -14,11 +14,12 @@
           </div>
           <div class="flex items-center gap-2 text-sm text-muted-foreground">
             <DocumentTextIcon class="w-4 h-4" />
-            <UIcon name="i-lucide-file-text" class="w-4 h-4" />
-            <span
-              >{{ documentosRequeridos?.length || 0 }} documentos
-              requeridos</span
-            >
+            <UIcon
+              name="i-lucide-file-text"
+              class="w-4 h-4"
+            />
+            <span>{{ documentosRequeridos?.length || 0 }} documentos
+              requeridos</span>
           </div>
         </div>
       </UPageCard>
@@ -39,7 +40,7 @@
           <div class="relative">
             <div
               class="w-16 h-16 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin"
-            ></div>
+            />
             <DocumentTextIcon
               class="absolute inset-0 w-8 h-8 m-auto text-blue-600"
             />
@@ -55,7 +56,10 @@
         </div>
 
         <!-- Error State -->
-        <UPageCard v-else-if="errorSolicitud" class="max-w-2xl mx-auto">
+        <UPageCard
+          v-else-if="errorSolicitud"
+          class="max-w-2xl mx-auto"
+        >
           <div class="text-center">
             <div
               class="w-16 h-16 bg-red-100 dark:bg-red-900/20 rounded-full flex items-center justify-center mx-auto mb-4"
@@ -71,15 +75,24 @@
             <p class="text-red-700 dark:text-red-300 mb-6">
               {{ errorSolicitud }}
             </p>
-            <UButton color="destructive" @click="cargarSolicitud">
-              <UIcon name="i-lucide-refresh-cw" class="w-4 h-4 mr-2" />
+            <UButton
+              color="destructive"
+              @click="cargarSolicitud"
+            >
+              <UIcon
+                name="i-lucide-refresh-cw"
+                class="w-4 h-4 mr-2"
+              />
               Reintentar
             </UButton>
           </div>
         </UPageCard>
 
         <!-- Main Content -->
-        <div v-else-if="solicitud" class="space-y-8">
+        <div
+          v-else-if="solicitud"
+          class="space-y-8"
+        >
           <!-- Info Card -->
           <div class="bg-gradient-primary rounded-2xl p-8 text-white shadow-xl">
             <div class="flex items-start gap-6">
@@ -89,13 +102,14 @@
                 <InformationCircleIcon class="w-6 h-6" />
               </div>
               <div class="flex-1">
-                <h2 class="text-2xl font-bold mb-3">Documentos Requeridos</h2>
+                <h2 class="text-2xl font-bold mb-3">
+                  Documentos Requeridos
+                </h2>
                 <p class="text-blue-100 text-lg leading-relaxed">
                   Para continuar con su solicitud de crédito<strong>
                     {{
                       solicitud?.payload?.linea_credito?.detalle_modalidad || ""
-                    }}</strong
-                  >, por favor cargue los documentos listados a continuación.
+                    }}</strong>, por favor cargue los documentos listados a continuación.
                 </p>
                 <div class="mt-4 flex items-center gap-6 text-sm">
                   <div class="flex items-center gap-2">
@@ -126,7 +140,7 @@
               <div
                 class="bg-linear-to-r from-blue-500 to-lime-600 h-3 rounded-full transition-all duration-500"
                 :style="{ width: `${progresoDocumentos}%` }"
-              ></div>
+              />
             </div>
             <p class="text-sm text-gray-600 mt-2">
               {{ progresoDocumentos }}% completado
@@ -139,12 +153,12 @@
               v-for="(docReq, index) in documentosRequeridos"
               :key="docReq.id"
               :ui="{
-                root: 'overflow-hidden transition-all duration-300 hover:shadow-xl ring-0',
+                root: 'overflow-hidden transition-all duration-300 hover:shadow-xl ring-0'
               }"
               :class="{
                 'border-success': getDocumentoCargado(docReq.id),
                 'border-warning':
-                  !getDocumentoCargado(docReq.id) && docReq.obligatorio,
+                  !getDocumentoCargado(docReq.id) && docReq.obligatorio
               }"
             >
               <!-- Document Header -->
@@ -169,9 +183,7 @@
                         >
                           {{ docReq.obligatorio ? "Obligatorio" : "Opcional" }}
                         </UBadge>
-                        <span class="text-xs text-muted-foreground"
-                          >Documento #{{ index + 1 }}</span
-                        >
+                        <span class="text-xs text-muted-foreground">Documento #{{ index + 1 }}</span>
                       </div>
                     </div>
                   </div>
@@ -229,10 +241,13 @@
                 variant="outline"
                 color="neutral"
                 size="lg"
-                @click="router.back()"
                 class="w-full md:w-auto"
+                @click="router.back()"
               >
-                <UIcon name="i-lucide-arrow-left" class="w-4 h-4 mr-2" />
+                <UIcon
+                  name="i-lucide-arrow-left"
+                  class="w-4 h-4 mr-2"
+                />
                 Volver a la Solicitud
               </UButton>
 
@@ -243,13 +258,19 @@
                   size="lg"
                   color="primary"
                   :disabled="!puedeContinuar"
-                  @click="handleContinue"
                   class="w-full md:w-auto"
+                  @click="handleContinue"
                 >
-                  <UIcon name="i-lucide-arrow-right" class="w-5 h-5 mr-2" />
+                  <UIcon
+                    name="i-lucide-arrow-right"
+                    class="w-5 h-5 mr-2"
+                  />
                   Continuar
                 </UButton>
-                <div v-if="!puedeContinuar" class="text-center md:text-right">
+                <div
+                  v-if="!puedeContinuar"
+                  class="text-center md:text-right"
+                >
                   <p
                     class="text-sm text-red-600 font-medium flex items-center gap-2 justify-center md:justify-end"
                   >
@@ -259,13 +280,16 @@
                   <p class="text-xs text-gray-500 mt-1">
                     {{
                       documentosRequeridos?.filter(
-                        (d) => d.obligatorio && !getDocumentoCargado(d.id),
+                        (d) => d.obligatorio && !getDocumentoCargado(d.id)
                       ).length || 0
                     }}
                     documentos obligatorios pendientes
                   </p>
                 </div>
-                <div v-else class="text-center md:text-right">
+                <div
+                  v-else
+                  class="text-center md:text-right"
+                >
                   <p
                     class="text-sm text-green-600 font-medium flex items-center gap-2 justify-center md:justify-end"
                   >
@@ -284,8 +308,8 @@
     v-model:open="downloadErrorDialogOpen"
     title="Error al descargar documento"
     :description="
-      downloadError ||
-      'No fue posible descargar el documento. Intente nuevamente más tarde.'
+      downloadError
+        || 'No fue posible descargar el documento. Intente nuevamente más tarde.'
     "
     :ui="{ footer: 'justify-end' }"
   >
@@ -311,7 +335,7 @@ import {
   ServerIcon,
   CheckCircleIcon,
   CircleStackIcon,
-  ExclamationTriangleIcon,
+  ExclamationTriangleIcon
 } from "@heroicons/vue/24/outline";
 
 // Usar el composable
@@ -337,7 +361,7 @@ const {
   errorUpload,
   downloadError,
   downloadErrorDialogOpen,
-  setDownloadErrorDialogOpen,
+  setDownloadErrorDialogOpen
 } = useDocumentosSolicitud();
 
 // Lifecycle
@@ -347,7 +371,7 @@ onMounted(() => {
 
 definePageMeta({
   layout: "dashboard",
-  middleware: ["auth"],
+  middleware: ["auth"]
 });
 
 const router = useRouter();

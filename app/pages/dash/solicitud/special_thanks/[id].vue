@@ -25,9 +25,7 @@
       <div class="grid md:grid-cols-2 gap-6">
         <div class="space-y-4">
           <div>
-            <label class="text-sm font-medium text-gray-500"
-              >Número de solicitud</label
-            >
+            <label class="text-sm font-medium text-gray-500">Número de solicitud</label>
             <div class="mt-1">
               <span class="text-lg font-semibold text-gray-900">{{
                 solicitudId
@@ -36,20 +34,19 @@
           </div>
 
           <div>
-            <label class="text-sm font-medium text-gray-500"
-              >Estado actual</label
-            >
+            <label class="text-sm font-medium text-gray-500">Estado actual</label>
             <div class="mt-1">
-              <Badge variant="secondary" class="text-sm">
+              <Badge
+                variant="secondary"
+                class="text-sm"
+              >
                 Enviado para validación
               </Badge>
             </div>
           </div>
 
           <div>
-            <label class="text-sm font-medium text-gray-500"
-              >Fecha de envío</label
-            >
+            <label class="text-sm font-medium text-gray-500">Fecha de envío</label>
             <div class="mt-1">
               <span class="text-gray-900">{{ fechaEnvio }}</span>
             </div>
@@ -58,9 +55,7 @@
 
         <div class="space-y-4">
           <div>
-            <label class="text-sm font-medium text-gray-500"
-              >Próximos pasos</label
-            >
+            <label class="text-sm font-medium text-gray-500">Próximos pasos</label>
             <div class="mt-1 text-sm text-gray-600">
               <ul class="space-y-2">
                 <li class="flex items-start">
@@ -92,12 +87,17 @@
     />
 
     <!-- Alerta de error o información -->
-    <div v-if="mostrarAlerta" class="mb-6">
+    <div
+      v-if="mostrarAlerta"
+      class="mb-6"
+    >
       <UCard class="bg-yellow-50 border-yellow-300">
         <div class="flex items-start gap-3">
           <AlertCircle class="h-5 w-5 text-yellow-600 shrink-0 mt-0.5" />
           <div>
-            <p class="text-sm text-yellow-800">{{ mensajeAlerta }}</p>
+            <p class="text-sm text-yellow-800">
+              {{ mensajeAlerta }}
+            </p>
           </div>
         </div>
       </UCard>
@@ -106,36 +106,42 @@
     <!-- Acciones disponibles -->
     <div class="flex flex-col sm:flex-row gap-4 justify-center mt-6">
       <UButton
-        @click="handleVisualizarPDF"
         variant="outline"
         :disabled="pdfLoading"
         class="flex items-center gap-2 bg-white text-gray-900"
+        @click="handleVisualizarPDF"
       >
-        <Eye v-if="!pdfLoading" class="h-4 w-4" />
+        <Eye
+          v-if="!pdfLoading"
+          class="h-4 w-4"
+        />
         <span
           v-if="pdfLoading"
           class="loading loading-spinner loading-xs"
-        ></span>
+        />
         {{ pdfLoading ? "Cargando..." : "Ver documento" }}
       </UButton>
 
       <UButton
-        @click="handleDescargarPDF"
         variant="outline"
         :disabled="pdfLoading"
         class="flex items-center gap-2 bg-white text-gray-900"
+        @click="handleDescargarPDF"
       >
-        <Download v-if="!pdfLoading" class="h-4 w-4" />
+        <Download
+          v-if="!pdfLoading"
+          class="h-4 w-4"
+        />
         <span
           v-if="pdfLoading"
           class="loading loading-spinner loading-xs"
-        ></span>
+        />
         {{ pdfLoading ? "Descargando..." : "Descargar PDF" }}
       </UButton>
 
       <UButton
-        @click="irAlInicio"
         class="flex items-center gap-2 w-full sm:w-auto"
+        @click="irAlInicio"
       >
         <Home class="h-4 w-4" />
         Ir al dashboard
@@ -176,7 +182,7 @@ import {
   Home,
   FileText,
   Eye,
-  AlertCircle,
+  AlertCircle
 } from "lucide-vue-next";
 
 import Badge from "@/components/shared/Badge.vue";
@@ -185,7 +191,7 @@ import { useSpecialThanksPage } from "~/composables/solicitud/useSpecialThanksPa
 
 definePageMeta({
   layout: "dashboard",
-  middleware: ["auth"],
+  middleware: ["auth"]
 });
 
 const {
@@ -205,6 +211,6 @@ const {
   // Funciones
   handleVisualizarPDF,
   handleDescargarPDF,
-  irAlInicio,
+  irAlInicio
 } = useSpecialThanksPage();
 </script>

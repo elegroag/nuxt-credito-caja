@@ -13,7 +13,7 @@ export const modules = [
     description: "Panel principal del sistema",
     permissions_required: null,
     created_at: "2026-02-25 02:06:11.0",
-    updated_at: "2026-02-25 02:06:11.0",
+    updated_at: "2026-02-25 02:06:11.0"
   },
   {
     id: 2,
@@ -29,7 +29,7 @@ export const modules = [
     description: "Gestión de solicitudes de crédito",
     permissions_required: ["solicitudes.read"],
     created_at: "2026-02-25 02:06:11.0",
-    updated_at: "2026-02-25 02:06:11.0",
+    updated_at: "2026-02-25 02:06:11.0"
   },
   {
     id: 3,
@@ -45,7 +45,7 @@ export const modules = [
     description: "Crear nueva solicitud de crédito",
     permissions_required: ["solicitudes.create"],
     created_at: "2026-02-25 02:06:11.0",
-    updated_at: "2026-02-25 02:06:11.0",
+    updated_at: "2026-02-25 02:06:11.0"
   },
   {
     id: 4,
@@ -61,7 +61,7 @@ export const modules = [
     description: "Gestión de trabajadores",
     permissions_required: ["trabajadores.read"],
     created_at: "2026-02-25 02:06:11.0",
-    updated_at: "2026-02-25 02:06:11.0",
+    updated_at: "2026-02-25 02:06:11.0"
   },
   {
     id: 5,
@@ -77,7 +77,7 @@ export const modules = [
     description: "Gestión de empresas convenio",
     permissions_required: ["empresas.read"],
     created_at: "2026-02-25 02:06:11.0",
-    updated_at: "2026-02-25 02:06:11.0",
+    updated_at: "2026-02-25 02:06:11.0"
   },
   {
     id: 6,
@@ -93,7 +93,7 @@ export const modules = [
     description: "Gestión de usuarios del sistema",
     permissions_required: ["users.read"],
     created_at: "2026-02-25 02:06:11.0",
-    updated_at: "2026-02-25 02:06:11.0",
+    updated_at: "2026-02-25 02:06:11.0"
   },
   {
     id: 7,
@@ -109,7 +109,7 @@ export const modules = [
     description: "Reportes y estadísticas",
     permissions_required: ["reports.read"],
     created_at: "2026-02-25 02:06:11.0",
-    updated_at: "2026-02-25 02:06:11.0",
+    updated_at: "2026-02-25 02:06:11.0"
   },
   {
     id: 8,
@@ -125,6 +125,6 @@ export const modules = [
     description: "Configuración del sistema",
     permissions_required: ["system.admin"],
     created_at: "2026-02-25 02:06:11.0",
-    updated_at: "2026-02-25 02:06:11.0",
-  },
+    updated_at: "2026-02-25 02:06:11.0"
+  }
 ];

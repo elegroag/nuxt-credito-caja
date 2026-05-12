@@ -13,7 +13,7 @@ const normalizeValue = (value: any): string | undefined => {
 const postulacionSolicitudService = () => {
   // Guardar número de solicitud
   const guardarNumeroSolicitud = async (
-    params: GuardarNumeroSolicitudParams,
+    params: GuardarNumeroSolicitudParams
   ) => {
     const { linea_credito = "03", vigencia } = params;
 
@@ -21,11 +21,11 @@ const postulacionSolicitudService = () => {
     const ultimoNumero = await prisma.numero_solicitudes.findFirst({
       where: {
         linea_credito,
-        vigencia,
+        vigencia
       },
       orderBy: {
-        numeric_secuencia: "desc",
-      },
+        numeric_secuencia: "desc"
+      }
     });
 
     const nuevaSecuencia = (ultimoNumero?.numeric_secuencia || 0) + 1;
@@ -38,8 +38,8 @@ const postulacionSolicitudService = () => {
         radicado,
         numeric_secuencia: nuevaSecuencia,
         linea_credito,
-        vigencia,
-      },
+        vigencia
+      }
     });
 
     return numeroSolicitud;
@@ -47,10 +47,10 @@ const postulacionSolicitudService = () => {
 
   // Guardar solicitud de crédito
   const guardarSolicitudCredito = async (
-    params: GuardarSolicitudCreditoParams,
+    params: GuardarSolicitudCreditoParams
   ) => {
     const solicitud = await prisma.solicitudes_credito.create({
-      data: params,
+      data: params
     });
 
     return solicitud;
@@ -59,7 +59,7 @@ const postulacionSolicitudService = () => {
   // Guardar payload
   const guardarPayload = async (params: GuardarPayloadParams) => {
     const payload = await prisma.solicitud_payload.create({
-      data: params,
+      data: params
     });
 
     return payload;
@@ -68,7 +68,7 @@ const postulacionSolicitudService = () => {
   // Guardar solicitante
   const guardarSolicitante = async (params: GuardarSolicitanteParams) => {
     const solicitante = await prisma.solicitud_solicitante.create({
-      data: params,
+      data: params
     });
 
     return solicitante;
@@ -77,7 +77,7 @@ const postulacionSolicitudService = () => {
   // Guardar timeline
   const guardarTimeline = async (params: GuardarTimelineParams) => {
     const timeline = await prisma.solicitud_timeline.create({
-      data: params,
+      data: params
     });
 
     return timeline;
@@ -86,7 +86,7 @@ const postulacionSolicitudService = () => {
   // Guardar firmante
   const guardarFirmante = async (params: GuardarFirmanteParams) => {
     const firmante = await prisma.firmantes_solicitud.create({
-      data: params,
+      data: params
     });
 
     return firmante;
@@ -105,13 +105,13 @@ const postulacionSolicitudService = () => {
         propiedades,
         deudas,
         referencias,
-        conyuge,
+        conyuge
       } = payload;
 
       // 1. Obtener estado inicial válido
       const estadoInicial = await prisma.estados_solicitud.findFirst({
         where: { activo: true },
-        orderBy: { orden: "asc" },
+        orderBy: { orden: "asc" }
       });
 
       if (!estadoInicial) {
@@ -125,33 +125,33 @@ const postulacionSolicitudService = () => {
       if (solicitudIdEnviado) {
         // Verificar si el número enviado ya existe
         const solicitudExistente = await prisma.solicitudes_credito.findUnique({
-          where: { numero_solicitud: solicitudIdEnviado },
+          where: { numero_solicitud: solicitudIdEnviado }
         });
 
         if (solicitudExistente) {
           // Si existe, generar uno nuevo automáticamente
           const numeroSolicitud = await guardarNumeroSolicitud({
             linea_credito: linea_credito?.tipcre || solicitud?.tipcre || "03",
-            vigencia: new Date().getFullYear(),
+            vigencia: new Date().getFullYear()
           });
           numeroSolicitudRadicado = numeroSolicitud.radicado;
         } else {
           // Si no existe, usar el enviado y guardarlo en tabla numero_solicitudes
-          const lineaCredito =
-            linea_credito?.tipcre || solicitud?.tipcre || "03";
+          const lineaCredito
+            = linea_credito?.tipcre || solicitud?.tipcre || "03";
           const vigencia = new Date().getFullYear();
           // Extraer secuencia del formato "000006-202604-01"
           const partes = solicitudIdEnviado.split("-");
-          const secuencia =
-            partes.length >= 1 ? parseInt(partes[0], 10) || 1 : 1;
+          const secuencia
+            = partes.length >= 1 ? parseInt(partes[0], 10) || 1 : 1;
 
           await prisma.numero_solicitudes.create({
             data: {
               radicado: solicitudIdEnviado,
               numeric_secuencia: secuencia,
               linea_credito: lineaCredito,
-              vigencia: vigencia,
-            },
+              vigencia: vigencia
+            }
           });
           numeroSolicitudRadicado = solicitudIdEnviado;
         }
@@ -159,7 +159,7 @@ const postulacionSolicitudService = () => {
         // Si no se envió número, generar uno automáticamente
         const numeroSolicitud = await guardarNumeroSolicitud({
           linea_credito: linea_credito?.tipcre || solicitud?.tipcre || "03",
-          vigencia: new Date().getFullYear(),
+          vigencia: new Date().getFullYear()
         });
         numeroSolicitudRadicado = numeroSolicitud.radicado;
       }
@@ -178,7 +178,7 @@ const postulacionSolicitudService = () => {
         tipo_credito: solicitud?.tipcre || linea_credito?.tipcre,
         moneda: solicitud?.moneda || "COP",
         cuota_mensual: solicitud?.cuota_mensual,
-        rol_en_solicitud: solicitud?.rol_en_solicitud || "T",
+        rol_en_solicitud: solicitud?.rol_en_solicitud || "T"
       });
 
       // 3. Guardar payload
@@ -190,7 +190,7 @@ const postulacionSolicitudService = () => {
         propiedades,
         deudas,
         referencias,
-        linea_credito,
+        linea_credito
       });
 
       // 4. Guardar solicitante
@@ -198,9 +198,9 @@ const postulacionSolicitudService = () => {
         await guardarSolicitante({
           solicitud_id: numeroSolicitudRadicado,
           tipo_persona: normalizeValue(solicitante.tipo_persona) as
-            | "natural"
-            | "juridica"
-            | undefined,
+          | "natural"
+          | "juridica"
+          | undefined,
           tipo_documento: solicitante.tipo_documento,
           numero_documento: solicitante.numero_documento,
           nombres: solicitante.nombres,
@@ -234,7 +234,7 @@ const postulacionSolicitudService = () => {
           salario: solicitante.salario,
           antiguedad_meses: solicitante.antiguedad_meses,
           tipo_contrato: solicitante.tipo_contrato,
-          sector_economico: solicitante.sector_economico,
+          sector_economico: solicitante.sector_economico
         });
       }
 
@@ -244,7 +244,7 @@ const postulacionSolicitudService = () => {
         estado: solicitudCredito.estado,
         detalle: "Solicitud creada exitosamente",
         usuario_username: solicitud?.owner_username,
-        automatico: true,
+        automatico: true
       });
 
       return {
@@ -252,9 +252,9 @@ const postulacionSolicitudService = () => {
         data: {
           numero_solicitud: numeroSolicitudRadicado,
           solicitud: solicitudCredito,
-          payload,
+          payload
         },
-        message: "Solicitud guardada exitosamente",
+        message: "Solicitud guardada exitosamente"
       };
     } catch (error: any) {
       throw new Error(`Error al guardar la solicitud: ${error.message}`);
@@ -268,7 +268,7 @@ const postulacionSolicitudService = () => {
     guardarSolicitante,
     guardarTimeline,
     guardarFirmante,
-    guardarSolicitudCompleta,
+    guardarSolicitudCompleta
   };
 };
 

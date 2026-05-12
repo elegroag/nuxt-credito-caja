@@ -37,8 +37,8 @@ export default defineEventHandler(async (event: H3Event) => {
     const solicitud = await prisma.solicitudes_credito.findUnique({
       where: { numero_solicitud: solicitudId },
       include: {
-        pdfs_generados: true,
-      },
+        pdfs_generados: true
+      }
     });
 
     if (!solicitud) {
@@ -59,7 +59,7 @@ export default defineEventHandler(async (event: H3Event) => {
 
     return CustomResponse.error(
       error?.data?.error || error?.message || "Error al obtener la solicitud",
-      "Error al obtener solicitud.",
+      "Error al obtener solicitud."
     );
   }
 });

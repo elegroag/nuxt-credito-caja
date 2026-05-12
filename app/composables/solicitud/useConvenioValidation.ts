@@ -17,7 +17,7 @@ export function useConvenioValidation() {
    */
   const validarConvenio = async (
     nitEmpresa: string,
-    cedulaTrabajador: string,
+    cedulaTrabajador: string
   ): Promise<boolean> => {
     loading.value = true;
     error.value = null;
@@ -26,7 +26,7 @@ export function useConvenioValidation() {
     try {
       const response = await api.getJson<ConvenioValidationResponse>(
         `/api/convenios/validar/${nitEmpresa}/${cedulaTrabajador}`,
-        { auth: true },
+        { auth: true }
       );
 
       if (response.success && response.data) {
@@ -40,13 +40,13 @@ export function useConvenioValidation() {
       const errorData = err.data as ConvenioValidationError | undefined;
 
       if (errorData?.error_type === "NOT_FOUND") {
-        error.value =
-          errorData.message ||
-          "No se encontró convenio activo para esta empresa";
+        error.value
+          = errorData.message
+            || "No se encontró convenio activo para esta empresa";
       } else if (errorData?.error_type === "VALIDATION_ERROR") {
-        error.value =
-          errorData.message ||
-          "El trabajador no cumple con los requisitos mínimos";
+        error.value
+          = errorData.message
+            || "El trabajador no cumple con los requisitos mínimos";
       } else {
         error.value = "Error al validar el convenio. Intente nuevamente.";
       }
@@ -62,8 +62,8 @@ export function useConvenioValidation() {
    * Valida convenio mediante POST (para formularios)
    */
   const validarConvenioPost = async (data: {
-    nit_empresa: string;
-    cedula_trabajador: string;
+    nit_empresa: string
+    cedula_trabajador: string
   }): Promise<boolean> => {
     loading.value = true;
     error.value = null;
@@ -73,7 +73,7 @@ export function useConvenioValidation() {
       const response = await api.postJson<ConvenioValidationResponse>(
         "/api/convenios/validar",
         data,
-        { auth: true },
+        { auth: true }
       );
 
       if (response.success && response.data) {
@@ -122,7 +122,7 @@ export function useConvenioValidation() {
         titulo: "Sin convenio empresarial",
         descripcion:
           "La empresa no tiene un convenio activo con Comfaca. Puede aplicar al flujo estándar de crédito.",
-        tipo: "info" as const,
+        tipo: "info" as const
       };
     }
 
@@ -131,7 +131,7 @@ export function useConvenioValidation() {
         titulo: "Tiempo de servicio insuficiente",
         descripcion:
           "Debe tener al menos 6 meses de antigüedad en la empresa para acceder a crédito bajo convenio.",
-        tipo: "warning" as const,
+        tipo: "warning" as const
       };
     }
 
@@ -140,14 +140,14 @@ export function useConvenioValidation() {
         titulo: "Estado laboral inactivo",
         descripcion:
           "Su estado laboral debe estar activo para solicitar crédito bajo convenio empresarial.",
-        tipo: "warning" as const,
+        tipo: "warning" as const
       };
     }
 
     return {
       titulo: "Error de validación",
       descripcion: error.value,
-      tipo: "error" as const,
+      tipo: "error" as const
     };
   });
 
@@ -164,6 +164,6 @@ export function useConvenioValidation() {
     // Métodos
     validarConvenio,
     validarConvenioPost,
-    limpiarValidacion,
+    limpiarValidacion
   };
 }

@@ -12,12 +12,12 @@ export default defineEventHandler(async (event: H3Event) => {
     if (!session?.user?.username) {
       throw createError({
         statusCode: 401,
-        message: "No session found",
+        message: "No session found"
       });
     }
 
     const convenios = await convenioSrv.getConveniosByUser(
-      session.user.username,
+      session.user.username
     );
 
     return CustomResponse.success(convenios, "Convenios obtenidos exitosamente");
@@ -27,7 +27,7 @@ export default defineEventHandler(async (event: H3Event) => {
 
     return CustomResponse.error(
       e?.data?.error || e?.message || "Error conectando con backend",
-      "Error al obtener convenios.",
+      "Error al obtener convenios."
     );
   }
 });

@@ -6,7 +6,7 @@ export const tipoDocumentos = [
     orden: 1,
     activo: true,
     created_at: "2026-02-25 02:06:19.0",
-    updated_at: "2026-02-25 02:06:19.0",
+    updated_at: "2026-02-25 02:06:19.0"
   },
   {
     id: 2,
@@ -15,7 +15,7 @@ export const tipoDocumentos = [
     orden: 2,
     activo: true,
     created_at: "2026-02-25 02:06:19.0",
-    updated_at: "2026-02-25 02:06:19.0",
+    updated_at: "2026-02-25 02:06:19.0"
   },
   {
     id: 3,
@@ -24,7 +24,7 @@ export const tipoDocumentos = [
     orden: 3,
     activo: true,
     created_at: "2026-02-25 02:06:20.0",
-    updated_at: "2026-02-25 02:06:20.0",
+    updated_at: "2026-02-25 02:06:20.0"
   },
   {
     id: 4,
@@ -33,7 +33,7 @@ export const tipoDocumentos = [
     orden: 4,
     activo: true,
     created_at: "2026-02-25 02:06:20.0",
-    updated_at: "2026-02-25 02:06:20.0",
+    updated_at: "2026-02-25 02:06:20.0"
   },
   {
     id: 5,
@@ -42,7 +42,7 @@ export const tipoDocumentos = [
     orden: 5,
     activo: true,
     created_at: "2026-02-25 02:06:20.0",
-    updated_at: "2026-02-25 02:06:20.0",
+    updated_at: "2026-02-25 02:06:20.0"
   },
   {
     id: 6,
@@ -51,7 +51,7 @@ export const tipoDocumentos = [
     orden: 6,
     activo: true,
     created_at: "2026-02-25 02:06:20.0",
-    updated_at: "2026-02-25 02:06:20.0",
+    updated_at: "2026-02-25 02:06:20.0"
   },
   {
     id: 7,
@@ -60,7 +60,7 @@ export const tipoDocumentos = [
     orden: 7,
     activo: true,
     created_at: "2026-02-25 02:06:20.0",
-    updated_at: "2026-02-25 02:06:20.0",
+    updated_at: "2026-02-25 02:06:20.0"
   },
   {
     id: 8,
@@ -69,7 +69,7 @@ export const tipoDocumentos = [
     orden: 8,
     activo: true,
     created_at: "2026-02-25 02:06:20.0",
-    updated_at: "2026-02-25 02:06:20.0",
+    updated_at: "2026-02-25 02:06:20.0"
   },
   {
     id: 9,
@@ -78,7 +78,7 @@ export const tipoDocumentos = [
     orden: 9,
     activo: true,
     created_at: "2026-02-25 02:06:21.0",
-    updated_at: "2026-02-25 02:06:21.0",
+    updated_at: "2026-02-25 02:06:21.0"
   },
   {
     id: 10,
@@ -87,7 +87,7 @@ export const tipoDocumentos = [
     orden: 10,
     activo: true,
     created_at: "2026-02-25 02:06:21.0",
-    updated_at: "2026-02-25 02:06:21.0",
+    updated_at: "2026-02-25 02:06:21.0"
   },
   {
     id: 11,
@@ -96,7 +96,7 @@ export const tipoDocumentos = [
     orden: 11,
     activo: true,
     created_at: "2026-02-25 02:06:21.0",
-    updated_at: "2026-02-25 02:06:21.0",
+    updated_at: "2026-02-25 02:06:21.0"
   },
   {
     id: 12,
@@ -105,7 +105,7 @@ export const tipoDocumentos = [
     orden: 12,
     activo: true,
     created_at: "2026-02-25 02:06:21.0",
-    updated_at: "2026-02-25 02:06:21.0",
+    updated_at: "2026-02-25 02:06:21.0"
   },
   {
     id: 13,
@@ -114,7 +114,7 @@ export const tipoDocumentos = [
     orden: 13,
     activo: true,
     created_at: "2026-02-25 02:06:21.0",
-    updated_at: "2026-02-25 02:06:21.0",
+    updated_at: "2026-02-25 02:06:21.0"
   },
   {
     id: 14,
@@ -123,7 +123,7 @@ export const tipoDocumentos = [
     orden: 14,
     activo: true,
     created_at: "2026-02-25 02:06:21.0",
-    updated_at: "2026-02-25 02:06:21.0",
+    updated_at: "2026-02-25 02:06:21.0"
   },
   {
     id: 15,
@@ -132,7 +132,7 @@ export const tipoDocumentos = [
     orden: 15,
     activo: true,
     created_at: "2026-02-25 02:06:22.0",
-    updated_at: "2026-02-25 02:06:22.0",
+    updated_at: "2026-02-25 02:06:22.0"
   },
   {
     id: 16,
@@ -141,6 +141,6 @@ export const tipoDocumentos = [
     orden: 99,
     activo: true,
     created_at: "2026-02-25 02:06:22.0",
-    updated_at: "2026-02-25 02:06:22.0",
-  },
+    updated_at: "2026-02-25 02:06:22.0"
+  }
 ];

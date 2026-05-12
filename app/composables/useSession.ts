@@ -12,7 +12,7 @@ const VALIDATION_TTL = 5 * 60 * 1000; // 5 minutos
 const emptySession = (): SessionData => ({
   accessToken: "",
   tokenType: "bearer",
-  user: null,
+  user: null
 });
 
 export const useSession = () => {
@@ -20,11 +20,11 @@ export const useSession = () => {
   const hydrated = useState<boolean>("session_hydrated", () => false);
   const hydrationPromise = useState<Promise<void> | null>(
     "session_hydration_promise",
-    () => null,
+    () => null
   );
 
   const hydrate = async () => {
-    if (!process.client) return;
+    if (!import.meta.client) return;
     if (hydrated.value) return;
     hydrated.value = true;
 
@@ -51,13 +51,13 @@ export const useSession = () => {
               ? u.permissions.filter((p: any) => typeof p === "string")
               : [];
             const email = typeof u.email === "string" ? u.email : "";
-            const tipo_documento =
-              typeof u.tipo_documento === "string" ? u.tipo_documento : "";
-            const numero_documento =
-              typeof u.numero_documento === "string" ? u.numero_documento : "";
+            const tipo_documento
+              = typeof u.tipo_documento === "string" ? u.tipo_documento : "";
+            const numero_documento
+              = typeof u.numero_documento === "string" ? u.numero_documento : "";
             const nombres = typeof u.nombres === "string" ? u.nombres : "";
-            const apellidos =
-              typeof u.apellidos === "string" ? u.apellidos : "";
+            const apellidos
+              = typeof u.apellidos === "string" ? u.apellidos : "";
 
             let trabajador: Trabajador | undefined;
             if (typeof trabajadorRaw === "string" && trabajadorRaw) {
@@ -76,7 +76,7 @@ export const useSession = () => {
               numero_documento,
               nombres,
               apellidos,
-              trabajador,
+              trabajador
             };
           }
         }
@@ -88,34 +88,34 @@ export const useSession = () => {
       const parsed = JSON.parse(raw);
       if (!parsed || typeof parsed !== "object") return;
 
-      const accessToken =
-        typeof parsed.accessToken === "string" ? parsed.accessToken : "";
-      const ttype =
-        typeof parsed.tokenType === "string" ? parsed.tokenType : "bearer";
+      const accessToken
+        = typeof parsed.accessToken === "string" ? parsed.accessToken : "";
+      const ttype
+        = typeof parsed.tokenType === "string" ? parsed.tokenType : "bearer";
       let user: SessionUser | null = null;
       if (parsed.user && typeof parsed.user === "object") {
-        const username =
-          typeof parsed.user.username === "string" ? parsed.user.username : "";
+        const username
+          = typeof parsed.user.username === "string" ? parsed.user.username : "";
         const roles = Array.isArray(parsed.user.roles)
           ? parsed.user.roles.filter((r: any) => typeof r === "string")
           : [];
         const permissions = Array.isArray(parsed.user.permissions)
           ? parsed.user.permissions.filter((p: any) => typeof p === "string")
           : [];
-        const email =
-          typeof parsed.user.email === "string" ? parsed.user.email : "";
-        const tipo_documento =
-          typeof parsed.user.tipo_documento === "string"
+        const email
+          = typeof parsed.user.email === "string" ? parsed.user.email : "";
+        const tipo_documento
+          = typeof parsed.user.tipo_documento === "string"
             ? parsed.user.tipo_documento
             : "";
-        const numero_documento =
-          typeof parsed.user.numero_documento === "string"
+        const numero_documento
+          = typeof parsed.user.numero_documento === "string"
             ? parsed.user.numero_documento
             : "";
-        const nombres =
-          typeof parsed.user.nombres === "string" ? parsed.user.nombres : "";
-        const apellidos =
-          typeof parsed.user.apellidos === "string"
+        const nombres
+          = typeof parsed.user.nombres === "string" ? parsed.user.nombres : "";
+        const apellidos
+          = typeof parsed.user.apellidos === "string"
             ? parsed.user.apellidos
             : "";
         user = {
@@ -126,7 +126,7 @@ export const useSession = () => {
           tipo_documento,
           numero_documento,
           nombres,
-          apellidos,
+          apellidos
         };
       }
 
@@ -149,7 +149,7 @@ export const useSession = () => {
     }
   };
 
-  if (process.client && !hydrated.value && !hydrationPromise.value) {
+  if (import.meta.client && !hydrated.value && !hydrationPromise.value) {
     hydrationPromise.value = hydrate();
   }
 
@@ -157,7 +157,7 @@ export const useSession = () => {
 
   const setSession = async (data: SessionData) => {
     session.value = data;
-    if (!process.client) return;
+    if (!import.meta.client) return;
 
     if (data.accessToken) {
       await storage.setItem(STORAGE_TOKEN_KEY, data.accessToken);
@@ -171,13 +171,13 @@ export const useSession = () => {
       const { trabajador, ...userWithoutTrabajador } = data.user;
       await storage.setItem(
         STORAGE_USER_KEY,
-        JSON.stringify(userWithoutTrabajador),
+        JSON.stringify(userWithoutTrabajador)
       );
 
       if (trabajador) {
         await storage.setItem(
           STORAGE_TRABAJADOR_KEY,
-          JSON.stringify(trabajador),
+          JSON.stringify(trabajador)
         );
       } else {
         await storage.removeItem(STORAGE_TRABAJADOR_KEY);
@@ -190,7 +190,7 @@ export const useSession = () => {
 
   const clearSession = async () => {
     session.value = emptySession();
-    if (!process.client) return;
+    if (!import.meta.client) return;
     await storage.removeItem(STORAGE_TOKEN_KEY);
     await storage.removeItem(STORAGE_TOKEN_TYPE_KEY);
     await storage.removeItem(STORAGE_USER_KEY);
@@ -200,7 +200,7 @@ export const useSession = () => {
   };
 
   const validateToken = async (force: boolean = false): Promise<boolean> => {
-    if (!process.client || !session.value.accessToken) return false;
+    if (!import.meta.client || !session.value.accessToken) return false;
 
     try {
       // Si no se fuerza, verificar cache primero
@@ -219,15 +219,15 @@ export const useSession = () => {
       const api = useApi();
 
       const response = await api.getJson<{
-        success: boolean;
+        success: boolean
         data: {
-          valid: boolean;
+          valid: boolean
           user: {
-            roles?: unknown;
-            permissions?: unknown;
-            trabajador?: Trabajador | null;
-          };
-        };
+            roles?: unknown
+            permissions?: unknown
+            trabajador?: Trabajador | null
+          }
+        }
       }>("/api/auth/verify", { auth: true });
 
       const isValid = response.success && response.data.valid;
@@ -239,10 +239,10 @@ export const useSession = () => {
         // Actualizar roles y permisos del usuario
         if (session.value.user) {
           session.value.user.roles = Array.isArray(userData.roles)
-            ? userData.roles.filter((r) => typeof r === "string")
+            ? userData.roles.filter(r => typeof r === "string")
             : [];
           session.value.user.permissions = Array.isArray(userData.permissions)
-            ? userData.permissions.filter((p) => typeof p === "string")
+            ? userData.permissions.filter(p => typeof p === "string")
             : [];
 
           if ("trabajador" in userData) {
@@ -253,13 +253,13 @@ export const useSession = () => {
           const { trabajador, ...userWithoutTrabajador } = session.value.user;
           await storage.setItem(
             STORAGE_USER_KEY,
-            JSON.stringify(userWithoutTrabajador),
+            JSON.stringify(userWithoutTrabajador)
           );
 
           if (trabajador) {
             await storage.setItem(
               STORAGE_TRABAJADOR_KEY,
-              JSON.stringify(trabajador),
+              JSON.stringify(trabajador)
             );
           } else {
             await storage.removeItem(STORAGE_TRABAJADOR_KEY);
@@ -272,8 +272,8 @@ export const useSession = () => {
         TOKEN_VALIDATION_KEY,
         JSON.stringify({
           timestamp: Date.now(),
-          valid: isValid,
-        }),
+          valid: isValid
+        })
       );
 
       if (!isValid) {
@@ -311,6 +311,6 @@ export const useSession = () => {
     validateToken,
     validateTokenForce,
     authHeader,
-    ready: hydrationPromise.value || Promise.resolve(),
+    ready: hydrationPromise.value || Promise.resolve()
   };
 };

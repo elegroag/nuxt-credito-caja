@@ -8,7 +8,7 @@ export default defineEventHandler(async (event) => {
   if (!user) {
     throw createError({
       statusCode: 401,
-      statusMessage: "No autenticado",
+      statusMessage: "No autenticado"
     });
   }
   return CustomResponse.success({ user }, "Usuario autenticado");

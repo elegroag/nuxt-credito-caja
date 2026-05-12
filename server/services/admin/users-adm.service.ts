@@ -33,20 +33,20 @@ const createUserSchema = z.object({
   telefono: z
     .string()
     .max(20, "El teléfono no puede exceder 20 caracteres")
-    .optional(),
+    .optional()
 });
 
 interface CreateUserParams {
-  username: string;
-  email: string;
-  password: string;
-  nombre: string;
-  apellido: string;
-  roles?: string[];
-  disabled?: boolean;
-  tipo_documento?: string;
-  numero_documento?: string;
-  telefono?: string;
+  username: string
+  email: string
+  password: string
+  nombre: string
+  apellido: string
+  roles?: string[]
+  disabled?: boolean
+  tipo_documento?: string
+  numero_documento?: string
+  telefono?: string
 }
 
 const usersAdmService = () => {
@@ -58,7 +58,7 @@ const usersAdmService = () => {
   // Verificar si el username ya existe
   const checkUsernameExists = async (username: string): Promise<boolean> => {
     const user = await prisma.users.findUnique({
-      where: { username },
+      where: { username }
     });
     return !!user;
   };
@@ -66,7 +66,7 @@ const usersAdmService = () => {
   // Verificar si el email ya existe
   const checkEmailExists = async (email: string): Promise<boolean> => {
     const user = await prisma.users.findUnique({
-      where: { email },
+      where: { email }
     });
     return !!user;
   };
@@ -90,7 +90,7 @@ const usersAdmService = () => {
       disabled = false,
       tipo_documento,
       numero_documento,
-      telefono,
+      telefono
     } = params;
 
     // Verificar unicidad de username
@@ -122,8 +122,8 @@ const usersAdmService = () => {
         tipo_documento,
         numero_documento,
         phone: telefono,
-        is_active: !disabled,
-      },
+        is_active: !disabled
+      }
     });
 
     return user;
@@ -147,8 +147,8 @@ const usersAdmService = () => {
         numero_documento: true,
         phone: true,
         created_at: true,
-        updated_at: true,
-      },
+        updated_at: true
+      }
     });
   };
 
@@ -170,15 +170,15 @@ const usersAdmService = () => {
         numero_documento: true,
         phone: true,
         created_at: true,
-        updated_at: true,
-      },
+        updated_at: true
+      }
     });
 
     // Convertir BigInt a string para evitar errores de serialización
     if (user) {
       return {
         ...user,
-        id: String(user.id),
+        id: String(user.id)
       };
     }
 
@@ -191,7 +191,7 @@ const usersAdmService = () => {
       take: limit,
       skip: offset,
       orderBy: {
-        created_at: "desc",
+        created_at: "desc"
       },
       select: {
         id: true,
@@ -207,8 +207,8 @@ const usersAdmService = () => {
         numero_documento: true,
         phone: true,
         created_at: true,
-        updated_at: true,
-      },
+        updated_at: true
+      }
     });
 
     const total = await prisma.users.count();
@@ -217,7 +217,7 @@ const usersAdmService = () => {
       data: users,
       total,
       limit,
-      offset,
+      offset
     };
   };
 
@@ -232,7 +232,7 @@ const usersAdmService = () => {
       disabled,
       tipo_documento,
       numero_documento,
-      telefono,
+      telefono
     } = params;
 
     const updateData: any = {};
@@ -243,8 +243,8 @@ const usersAdmService = () => {
         const emailExists = await prisma.users.findFirst({
           where: {
             email,
-            NOT: { id },
-          },
+            NOT: { id }
+          }
         });
         if (emailExists) {
           throw new Error("El email ya está en uso");
@@ -289,7 +289,7 @@ const usersAdmService = () => {
 
     const user = await prisma.users.update({
       where: { id },
-      data: updateData,
+      data: updateData
     });
 
     return user;
@@ -301,8 +301,8 @@ const usersAdmService = () => {
       where: { id },
       data: {
         disabled: true,
-        is_active: false,
-      },
+        is_active: false
+      }
     });
   };
 
@@ -315,7 +315,7 @@ const usersAdmService = () => {
     getUserById,
     listUsers,
     updateUser,
-    deleteUser,
+    deleteUser
   };
 };
 

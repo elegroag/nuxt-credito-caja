@@ -25,7 +25,7 @@ const solicitudSchema = z.object({
   tipo_credito: z.string().optional(),
   moneda: z.string().optional(),
   cuota_mensual: z.number().optional(),
-  rol_en_solicitud: z.enum(["T", "S", "C", "E"]).optional(),
+  rol_en_solicitud: z.enum(["T", "S", "C", "E"]).optional()
 });
 
 const solicitanteSchema = z
@@ -33,7 +33,7 @@ const solicitanteSchema = z
     tipo_persona: z
       .union([
         z.enum(["natural", "juridica"]),
-        z.object({ label: z.string(), value: z.enum(["natural", "juridica"]) }),
+        z.object({ label: z.string(), value: z.enum(["natural", "juridica"]) })
       ])
       .optional(),
     tipo_documento: z.string().optional(),
@@ -60,8 +60,8 @@ const solicitanteSchema = z
         z.object({
           label: z.string(),
           value: z.string(),
-          description: z.string().optional(),
-        }),
+          description: z.string().optional()
+        })
       ])
       .optional(),
     pais_residencia: z.string().optional(),
@@ -74,7 +74,7 @@ const solicitanteSchema = z
     salario: z.number().nonnegative().optional(),
     antiguedad_meses: z.number().int().min(0).optional(),
     tipo_contrato: z.string().optional(),
-    sector_economico: z.string().optional(),
+    sector_economico: z.string().optional()
   })
   .optional();
 
@@ -88,7 +88,7 @@ const bodySchema = z.object({
   informacion_economica: z.any().optional(),
   propiedades: z.any().optional(),
   deudas: z.any().optional(),
-  referencias: z.any().optional(),
+  referencias: z.any().optional()
 });
 
 export default defineEventHandler(async (event: H3Event) => {
@@ -99,7 +99,7 @@ export default defineEventHandler(async (event: H3Event) => {
       setResponseStatus(event, 401);
       return CustomResponse.error(
         "No hay sesión activa",
-        "Error de autenticación",
+        "Error de autenticación"
       );
     }
 
@@ -121,7 +121,7 @@ export default defineEventHandler(async (event: H3Event) => {
 
     return CustomResponse.error(
       e?.data?.error || e?.message || "Error conectando con backend",
-      "Error al guardar solicitud.",
+      "Error al guardar solicitud."
     );
   }
 });

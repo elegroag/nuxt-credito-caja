@@ -6,8 +6,8 @@
         variant="ghost"
         size="sm"
         icon="i-lucide-arrow-left"
-        @click="navigateToLineas"
         class="mb-4"
+        @click="navigateToLineas"
       >
         Volver a líneas
       </UButton>
@@ -24,7 +24,10 @@
           </p>
         </div>
 
-        <div v-if="lineaSeleccionada" class="flex items-center gap-2">
+        <div
+          v-if="lineaSeleccionada"
+          class="flex items-center gap-2"
+        >
           <Badge
             :variant="
               lineaSeleccionada.estado === 'A' ? 'default' : 'destructive'
@@ -45,7 +48,10 @@
     </div>
 
     <!-- Estado de carga -->
-    <div v-if="loading" class="flex justify-center items-center min-h-[400px]">
+    <div
+      v-if="loading"
+      class="flex justify-center items-center min-h-[400px]"
+    >
       <div class="flex flex-col items-center gap-3">
         <UIcon
           name="i-lucide-loader-2"
@@ -72,11 +78,24 @@
               class="w-6 h-6 text-destructive"
             />
           </div>
-          <h3 class="text-lg font-semibold">Error al cargar</h3>
-          <p class="text-sm text-muted-foreground">{{ error }}</p>
+          <h3 class="text-lg font-semibold">
+            Error al cargar
+          </h3>
+          <p class="text-sm text-muted-foreground">
+            {{ error }}
+          </p>
           <div class="flex gap-3 mt-2">
-            <UButton size="sm" @click="cargarLineaCredito">Reintentar</UButton>
-            <UButton size="sm" variant="outline" @click="navigateToLineas">
+            <UButton
+              size="sm"
+              @click="cargarLineaCredito"
+            >
+              Reintentar
+            </UButton>
+            <UButton
+              size="sm"
+              variant="outline"
+              @click="navigateToLineas"
+            >
               Volver
             </UButton>
           </div>
@@ -107,10 +126,10 @@
     <!-- Alerta de convenio -->
     <div
       v-if="
-        lineaSeleccionada &&
-        lineaSeleccionada.estado === 'A' &&
-        convenioVerificado &&
-        isElegible
+        lineaSeleccionada
+          && lineaSeleccionada.estado === 'A'
+          && convenioVerificado
+          && isElegible
       "
       class="mb-6"
     >
@@ -140,11 +159,11 @@
     <!-- Alerta de error de convenio -->
     <div
       v-else-if="
-        lineaSeleccionada &&
-        lineaSeleccionada.estado === 'A' &&
-        convenioVerificado &&
-        !isElegible &&
-        getMensajeError
+        lineaSeleccionada
+          && lineaSeleccionada.estado === 'A'
+          && convenioVerificado
+          && !isElegible
+          && getMensajeError
       "
       class="mb-6"
     >
@@ -153,7 +172,10 @@
           <div
             class="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center shrink-0"
           >
-            <UIcon name="i-lucide-alert-circle" class="w-5 h-5 text-red-600" />
+            <UIcon
+              name="i-lucide-alert-circle"
+              class="w-5 h-5 text-red-600"
+            />
           </div>
           <div>
             <p class="font-semibold text-red-800">
@@ -170,9 +192,9 @@
     <!-- Contenido principal -->
     <div
       v-if="
-        (convenioVerificado || !trabajador?.empresa?.nit) &&
-        lineaSeleccionada &&
-        lineaSeleccionada.estado === 'A'
+        (convenioVerificado || !trabajador?.empresa?.nit)
+          && lineaSeleccionada
+          && lineaSeleccionada.estado === 'A'
       "
       class="grid gap-6 lg:grid-cols-2"
     >
@@ -183,10 +205,15 @@
             <div
               class="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center"
             >
-              <UIcon name="i-lucide-calculator" class="w-5 h-5 text-primary" />
+              <UIcon
+                name="i-lucide-calculator"
+                class="w-5 h-5 text-primary"
+              />
             </div>
             <div>
-              <h2 class="text-lg font-semibold">Datos del crédito</h2>
+              <h2 class="text-lg font-semibold">
+                Datos del crédito
+              </h2>
               <p class="text-sm text-muted-foreground">
                 Ingresa la información para calcular
               </p>
@@ -207,16 +234,19 @@
               placeholder="ej. 1.000.000"
               :maxlength="lineaSeleccionada.valmax.toString().length"
               :class="montoInput?.cls"
+              :disabled="lineaSeleccionada?.estado !== 'A'"
               @keyup="validarMonto"
               @blur="validarMonto"
-              :disabled="lineaSeleccionada?.estado !== 'A'"
             />
             <template #help>
               <div class="space-y-2">
-                <p class="text-xs" :class="montoInput?.hintClass">
+                <p
+                  class="text-xs"
+                  :class="montoInput?.hintClass"
+                >
                   {{
-                    montoInput?.hint ||
-                    "Ingresa un monto entre 200.000 y el máximo"
+                    montoInput?.hint
+                      || "Ingresa un monto entre 200.000 y el máximo"
                   }}
                 </p>
                 <UProgress
@@ -250,7 +280,7 @@
                 v-model="tipoTasa"
                 :items="[
                   { label: 'Anual (EA)', value: 'anual' },
-                  { label: 'Mensual', value: 'mensual' },
+                  { label: 'Mensual', value: 'mensual' }
                 ]"
               />
             </UFormField>
@@ -289,7 +319,10 @@
 
           <div class="grid gap-4 sm:grid-cols-2">
             <!-- Ingresos -->
-            <UFormField label="Ingresos mensuales" description="Salario bruto">
+            <UFormField
+              label="Ingresos mensuales"
+              description="Salario bruto"
+            >
               <UInput
                 v-model.number="ingresosMensuales"
                 type="number"
@@ -354,9 +387,7 @@
                 name="i-lucide-calendar-days"
                 class="w-4 h-4 text-primary"
               />
-              <span class="text-xs font-medium text-muted-foreground uppercase"
-                >Cuota estimada</span
-              >
+              <span class="text-xs font-medium text-muted-foreground uppercase">Cuota estimada</span>
             </div>
             <p class="text-2xl font-bold text-primary">
               {{ fmt(cuotaMensual) }}
@@ -368,10 +399,11 @@
 
           <UPageCard class="bg-accent/5">
             <div class="flex items-center gap-2 mb-2">
-              <UIcon name="i-lucide-wallet" class="w-4 h-4 text-accent" />
-              <span class="text-xs font-medium text-muted-foreground uppercase"
-                >Capacidad disponible</span
-              >
+              <UIcon
+                name="i-lucide-wallet"
+                class="w-4 h-4 text-accent"
+              />
+              <span class="text-xs font-medium text-muted-foreground uppercase">Capacidad disponible</span>
             </div>
             <p class="text-2xl font-bold text-accent">
               {{ fmt(capacidadDisponible) }}
@@ -389,11 +421,11 @@
               name="i-lucide-receipt"
               class="w-4 h-4 text-muted-foreground"
             />
-            <span class="text-xs font-medium text-muted-foreground uppercase"
-              >Total a pagar</span
-            >
+            <span class="text-xs font-medium text-muted-foreground uppercase">Total a pagar</span>
           </div>
-          <p class="text-xl font-bold">{{ fmt(totalPagar) }}</p>
+          <p class="text-xl font-bold">
+            {{ fmt(totalPagar) }}
+          </p>
           <p class="text-sm text-muted-foreground">
             Intereses: {{ fmt(intereses) }}
           </p>
@@ -488,7 +520,13 @@
           >
             Continuar solicitud
           </UButton>
-          <UButton v-else color="neutral" size="lg" class="flex-1" disabled>
+          <UButton
+            v-else
+            color="neutral"
+            size="lg"
+            class="flex-1"
+            disabled
+          >
             No disponible
           </UButton>
           <UButton
@@ -558,7 +596,7 @@ const {
   navigateToLineas,
   cargarLineaCredito,
   saveDataManual,
-  validarMontoMaximo,
+  validarMontoMaximo
 } = useSimuladorConLineaPage();
 
 // Función para guardar datos y navegar a solicitud

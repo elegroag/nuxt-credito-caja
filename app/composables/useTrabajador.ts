@@ -18,8 +18,8 @@ export const useTrabajador = () => {
 
   const nombreCompleto = computed(() => {
     if (!trabajador.value) return "";
-    const { primer_nombre, segundo_nombre, primer_apellido, segundo_apellido } =
-      trabajador.value;
+    const { primer_nombre, segundo_nombre, primer_apellido, segundo_apellido }
+      = trabajador.value;
     return [primer_nombre, segundo_nombre, primer_apellido, segundo_apellido]
       .filter(Boolean)
       .join(" ");
@@ -35,7 +35,7 @@ export const useTrabajador = () => {
       direccion: trabajador.value.direccion,
       salario: trabajador.value.salario,
       cargo: trabajador.value.cargo,
-      empresa: trabajador.value.empresa?.razon_social,
+      empresa: trabajador.value.empresa?.razon_social
     };
   });
 
@@ -44,6 +44,6 @@ export const useTrabajador = () => {
     empresa,
     salario,
     nombreCompleto,
-    datosBasicos,
+    datosBasicos
   };
 };

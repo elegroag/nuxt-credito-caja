@@ -3,8 +3,14 @@
     <!-- Header -->
     <div class="mb-6">
       <div class="flex items-center gap-4 mb-4">
-        <UButton variant="outline" @click="goBack()">
-          <Icon name="lucide:chevron-left" class="w-4 h-4 mr-2" />
+        <UButton
+          variant="outline"
+          @click="goBack()"
+        >
+          <Icon
+            name="lucide:chevron-left"
+            class="w-4 h-4 mr-2"
+          />
           Volver
         </UButton>
         <div>
@@ -21,9 +27,14 @@
     </div>
 
     <!-- Loading State -->
-    <div v-if="loading" class="flex flex-col items-center justify-center py-16">
+    <div
+      v-if="loading"
+      class="flex flex-col items-center justify-center py-16"
+    >
       <ArrowPathIcon class="w-10 h-10 animate-spin text-blue-500 mb-4" />
-      <p class="text-gray-500">Cargando información del usuario...</p>
+      <p class="text-gray-500">
+        Cargando información del usuario...
+      </p>
     </div>
 
     <!-- Error State -->
@@ -32,8 +43,15 @@
       class="flex flex-col items-center justify-center py-16"
     >
       <NoSymbolIcon class="w-10 h-10 text-red-500 mb-4" />
-      <p class="text-red-600 mb-4">{{ error }}</p>
-      <UButton variant="outline" @click="cargarUsuario">Reintentar</UButton>
+      <p class="text-red-600 mb-4">
+        {{ error }}
+      </p>
+      <UButton
+        variant="outline"
+        @click="cargarUsuario"
+      >
+        Reintentar
+      </UButton>
     </div>
 
     <!-- Formulario -->
@@ -41,7 +59,10 @@
       v-else-if="usuario"
       class="bg-white rounded-lg border border-gray-200 shadow-sm"
     >
-      <form @submit.prevent="handleSubmit" class="p-6 space-y-6">
+      <form
+        class="p-6 space-y-6"
+        @submit.prevent="handleSubmit"
+      >
         <!-- Información Básica -->
         <div class="border-b border-gray-200 pb-6">
           <h2
@@ -65,7 +86,10 @@
                 class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 :class="{ 'border-red-500': errors.username }"
               />
-              <p v-if="errors.username" class="mt-1 text-sm text-red-600">
+              <p
+                v-if="errors.username"
+                class="mt-1 text-sm text-red-600"
+              >
                 {{ errors.username }}
               </p>
             </div>
@@ -83,7 +107,10 @@
                 class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 :class="{ 'border-red-500': errors.email }"
               />
-              <p v-if="errors.email" class="mt-1 text-sm text-red-600">
+              <p
+                v-if="errors.email"
+                class="mt-1 text-sm text-red-600"
+              >
                 {{ errors.email }}
               </p>
             </div>
@@ -101,7 +128,10 @@
                 class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 :class="{ 'border-red-500': errors.password }"
               />
-              <p v-if="errors.password" class="mt-1 text-sm text-red-600">
+              <p
+                v-if="errors.password"
+                class="mt-1 text-sm text-red-600"
+              >
                 {{ errors.password }}
               </p>
             </div>
@@ -140,12 +170,23 @@
                 class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 :class="{ 'border-red-500': errors.roles }"
               >
-                <option value="">Seleccione roles</option>
-                <option value="administrator">Administrador</option>
-                <option value="adviser">Asesor</option>
-                <option value="user_trabajador">Trabajador</option>
+                <option value="">
+                  Seleccione roles
+                </option>
+                <option value="administrator">
+                  Administrador
+                </option>
+                <option value="adviser">
+                  Asesor
+                </option>
+                <option value="user_trabajador">
+                  Trabajador
+                </option>
               </select>
-              <p v-if="errors.roles" class="mt-1 text-sm text-red-600">
+              <p
+                v-if="errors.roles"
+                class="mt-1 text-sm text-red-600"
+              >
                 {{ errors.roles }}
               </p>
             </div>
@@ -160,8 +201,12 @@
                 v-model="form.disabled"
                 class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
-                <option :value="false">Activo</option>
-                <option :value="true">Inactivo</option>
+                <option :value="false">
+                  Activo
+                </option>
+                <option :value="true">
+                  Inactivo
+                </option>
               </select>
             </div>
           </div>
@@ -190,7 +235,10 @@
                 class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 :class="{ 'border-red-500': errors.nombre }"
               />
-              <p v-if="errors.nombre" class="mt-1 text-sm text-red-600">
+              <p
+                v-if="errors.nombre"
+                class="mt-1 text-sm text-red-600"
+              >
                 {{ errors.nombre }}
               </p>
             </div>
@@ -208,7 +256,10 @@
                 class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 :class="{ 'border-red-500': errors.apellido }"
               />
-              <p v-if="errors.apellido" class="mt-1 text-sm text-red-600">
+              <p
+                v-if="errors.apellido"
+                class="mt-1 text-sm text-red-600"
+              >
                 {{ errors.apellido }}
               </p>
             </div>
@@ -223,10 +274,18 @@
                 v-model="form.tipo_documento"
                 class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
-                <option value="CC">Cédula de Ciudadanía</option>
-                <option value="CE">Cédula de Extranjería</option>
-                <option value="TI">Tarjeta de Identidad</option>
-                <option value="PA">Pasaporte</option>
+                <option value="CC">
+                  Cédula de Ciudadanía
+                </option>
+                <option value="CE">
+                  Cédula de Extranjería
+                </option>
+                <option value="TI">
+                  Tarjeta de Identidad
+                </option>
+                <option value="PA">
+                  Pasaporte
+                </option>
               </select>
             </div>
             <div>
@@ -262,7 +321,10 @@
                 class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 :class="{ 'border-red-500': errors.phone }"
               />
-              <p v-if="errors.phone" class="mt-1 text-sm text-red-600">
+              <p
+                v-if="errors.phone"
+                class="mt-1 text-sm text-red-600"
+              >
                 {{ errors.phone }}
               </p>
             </div>
@@ -276,12 +338,15 @@
           <UButton
             type="button"
             variant="outline"
-            @click="goBack()"
             :disabled="loading"
+            @click="goBack()"
           >
             Cancelar
           </UButton>
-          <UButton type="submit" :disabled="loading">
+          <UButton
+            type="submit"
+            :disabled="loading"
+          >
             <Icon
               v-if="loading"
               name="lucide:loader-2"
@@ -313,12 +378,12 @@ import {
   MapPinIcon,
   UserGroupIcon,
   ArrowPathIcon,
-  NoSymbolIcon,
+  NoSymbolIcon
 } from "@heroicons/vue/24/outline";
 
 definePageMeta({
   layout: "dashboard",
-  middleware: ["auth"],
+  middleware: ["auth"]
 });
 
 // Usar el composable
@@ -332,6 +397,6 @@ const {
   validateForm,
   handleSubmit,
   resetForm,
-  goBack,
+  goBack
 } = useEditUser();
 </script>

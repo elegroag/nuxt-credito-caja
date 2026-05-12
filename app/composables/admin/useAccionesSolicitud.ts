@@ -5,7 +5,7 @@ import { useSession } from "~/composables/useSession";
 import type {
   SolicitudCredito,
   InEstadoSolicitud,
-  AccionData,
+  AccionData
 } from "~~/shared/types/solicitud-credito";
 
 export function useAccionesSolicitud() {
@@ -34,16 +34,16 @@ export function useAccionesSolicitud() {
     try {
       await ready;
       const response = await getJson<{
-        success: boolean;
-        data: SolicitudCredito;
+        success: boolean
+        data: SolicitudCredito
       }>(`/api/admin/solicitudes/${solicitudId.value}`, { auth: true });
 
       solicitud.value = response.data;
       estadoSeleccionado.value = response.data.estado;
     } catch (e: any) {
       console.error("Error al cargar solicitud:", e);
-      error.value =
-        e.message || "No se pudo cargar la información de la solicitud.";
+      error.value
+        = e.message || "No se pudo cargar la información de la solicitud.";
     } finally {
       loading.value = false;
     }
@@ -55,8 +55,8 @@ export function useAccionesSolicitud() {
     try {
       await ready;
       const response = await getJson<{
-        success: boolean;
-        data: InEstadoSolicitud[];
+        success: boolean
+        data: InEstadoSolicitud[]
       }>("/api/solicitudes/estados-solicitud", { auth: true });
 
       if (response.data && Array.isArray(response.data)) {
@@ -64,8 +64,8 @@ export function useAccionesSolicitud() {
       }
     } catch (e: any) {
       console.error("Error al cargar estados:", e);
-      error.value =
-        e.message || "No se pudieron cargar los estados disponibles.";
+      error.value
+        = e.message || "No se pudieron cargar los estados disponibles.";
     } finally {
       loadingEstados.value = false;
     }
@@ -76,7 +76,7 @@ export function useAccionesSolicitud() {
     if (!estadoSeleccionado.value) {
       return {
         success: false,
-        message: "Debe seleccionar un estado",
+        message: "Debe seleccionar un estado"
       };
     }
 
@@ -86,15 +86,15 @@ export function useAccionesSolicitud() {
 
       const accionData: AccionData = {
         estado: estadoSeleccionado.value,
-        descripcion: notificacion.value || undefined,
+        descripcion: notificacion.value || undefined
       };
 
       const response = await putJson<{
-        success: boolean;
-        data: SolicitudCredito;
-        message: string;
+        success: boolean
+        data: SolicitudCredito
+        message: string
       }>(`/api/admin/solicitudes/${solicitudId.value}/estado`, accionData, {
-        auth: true,
+        auth: true
       });
 
       if (response.success) {
@@ -103,7 +103,7 @@ export function useAccionesSolicitud() {
 
         return {
           success: true,
-          message: response.message || "Estado actualizado exitosamente",
+          message: response.message || "Estado actualizado exitosamente"
         };
       } else {
         throw new Error(response.message || "Error al actualizar estado");
@@ -112,7 +112,7 @@ export function useAccionesSolicitud() {
       console.error("Error al registrar acción:", e);
       return {
         success: false,
-        message: e.message || "Error al registrar la acción",
+        message: e.message || "Error al registrar la acción"
       };
     } finally {
       loadingAccion.value = false;
@@ -123,7 +123,7 @@ export function useAccionesSolicitud() {
   const estadoActualInfo = computed(() => {
     if (!solicitud.value || !estados.value.length) return null;
 
-    return estados.value.find((e) => e.id === solicitud.value?.estado);
+    return estados.value.find(e => e.id === solicitud.value?.estado);
   });
 
   // Validar si el estado seleccionado es diferente al actual
@@ -135,7 +135,7 @@ export function useAccionesSolicitud() {
 
   // Obtener nombre del estado
   const getNombreEstado = (estadoId: string): string => {
-    const estado = estados.value.find((e) => e.id === estadoId);
+    const estado = estados.value.find(e => e.id === estadoId);
     return estado?.nombre || estadoId;
   };
 
@@ -171,6 +171,6 @@ export function useAccionesSolicitud() {
     registrarAccion,
     getNombreEstado,
     volverADetalle,
-    volverAListado,
+    volverAListado
   };
 }

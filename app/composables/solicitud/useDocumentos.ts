@@ -18,15 +18,15 @@ export const useDocumentos = (solicitudId: string) => {
       "application/pdf",
       "image/jpeg",
       "image/png",
-      "image/jpg",
+      "image/jpg"
     ];
 
     if (file.size > MAX_SIZE) {
-      return `El archivo excede el tamaño máximo permitido de 5MB`;
+      return "El archivo excede el tamaño máximo permitido de 5MB";
     }
 
     if (!ALLOWED_TYPES.includes(file.type)) {
-      return `Formato de archivo no válido. Se permiten: PDF, JPG, PNG`;
+      return "Formato de archivo no válido. Se permiten: PDF, JPG, PNG";
     }
 
     return null;
@@ -38,18 +38,18 @@ export const useDocumentos = (solicitudId: string) => {
     try {
       // Cargar documentos cargados desde el endpoint actual
       const responseCargados = await getJson<{
-        success: boolean;
-        data: DocumentoCargado[];
-        count: number;
+        success: boolean
+        data: DocumentoCargado[]
+        count: number
       }>(`/api/solicitudes/${solicitudId}/documentos`, {
-        auth: true,
+        auth: true
       });
 
       // Procesar documentos cargados
       if (
-        responseCargados &&
-        responseCargados.success &&
-        Array.isArray(responseCargados.data)
+        responseCargados
+        && responseCargados.success
+        && Array.isArray(responseCargados.data)
       ) {
         documentosCargados.value = responseCargados.data;
       } else {
@@ -58,18 +58,18 @@ export const useDocumentos = (solicitudId: string) => {
 
       // Cargar documentos requeridos desde el nuevo endpoint
       const responseRequeridos = await getJson<{
-        success: boolean;
-        data: DocumentoRequerido[];
-        count: number;
+        success: boolean
+        data: DocumentoRequerido[]
+        count: number
       }>(`/api/solicitudes/${solicitudId}/documentos/requeridos`, {
-        auth: true,
+        auth: true
       });
 
       // Procesar documentos requeridos
       if (
-        responseRequeridos &&
-        responseRequeridos.success &&
-        Array.isArray(responseRequeridos.data)
+        responseRequeridos
+        && responseRequeridos.success
+        && Array.isArray(responseRequeridos.data)
       ) {
         documentosRequeridos.value = responseRequeridos.data;
       } else {
@@ -100,23 +100,23 @@ export const useDocumentos = (solicitudId: string) => {
       formData.append("documento_requerido_id", documentoRequeridoId);
 
       const response = await $fetch<{
-        success: boolean;
-        data: SolicitudCredito;
-        message: string;
+        success: boolean
+        data: SolicitudCredito
+        message: string
       }>(urlFor(`/api/solicitudes/${solicitudId}/documentos`), {
         method: "POST",
         body: formData,
         headers: {
-          ...(authHeader.value as any),
-        },
+          ...(authHeader.value as any)
+        }
       });
 
       // Actualizar la lista de documentos cargados desde la respuesta del backend
       if (
-        response &&
-        response.success &&
-        response.data &&
-        response.data.documentos
+        response
+        && response.success
+        && response.data
+        && response.data.documentos
       ) {
         documentosCargados.value = response.data.documentos;
       }
@@ -141,14 +141,14 @@ export const useDocumentos = (solicitudId: string) => {
     try {
       await $fetch(
         urlFor(
-          `/api/solicitudes/${solicitudId}/documentos/${documentoCargadoId}`,
+          `/api/solicitudes/${solicitudId}/documentos/${documentoCargadoId}`
         ),
         {
           method: "DELETE",
           headers: {
-            ...(authHeader.value as any),
-          },
-        },
+            ...(authHeader.value as any)
+          }
+        }
       );
 
       // Forzar refresh de documentos después de eliminar
@@ -170,6 +170,6 @@ export const useDocumentos = (solicitudId: string) => {
     subirDocumento,
     eliminarDocumento,
     cargarDocumentos,
-    validarArchivo,
+    validarArchivo
   };
 };

@@ -1,118 +1,118 @@
-import { computed, useRuntimeConfig, useSession } from '#imports'
-import { $fetch } from 'ofetch'
+import { computed, useRuntimeConfig, useSession } from "#imports";
+import { $fetch } from "ofetch";
 
 export const useApi = () => {
-    const config = useRuntimeConfig()
-    const { authHeader } = useSession()
+  const config = useRuntimeConfig();
+  const { authHeader } = useSession();
 
-    const baseUrl = computed(() => {
-        // Usar directamente el backendBaseUrl del runtimeConfig
-        const raw = String(config.public.backendBaseUrl || '')
-        return raw.replace(/\/+$/, '')
-    })
+  const baseUrl = computed(() => {
+    // Usar directamente el backendBaseUrl del runtimeConfig
+    const raw = String(config.public.backendBaseUrl || "");
+    return raw.replace(/\/+$/, "");
+  });
 
-    const urlFor = (path: string) => {
-        const p = path.startsWith('/') ? path : `/${path}`
-        return `${baseUrl.value}${p}`
+  const urlFor = (path: string) => {
+    const p = path.startsWith("/") ? path : `/${path}`;
+    return `${baseUrl.value}${p}`;
+  };
+
+  const postJson = async <T>(
+    path: string,
+    body: Record<string, any>,
+    opts?: {
+      auth?: boolean
+      headers?: Record<string, string>
+    }
+  ) => {
+    const headers: Record<string, string> = {
+      "content-type": "application/json",
+      ...(opts?.headers || {})
+    };
+
+    if (opts?.auth) {
+      Object.assign(headers, authHeader.value as any);
     }
 
-    const postJson = async <T>(
-        path: string,
-        body: Record<string, any>,
-        opts?: {
-            auth?: boolean
-            headers?: Record<string, string>
-        }
-    ) => {
-        const headers: Record<string, string> = {
-            'content-type': 'application/json',
-            ...(opts?.headers || {})
-        }
+    return await $fetch<T>(urlFor(path), {
+      method: "POST",
+      body: body as any,
+      headers
+    });
+  };
 
-        if (opts?.auth) {
-            Object.assign(headers, authHeader.value as any)
-        }
+  // Agregar métodos GET, PUT, DELETE para completar la API
+  const getJson = async <T>(
+    path: string,
+    opts?: {
+      auth?: boolean
+      headers?: Record<string, string>
+    }
+  ) => {
+    const headers: Record<string, string> = {
+      ...(opts?.headers || {})
+    };
 
-        return await $fetch<T>(urlFor(path), {
-            method: 'POST',
-            body: body as any,
-            headers
-        })
+    if (opts?.auth) {
+      Object.assign(headers, authHeader.value as any);
     }
 
-    // Agregar métodos GET, PUT, DELETE para completar la API
-    const getJson = async <T>(
-        path: string,
-        opts?: {
-            auth?: boolean
-            headers?: Record<string, string>
-        }
-    ) => {
-        const headers: Record<string, string> = {
-            ...(opts?.headers || {})
-        }
+    return await $fetch<T>(urlFor(path), {
+      method: "GET",
+      headers
+    });
+  };
 
-        if (opts?.auth) {
-            Object.assign(headers, authHeader.value as any)
-        }
+  const putJson = async <T>(
+    path: string,
+    body: Record<string, any>,
+    opts?: {
+      auth?: boolean
+      headers?: Record<string, string>
+    }
+  ) => {
+    const headers: Record<string, string> = {
+      "content-type": "application/json",
+      ...(opts?.headers || {})
+    };
 
-        return await $fetch<T>(urlFor(path), {
-            method: 'GET',
-            headers
-        })
+    if (opts?.auth) {
+      Object.assign(headers, authHeader.value as any);
     }
 
-    const putJson = async <T>(
-        path: string,
-        body: Record<string, any>,
-        opts?: {
-            auth?: boolean
-            headers?: Record<string, string>
-        }
-    ) => {
-        const headers: Record<string, string> = {
-            'content-type': 'application/json',
-            ...(opts?.headers || {})
-        }
+    return await $fetch<T>(urlFor(path), {
+      method: "PUT",
+      body: body as any,
+      headers
+    });
+  };
 
-        if (opts?.auth) {
-            Object.assign(headers, authHeader.value as any)
-        }
+  const deleteJson = async <T>(
+    path: string,
+    opts?: {
+      auth?: boolean
+      headers?: Record<string, string>
+    }
+  ) => {
+    const headers: Record<string, string> = {
+      ...(opts?.headers || {})
+    };
 
-        return await $fetch<T>(urlFor(path), {
-            method: 'PUT',
-            body: body as any,
-            headers
-        })
+    if (opts?.auth) {
+      Object.assign(headers, authHeader.value as any);
     }
 
-    const deleteJson = async <T>(
-        path: string,
-        opts?: {
-            auth?: boolean
-            headers?: Record<string, string>
-        }
-    ) => {
-        const headers: Record<string, string> = {
-            ...(opts?.headers || {})
-        }
+    return await $fetch<T>(urlFor(path), {
+      method: "DELETE",
+      headers
+    });
+  };
 
-        if (opts?.auth) {
-            Object.assign(headers, authHeader.value as any)
-        }
-
-        return await $fetch<T>(urlFor(path), {
-            method: 'DELETE',
-            headers
-        })
-    }
-
-    return {
-        baseUrl,
-        getJson,
-        postJson,
-        putJson,
-        deleteJson,
-        urlFor
-    }
-}
+  return {
+    baseUrl,
+    getJson,
+    postJson,
+    putJson,
+    deleteJson,
+    urlFor
+  };
+};

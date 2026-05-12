@@ -3,15 +3,15 @@ import {
   SliderRange,
   SliderRoot,
   SliderThumb,
-  SliderTrack,
+  SliderTrack
 } from "radix-vue";
 
 const modelValue = defineModel<number[]>({ required: true });
 
 defineProps<{
-  min?: number;
-  max?: number;
-  step?: number;
+  min?: number
+  max?: number
+  step?: number
 }>();
 </script>
 

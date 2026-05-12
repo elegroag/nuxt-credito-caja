@@ -31,7 +31,7 @@ export default defineEventHandler(async (event: H3Event) => {
       setResponseStatus(event, 400);
       return CustomResponse.error(
         "ID de solicitud no proporcionado",
-        "Error de validación",
+        "Error de validación"
       );
     }
 
@@ -41,20 +41,20 @@ export default defineEventHandler(async (event: H3Event) => {
         pdfs_generados: true,
         solicitud_solicitante: true,
         firmantes_solicitud: {
-          orderBy: { orden: "asc" },
+          orderBy: { orden: "asc" }
         },
         solicitud_payload: {
           orderBy: { created_at: "desc" },
-          take: 1,
-        },
-      },
+          take: 1
+        }
+      }
     });
 
     if (!solicitud) {
       setResponseStatus(event, 404);
       return CustomResponse.error(
         "Solicitud no encontrada",
-        "Recurso no encontrado",
+        "Recurso no encontrado"
       );
     }
 
@@ -74,13 +74,13 @@ export default defineEventHandler(async (event: H3Event) => {
     // Obtener datos del payload JSON si existe
     const informacionLaboral = (payloadData?.informacion_laboral as any) || {};
     const ingresosDescuentos = (payloadData?.ingresos_descuentos as any) || {};
-    const informacionEconomica =
-      (payloadData?.informacion_economica as any) || {};
+    const informacionEconomica
+      = (payloadData?.informacion_economica as any) || {};
     const propiedades = (payloadData?.propiedades as any) || [];
     const deudas = (payloadData?.deudas as any) || [];
     const referencias = (payloadData?.referencias as any) || {
       familiares: [],
-      personales: [],
+      personales: []
     };
 
     // Construir el payload completo para Flask PDF
@@ -96,7 +96,7 @@ export default defineEventHandler(async (event: H3Event) => {
         categoria: solicitante?.codigo_categoria || "B",
         producto_tipo: solicitudData.producto_tipo || "",
         ha_tenido_credito: solicitudData.ha_tenido_credito || false,
-        tipo_credito: solicitudData.tipo_credito || "01",
+        tipo_credito: solicitudData.tipo_credito || "01"
       },
       solicitante: {
         fecha_vinculacion:
@@ -125,33 +125,33 @@ export default defineEventHandler(async (event: H3Event) => {
         vive_con_nucleo_familiar:
           solicitante?.vive_con_nucleo_familiar || false,
         personas_a_cargo: solicitante?.personas_a_cargo || 0,
-        direccion_residencia: solicitante?.direccion || "",
+        direccion_residencia: solicitante?.direccion || ""
       },
       laboral: {
         cargo: solicitante?.cargo || informacionLaboral.cargo || "",
         empresa_nit: solicitante?.nit || informacionLaboral.empresa_nit || "",
         fecha_ingreso:
-          informacionLaboral.fecha_ingreso ||
-          solicitante?.created_at?.toISOString().split("T")[0] ||
-          "",
+          informacionLaboral.fecha_ingreso
+          || solicitante?.created_at?.toISOString().split("T")[0]
+          || "",
         tipo_contrato:
           solicitante?.tipo_contrato || informacionLaboral.tipo_contrato || "",
         empresa_ciudad:
           informacionLaboral.empresa_ciudad || solicitante?.ciudad || "",
         tiempo_servicio:
-          informacionLaboral.tiempo_servicio ||
-          solicitante?.antiguedad_meses ||
-          0,
+          informacionLaboral.tiempo_servicio
+          || solicitante?.antiguedad_meses
+          || 0,
         empresa_telefono: informacionLaboral.empresa_telefono || "",
         empresa_direccion: informacionLaboral.empresa_direccion || "",
         empresa_razon_social:
-          solicitante?.razon_social ||
-          informacionLaboral.empresa_razon_social ||
-          "",
+          solicitante?.razon_social
+          || informacionLaboral.empresa_razon_social
+          || "",
         nombramiento_o_pagador:
           informacionLaboral.nombramiento_o_pagador || null,
         tiempo_servicio_unidad:
-          informacionLaboral.tiempo_servicio_unidad || "meses",
+          informacionLaboral.tiempo_servicio_unidad || "meses"
       },
       economica: {
         otros: informacionEconomica.otros || 0,
@@ -161,7 +161,7 @@ export default defineEventHandler(async (event: H3Event) => {
         total_activos: informacionEconomica.total_activos || 0,
         total_pasivos: informacionEconomica.total_pasivos || 0,
         arrendamientos: informacionEconomica.arrendamientos || 0,
-        gastos_descripcion: informacionEconomica.gastos_descripcion || null,
+        gastos_descripcion: informacionEconomica.gastos_descripcion || null
       },
       ingresos: {
         moneda: ingresosDescuentos.moneda || "COP",
@@ -169,14 +169,14 @@ export default defineEventHandler(async (event: H3Event) => {
         horas_extras: ingresosDescuentos.horas_extras || 0,
         otros_ingresos: ingresosDescuentos.otros_ingresos || 0,
         total_ingresos:
-          ingresosDescuentos.total_ingresos ||
-          solicitante?.salario?.toNumber() ||
-          0,
+          ingresosDescuentos.total_ingresos
+          || solicitante?.salario?.toNumber()
+          || 0,
         total_neto_recibido: ingresosDescuentos.total_neto_recibido || 0,
         salario_basico_mensual:
-          ingresosDescuentos.salario_basico_mensual ||
-          solicitante?.salario?.toNumber() ||
-          0,
+          ingresosDescuentos.salario_basico_mensual
+          || solicitante?.salario?.toNumber()
+          || 0
       },
       descuentos: {
         judiciales: ingresosDescuentos.judiciales || 0,
@@ -186,23 +186,23 @@ export default defineEventHandler(async (event: H3Event) => {
         libranzas_comfaca: ingresosDescuentos.libranzas_comfaca || 0,
         otras_deducciones: ingresosDescuentos.otras_deducciones || 0,
         subsidio_transporte: ingresosDescuentos.subsidio_transporte || 0,
-        total_neto_recibido: ingresosDescuentos.total_neto_recibido || 0,
+        total_neto_recibido: ingresosDescuentos.total_neto_recibido || 0
       },
       conyuge: [],
       referencias: {
         familiares: referencias.familiares || [],
-        personales: referencias.personales || [],
+        personales: referencias.personales || []
       },
       deudas: Array.isArray(deudas) ? deudas : [],
       propiedades: Array.isArray(propiedades) ? propiedades : [],
       firmantes:
-        firmantes_solicitud?.map((f) => ({
+        firmantes_solicitud?.map(f => ({
           tipo: f.tipo,
           rol: f.rol,
           nombre_completo: f.nombre_completo,
           numero_documento: f.numero_documento,
           email: f.email,
-          orden: f.orden,
+          orden: f.orden
         })) || [],
       convenio: {
         representante_documento:
@@ -213,24 +213,24 @@ export default defineEventHandler(async (event: H3Event) => {
         nit: solicitante?.nit || informacionLaboral.nit || "",
         razon_social:
           solicitante?.razon_social || informacionLaboral.razon_social || "",
-        estado: informacionLaboral.estado || "Activo",
+        estado: informacionLaboral.estado || "Activo"
       },
       proceso_firmado: {
         proveedor: "CAJA DE COMPENSACIÓN FAMILIAR DEL CAQUETÁ",
         estado: "POSTULADO",
         transaccion_id: "0",
-        fecha_inicio: new Date().toLocaleString("es-CO"),
+        fecha_inicio: new Date().toLocaleString("es-CO")
       },
       encabezado: {
         fecha_radicado:
-          solicitudData.fecha_radicado?.toISOString() ||
-          new Date().toISOString(),
-        solicitud_id: solicitudId,
+          solicitudData.fecha_radicado?.toISOString()
+          || new Date().toISOString(),
+        solicitud_id: solicitudId
       },
       pdf_metadata: {
         fecha_generacion: new Date().toLocaleString("es-CO"),
         solicitud_id: solicitudId,
-        version: "2.0",
+        version: "2.0"
       },
       trabajador: {
         cedula: solicitante?.numero_documento || "",
@@ -265,7 +265,7 @@ export default defineEventHandler(async (event: H3Event) => {
           representante_legal: informacionLaboral.representante_nombre || "",
           representante_cedula:
             informacionLaboral.representante_documento || "",
-          estado: "A",
+          estado: "A"
         },
         estado: "A",
         fecha_afiliacion:
@@ -273,8 +273,8 @@ export default defineEventHandler(async (event: H3Event) => {
         cargo: solicitante?.cargo || "",
         tipo_contrato: solicitante?.tipo_contrato || "",
         personas_a_cargo: solicitante?.personas_a_cargo || 0,
-        antiguedad_meses: solicitante?.antiguedad_meses || 0,
-      },
+        antiguedad_meses: solicitante?.antiguedad_meses || 0
+      }
     };
 
     console.log("Generando PDF para solicitud:", solicitudId);
@@ -287,7 +287,7 @@ export default defineEventHandler(async (event: H3Event) => {
       setResponseStatus(event, 500);
       return CustomResponse.error(
         response.message || "Error al generar el PDF",
-        "Error en Flask PDF",
+        "Error en Flask PDF"
       );
     }
 
@@ -305,7 +305,7 @@ export default defineEventHandler(async (event: H3Event) => {
         storagePath = await documentoStorage.guardarPdf(
           solicitudId,
           pdfContent,
-          pdfFilename,
+          pdfFilename
         );
         console.log("PDF guardado en storage:", storagePath);
       } catch (storageError) {
@@ -320,8 +320,8 @@ export default defineEventHandler(async (event: H3Event) => {
           path: storagePath,
           filename: pdfFilename,
           generado_en: pdfData,
-          updated_at: new Date(),
-        },
+          updated_at: new Date()
+        }
       });
     } else {
       await prisma.pdfs_generados.create({
@@ -331,8 +331,8 @@ export default defineEventHandler(async (event: H3Event) => {
           filename: pdfFilename,
           generado_en: pdfData,
           created_at: new Date(),
-          updated_at: new Date(),
-        },
+          updated_at: new Date()
+        }
       });
     }
 
@@ -340,9 +340,9 @@ export default defineEventHandler(async (event: H3Event) => {
       {
         solicitud_id: solicitudId,
         filename: pdfFilename,
-        path: pdfPath,
+        path: pdfPath
       },
-      "PDF generado exitosamente",
+      "PDF generado exitosamente"
     );
   } catch (error: any) {
     console.error("Error al generar PDF:", error);
@@ -351,7 +351,7 @@ export default defineEventHandler(async (event: H3Event) => {
 
     return CustomResponse.error(
       error?.data?.error || error?.message || "Error al generar el PDF",
-      "Error al generar PDF.",
+      "Error al generar PDF."
     );
   }
 });

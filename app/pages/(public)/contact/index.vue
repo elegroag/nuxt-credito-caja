@@ -2,7 +2,7 @@
 import { z } from "zod";
 
 definePageMeta({
-  layout: "public",
+  layout: "public"
 });
 
 const formSchema = z.object({
@@ -10,7 +10,7 @@ const formSchema = z.object({
   email: z.string().email("Email inválido"),
   phone: z.string().optional(),
   subject: z.string().min(3, "Asunto requerido"),
-  message: z.string().min(10, "Mensaje muy corto"),
+  message: z.string().min(10, "Mensaje muy corto")
 });
 
 const form = ref({
@@ -18,7 +18,7 @@ const form = ref({
   email: "",
   phone: "",
   subject: "",
-  message: "",
+  message: ""
 });
 
 const errors = ref<Record<string, string>>({});
@@ -29,7 +29,7 @@ const focusedField = ref<string | null>(null);
 const validateField = (field: keyof typeof form.value) => {
   const result = formSchema.safeParse({ ...form.value });
   if (!result.success) {
-    const fieldError = result.error.issues.find((e) => e.path[0] === field);
+    const fieldError = result.error.issues.find(e => e.path[0] === field);
     if (fieldError) {
       errors.value[field] = fieldError.message;
     } else {
@@ -51,7 +51,7 @@ const submitForm = async () => {
   }
 
   loading.value = true;
-  await new Promise((resolve) => setTimeout(resolve, 1500));
+  await new Promise(resolve => setTimeout(resolve, 1500));
   loading.value = false;
   submitted.value = true;
 };
@@ -62,29 +62,29 @@ const contactInfo = [
     label: "Email",
     value: "info@comfaca.com",
     href: "mailto:info@comfaca.com",
-    description: "Respondemos en 24h",
+    description: "Respondemos en 24h"
   },
   {
     icon: "i-lucide-phone",
     label: "Teléfono",
     value: "+57 300 123 4567",
     href: "tel:+573001234567",
-    description: "Lun - Vie 8am - 5pm",
+    description: "Lun - Vie 8am - 5pm"
   },
   {
     icon: "i-lucide-map-pin",
     label: "Oficina",
     value: "Florencia, Caquetá",
     href: "#",
-    description: "Colombia",
-  },
+    description: "Colombia"
+  }
 ];
 
 const socialLinks = [
   { icon: "i-lucide-facebook", label: "Facebook", href: "#" },
   { icon: "i-lucide-instagram", label: "Instagram", href: "#" },
   { icon: "i-lucide-linkedin", label: "LinkedIn", href: "#" },
-  { icon: "i-lucide-message-circle", label: "WhatsApp", href: "#" },
+  { icon: "i-lucide-message-circle", label: "WhatsApp", href: "#" }
 ];
 </script>
 
@@ -122,7 +122,10 @@ const socialLinks = [
           <div
             class="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-colors"
           >
-            <UIcon :name="info.icon" class="w-5 h-5 text-primary" />
+            <UIcon
+              :name="info.icon"
+              class="w-5 h-5 text-primary"
+            />
           </div>
           <p class="text-sm text-muted-foreground">{{ info.label }}</p>
           <p class="text-foreground font-medium mt-1">{{ info.value }}</p>
@@ -134,11 +137,17 @@ const socialLinks = [
 
       <!-- Form Section -->
       <div class="relative">
-        <div v-if="submitted" class="bg-card rounded-3xl p-12 text-center">
+        <div
+          v-if="submitted"
+          class="bg-card rounded-3xl p-12 text-center"
+        >
           <div
             class="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6"
           >
-            <UIcon name="i-lucide-check" class="w-10 h-10 text-primary" />
+            <UIcon
+              name="i-lucide-check"
+              class="w-10 h-10 text-primary"
+            />
           </div>
           <h2 class="text-2xl font-semibold text-foreground mb-2">
             ¡Mensaje enviado!
@@ -156,7 +165,7 @@ const socialLinks = [
                 email: '',
                 phone: '',
                 subject: '',
-                message: '',
+                message: ''
               };
             "
           >
@@ -166,8 +175,8 @@ const socialLinks = [
 
         <form
           v-else
-          @submit.prevent="submitForm"
           class="bg-card rounded-3xl p-8 sm:p-12"
+          @submit.prevent="submitForm"
         >
           <div class="grid sm:grid-cols-2 gap-6 mb-6">
             <!-- Name -->
@@ -188,9 +197,12 @@ const socialLinks = [
                   :class="{ 'ring-2 ring-red-500/20': errors.name }"
                   @blur="validateField('name')"
                   @focus="focusedField = 'name'"
-                />
+                >
               </div>
-              <p v-if="errors.name" class="mt-1 text-xs text-red-500">
+              <p
+                v-if="errors.name"
+                class="mt-1 text-xs text-red-500"
+              >
                 {{ errors.name }}
               </p>
             </div>
@@ -213,18 +225,19 @@ const socialLinks = [
                   :class="{ 'ring-2 ring-red-500/20': errors.email }"
                   @blur="validateField('email')"
                   @focus="focusedField = 'email'"
-                />
+                >
               </div>
-              <p v-if="errors.email" class="mt-1 text-xs text-red-500">
+              <p
+                v-if="errors.email"
+                class="mt-1 text-xs text-red-500"
+              >
                 {{ errors.email }}
               </p>
             </div>
 
             <!-- Phone -->
             <div class="relative">
-              <label class="block text-sm font-medium text-foreground mb-2"
-                >Teléfono</label
-              >
+              <label class="block text-sm font-medium text-foreground mb-2">Teléfono</label>
               <div class="relative">
                 <UIcon
                   name="i-lucide-phone"
@@ -236,7 +249,7 @@ const socialLinks = [
                   placeholder="+57 300 123 4567"
                   class="w-full pl-11 pr-4 py-3 bg-muted/50 rounded-xl border-0 text-foreground placeholder:text-muted-foreground focus:ring-2 focus:ring-primary/20 focus:bg-card transition-all"
                   @focus="focusedField = 'phone'"
-                />
+                >
               </div>
             </div>
 
@@ -258,9 +271,12 @@ const socialLinks = [
                   :class="{ 'ring-2 ring-red-500/20': errors.subject }"
                   @blur="validateField('subject')"
                   @focus="focusedField = 'subject'"
-                />
+                >
               </div>
-              <p v-if="errors.subject" class="mt-1 text-xs text-red-500">
+              <p
+                v-if="errors.subject"
+                class="mt-1 text-xs text-red-500"
+              >
                 {{ errors.subject }}
               </p>
             </div>
@@ -280,7 +296,10 @@ const socialLinks = [
               @blur="validateField('message')"
               @focus="focusedField = 'message'"
             />
-            <p v-if="errors.message" class="mt-1 text-xs text-red-500">
+            <p
+              v-if="errors.message"
+              class="mt-1 text-xs text-red-500"
+            >
               {{ errors.message }}
             </p>
           </div>
@@ -295,7 +314,11 @@ const socialLinks = [
               class="w-full sm:w-auto px-8"
             >
               <template #leading>
-                <UIcon v-if="!loading" name="i-lucide-send" class="w-4 h-4" />
+                <UIcon
+                  v-if="!loading"
+                  name="i-lucide-send"
+                  class="w-4 h-4"
+                />
               </template>
               Enviar mensaje
             </UButton>
@@ -308,7 +331,9 @@ const socialLinks = [
 
       <!-- Social Links -->
       <div class="mt-12 text-center">
-        <p class="text-sm text-muted-foreground mb-4">Síguenos en redes</p>
+        <p class="text-sm text-muted-foreground mb-4">
+          Síguenos en redes
+        </p>
         <div class="flex justify-center gap-3">
           <a
             v-for="social in socialLinks"
@@ -317,7 +342,10 @@ const socialLinks = [
             class="w-10 h-10 rounded-full bg-muted/50 flex items-center justify-center hover:bg-primary/10 hover:text-primary transition-all"
             :aria-label="social.label"
           >
-            <UIcon :name="social.icon" class="w-4 h-4" />
+            <UIcon
+              :name="social.icon"
+              class="w-4 h-4"
+            />
           </a>
         </div>
       </div>

@@ -15,7 +15,7 @@ export const useNotificationsPage = () => {
     markAllAsRead,
     deleteNotification,
     startPolling,
-    stopPolling,
+    stopPolling
   } = useNotifications();
 
   const currentFilter = ref<"all" | "unread" | "read">("all");
@@ -23,7 +23,7 @@ export const useNotificationsPage = () => {
   const filters = [
     { value: "all", label: "Todas" },
     { value: "unread", label: "No leídas" },
-    { value: "read", label: "Leídas" },
+    { value: "read", label: "Leídas" }
   ];
 
   const filteredNotifications = computed(() => {
@@ -93,6 +93,6 @@ export const useNotificationsPage = () => {
     loadNotifications,
     markAsRead: markAsRead,
     markAllAsRead: markAllAsRead,
-    deleteNotification: deleteNotification,
+    deleteNotification: deleteNotification
   };
 };

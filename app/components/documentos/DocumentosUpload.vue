@@ -8,7 +8,7 @@
         isDragging
           ? 'border-primary bg-primary/5'
           : 'border-border hover:border-primary',
-        error ? 'border-destructive' : '',
+        error ? 'border-destructive' : ''
       ]"
       @dragenter.prevent="isDragging = true"
       @dragleave.prevent="isDragging = false"
@@ -32,7 +32,9 @@
             </span>
             o arrastra y suelta
           </p>
-          <p class="text-xs text-muted-foreground">PDF, JPG o PNG (máx. 5MB)</p>
+          <p class="text-xs text-muted-foreground">
+            PDF, JPG o PNG (máx. 5MB)
+          </p>
         </div>
       </div>
       <input
@@ -41,7 +43,7 @@
         class="hidden"
         accept=".pdf,.jpg,.jpeg,.png"
         @change="handleFileSelect"
-      />
+      >
     </div>
 
     <!-- Estado: Cargando -->
@@ -57,8 +59,13 @@
           />
         </div>
         <div class="flex-1 space-y-1">
-          <p class="text-sm font-medium text-foreground">Subiendo archivo...</p>
-          <UProgress :model-value="progress" size="sm" />
+          <p class="text-sm font-medium text-foreground">
+            Subiendo archivo...
+          </p>
+          <UProgress
+            :model-value="progress"
+            size="sm"
+          />
         </div>
       </div>
     </div>
@@ -71,7 +78,10 @@
       <div class="flex items-start justify-between">
         <div class="flex items-center space-x-3 overflow-hidden">
           <div class="p-2 bg-success/10 rounded-full shrink-0">
-            <UIcon name="i-lucide-file-check" class="h-5 w-5 text-success" />
+            <UIcon
+              name="i-lucide-file-check"
+              class="h-5 w-5 text-success"
+            />
           </div>
           <div class="min-w-0">
             <p class="text-sm font-medium text-foreground truncate">
@@ -111,7 +121,10 @@
       v-if="error"
       class="mt-2 text-xs text-destructive flex items-center gap-1"
     >
-      <UIcon name="i-lucide-alert-circle" class="h-3 w-3" />
+      <UIcon
+        name="i-lucide-alert-circle"
+        class="h-3 w-3"
+      />
       {{ error }}
     </p>
   </div>
@@ -121,17 +134,17 @@
 import { ref } from "vue";
 
 const props = defineProps<{
-  modelValue?: DocumentoCargado;
-  loading?: boolean;
-  progress?: number;
-  error?: string | null;
+  modelValue?: DocumentoCargado
+  loading?: boolean
+  progress?: number
+  error?: string | null
 }>();
 
 const emit = defineEmits<{
-  "upload": [file: File];
-  "delete": [id: string];
-  "download": [id: string];
-  "update:modelValue": [value: DocumentoCargado | undefined];
+  "upload": [file: File]
+  "delete": [id: string]
+  "download": [id: string]
+  "update:modelValue": [value: DocumentoCargado | undefined]
 }>();
 
 const fileInput = ref<HTMLInputElement | null>(null);

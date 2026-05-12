@@ -5,21 +5,21 @@ import { useSession } from "~/composables/useSession";
 import { useApi } from "~/composables/useApi";
 
 type ApiSuccessResponse<T> = {
-  success: boolean;
-  message?: string;
-  data?: T;
+  success: boolean
+  message?: string
+  data?: T
 };
 
 type PerfilApiData = {
-  id: string;
-  username: string;
-  email: string;
-  full_name?: string | null;
-  phone?: string | null;
-  tipo_documento?: string | null;
-  numero_documento?: string | null;
-  nombres?: string | null;
-  apellidos?: string | null;
+  id: string
+  username: string
+  email: string
+  full_name?: string | null
+  phone?: string | null
+  tipo_documento?: string | null
+  numero_documento?: string | null
+  nombres?: string | null
+  apellidos?: string | null
 };
 
 export function usePerfil() {
@@ -35,13 +35,13 @@ export function usePerfil() {
     tipo_documento: "",
     numero_documento: "",
     nombres: "",
-    apellidos: "",
+    apellidos: ""
   });
 
   const passwordData = ref<PasswordData>({
     password_actual: "",
     nueva_password: "",
-    confirmar_password: "",
+    confirmar_password: ""
   });
 
   const loading = ref(false);
@@ -51,9 +51,9 @@ export function usePerfil() {
 
   const hasPasswordChange = computed(() => {
     return Boolean(
-      passwordData.value.password_actual ||
-      passwordData.value.nueva_password ||
-      passwordData.value.confirmar_password,
+      passwordData.value.password_actual
+      || passwordData.value.nueva_password
+      || passwordData.value.confirmar_password
     );
   });
 
@@ -82,14 +82,14 @@ export function usePerfil() {
     const hasLower = /[a-z]/.test(pwd);
     const hasDigit = /\d/.test(pwd);
     if (!(hasUpper && hasLower && hasDigit)) {
-      error.value =
-        "La nueva contraseña debe contener mayúsculas, minúsculas y números";
+      error.value
+        = "La nueva contraseña debe contener mayúsculas, minúsculas y números";
       return false;
     }
 
     if (
-      passwordData.value.nueva_password !==
-      passwordData.value.confirmar_password
+      passwordData.value.nueva_password
+      !== passwordData.value.confirmar_password
     ) {
       error.value = "Las contraseñas no coinciden";
       return false;
@@ -107,7 +107,7 @@ export function usePerfil() {
     () => [perfil.value.nombres, perfil.value.apellidos],
     () => {
       sync_full_name();
-    },
+    }
   );
 
   const cargarPerfil = async () => {
@@ -117,7 +117,7 @@ export function usePerfil() {
 
       const data = await getJson<ApiSuccessResponse<PerfilApiData>>(
         "/api/user/perfil",
-        { auth: true },
+        { auth: true }
       );
       if (data?.success && data.data) {
         perfil.value = {
@@ -128,7 +128,7 @@ export function usePerfil() {
           tipo_documento: String(data.data.tipo_documento || ""),
           numero_documento: String(data.data.numero_documento || ""),
           nombres: String(data.data.nombres || ""),
-          apellidos: String(data.data.apellidos || ""),
+          apellidos: String(data.data.apellidos || "")
         };
       } else if (session.value.user) {
         const user = session.value.user;
@@ -178,13 +178,13 @@ export function usePerfil() {
       const updatePayload: Record<string, string> = {
         email: perfil.value.email,
         phone: perfil.value.phone,
-        full_name: perfil.value.full_name,
+        full_name: perfil.value.full_name
       };
 
       const updateResp = await putJson<ApiSuccessResponse<PerfilApiData>>(
         "/api/user/perfil",
         updatePayload,
-        { auth: true },
+        { auth: true }
       );
       if (updateResp?.success && updateResp.data) {
         perfil.value = {
@@ -195,7 +195,7 @@ export function usePerfil() {
           tipo_documento: String(updateResp.data.tipo_documento || ""),
           numero_documento: String(updateResp.data.numero_documento || ""),
           nombres: String(updateResp.data.nombres || ""),
-          apellidos: String(updateResp.data.apellidos || ""),
+          apellidos: String(updateResp.data.apellidos || "")
         };
       }
 
@@ -204,9 +204,9 @@ export function usePerfil() {
           "/api/user/perfil/password-change",
           {
             current_password: passwordData.value.password_actual,
-            new_password: passwordData.value.nueva_password,
+            new_password: passwordData.value.nueva_password
           },
-          { auth: true },
+          { auth: true }
         );
       }
 
@@ -217,8 +217,8 @@ export function usePerfil() {
             ...session.value.user,
             email: perfil.value.email,
             nombres: perfil.value.nombres,
-            apellidos: perfil.value.apellidos,
-          },
+            apellidos: perfil.value.apellidos
+          }
         });
       }
 
@@ -226,7 +226,7 @@ export function usePerfil() {
       passwordData.value = {
         password_actual: "",
         nueva_password: "",
-        confirmar_password: "",
+        confirmar_password: ""
       };
 
       setTimeout(() => {
@@ -245,7 +245,7 @@ export function usePerfil() {
     passwordData.value = {
       password_actual: "",
       nueva_password: "",
-      confirmar_password: "",
+      confirmar_password: ""
     };
   };
 
@@ -277,6 +277,6 @@ export function usePerfil() {
     success,
     guardarPerfil,
     recargarPerfil,
-    resetPasswordForm,
+    resetPasswordForm
   };
 }

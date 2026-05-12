@@ -9,7 +9,7 @@ export const firmantesSolicitud = [
     email: "maxedwwin@gmail.com",
     rol: "SOLICITANTE",
     created_at: "2026-03-18 01:30:34.0",
-    updated_at: "2026-03-18 01:30:34.0",
+    updated_at: "2026-03-18 01:30:34.0"
   },
   {
     id: 6,
@@ -21,6 +21,6 @@ export const firmantesSolicitud = [
     email: "logistica@transporterapica.com",
     rol: "EMPRESA_PATROCINADORA",
     created_at: "2026-03-18 01:30:34.0",
-    updated_at: "2026-03-18 01:30:34.0",
-  },
+    updated_at: "2026-03-18 01:30:34.0"
+  }
 ];

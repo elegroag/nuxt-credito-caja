@@ -22,8 +22,8 @@ export default defineEventHandler(async (event: H3Event) => {
     const solicitud = await prisma.solicitudes_credito.findUnique({
       where: { numero_solicitud: solicitudId },
       include: {
-        pdfs_generados: true,
-      },
+        pdfs_generados: true
+      }
     });
 
     if (!solicitud) {
@@ -63,11 +63,11 @@ export default defineEventHandler(async (event: H3Event) => {
               filename: solicitud.pdfs_generados.filename,
               generado_en: solicitud.pdfs_generados.generado_en,
               archivo_existe: tienePdf,
-              path: solicitud.pdfs_generados.path,
+              path: solicitud.pdfs_generados.path
             }
-          : null,
+          : null
       },
-      tienePdf ? "PDF disponible" : "PDF no generado",
+      tienePdf ? "PDF disponible" : "PDF no generado"
     );
   } catch (error: any) {
     console.error("Error al verificar estado del PDF:", error);
@@ -76,7 +76,7 @@ export default defineEventHandler(async (event: H3Event) => {
 
     return CustomResponse.error(
       error?.data?.error || error?.message || "Error al verificar el estado del PDF",
-      "Error al verificar PDF.",
+      "Error al verificar PDF."
     );
   }
 });

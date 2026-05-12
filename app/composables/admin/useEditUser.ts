@@ -1,6 +1,5 @@
 import { ref, reactive, onMounted } from "vue";
-import { useRouter } from "vue-router";
-import { useRoute } from "vue-router";
+import { useRouter, useRoute } from "vue-router";
 import { useApi } from "~/composables/useApi";
 import { useSession } from "~/composables/useSession";
 import { getDefaultTipoDocumento } from "~/lib/tipos_documento";
@@ -31,7 +30,7 @@ export function useEditUser() {
     apellido: "",
     tipo_documento: getDefaultTipoDocumento(), // Cédula de Ciudadanía
     numero_documento: "",
-    phone: "",
+    phone: ""
   });
 
   // Errores
@@ -46,9 +45,9 @@ export function useEditUser() {
       await ready;
 
       const response = await getJson<{
-        success: boolean;
-        data: any;
-        message?: string;
+        success: boolean
+        data: any
+        message?: string
       }>(`/api/admin/users/${route.params.id}`, { auth: true });
 
       if (response.success && response.data) {
@@ -61,13 +60,13 @@ export function useEditUser() {
         form.apellido = response.data.apellidos || response.data.apellido || "";
         form.roles = response.data.roles || [];
         form.disabled = response.data.disabled || false;
-        form.tipo_documento =
-          response.data.tipo_documento || getDefaultTipoDocumento();
+        form.tipo_documento
+          = response.data.tipo_documento || getDefaultTipoDocumento();
         form.numero_documento = response.data.numero_documento || "";
         form.phone = response.data.phone || response.data.telefono || "";
       } else {
-        error.value =
-          response.message || "No se pudo cargar la información del usuario";
+        error.value
+          = response.message || "No se pudo cargar la información del usuario";
       }
     } catch (err: any) {
       console.error("Error al cargar usuario:", err);
@@ -85,8 +84,8 @@ export function useEditUser() {
     if (!form.username.trim()) {
       errors.value.username = "El nombre de usuario es requerido";
     } else if (form.username.length < 3) {
-      errors.value.username =
-        "El nombre de usuario debe tener al menos 3 caracteres";
+      errors.value.username
+        = "El nombre de usuario debe tener al menos 3 caracteres";
     }
 
     // Validar email
@@ -100,8 +99,8 @@ export function useEditUser() {
     // Validar contraseña solo si se proporciona
     if (form.password) {
       if (form.password.length < 8) {
-        errors.value.password =
-          "La contraseña debe tener al menos 8 caracteres";
+        errors.value.password
+          = "La contraseña debe tener al menos 8 caracteres";
       }
 
       if (form.confirmPassword) {
@@ -128,8 +127,8 @@ export function useEditUser() {
 
     // Validar número de documento si se proporciona tipo
     if (form.tipo_documento && !form.numero_documento.trim()) {
-      errors.value.numero_documento =
-        "El número de documento es requerido cuando se especifica el tipo";
+      errors.value.numero_documento
+        = "El número de documento es requerido cuando se especifica el tipo";
     }
 
     return Object.keys(errors.value).length === 0;
@@ -156,7 +155,7 @@ export function useEditUser() {
         disabled: form.disabled,
         tipo_documento: form.tipo_documento,
         numero_documento: form.numero_documento.trim(),
-        phone: form.phone.trim(),
+        phone: form.phone.trim()
       };
 
       // Agregar contraseña solo si se proporciona
@@ -165,8 +164,8 @@ export function useEditUser() {
       }
 
       const response = await putJson<{
-        success: boolean;
-        message: string;
+        success: boolean
+        message: string
       }>(`/api/admin/users/${route.params.id}`, payload, { auth: true });
 
       if (response.success) {
@@ -174,8 +173,8 @@ export function useEditUser() {
         router.push(`/admin/users/show/${route.params.id}`);
       } else {
         // Mostrar error genérico
-        errors.value.general =
-          response.message || "Error al actualizar el usuario";
+        errors.value.general
+          = response.message || "Error al actualizar el usuario";
       }
     } catch (error: any) {
       console.error("Error al actualizar usuario:", error);
@@ -186,8 +185,8 @@ export function useEditUser() {
       } else if (error.message?.includes("email")) {
         errors.value.email = "El email ya está registrado";
       } else {
-        errors.value.general =
-          error.message || "Error al actualizar el usuario";
+        errors.value.general
+          = error.message || "Error al actualizar el usuario";
       }
     } finally {
       loading.value = false;
@@ -203,8 +202,8 @@ export function useEditUser() {
       form.apellido = usuario.value.apellidos || usuario.value.apellido || "";
       form.roles = usuario.value.roles || [];
       form.disabled = usuario.value.disabled || false;
-      form.tipo_documento =
-        usuario.value.tipo_documento || getDefaultTipoDocumento();
+      form.tipo_documento
+        = usuario.value.tipo_documento || getDefaultTipoDocumento();
       form.numero_documento = usuario.value.numero_documento || "";
       form.phone = usuario.value.phone || usuario.value.telefono || "";
       form.password = "";
@@ -237,6 +236,6 @@ export function useEditUser() {
     validateForm,
     handleSubmit,
     resetForm,
-    goBack,
+    goBack
   };
 }

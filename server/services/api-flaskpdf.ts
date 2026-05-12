@@ -8,14 +8,14 @@ const apiFlaskPdf = () => {
   const basic_password = config.apiFLASKPDF.basic_password;
   const baseUrl = {
     pro: config.apiFLASKPDF.url_pro,
-    dev: config.apiFLASKPDF.url_dev,
+    dev: config.apiFLASKPDF.url_dev
   };
 
   const authHeader = (basicToken: string) => {
     return {
-      Authorization: `Basic ${basicToken}`,
+      "Authorization": `Basic ${basicToken}`,
       "Content-Type": "application/json",
-      Accept: "application/json",
+      "Accept": "application/json"
     };
   };
 
@@ -24,7 +24,7 @@ const apiFlaskPdf = () => {
       if (!basic_user || !basic_password) {
         throw createError({
           statusCode: 401,
-          message: "Basic user or password not configured",
+          message: "Basic user or password not configured"
         });
       }
       return Buffer.from(`${basic_user}:${basic_password}`).toString("base64");
@@ -36,7 +36,7 @@ const apiFlaskPdf = () => {
 
       return {
         error:
-          e?.data?.error || e?.message || "Error conectando con FLASKPDF API",
+          e?.data?.error || e?.message || "Error conectando con FLASKPDF API"
       };
     }
   };
@@ -45,12 +45,12 @@ const apiFlaskPdf = () => {
     path: string,
     body: any,
     opts?: {
-      auth?: boolean;
-      headers?: Record<string, string>;
-    },
+      auth?: boolean
+      headers?: Record<string, string>
+    }
   ) => {
     const headers: Record<string, string> = {
-      ...(opts?.headers || {}),
+      ...(opts?.headers || {})
     };
     const token = await getBasicToken();
 
@@ -58,7 +58,7 @@ const apiFlaskPdf = () => {
       throw createError({
         statusCode: 401,
         message: "Bad token no valid",
-        data: token,
+        data: token
       });
     }
 
@@ -70,7 +70,7 @@ const apiFlaskPdf = () => {
     const response = await ofetch<T>(`${url}/${path}`, {
       method: "POST",
       headers,
-      body,
+      body
     });
 
     return response;
@@ -83,7 +83,7 @@ const apiFlaskPdf = () => {
   return {
     getBasicToken,
     postJson,
-    generatePdf,
+    generatePdf
   };
 };
 

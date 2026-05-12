@@ -3,7 +3,7 @@ import {
   defineEventHandler,
   getRouterParam,
   setResponseStatus,
-  readMultipartFormData,
+  readMultipartFormData
 } from "h3";
 import prisma from "~~/lib/prisma";
 import { writeFile, mkdir } from "fs/promises";
@@ -41,7 +41,7 @@ const mapDocumentoCargado = (doc: any): any => ({
   documento_uuid: doc.api_filename || doc.saved_filename,
   updated_at: doc.updated_at?.toISOString?.() || String(doc.updated_at),
   activo: doc.activo,
-  solicitud_id: doc.solicitud_id,
+  solicitud_id: doc.solicitud_id
 });
 
 export default defineEventHandler(async (event: H3Event) => {
@@ -53,7 +53,7 @@ export default defineEventHandler(async (event: H3Event) => {
       setResponseStatus(event, 401);
       return CustomResponse.error(
         "No hay sesión activa",
-        "Error de autenticación",
+        "Error de autenticación"
       );
     }
 
@@ -61,19 +61,19 @@ export default defineEventHandler(async (event: H3Event) => {
       setResponseStatus(event, 400);
       return CustomResponse.error(
         "ID de solicitud no proporcionado",
-        "Error de validación",
+        "Error de validación"
       );
     }
 
     const solicitud = await prisma.solicitudes_credito.findUnique({
-      where: { numero_solicitud: solicitudId },
+      where: { numero_solicitud: solicitudId }
     });
 
     if (!solicitud) {
       setResponseStatus(event, 404);
       return CustomResponse.error(
         "Solicitud no encontrada",
-        "Recurso no encontrado",
+        "Recurso no encontrado"
       );
     }
 
@@ -81,7 +81,7 @@ export default defineEventHandler(async (event: H3Event) => {
       setResponseStatus(event, 403);
       return CustomResponse.error(
         "No tienes permiso para subir documentos a esta solicitud",
-        "Acceso denegado",
+        "Acceso denegado"
       );
     }
 
@@ -91,20 +91,20 @@ export default defineEventHandler(async (event: H3Event) => {
       setResponseStatus(event, 400);
       return CustomResponse.error(
         "No se recibieron datos del formulario",
-        "Error de validación",
+        "Error de validación"
       );
     }
 
-    const file = formData.find((item) => item.name === "documento");
+    const file = formData.find(item => item.name === "documento");
     const documentoRequeridoId = formData
-      .find((item) => item.name === "documento_requerido_id")
+      .find(item => item.name === "documento_requerido_id")
       ?.data.toString();
 
     if (!file) {
       setResponseStatus(event, 400);
       return CustomResponse.error(
         "No se recibió el archivo del documento",
-        "Error de validación",
+        "Error de validación"
       );
     }
 
@@ -112,7 +112,7 @@ export default defineEventHandler(async (event: H3Event) => {
       setResponseStatus(event, 400);
       return CustomResponse.error(
         "ID de documento requerido no proporcionado",
-        "Error de validación",
+        "Error de validación"
       );
     }
 
@@ -147,8 +147,8 @@ export default defineEventHandler(async (event: H3Event) => {
         api_filename: uniqueFilename,
         activo: true,
         created_at: new Date(),
-        updated_at: new Date(),
-      },
+        updated_at: new Date()
+      }
     });
 
     // Recargar lista de documentos para retornar al frontend
@@ -156,12 +156,12 @@ export default defineEventHandler(async (event: H3Event) => {
       {
         where: {
           solicitud_id: solicitudId,
-          activo: true,
+          activo: true
         },
         orderBy: {
-          created_at: "desc",
-        },
-      },
+          created_at: "desc"
+        }
+      }
     );
 
     // Mapear documentos al formato esperado por el frontend
@@ -169,7 +169,7 @@ export default defineEventHandler(async (event: H3Event) => {
 
     return CustomResponse.success(
       { documentos: documentosMapeados },
-      "Documento subido exitosamente",
+      "Documento subido exitosamente"
     );
   } catch (error: any) {
     console.error("Error al subir documento:", error);
@@ -178,7 +178,7 @@ export default defineEventHandler(async (event: H3Event) => {
 
     return CustomResponse.error(
       error?.data?.error || error?.message || "Error al subir documento",
-      "Error al subir documento.",
+      "Error al subir documento."
     );
   }
 });

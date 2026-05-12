@@ -29,8 +29,8 @@ export function useAdviser() {
         "/api/auth/adviser/autenticar",
         {
           username: username.value,
-          password: password.value,
-        },
+          password: password.value
+        }
       );
 
       const data = response.data;
@@ -64,17 +64,17 @@ export function useAdviser() {
       const code = e?.data?.code;
 
       if (status === 404 && code === "USER_NOT_FOUND") {
-        errorMsg.value =
-          "Asesor no encontrado. Verifique el número de asesor y credenciales.";
+        errorMsg.value
+          = "Asesor no encontrado. Verifique el número de asesor y credenciales.";
       } else if (status === 401) {
         errorMsg.value = "Credenciales incorrectas. Intente nuevamente.";
       } else if (status === 403) {
         errorMsg.value = "El usuario no tiene permisos de asesor.";
       } else {
-        errorMsg.value =
-          e?.data?.error ||
-          e?.message ||
-          "No fue posible iniciar sesión como asesor";
+        errorMsg.value
+          = e?.data?.error
+            || e?.message
+            || "No fue posible iniciar sesión como asesor";
       }
 
       return false;
@@ -88,8 +88,8 @@ export function useAdviser() {
     await ready;
 
     if (isAuthenticated.value) {
-      const redirect =
-        typeof route.query.redirect === "string"
+      const redirect
+        = typeof route.query.redirect === "string"
           ? route.query.redirect
           : "/adviser/dashboard";
       await navigateTo(redirect.startsWith("/") ? redirect : "/");
@@ -142,13 +142,13 @@ export function useAdviser() {
         adviser_number: "",
         asesor: user?.asesor,
         trabajador: user?.trabajador,
-        selected_punto: selectedPunto.value || undefined,
-      },
+        selected_punto: selectedPunto.value || undefined
+      }
     });
 
     // Redirigir al dashboard de asesores
-    const redirect =
-      typeof route.query.redirect === "string" ? route.query.redirect : "/dash";
+    const redirect
+      = typeof route.query.redirect === "string" ? route.query.redirect : "/dash";
     await navigateTo(redirect.startsWith("/") ? redirect : "/");
 
     return true;
@@ -182,6 +182,6 @@ export function useAdviser() {
     showPuntosModal,
     puntosAsesoria,
     selectPuntoAsesoria,
-    cancelPuntoSelection,
+    cancelPuntoSelection
   };
 }

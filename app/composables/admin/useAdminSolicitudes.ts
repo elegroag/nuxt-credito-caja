@@ -15,13 +15,13 @@ export const useAdminSolicitudes = () => {
   // Filtros activos
   const filtrosActivos = ref<FiltrosSolicitudes>({
     skip: 0,
-    limit: 20,
+    limit: 20
   });
 
   // Opciones para filtros
   const opcionesFiltro = ref<OpcionesFiltro>({
     estados: [],
-    usuarios: [],
+    usuarios: []
   });
 
   // Conteo por estados
@@ -46,7 +46,7 @@ export const useAdminSolicitudes = () => {
       return response.data || defaultValue;
     } else {
       throw new Error(
-        response?.message || "Error en la respuesta del servidor",
+        response?.message || "Error en la respuesta del servidor"
       );
     }
   };
@@ -60,7 +60,7 @@ export const useAdminSolicitudes = () => {
     try {
       const params = new URLSearchParams({
         limit: (filtrosActivos.value.limit || 20).toString(),
-        skip: (filtrosActivos.value.skip || 0).toString(),
+        skip: (filtrosActivos.value.skip || 0).toString()
       });
 
       // Agregar estado a la URL solo si está definido
@@ -71,13 +71,13 @@ export const useAdminSolicitudes = () => {
 
       const response = await getJson<any>(
         `/api/admin/solicitudes?${params.toString()}`,
-        { auth: true },
+        { auth: true }
       );
 
       // Usar el manejador de respuestas estandarizado
       const data = handleApiResponse(response, {
         collection: [],
-        pagination: { total: 0 },
+        pagination: { total: 0 }
       });
       solicitudes.value = data.collection || [];
       totalItems.value = data.pagination?.total || 0;
@@ -97,7 +97,7 @@ export const useAdminSolicitudes = () => {
     try {
       const response = await getJson<{ data: EstadoSolicitudData[] }>(
         "/api/solicitudes/estados-solicitud",
-        { auth: true },
+        { auth: true }
       );
       const data = handleApiResponse(response, []);
       estadosDisponibles.value = Array.isArray(data) ? data : [];
@@ -115,7 +115,7 @@ export const useAdminSolicitudes = () => {
     try {
       const response = await getJson<any>(
         "/api/admin/solicitudes/estados-count",
-        { auth: true },
+        { auth: true }
       );
       const conteo = handleApiResponse(response, {});
 
@@ -163,13 +163,13 @@ export const useAdminSolicitudes = () => {
   const actualizarEstado = async (
     solicitudId: string,
     estado: string,
-    descripcion?: string,
+    descripcion?: string
   ) => {
     try {
       const response = await putJson<any>(
         `/api/admin/solicitudes/${solicitudId}/estado`,
         { estado, descripcion },
-        { auth: true },
+        { auth: true }
       );
 
       // Recargar los datos
@@ -186,12 +186,12 @@ export const useAdminSolicitudes = () => {
    * Obtiene una solicitud específica
    */
   const obtenerSolicitud = async (
-    solicitudId: string,
+    solicitudId: string
   ): Promise<SolicitudAdmin> => {
     try {
       const response = await getJson<any>(
         `/api/admin/solicitudes/${solicitudId}`,
-        { auth: true },
+        { auth: true }
       );
       return handleApiResponse(response, null);
     } catch (err) {
@@ -206,7 +206,7 @@ export const useAdminSolicitudes = () => {
   const eliminarSolicitud = async (solicitudId: string) => {
     try {
       await deleteJson(`/api/solicitudes/${solicitudId}`, {
-        auth: true,
+        auth: true
       });
 
       // Recargar los datos
@@ -222,7 +222,7 @@ export const useAdminSolicitudes = () => {
    * Exporta las solicitudes a CSV
    */
   const exportarCSV = async () => {
-    //pendiente
+    // pendiente
   };
 
   /**
@@ -271,7 +271,7 @@ export const useAdminSolicitudes = () => {
       await actualizarEstado(
         solicitudNumero,
         nuevoEstado.value,
-        estadoDescripcion.value || undefined,
+        estadoDescripcion.value || undefined
       );
 
       cerrarEstadoModal();
@@ -288,7 +288,7 @@ export const useAdminSolicitudes = () => {
   const eliminarSolicitudConfirm = (solicitud: SolicitudAdmin | any) => {
     if (
       confirm(
-        `¿Estás seguro de eliminar la solicitud ${solicitud.numero_solicitud}?`,
+        `¿Estás seguro de eliminar la solicitud ${solicitud.numero_solicitud}?`
       )
     ) {
       eliminarSolicitud(solicitud.numero_solicitud);
@@ -299,11 +299,11 @@ export const useAdminSolicitudes = () => {
   const tieneFiltrosActivos = computed(() => {
     const f = filtrosActivos.value;
     return !!(
-      f.numero_documento ||
-      f.nombre_usuario ||
-      f.owner_username ||
-      f.numero_solicitud ||
-      (f.estados && f.estados.length > 0)
+      f.numero_documento
+      || f.nombre_usuario
+      || f.owner_username
+      || f.numero_solicitud
+      || (f.estados && f.estados.length > 0)
     );
   });
 
@@ -333,7 +333,7 @@ export const useAdminSolicitudes = () => {
   const getTotalSolicitudes = computed(() => {
     return Object.values(estadosCount.value).reduce(
       (total, count) => total + count,
-      0,
+      0
     );
   });
 
@@ -350,12 +350,12 @@ export const useAdminSolicitudes = () => {
    * Aplica filtros y recarga los datos
    */
   const aplicarFiltroPaginacion = (
-    nuevosFiltros: Partial<FiltrosSolicitudes>,
+    nuevosFiltros: Partial<FiltrosSolicitudes>
   ) => {
     filtrosActivos.value = {
       ...filtrosActivos.value,
       ...nuevosFiltros,
-      skip: 0,
+      skip: 0
     };
     cargarSolicitudes();
   };
@@ -366,14 +366,14 @@ export const useAdminSolicitudes = () => {
   const filtrarPorEstado = (estado: string) => {
     // Buscar el estado por nombre para obtener su ID
     const estadoData = estadosDisponibles.value.find(
-      (e) => e.nombre === estado,
+      e => e.nombre === estado
     );
     const estadoId = estadoData?.id || estado;
 
     // Aplicar filtro por estado específico usando el ID del estado
     aplicarFiltroPaginacion({
       estados: [estadoId],
-      skip: 0, // Reiniciar paginación
+      skip: 0 // Reiniciar paginación
     });
   };
 
@@ -383,7 +383,7 @@ export const useAdminSolicitudes = () => {
   const limpiarFiltroEstado = () => {
     aplicarFiltroPaginacion({
       estados: [],
-      skip: 0,
+      skip: 0
     });
   };
 
@@ -437,6 +437,6 @@ export const useAdminSolicitudes = () => {
     confirmarCambioEstado,
     eliminarSolicitudConfirm,
     filtrarPorEstado,
-    limpiarFiltroEstado,
+    limpiarFiltroEstado
   };
 };

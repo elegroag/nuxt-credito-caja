@@ -2,7 +2,7 @@
   <div
     :class="[
       'flex items-start gap-3 p-4 border-b border-border hover:bg-muted/50 transition-colors cursor-pointer',
-      !notification.read_at ? 'bg-primary/5' : '',
+      !notification.read_at ? 'bg-primary/5' : ''
     ]"
     @click="handleClick"
   >
@@ -10,7 +10,7 @@
     <div
       :class="[
         'shrink-0 p-2 rounded-full',
-        !notification.read_at ? 'bg-primary/20' : 'bg-muted',
+        !notification.read_at ? 'bg-primary/20' : 'bg-muted'
       ]"
     >
       <UIcon
@@ -32,8 +32,11 @@
         </div>
 
         <!-- Indicador de no leída -->
-        <div v-if="!notification.read_at" class="shrink-0">
-          <div class="w-2 h-2 bg-primary rounded-full"></div>
+        <div
+          v-if="!notification.read_at"
+          class="shrink-0"
+        >
+          <div class="w-2 h-2 bg-primary rounded-full" />
         </div>
       </div>
 
@@ -73,32 +76,32 @@ import { useRouter } from "vue-router";
 import { useNotifications } from "~/composables/useNotifications";
 
 interface Notification {
-  id: string;
-  type: string;
+  id: string
+  type: string
   data: {
-    titulo: string;
-    mensaje: string;
-    url?: string;
-    [key: string]: any;
-  };
-  read_at: string | null;
-  created_at: string;
+    titulo: string
+    mensaje: string
+    url?: string
+    [key: string]: any
+  }
+  read_at: string | null
+  created_at: string
 }
 
 interface Props {
-  notification: Notification;
+  notification: Notification
 }
 
 const props = defineProps<Props>();
 
 const emit = defineEmits<{
-  "mark-as-read": [notificationId: string];
-  delete: [notificationId: string];
+  "mark-as-read": [notificationId: string]
+  "delete": [notificationId: string]
 }>();
 
 const router = useRouter();
-const { formatRelativeTime, getNotificationIcon, getNotificationColor } =
-  useNotifications();
+const { formatRelativeTime, getNotificationIcon, getNotificationColor }
+  = useNotifications();
 
 const handleClick = () => {
   if (!props.notification.read_at) {

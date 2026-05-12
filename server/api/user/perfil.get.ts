@@ -27,26 +27,26 @@ export default defineEventHandler(async (event: H3Event) => {
         is_active: true,
         disabled: true,
         created_at: true,
-        updated_at: true,
-      },
+        updated_at: true
+      }
     });
 
     if (!user) {
       throw createError({
         statusCode: 404,
-        statusMessage: "Usuario no encontrado",
+        statusMessage: "Usuario no encontrado"
       });
     }
 
     return CustomResponse.success(
       { ...user, id: Number(user.id) },
-      "Perfil obtenido exitosamente",
+      "Perfil obtenido exitosamente"
     );
   } catch (error: any) {
     if (error.statusCode) throw error;
     throw createError({
       statusCode: 500,
-      statusMessage: "Error al obtener el perfil",
+      statusMessage: "Error al obtener el perfil"
     });
   }
 });

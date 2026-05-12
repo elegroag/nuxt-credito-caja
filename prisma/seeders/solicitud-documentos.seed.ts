@@ -13,7 +13,7 @@ export const solicitudDocumentos = [
     activo: true,
     created_at: "2026-03-18 01:30:49.0",
     updated_at: "2026-03-18 01:30:49.0",
-    deleted_at: null,
+    deleted_at: null
   },
   {
     id: 25,
@@ -29,7 +29,7 @@ export const solicitudDocumentos = [
     activo: true,
     created_at: "2026-03-18 01:31:01.0",
     updated_at: "2026-03-18 01:31:01.0",
-    deleted_at: null,
+    deleted_at: null
   },
   {
     id: 26,
@@ -45,6 +45,6 @@ export const solicitudDocumentos = [
     activo: true,
     created_at: "2026-03-18 01:31:09.0",
     updated_at: "2026-03-18 01:31:09.0",
-    deleted_at: null,
-  },
+    deleted_at: null
+  }
 ];

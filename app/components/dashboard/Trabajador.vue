@@ -5,13 +5,22 @@
       class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4"
     >
       <div>
-        <h1 class="text-2xl font-bold text-foreground">Bienvenido</h1>
+        <h1 class="text-2xl font-bold text-foreground">
+          Bienvenido
+        </h1>
         <p class="text-sm text-muted-foreground mt-1">
           {{ nombreBienvenida || "Usuario" }}
         </p>
       </div>
-      <UButton to="/dash/simulador/lineas-credito" color="primary" size="lg">
-        <UIcon name="i-lucide-plus" class="w-4 h-4 mr-2" />
+      <UButton
+        to="/dash/simulador/lineas-credito"
+        color="primary"
+        size="lg"
+      >
+        <UIcon
+          name="i-lucide-plus"
+          class="w-4 h-4 mr-2"
+        />
         Nueva solicitud
       </UButton>
     </div>
@@ -24,10 +33,15 @@
         <div
           class="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center"
         >
-          <UIcon name="i-lucide-clipboard-list" class="w-5 h-5 text-primary" />
+          <UIcon
+            name="i-lucide-clipboard-list"
+            class="w-5 h-5 text-primary"
+          />
         </div>
         <div>
-          <h2 class="text-lg font-semibold text-foreground">Mis solicitudes</h2>
+          <h2 class="text-lg font-semibold text-foreground">
+            Mis solicitudes
+          </h2>
           <p class="text-sm text-muted-foreground">
             Listado de tus solicitudes y estado actual
           </p>
@@ -37,10 +51,13 @@
         variant="soft"
         color="neutral"
         size="md"
-        @click="cargarSolicitudes"
         :loading="loadingSolicitudes"
+        @click="cargarSolicitudes"
       >
-        <UIcon name="i-lucide-refresh-cw" class="w-4 h-4 mr-2" />
+        <UIcon
+          name="i-lucide-refresh-cw"
+          class="w-4 h-4 mr-2"
+        />
         Actualizar
       </UButton>
     </div>
@@ -51,7 +68,10 @@
       class="flex items-center justify-center py-12"
     >
       <div class="flex items-center gap-2 text-primary">
-        <UIcon name="i-lucide-loader-2" class="w-5 h-5 animate-spin" />
+        <UIcon
+          name="i-lucide-loader-2"
+          class="w-5 h-5 animate-spin"
+        />
         <span class="text-sm font-medium">Cargando solicitudes...</span>
       </div>
     </div>
@@ -62,7 +82,10 @@
       class="rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-600"
     >
       <div class="flex items-center gap-2">
-        <UIcon name="i-lucide-alert-triangle" class="w-5 h-5" />
+        <UIcon
+          name="i-lucide-alert-triangle"
+          class="w-5 h-5"
+        />
         {{ solicitudesError }}
       </div>
     </div>
@@ -76,7 +99,10 @@
         <div
           class="w-16 h-16 bg-muted rounded-2xl flex items-center justify-center"
         >
-          <UIcon name="i-lucide-file-x" class="w-8 h-8 text-muted-foreground" />
+          <UIcon
+            name="i-lucide-file-x"
+            class="w-8 h-8 text-muted-foreground"
+          />
         </div>
         <div>
           <p class="text-sm font-medium text-foreground">
@@ -86,20 +112,30 @@
             Cuando crees una solicitud, aparecerá aquí
           </p>
         </div>
-        <UButton to="/dash/simulador/lineas-credito" size="sm" color="primary">
-          <UIcon name="i-lucide-plus" class="w-4 h-4 mr-2" />
+        <UButton
+          to="/dash/simulador/lineas-credito"
+          size="sm"
+          color="primary"
+        >
+          <UIcon
+            name="i-lucide-plus"
+            class="w-4 h-4 mr-2"
+          />
           Crear solicitud
         </UButton>
       </div>
     </div>
 
     <!-- Solicitudes Grid -->
-    <div v-else class="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
+    <div
+      v-else
+      class="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3"
+    >
       <UPageCard
         v-for="s in solicitudes"
         :key="s.numero_solicitud"
         :ui="{
-          root: 'overflow-hidden transition-all duration-200 hover:-translate-y-1',
+          root: 'overflow-hidden transition-all duration-200 hover:-translate-y-1'
         }"
       >
         <div class="flex flex-wrap items-start justify-between gap-2 mb-3">
@@ -137,8 +173,15 @@
 
         <div class="flex justify-end">
           <NuxtLink :to="`/dash/solicitudes/${s.numero_solicitud}`">
-            <UButton size="sm" color="primary" variant="soft">
-              <UIcon name="i-lucide-eye" class="w-4 h-4 mr-2" />
+            <UButton
+              size="sm"
+              color="primary"
+              variant="soft"
+            >
+              <UIcon
+                name="i-lucide-eye"
+                class="w-4 h-4 mr-2"
+              />
               Ver detalle
             </UButton>
           </NuxtLink>
@@ -154,10 +197,15 @@
         <div
           class="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center"
         >
-          <UIcon name="i-lucide-building-2" class="w-5 h-5 text-primary" />
+          <UIcon
+            name="i-lucide-building-2"
+            class="w-5 h-5 text-primary"
+          />
         </div>
         <div>
-          <h2 class="text-lg font-semibold text-foreground">Convenio activo</h2>
+          <h2 class="text-lg font-semibold text-foreground">
+            Convenio activo
+          </h2>
           <p class="text-sm text-muted-foreground">
             Información del convenio de tu empresa
           </p>
@@ -167,28 +215,37 @@
         variant="soft"
         color="neutral"
         size="md"
-        @click="cargarConvenioActivo"
         :loading="loadingConvenio"
+        @click="cargarConvenioActivo"
       >
-        <UIcon name="i-lucide-refresh-cw" class="w-4 h-4 mr-2" />
+        <UIcon
+          name="i-lucide-refresh-cw"
+          class="w-4 h-4 mr-2"
+        />
         Actualizar
       </UButton>
     </div>
 
-    <div v-if="errorConvenio" class="text-sm text-destructive">
+    <div
+      v-if="errorConvenio"
+      class="text-sm text-destructive"
+    >
       {{ errorConvenio }}
     </div>
 
-    <div v-else class="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <div
+      v-else
+      class="grid grid-cols-1 md:grid-cols-2 gap-4"
+    >
       <div class="rounded-xl bg-muted/50 p-4">
         <p class="text-xs font-medium text-muted-foreground uppercase mb-1">
           Empresa
         </p>
         <p class="text-sm font-semibold text-foreground">
           {{
-            convenioActivo?.razon_social ||
-            empresaTrabajador?.razon_social ||
-            "-"
+            convenioActivo?.razon_social
+              || empresaTrabajador?.razon_social
+              || "-"
           }}
         </p>
         <p class="text-xs text-muted-foreground mt-1">
@@ -230,7 +287,7 @@ const {
   estadoProgressPercent,
   estadoBadgeClass,
   getEstadoData,
-  cargarSolicitudes,
+  cargarSolicitudes
 } = useInicio();
 
 const {
@@ -239,13 +296,13 @@ const {
   convenioActivo,
   empresaTrabajador,
   cargarConvenioActivo,
-  nombreBienvenida,
+  nombreBienvenida
 } = useInicioTrabajador();
 
 const descripcionEstadoSolicitud = (s: { estado?: string }): string => {
   return (
-    getEstadoData(String(s.estado || ""))?.descripcion ||
-    "Consulta el seguimiento de tu solicitud"
+    getEstadoData(String(s.estado || ""))?.descripcion
+    || "Consulta el seguimiento de tu solicitud"
   );
 };
 </script>

@@ -4,28 +4,28 @@ import { useApi } from "~/composables/useApi";
 import { useSession } from "~/composables/useSession";
 
 interface ProcesoFirmado {
-  transaccion_id: string;
-  estado: string;
-  fecha_inicio: string;
-  proveedor: string;
-  urls_firma?: Record<string, string>;
-  firmantes_completados: number;
-  firmantes_pendientes: number;
-  fecha_completado?: string;
-  webhook_recibido_at?: string;
+  transaccion_id: string
+  estado: string
+  fecha_inicio: string
+  proveedor: string
+  urls_firma?: Record<string, string>
+  firmantes_completados: number
+  firmantes_pendientes: number
+  fecha_completado?: string
+  webhook_recibido_at?: string
 }
 
 interface SolicitudConFirma extends SolicitudCredito {
-  proceso_firmado?: ProcesoFirmado;
+  proceso_firmado?: ProcesoFirmado
 }
 
 interface EstadisticasFirmas {
-  total: number;
-  pendientes: number;
-  firmados: number;
-  rechazados: number;
-  expirados: number;
-  porcentajeCompletado: number;
+  total: number
+  pendientes: number
+  firmados: number
+  rechazados: number
+  expirados: number
+  porcentajeCompletado: number
 }
 
 export function useMonitoreoFirmasRealTime() {
@@ -48,11 +48,11 @@ export function useMonitoreoFirmasRealTime() {
   // Notificaciones de cambios
   const cambiosRecientes = ref<
     Array<{
-      solicitudId: string;
-      nombreSolicitante: string;
-      estadoAnterior: string;
-      estadoNuevo: string;
-      timestamp: Date;
+      solicitudId: string
+      nombreSolicitante: string
+      estadoAnterior: string
+      estadoNuevo: string
+      timestamp: Date
     }>
   >([]);
 
@@ -67,38 +67,38 @@ export function useMonitoreoFirmasRealTime() {
       value: "PENDIENTE_FIRMADO",
       label: "Pendiente de Firmar",
       icon: "lucide:clock",
-      color: "yellow",
+      color: "yellow"
     },
     {
       value: "FIRMADO",
       label: "Firmado",
       icon: "lucide:check-circle",
-      color: "green",
+      color: "green"
     },
     {
       value: "RECHAZADO",
       label: "Rechazado",
       icon: "lucide:x-circle",
-      color: "red",
+      color: "red"
     },
     {
       value: "EXPIRADO",
       label: "Expirado",
       icon: "lucide:alert-circle",
-      color: "gray",
+      color: "gray"
     },
     {
       value: "CANCELADO",
       label: "Cancelado",
       icon: "lucide:ban",
-      color: "orange",
+      color: "orange"
     },
-    { value: "@", label: "Todos", icon: "lucide:list", color: "blue" },
+    { value: "@", label: "Todos", icon: "lucide:list", color: "blue" }
   ];
 
   // Computadas
   const totalPages = computed(() =>
-    Math.ceil(totalSolicitudes.value / pageSize.value),
+    Math.ceil(totalSolicitudes.value / pageSize.value)
   );
   const hasNext = computed(() => currentPage.value < totalPages.value);
   const hasPrevious = computed(() => currentPage.value > 1);
@@ -107,19 +107,19 @@ export function useMonitoreoFirmasRealTime() {
   const estadisticas = computed<EstadisticasFirmas>(() => {
     const total = solicitudes.value.length;
     const pendientes = solicitudes.value.filter(
-      (s) => s.proceso_firmado?.estado === "PENDIENTE_FIRMADO",
+      s => s.proceso_firmado?.estado === "PENDIENTE_FIRMADO"
     ).length;
     const firmados = solicitudes.value.filter(
-      (s) => s.proceso_firmado?.estado === "FIRMADO",
+      s => s.proceso_firmado?.estado === "FIRMADO"
     ).length;
     const rechazados = solicitudes.value.filter(
-      (s) => s.proceso_firmado?.estado === "RECHAZADO",
+      s => s.proceso_firmado?.estado === "RECHAZADO"
     ).length;
     const expirados = solicitudes.value.filter(
-      (s) => s.proceso_firmado?.estado === "EXPIRADO",
+      s => s.proceso_firmado?.estado === "EXPIRADO"
     ).length;
-    const porcentajeCompletado =
-      total > 0 ? Math.round((firmados / total) * 100) : 0;
+    const porcentajeCompletado
+      = total > 0 ? Math.round((firmados / total) * 100) : 0;
 
     return {
       total,
@@ -127,7 +127,7 @@ export function useMonitoreoFirmasRealTime() {
       firmados,
       rechazados,
       expirados,
-      porcentajeCompletado,
+      porcentajeCompletado
     };
   });
 
@@ -146,38 +146,38 @@ export function useMonitoreoFirmasRealTime() {
       const estado = estadoFiltro.value;
 
       const response = await getJson<{
-        success: boolean;
+        success: boolean
         data: {
-          solicitudes: SolicitudConFirma[];
-          total: number;
-          skip: number;
-          limit: number;
-        };
-        message: string;
+          solicitudes: SolicitudConFirma[]
+          total: number
+          skip: number
+          limit: number
+        }
+        message: string
       }>(
         `/api/admin/solicitudes?limit=${limit}&skip=${skip}${estado !== "all" ? `&estado=${estado}` : ""}`,
         {
-          auth: true,
-        },
+          auth: true
+        }
       );
 
       if (response.success && response.data) {
         const solicitudesAnteriores = new Map(
-          solicitudes.value.map((s) => [
+          solicitudes.value.map(s => [
             s.numero_solicitud,
-            s.proceso_firmado?.estado,
-          ]),
+            s.proceso_firmado?.estado
+          ])
         );
 
         // Filtrar solo las que tienen proceso_firmado
         const nuevasSolicitudes = response.data.solicitudes.filter(
-          (s) => s.proceso_firmado && s.proceso_firmado.transaccion_id,
+          s => s.proceso_firmado && s.proceso_firmado.transaccion_id
         );
 
         // Detectar cambios de estado
         nuevasSolicitudes.forEach((solicitud) => {
           const estadoAnterior = solicitudesAnteriores.get(
-            solicitud.numero_solicitud,
+            solicitud.numero_solicitud
           );
           const estadoNuevo = solicitud.proceso_firmado?.estado;
 
@@ -188,7 +188,7 @@ export function useMonitoreoFirmasRealTime() {
                 solicitud.solicitante?.nombres_apellidos || "Sin nombre",
               estadoAnterior,
               estadoNuevo,
-              timestamp: new Date(),
+              timestamp: new Date()
             });
 
             // Mantener solo los últimos 10 cambios
@@ -223,20 +223,20 @@ export function useMonitoreoFirmasRealTime() {
       await ready;
 
       const response = await getJson<{
-        success: boolean;
+        success: boolean
         data: {
-          solicitud_id: string;
-          transaccion_id: string;
-          estado: string;
-          firmantes_completados: number;
-          firmantes_pendientes: number;
-        };
-        message: string;
+          solicitud_id: string
+          transaccion_id: string
+          estado: string
+          firmantes_completados: number
+          firmantes_pendientes: number
+        }
+        message: string
       }>(`/api/solicitudes/${solicitudId}/estado-firmado`, { auth: true });
 
       if (response.success) {
         const index = solicitudes.value.findIndex(
-          (s) => s.numero_solicitud === solicitudId,
+          s => s.numero_solicitud === solicitudId
         );
         if (index !== -1 && solicitudes.value[index]) {
           const solicitud = solicitudes.value[index];
@@ -244,10 +244,10 @@ export function useMonitoreoFirmasRealTime() {
 
           if (solicitud?.proceso_firmado) {
             solicitud.proceso_firmado.estado = response.data.estado;
-            solicitud.proceso_firmado.firmantes_completados =
-              response.data.firmantes_completados;
-            solicitud.proceso_firmado.firmantes_pendientes =
-              response.data.firmantes_pendientes;
+            solicitud.proceso_firmado.firmantes_completados
+              = response.data.firmantes_completados;
+            solicitud.proceso_firmado.firmantes_pendientes
+              = response.data.firmantes_pendientes;
 
             // Registrar cambio si hubo
             if (estadoAnterior && estadoAnterior !== response.data.estado) {
@@ -257,7 +257,7 @@ export function useMonitoreoFirmasRealTime() {
                   solicitud.solicitante?.nombres_apellidos || "Sin nombre",
                 estadoAnterior,
                 estadoNuevo: response.data.estado,
-                timestamp: new Date(),
+                timestamp: new Date()
               });
 
               if (cambiosRecientes.value.length > 10) {
@@ -270,7 +270,7 @@ export function useMonitoreoFirmasRealTime() {
         return {
           success: true,
           message: response.message || "Estado actualizado",
-          data: response.data,
+          data: response.data
         };
       } else {
         throw new Error(response.message || "Error al consultar estado");
@@ -279,15 +279,15 @@ export function useMonitoreoFirmasRealTime() {
       console.error("Error al consultar estado:", e);
       return {
         success: false,
-        message: e.message || "Error al consultar el estado",
+        message: e.message || "Error al consultar el estado"
       };
     }
   };
 
   // Refrescar todas las solicitudes visibles
   const refrescarTodos = async () => {
-    const promises = solicitudes.value.map((s) =>
-      consultarEstado(s.numero_solicitud),
+    const promises = solicitudes.value.map(s =>
+      consultarEstado(s.numero_solicitud)
     );
     await Promise.all(promises);
   };
@@ -365,7 +365,7 @@ export function useMonitoreoFirmasRealTime() {
       month: "short",
       day: "numeric",
       hour: "2-digit",
-      minute: "2-digit",
+      minute: "2-digit"
     }).format(date);
   };
 
@@ -389,7 +389,7 @@ export function useMonitoreoFirmasRealTime() {
       FIRMADO: "bg-green-100 text-green-800 border-green-300",
       RECHAZADO: "bg-red-100 text-red-800 border-red-300",
       EXPIRADO: "bg-gray-100 text-gray-800 border-gray-300",
-      CANCELADO: "bg-orange-100 text-orange-800 border-orange-300",
+      CANCELADO: "bg-orange-100 text-orange-800 border-orange-300"
     };
     return colores[estado] || "bg-gray-100 text-gray-800 border-gray-300";
   };
@@ -400,7 +400,7 @@ export function useMonitoreoFirmasRealTime() {
       FIRMADO: "lucide:check-circle",
       RECHAZADO: "lucide:x-circle",
       EXPIRADO: "lucide:alert-circle",
-      CANCELADO: "lucide:ban",
+      CANCELADO: "lucide:ban"
     };
     return iconos[estado] || "lucide:help-circle";
   };
@@ -408,11 +408,11 @@ export function useMonitoreoFirmasRealTime() {
   const cargarConvenio = async () => {
     try {
       const response = await getJson<{
-        success: boolean;
-        data: EmpresaConvenio | null;
-        message: string;
-      }>(`/api/convenios/activo`, {
-        auth: true,
+        success: boolean
+        data: EmpresaConvenio | null
+        message: string
+      }>("/api/convenios/activo", {
+        auth: true
       });
 
       if (response.success) {
@@ -469,6 +469,6 @@ export function useMonitoreoFirmasRealTime() {
     iniciarPolling,
     detenerPolling,
     togglePolling,
-    cargarConvenio,
+    cargarConvenio
   };
 }

@@ -6,7 +6,7 @@ import type { Usuario } from "~~/shared/types/admin-usuarios";
 
 definePageMeta({
   layout: "dashboard",
-  middleware: ["auth"],
+  middleware: ["auth"]
 });
 
 const {
@@ -28,7 +28,7 @@ const {
   aplicarFiltros,
   getRolLabel,
   getEstadoLabel,
-  formatDate,
+  formatDate
 } = useAdminUsers();
 
 onMounted(() => cargarUsuarios());
@@ -38,25 +38,25 @@ const opcionesRol = [
   { label: "Todos los roles", value: null },
   { label: "Administrador", value: "administrator" },
   { label: "Trabajador", value: "user_trabajador" },
-  { label: "Empresa", value: "user_empresa" },
+  { label: "Empresa", value: "user_empresa" }
 ];
 const opcionesEstado = [
   { label: "Todos los estados", value: null },
   { label: "Activo", value: "active" },
   { label: "Inactivo", value: "inactive" },
-  { label: "Suspendido", value: "suspended" },
+  { label: "Suspendido", value: "suspended" }
 ];
 const opcionesLimite = [
   { label: "10 / pág", value: 10 },
   { label: "20 / pág", value: 20 },
   { label: "50 / pág", value: 50 },
-  { label: "100 / pág", value: 100 },
+  { label: "100 / pág", value: 100 }
 ];
 
 const estadoColorMap: Record<string, "primary" | "neutral" | "destructive"> = {
   active: "primary",
   inactive: "neutral",
-  suspended: "destructive",
+  suspended: "destructive"
 };
 
 const columns: TableColumn<Usuario>[] = [
@@ -68,8 +68,8 @@ const columns: TableColumn<Usuario>[] = [
   {
     id: "acciones",
     header: "",
-    meta: { class: { th: "text-right", td: "text-right" } },
-  },
+    meta: { class: { th: "text-right", td: "text-right" } }
+  }
 ];
 </script>
 
@@ -83,7 +83,10 @@ const columns: TableColumn<Usuario>[] = [
         <h1
           class="text-xl font-semibold text-foreground flex items-center gap-2"
         >
-          <UIcon name="i-lucide-users" class="w-5 h-5 text-primary" />
+          <UIcon
+            name="i-lucide-users"
+            class="w-5 h-5 text-primary"
+          />
           Administración de Usuarios
         </h1>
         <p class="mt-1 text-sm text-muted-foreground">
@@ -101,7 +104,11 @@ const columns: TableColumn<Usuario>[] = [
         >
           Recargar
         </UButton>
-        <UButton color="primary" icon="i-lucide-plus" to="/admin/users/create">
+        <UButton
+          color="primary"
+          icon="i-lucide-plus"
+          to="/admin/users/create"
+        >
           Nuevo Usuario
         </UButton>
       </div>
@@ -116,9 +123,14 @@ const columns: TableColumn<Usuario>[] = [
           <p class="text-xs text-muted-foreground uppercase tracking-wide">
             Total
           </p>
-          <p class="text-2xl font-bold text-foreground">{{ totalUsuarios }}</p>
+          <p class="text-2xl font-bold text-foreground">
+            {{ totalUsuarios }}
+          </p>
         </div>
-        <UIcon name="i-lucide-users" class="w-7 h-7 text-primary opacity-60" />
+        <UIcon
+          name="i-lucide-users"
+          class="w-7 h-7 text-primary opacity-60"
+        />
       </div>
       <div
         class="rounded-xl border border-border bg-card p-4 flex items-center justify-between"
@@ -179,8 +191,8 @@ const columns: TableColumn<Usuario>[] = [
             :items="opcionesRol"
             value-key="value"
             label-key="label"
-            @change="aplicarFiltros"
             class="w-full"
+            @change="aplicarFiltros"
           />
         </UFormField>
         <UFormField label="Buscar">
@@ -188,8 +200,8 @@ const columns: TableColumn<Usuario>[] = [
             v-model="filtros.busqueda"
             placeholder="Nombre, email..."
             icon="i-lucide-search"
-            @input="debounceSearch"
             class="w-full"
+            @input="debounceSearch"
           />
         </UFormField>
         <UFormField label="Estado">
@@ -198,8 +210,8 @@ const columns: TableColumn<Usuario>[] = [
             :items="opcionesEstado"
             value-key="value"
             label-key="label"
-            @change="aplicarFiltros"
             class="w-full"
+            @change="aplicarFiltros"
           />
         </UFormField>
       </div>
@@ -212,18 +224,24 @@ const columns: TableColumn<Usuario>[] = [
       >
         <p class="text-sm font-medium text-foreground">
           Usuarios
-          <UBadge color="neutral" variant="subtle" class="ml-2">{{
-            totalUsuarios
-          }}</UBadge>
+          <UBadge
+            color="neutral"
+            variant="subtle"
+            class="ml-2"
+          >
+            {{
+              totalUsuarios
+            }}
+          </UBadge>
         </p>
         <USelect
           v-model.number="paginacion.limit"
           :items="opcionesLimite"
           value-key="value"
           label-key="label"
-          @change="cambiarLimite(paginacion.limit)"
           size="sm"
           class="w-32"
+          @change="cambiarLimite(paginacion.limit)"
         />
       </div>
 
@@ -236,11 +254,16 @@ const columns: TableColumn<Usuario>[] = [
           name="i-lucide-loader-circle"
           class="w-8 h-8 animate-spin text-primary"
         />
-        <p class="text-sm">Cargando usuarios…</p>
+        <p class="text-sm">
+          Cargando usuarios…
+        </p>
       </div>
 
       <!-- Error -->
-      <div v-else-if="error" class="p-6">
+      <div
+        v-else-if="error"
+        class="p-6"
+      >
         <UAlert
           color="destructive"
           variant="subtle"
@@ -253,15 +276,20 @@ const columns: TableColumn<Usuario>[] = [
               variant="outline"
               color="neutral"
               @click="cargarUsuarios"
-              >Reintentar</UButton
             >
+              Reintentar
+            </UButton>
           </template>
         </UAlert>
       </div>
 
       <!-- Tabla + paginación -->
       <template v-else>
-        <UTable :data="usuarios" :columns="columns" class="w-full">
+        <UTable
+          :data="usuarios"
+          :columns="columns"
+          class="w-full"
+        >
           <template #numero_documento-cell="{ row }">
             <div class="flex items-center gap-1.5 text-sm">
               <UIcon
@@ -279,7 +307,10 @@ const columns: TableColumn<Usuario>[] = [
           </template>
 
           <template #rol-cell="{ row }">
-            <UBadge color="neutral" variant="subtle">
+            <UBadge
+              color="neutral"
+              variant="subtle"
+            >
               {{ getRolLabel(row.original.rol) }}
             </UBadge>
           </template>
@@ -297,7 +328,10 @@ const columns: TableColumn<Usuario>[] = [
             <div
               class="flex items-center gap-1.5 text-sm text-muted-foreground"
             >
-              <UIcon name="i-lucide-calendar" class="w-4 h-4 shrink-0" />
+              <UIcon
+                name="i-lucide-calendar"
+                class="w-4 h-4 shrink-0"
+              />
               {{ formatDate(row.original.fecha_creacion) }}
             </div>
           </template>

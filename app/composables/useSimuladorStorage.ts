@@ -12,7 +12,7 @@ const loadSimuladorData = (): SimuladorStorageData | null => {
     if (stored) {
       const data = JSON.parse(stored) as SimuladorStorageData;
       simuladorData.value = data;
-      //console.log("✅ Datos del simulador cargados desde localStorage:", data);
+      // console.log("✅ Datos del simulador cargados desde localStorage:", data);
       return data;
     }
   } catch (error) {
@@ -34,7 +34,7 @@ const saveSimuladorData = (data: SimuladorStorageData): void => {
 
     const dataToStore: SimuladorStorageData = {
       ...data,
-      fechaSimulacion: data.fechaSimulacion || new Date().toISOString(),
+      fechaSimulacion: data.fechaSimulacion || new Date().toISOString()
     };
 
     localStorage.setItem(STORAGE_KEY, JSON.stringify(dataToStore));
@@ -53,7 +53,7 @@ const saveSimuladorDataSilent = (data: SimuladorStorageData): void => {
 
     const dataToStore: SimuladorStorageData = {
       ...data,
-      fechaSimulacion: data.fechaSimulacion || new Date().toISOString(),
+      fechaSimulacion: data.fechaSimulacion || new Date().toISOString()
     };
 
     localStorage.setItem(STORAGE_KEY, JSON.stringify(dataToStore));
@@ -83,7 +83,7 @@ const updateSimuladorData = (updates: Partial<SimuladorStorageData>): void => {
 // Obtener datos formateados para solicitud
 const getDatosParaSolicitud = () => {
   const data = simuladorData.value;
-  //console.log('🔍 getDatosParaSolicitud llamado. simuladorData.value:', data)
+  // console.log('🔍 getDatosParaSolicitud llamado. simuladorData.value:', data)
 
   if (!data) {
     console.log("❌ No hay datos del simulador disponibles");
@@ -98,10 +98,10 @@ const getDatosParaSolicitud = () => {
     cuotaMensual: data.cuotaMensual,
     totalIntereses: data.totalIntereses,
     totalPagar: data.totalPagar,
-    fechaSimulacion: data.fechaSimulacion,
+    fechaSimulacion: data.fechaSimulacion
   };
 
-  //console.log('✅ Datos formateados para solicitud:', result)
+  // console.log('✅ Datos formateados para solicitud:', result)
   return result;
 };
 
@@ -122,7 +122,7 @@ watch(
       }
     }
   },
-  { deep: true },
+  { deep: true }
 );
 
 export const useSimuladorStorage = () => {
@@ -144,6 +144,6 @@ export const useSimuladorStorage = () => {
 
     // Utilidades
     getDatosParaSolicitud,
-    hasSimuladorData,
+    hasSimuladorData
   };
 };

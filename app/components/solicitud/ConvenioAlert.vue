@@ -1,5 +1,9 @@
 <template>
-  <div v-if="showAlert" class="alert mb-4" :class="alertClass">
+  <div
+    v-if="showAlert"
+    class="alert mb-4"
+    :class="alertClass"
+  >
     <svg
       v-if="tipo === 'success'"
       xmlns="http://www.w3.org/2000/svg"
@@ -57,8 +61,12 @@
       />
     </svg>
     <div class="flex-1">
-      <h3 class="font-bold">{{ titulo }}</h3>
-      <div class="text-xs">{{ descripcion }}</div>
+      <h3 class="font-bold">
+        {{ titulo }}
+      </h3>
+      <div class="text-xs">
+        {{ descripcion }}
+      </div>
     </div>
     <button
       v-if="dismissible"
@@ -71,24 +79,24 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from '#imports';
+import { ref, computed } from "#imports";
 
 interface Props {
-  titulo: string;
-  descripcion: string;
-  tipo?: 'success' | 'info' | 'warning' | 'error';
-  dismissible?: boolean;
-  visible?: boolean;
+  titulo: string
+  descripcion: string
+  tipo?: "success" | "info" | "warning" | "error"
+  dismissible?: boolean
+  visible?: boolean
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  tipo: 'info',
+  tipo: "info",
   dismissible: true,
-  visible: true,
+  visible: true
 });
 
 const emit = defineEmits<{
-  close: [];
+  close: []
 }>();
 
 const localVisible = ref(props.visible);
@@ -97,20 +105,20 @@ const showAlert = computed(() => localVisible.value && props.visible);
 
 const alertClass = computed(() => {
   switch (props.tipo) {
-    case 'success':
-      return 'alert-success';
-    case 'warning':
-      return 'alert-warning';
-    case 'error':
-      return 'alert-error';
-    case 'info':
+    case "success":
+      return "alert-success";
+    case "warning":
+      return "alert-warning";
+    case "error":
+      return "alert-error";
+    case "info":
     default:
-      return 'alert-info';
+      return "alert-info";
   }
 });
 
 const cerrar = () => {
   localVisible.value = false;
-  emit('close');
+  emit("close");
 };
 </script>

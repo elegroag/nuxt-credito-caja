@@ -18,7 +18,7 @@ export const useSimuladorPage = () => {
     isElegible,
     getMensajeError,
     validarConvenioAntesDSimular,
-    mensajeBeneficios,
+    mensajeBeneficios
   } = useSimuladorConConvenio();
 
   // Composable principal del simulador
@@ -49,7 +49,7 @@ export const useSimuladorPage = () => {
     fmt,
     fmtPct,
     reset,
-    cambiarTipoTasa,
+    cambiarTipoTasa
   } = useSimulador();
 
   const navigateToLineas = () => {
@@ -68,7 +68,7 @@ export const useSimuladorPage = () => {
       } else {
         tasaMensualInput.value = value;
       }
-    },
+    }
   });
 
   // Cargar datos del trabajador y validar convenio al montar
@@ -115,7 +115,7 @@ export const useSimuladorPage = () => {
           nitEmpresa: nitEmpresa.value,
           cedulaTrabajador: cedulaTrabajador.value,
           // Sin línea de crédito específica
-          lineaCredito: undefined as unknown as LineaCreditoSimulador,
+          lineaCredito: undefined as unknown as LineaCreditoSimulador
         });
       }
     }, 500);
@@ -133,10 +133,10 @@ export const useSimuladorPage = () => {
       totalPagar,
       intereses,
       isElegible,
-      convenioVerificado,
+      convenioVerificado
     ],
     saveData,
-    { deep: true },
+    { deep: true }
   );
 
   return {
@@ -180,6 +180,6 @@ export const useSimuladorPage = () => {
 
     // Computed y funciones específicas de la página
     tasaInput,
-    navigateToLineas,
+    navigateToLineas
   };
 };

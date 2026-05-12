@@ -13,12 +13,13 @@
             </p>
           </div>
           <div class="flex items-center gap-2 text-sm text-muted-foreground">
-            <UIcon name="i-lucide-file-check" class="w-4 h-4" />
-            <span
-              >Solicitud #{{
-                solicitud?.numero_solicitud || route.params.id
-              }}</span
-            >
+            <UIcon
+              name="i-lucide-file-check"
+              class="w-4 h-4"
+            />
+            <span>Solicitud #{{
+              solicitud?.numero_solicitud || route.params.id
+            }}</span>
           </div>
         </div>
       </UPageCard>
@@ -53,7 +54,10 @@
         </UPageCard>
 
         <!-- Error State -->
-        <UPageCard v-else-if="errorSolicitud" class="max-w-2xl mx-auto">
+        <UPageCard
+          v-else-if="errorSolicitud"
+          class="max-w-2xl mx-auto"
+        >
           <div class="text-center">
             <div
               class="w-16 h-16 bg-destructive/10 rounded-full flex items-center justify-center mx-auto mb-4"
@@ -66,23 +70,37 @@
             <h3 class="text-xl font-bold text-destructive mb-2">
               Error al cargar la solicitud
             </h3>
-            <p class="text-destructive/80 mb-6">{{ errorSolicitud }}</p>
-            <UButton color="destructive" @click="cargarSolicitud">
-              <UIcon name="i-lucide-refresh-cw" class="w-4 h-4 mr-2" />
+            <p class="text-destructive/80 mb-6">
+              {{ errorSolicitud }}
+            </p>
+            <UButton
+              color="destructive"
+              @click="cargarSolicitud"
+            >
+              <UIcon
+                name="i-lucide-refresh-cw"
+                class="w-4 h-4 mr-2"
+              />
               Reintentar
             </UButton>
           </div>
         </UPageCard>
 
         <!-- Main Content -->
-        <div v-else-if="solicitud" class="space-y-8">
+        <div
+          v-else-if="solicitud"
+          class="space-y-8"
+        >
           <!-- Alerta de confirmación -->
           <div class="bg-gradient-primary rounded-2xl p-8 text-white shadow-xl">
             <div class="flex items-start gap-6">
               <div
                 class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center shrink-0"
               >
-                <UIcon name="i-lucide-alert-triangle" class="w-6 h-6" />
+                <UIcon
+                  name="i-lucide-alert-triangle"
+                  class="w-6 h-6"
+                />
               </div>
               <div class="flex-1">
                 <h2 class="text-2xl font-bold mb-3">
@@ -92,16 +110,16 @@
                   Para continuar con su solicitud de crédito<strong>
                     {{
                       solicitud?.payload?.linea_credito?.detalle_modalidad || ""
-                    }}</strong
-                  >, Una vez enviada para validación previa, algunos datos no
+                    }}</strong>, Una vez enviada para validación previa, algunos datos no
                   podrán ser modificados.
                 </p>
                 <div class="flex items-center gap-2 text-white/80 text-sm">
-                  <UIcon name="i-lucide-info" class="w-4 h-4" />
-                  <span
-                    >Verifique que todos los documentos obligatorios estén
-                    cargados y sean legibles</span
-                  >
+                  <UIcon
+                    name="i-lucide-info"
+                    class="w-4 h-4"
+                  />
+                  <span>Verifique que todos los documentos obligatorios estén
+                    cargados y sean legibles</span>
                 </div>
               </div>
             </div>
@@ -128,7 +146,10 @@
               <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 <div class="bg-primary/5 rounded-lg p-4">
                   <div class="flex items-center gap-2 text-primary mb-2">
-                    <UIcon name="i-lucide-dollar-sign" class="w-4 h-4" />
+                    <UIcon
+                      name="i-lucide-dollar-sign"
+                      class="w-4 h-4"
+                    />
                     <span class="text-sm font-medium">Valor solicitado</span>
                   </div>
                   <p class="text-2xl font-bold text-foreground">
@@ -137,7 +158,10 @@
                 </div>
                 <div class="bg-success/5 rounded-lg p-4">
                   <div class="flex items-center gap-2 text-success mb-2">
-                    <UIcon name="i-lucide-calendar" class="w-4 h-4" />
+                    <UIcon
+                      name="i-lucide-calendar"
+                      class="w-4 h-4"
+                    />
                     <span class="text-sm font-medium">Plazo</span>
                   </div>
                   <p class="text-2xl font-bold text-foreground">
@@ -148,7 +172,10 @@
                   <div
                     class="flex items-center gap-2 text-secondary-foreground mb-2"
                   >
-                    <UIcon name="i-lucide-credit-card" class="w-4 h-4" />
+                    <UIcon
+                      name="i-lucide-credit-card"
+                      class="w-4 h-4"
+                    />
                     <span class="text-sm font-medium">Cuota mensual</span>
                   </div>
                   <p class="text-2xl font-bold text-foreground">
@@ -197,10 +224,16 @@
                   </h3>
                 </div>
                 <div class="flex items-center gap-2 text-sm">
-                  <UBadge color="secondary" variant="subtle">
+                  <UBadge
+                    color="secondary"
+                    variant="subtle"
+                  >
                     {{ documentosCargados?.length || 0 }} cargados
                   </UBadge>
-                  <UBadge color="primary" variant="subtle">
+                  <UBadge
+                    color="primary"
+                    variant="subtle"
+                  >
                     {{
                       documentosRequeridos?.filter((d) => d.obligatorio)
                         .length || 0
@@ -262,31 +295,37 @@
               class="flex flex-col md:flex-row gap-4 justify-between items-center"
             >
               <UButton
-                @click="handleBack"
                 variant="outline"
                 color="neutral"
                 size="lg"
+                @click="handleBack"
               >
-                <UIcon name="i-lucide-arrow-left" class="w-4 h-4 mr-2" />
+                <UIcon
+                  name="i-lucide-arrow-left"
+                  class="w-4 h-4 mr-2"
+                />
                 Volver a Documentos
               </UButton>
 
               <div class="flex flex-col md:flex-row gap-3">
                 <UButton
-                  @click="handleEdit"
                   variant="outline"
                   color="neutral"
                   size="lg"
+                  @click="handleEdit"
                 >
-                  <UIcon name="i-lucide-pencil" class="w-4 h-4 mr-2" />
+                  <UIcon
+                    name="i-lucide-pencil"
+                    class="w-4 h-4 mr-2"
+                  />
                   Editar Solicitud
                 </UButton>
 
                 <UButton
-                  @click="handleEnviarValidacion"
                   :disabled="enviando || !todosDocumentosCompletos"
                   color="primary"
                   size="lg"
+                  @click="handleEnviarValidacion"
                 >
                   <UIcon
                     v-if="!enviando"
@@ -322,7 +361,7 @@
                   Faltan
                   {{
                     documentosRequeridos?.filter(
-                      (d) => d.obligatorio && !getDocumentoCargado(d.id),
+                      (d) => d.obligatorio && !getDocumentoCargado(d.id)
                     ).length || 0
                   }}
                   documentos obligatorios por cargar.
@@ -341,6 +380,7 @@ import { onMounted } from "vue";
 import { useRoute } from "vue-router";
 import { useResumenSolicitud } from "~/composables/solicitud/useResumenSolicitud";
 import { formatCurrencyIntl, formatDate } from "~~/shared/utils/formatters";
+
 const route = useRoute();
 
 const {
@@ -356,7 +396,7 @@ const {
   handleEdit,
   handleEnviarValidacion,
   documentosCargados,
-  documentosRequeridos,
+  documentosRequeridos
 } = useResumenSolicitud();
 
 // Lifecycle
@@ -366,6 +406,6 @@ onMounted(() => {
 
 definePageMeta({
   layout: "dashboard",
-  middleware: ["auth"],
+  middleware: ["auth"]
 });
 </script>

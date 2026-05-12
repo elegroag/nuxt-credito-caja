@@ -2,7 +2,10 @@
   <div class="w-full max-w-md mx-auto">
     <div class="bg-card rounded-3xl border border-border/50 p-8 sm:p-10">
       <!-- Form -->
-      <form @submit.prevent="login" class="space-y-5">
+      <form
+        class="space-y-5"
+        @submit.prevent="login"
+      >
         <!-- Username -->
         <div class="space-y-2">
           <label class="text-sm font-medium text-foreground p-2">Usuario</label>
@@ -25,9 +28,7 @@
 
         <!-- Password -->
         <div class="space-y-2">
-          <label class="text-sm font-medium text-foreground p-2"
-            >Contraseña</label
-          >
+          <label class="text-sm font-medium text-foreground p-2">Contraseña</label>
           <div class="relative">
             <UIcon
               name="i-lucide-lock"
@@ -90,7 +91,7 @@
       :class="
         cn(
           'mt-4 px-4 py-2 text-xs rounded-full flex items-center justify-center gap-1.5',
-          connectionStatusClass,
+          connectionStatusClass
         )
       "
     >
@@ -114,7 +115,7 @@
       :close="{
         color: 'destructive',
         variant: 'outline',
-        class: 'rounded-full',
+        class: 'rounded-full'
       }"
     >
       <template #body>
@@ -139,17 +140,17 @@ import { useHealthCheck } from "~/composables/useHealthCheck";
 import { cn } from "@/lib/utils";
 
 definePageMeta({
-  layout: "auth",
+  layout: "auth"
 });
 
-const { username, password, loading, errorMsg, login, checkAuthAndRedirect } =
-  useLogin();
+const { username, password, loading, errorMsg, login, checkAuthAndRedirect }
+  = useLogin();
 const {
   isConnected,
   checkingConnection,
   connectionMessage,
   connectionStatusClass,
-  checkConnection,
+  checkConnection
 } = useHealthCheck();
 
 const isModalOpen = ref(false);

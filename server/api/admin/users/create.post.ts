@@ -16,9 +16,9 @@ export default defineEventHandler(async (event: H3Event) => {
         username: user.username,
         email: user.email,
         full_name: user.full_name,
-        roles: user.roles,
+        roles: user.roles
       },
-      "Usuario creado exitosamente",
+      "Usuario creado exitosamente"
     );
   } catch (e: any) {
     const status = Number(e?.statusCode || e?.response?.status || 502);
@@ -26,7 +26,7 @@ export default defineEventHandler(async (event: H3Event) => {
 
     return CustomResponse.error(
       e?.data?.error || e?.message || "Error conectando con backend",
-      "Error al crear usuario.",
+      "Error al crear usuario."
     );
   }
 });

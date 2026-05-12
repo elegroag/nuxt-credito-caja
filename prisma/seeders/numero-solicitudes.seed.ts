@@ -6,7 +6,7 @@ export const numeroSolicitudes = [
     linea_credito: "03",
     vigencia: 202501,
     created_at: "2026-02-25 02:06:15.0",
-    updated_at: "2026-02-25 02:06:15.0",
+    updated_at: "2026-02-25 02:06:15.0"
   },
   {
     id: 2,
@@ -15,7 +15,7 @@ export const numeroSolicitudes = [
     linea_credito: "03",
     vigencia: 202501,
     created_at: "2026-02-25 02:06:15.0",
-    updated_at: "2026-02-25 02:06:15.0",
+    updated_at: "2026-02-25 02:06:15.0"
   },
   {
     id: 3,
@@ -24,7 +24,7 @@ export const numeroSolicitudes = [
     linea_credito: "03",
     vigencia: 202501,
     created_at: "2026-02-25 02:06:15.0",
-    updated_at: "2026-02-25 02:06:15.0",
+    updated_at: "2026-02-25 02:06:15.0"
   },
   {
     id: 4,
@@ -33,7 +33,7 @@ export const numeroSolicitudes = [
     linea_credito: "03",
     vigencia: 202401,
     created_at: "2026-02-25 02:06:15.0",
-    updated_at: "2026-02-25 02:06:15.0",
+    updated_at: "2026-02-25 02:06:15.0"
   },
   {
     id: 5,
@@ -42,7 +42,7 @@ export const numeroSolicitudes = [
     linea_credito: "03",
     vigencia: 202401,
     created_at: "2026-02-25 02:06:15.0",
-    updated_at: "2026-02-25 02:06:15.0",
+    updated_at: "2026-02-25 02:06:15.0"
   },
   {
     id: 6,
@@ -51,7 +51,7 @@ export const numeroSolicitudes = [
     linea_credito: "03",
     vigencia: 202401,
     created_at: "2026-02-25 02:06:15.0",
-    updated_at: "2026-02-25 02:06:15.0",
+    updated_at: "2026-02-25 02:06:15.0"
   },
   {
     id: 7,
@@ -60,7 +60,7 @@ export const numeroSolicitudes = [
     linea_credito: "03",
     vigencia: 202301,
     created_at: "2026-02-25 02:06:16.0",
-    updated_at: "2026-02-25 02:06:16.0",
+    updated_at: "2026-02-25 02:06:16.0"
   },
   {
     id: 8,
@@ -69,7 +69,7 @@ export const numeroSolicitudes = [
     linea_credito: "03",
     vigencia: 202301,
     created_at: "2026-02-25 02:06:16.0",
-    updated_at: "2026-02-25 02:06:16.0",
+    updated_at: "2026-02-25 02:06:16.0"
   },
   {
     id: 9,
@@ -78,7 +78,7 @@ export const numeroSolicitudes = [
     linea_credito: "03",
     vigencia: 202301,
     created_at: "2026-02-25 02:06:16.0",
-    updated_at: "2026-02-25 02:06:16.0",
+    updated_at: "2026-02-25 02:06:16.0"
   },
   {
     id: 10,
@@ -87,7 +87,7 @@ export const numeroSolicitudes = [
     linea_credito: "01",
     vigencia: 202201,
     created_at: "2026-02-25 02:06:16.0",
-    updated_at: "2026-02-25 02:06:16.0",
+    updated_at: "2026-02-25 02:06:16.0"
   },
   {
     id: 11,
@@ -96,7 +96,7 @@ export const numeroSolicitudes = [
     linea_credito: "01",
     vigencia: 202201,
     created_at: "2026-02-25 02:06:16.0",
-    updated_at: "2026-02-25 02:06:16.0",
+    updated_at: "2026-02-25 02:06:16.0"
   },
   {
     id: 12,
@@ -105,7 +105,7 @@ export const numeroSolicitudes = [
     linea_credito: "01",
     vigencia: 202201,
     created_at: "2026-02-25 02:06:16.0",
-    updated_at: "2026-02-25 02:06:16.0",
+    updated_at: "2026-02-25 02:06:16.0"
   },
   {
     id: 13,
@@ -114,7 +114,7 @@ export const numeroSolicitudes = [
     linea_credito: "06",
     vigencia: 202602,
     created_at: "2026-02-25 02:08:17.0",
-    updated_at: "2026-02-25 02:08:17.0",
+    updated_at: "2026-02-25 02:08:17.0"
   },
   {
     id: 14,
@@ -123,6 +123,6 @@ export const numeroSolicitudes = [
     linea_credito: "01",
     vigencia: 202603,
     created_at: "2026-03-12 03:42:04.0",
-    updated_at: "2026-03-18 01:30:33.0",
-  },
+    updated_at: "2026-03-18 01:30:33.0"
+  }
 ];

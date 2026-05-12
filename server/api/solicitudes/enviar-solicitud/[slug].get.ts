@@ -9,13 +9,13 @@ export default defineEventHandler(async (event) => {
 
   const solicitudCredito = await prisma.solicitudes_credito.findUnique({
     where: {
-      numero_solicitud: numero_solicitud,
+      numero_solicitud: numero_solicitud
     },
     include: {
       solicitud_documentos: true,
       solicitud_payload: true,
-      solicitud_solicitante: true,
-    },
+      solicitud_solicitante: true
+    }
   });
 
   const solicitante = solicitudCredito?.solicitud_solicitante?.[0] ?? null;
@@ -27,10 +27,10 @@ export default defineEventHandler(async (event) => {
   const ciudad = solicitante?.ciudad ?? "";
 
   const datosLaborales = (solicitud_payload?.informacion_laboral as any) ?? [];
-  const ingresosDescuentos =
-    (solicitud_payload?.ingresos_descuentos as any) ?? [];
-  const informacionEconomica =
-    (solicitud_payload?.informacion_economica as any) ?? [];
+  const ingresosDescuentos
+    = (solicitud_payload?.ingresos_descuentos as any) ?? [];
+  const informacionEconomica
+    = (solicitud_payload?.informacion_economica as any) ?? [];
 
   const payload = {
     documento: numero_solicitud,
@@ -75,9 +75,9 @@ export default defineEventHandler(async (event) => {
     aprseg: "N",
     documentos: JSON.stringify(
       solicitudCredito?.solicitud_documentos?.map(
-        (doc) => doc.documento_requerido_id,
-      ) ?? [],
-    ),
+        doc => doc.documento_requerido_id
+      ) ?? []
+    )
   };
 
   const response = await datosApi.crearSolicitudCredito(payload);
@@ -89,10 +89,10 @@ export default defineEventHandler(async (event) => {
       message: `Error creating solicitud with numero ${numero_solicitud}`,
       data: {
         numero_solicitud,
-        state: process.env.STAGE,
+        state: process.env.STAGE
       },
 
-      stack: process.env.STAGE !== "prod" ? new Error().stack : "",
+      stack: process.env.STAGE !== "prod" ? new Error().stack : ""
     });
   }
 
@@ -103,10 +103,10 @@ export default defineEventHandler(async (event) => {
       message: `Solicitud with numero ${numero_solicitud} not found`,
       data: {
         numero_solicitud,
-        state: process.env.STAGE,
+        state: process.env.STAGE
       },
 
-      stack: process.env.STAGE !== "prod" ? new Error().stack : "",
+      stack: process.env.STAGE !== "prod" ? new Error().stack : ""
     });
   }
 

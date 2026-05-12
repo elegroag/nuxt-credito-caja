@@ -19,8 +19,10 @@
       <div class="text-center">
         <div
           class="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"
-        ></div>
-        <p class="text-muted-foreground">Cargando parámetros del sistema...</p>
+        />
+        <p class="text-muted-foreground">
+          Cargando parámetros del sistema...
+        </p>
       </div>
     </div>
 
@@ -33,16 +35,20 @@
         class="border-destructive/50 bg-destructive/5 max-w-md text-center"
       >
         <AlertCircle class="h-12 w-12 text-destructive mx-auto mb-4" />
-        <h3 class="text-lg font-semibold mb-2">Error al cargar parámetros</h3>
-        <p class="text-muted-foreground">{{ errorParametros }}</p>
+        <h3 class="text-lg font-semibold mb-2">
+          Error al cargar parámetros
+        </h3>
+        <p class="text-muted-foreground">
+          {{ errorParametros }}
+        </p>
         <div class="flex gap-3 mt-4">
           <UButton
+            variant="outline"
             @click="
               () => {
                 cargarParametros();
               }
             "
-            variant="outline"
           >
             Reintentar
           </UButton>
@@ -69,7 +75,7 @@ import { useParametros } from "~/composables/useParametros";
 
 definePageMeta({
   layout: "dashboard",
-  middleware: ["auth"],
+  middleware: ["auth"]
 });
 
 // Generar fecha de radicado (formato YYYY-MM-DD)
@@ -80,7 +86,7 @@ const {
   loading: loadingParametros,
   error: errorParametros,
   parametrosCache,
-  cargarParametros,
+  cargarParametros
 } = useParametros();
 
 // Cargar parámetros al montar el componente

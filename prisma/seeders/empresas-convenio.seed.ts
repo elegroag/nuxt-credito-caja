@@ -20,7 +20,7 @@ export const empresasConvenio = [
       "Cooperativa financiera especializada en créditos para trabajadores y empresas asociadas",
     notas_internas: "Empresa principal del sistema",
     created_at: "2026-02-25 02:06:14.0",
-    updated_at: "2026-02-25 02:06:14.0",
+    updated_at: "2026-02-25 02:06:14.0"
   },
   {
     id: 2,
@@ -43,7 +43,7 @@ export const empresasConvenio = [
       "Empresa dedicada a la producción y comercialización de alimentos procesados",
     notas_internas: "Cliente corporativo importante",
     created_at: "2026-02-25 02:06:14.0",
-    updated_at: "2026-02-25 02:06:14.0",
+    updated_at: "2026-02-25 02:06:14.0"
   },
   {
     id: 3,
@@ -66,7 +66,7 @@ export const empresasConvenio = [
       "Empresa especializada en construcción civil y proyectos de infraestructura",
     notas_internas: "Sector construcción con buen historial crediticio",
     created_at: "2026-02-25 02:06:14.0",
-    updated_at: "2026-02-25 02:06:14.0",
+    updated_at: "2026-02-25 02:06:14.0"
   },
   {
     id: 4,
@@ -88,7 +88,7 @@ export const empresasConvenio = [
     descripcion: "Empresa de servicios tecnológicos y consultoría TI",
     notas_internas: "Temporalmente suspendido por revisión de cumplimiento",
     created_at: "2026-02-25 02:06:15.0",
-    updated_at: "2026-02-25 02:06:15.0",
+    updated_at: "2026-02-25 02:06:15.0"
   },
   {
     id: 5,
@@ -110,7 +110,7 @@ export const empresasConvenio = [
     descripcion: "Empresa de transporte de carga y logística",
     notas_internas: "Convenio vencido, pendiente renovación",
     created_at: "2026-02-25 02:06:15.0",
-    updated_at: "2026-02-25 02:06:15.0",
+    updated_at: "2026-02-25 02:06:15.0"
   },
   {
     id: 6,
@@ -120,7 +120,7 @@ export const empresasConvenio = [
     fecha_vencimiento: "2028-09-01",
     estado: "Activo",
     representante_documento: "17689152",
-    representante_nombre: 'GUILLERMO ALFONSO PERDOMO ROJAS"',
+    representante_nombre: "GUILLERMO ALFONSO PERDOMO ROJAS\"",
     telefono: "3003334444",
     correo: "logistica@transporterapida.com",
     direccion: "Kilómetro 10 Vía al Mar",
@@ -132,6 +132,6 @@ export const empresasConvenio = [
     descripcion: "Empresa de transporte de carga y logística",
     notas_internas: "Convenio vencido, pendiente renovación",
     created_at: "2026-02-25 02:06:15.0",
-    updated_at: "2026-02-25 02:06:15.0",
-  },
+    updated_at: "2026-02-25 02:06:15.0"
+  }
 ];

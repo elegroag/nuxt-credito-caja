@@ -4,11 +4,18 @@
     <div
       class="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center mx-auto mb-4"
     >
-      <UIcon :name="getIcon()" class="w-8 h-8 text-primary" />
+      <UIcon
+        :name="getIcon()"
+        class="w-8 h-8 text-primary"
+      />
     </div>
     <!-- Title -->
-    <h1 class="text-2xl font-bold text-foreground">{{ getTitle() }}</h1>
-    <p class="text-sm text-muted-foreground mt-1">{{ getSubtitle() }}</p>
+    <h1 class="text-2xl font-bold text-foreground">
+      {{ getTitle() }}
+    </h1>
+    <p class="text-sm text-muted-foreground mt-1">
+      {{ getSubtitle() }}
+    </p>
   </div>
 </template>
 

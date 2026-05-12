@@ -33,7 +33,7 @@
               Datos básicos
             </div>
           </div>
-          <div class="w-16 h-1 bg-emerald-500"></div>
+          <div class="w-16 h-1 bg-emerald-500" />
           <div class="relative group">
             <div
               class="w-8 h-8 bg-emerald-500 text-white rounded-full flex items-center justify-center text-sm font-medium cursor-help"
@@ -46,7 +46,7 @@
               Documentos
             </div>
           </div>
-          <div class="w-16 h-1 bg-emerald-500"></div>
+          <div class="w-16 h-1 bg-emerald-500" />
           <div class="relative group">
             <div
               class="w-8 h-8 bg-emerald-500 text-white rounded-full flex items-center justify-center text-sm font-medium cursor-help"
@@ -59,7 +59,7 @@
               Selfie
             </div>
           </div>
-          <div class="w-16 h-1 bg-emerald-500"></div>
+          <div class="w-16 h-1 bg-emerald-500" />
           <div class="relative group">
             <div
               class="w-8 h-8 bg-emerald-500 text-white rounded-full flex items-center justify-center text-sm font-medium cursor-help"
@@ -92,13 +92,15 @@
               stroke-linejoin="round"
               stroke-width="2"
               d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-            ></path>
+            />
           </svg>
           Datos de identificación
         </h2>
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div class="bg-zinc-50 p-4 rounded-lg">
-            <div class="text-sm text-zinc-600 mb-1">Tipo de identificación</div>
+            <div class="text-sm text-zinc-600 mb-1">
+              Tipo de identificación
+            </div>
             <div class="font-medium">
               {{ verificationData?.tipoIdentificacion || "CC" }}
             </div>
@@ -128,15 +130,13 @@
               stroke-linejoin="round"
               stroke-width="2"
               d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
-            ></path>
+            />
           </svg>
           Clave de seguridad
         </h2>
         <div class="space-y-4">
           <div>
-            <label class="mb-1 block text-sm font-medium text-zinc-900"
-              >Clave segura</label
-            >
+            <label class="mb-1 block text-sm font-medium text-zinc-900">Clave segura</label>
             <UInput
               v-model="claveLocal"
               type="password"
@@ -149,9 +149,7 @@
             </p>
           </div>
           <div>
-            <label class="mb-1 block text-sm font-medium text-zinc-900"
-              >Confirmar clave</label
-            >
+            <label class="mb-1 block text-sm font-medium text-zinc-900">Confirmar clave</label>
             <UInput
               v-model="claveConfirmLocal"
               type="password"
@@ -176,7 +174,9 @@
 
       <!-- Términos y condiciones -->
       <div class="rounded-lg border border-zinc-200 bg-white p-6">
-        <h2 class="text-lg font-semibold mb-4">Términos y condiciones</h2>
+        <h2 class="text-lg font-semibold mb-4">
+          Términos y condiciones
+        </h2>
         <div class="space-y-3">
           <label class="flex items-start space-x-3 cursor-pointer">
             <UInput
@@ -189,8 +189,7 @@
               <a
                 href="#"
                 class="text-emerald-600 hover:text-emerald-700 underline"
-                >términos y condiciones</a
-              >
+              >términos y condiciones</a>
               para la creación de mi entidad digital
             </span>
           </label>
@@ -205,8 +204,7 @@
               <a
                 href="#"
                 class="text-emerald-600 hover:text-emerald-700 underline"
-                >política de privacidad</a
-              >
+              >política de privacidad</a>
             </span>
           </label>
         </div>
@@ -217,8 +215,8 @@
         <button
           type="button"
           class="rounded-md border border-zinc-300 bg-white px-6 py-3 text-sm font-medium text-zinc-900 hover:bg-zinc-50 transition-colors"
-          @click="goBack"
           :disabled="loading"
+          @click="goBack"
         >
           <svg
             class="w-4 h-4 inline mr-2"
@@ -231,7 +229,7 @@
               stroke-linejoin="round"
               stroke-width="2"
               d="M15 19l-7-7 7-7"
-            ></path>
+            />
           </svg>
           Atrás
         </button>
@@ -240,8 +238,8 @@
           <button
             type="button"
             class="rounded-md border border-zinc-300 bg-white px-6 py-3 text-sm font-medium text-zinc-900 hover:bg-zinc-50 transition-colors"
-            @click="cancelProcess"
             :disabled="loading"
+            @click="cancelProcess"
           >
             Cancelar proceso
           </button>
@@ -265,12 +263,12 @@
                 r="10"
                 stroke="currentColor"
                 stroke-width="4"
-              ></circle>
+              />
               <path
                 class="opacity-75"
                 fill="currentColor"
                 d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-              ></path>
+              />
             </svg>
             {{
               loading
@@ -297,7 +295,7 @@
             fill-rule="evenodd"
             d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
             clip-rule="evenodd"
-          ></path>
+          />
         </svg>
         <span>{{ errorMsg }}</span>
       </div>
@@ -317,7 +315,7 @@
             fill-rule="evenodd"
             d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
             clip-rule="evenodd"
-          ></path>
+          />
         </svg>
         <span>{{ successMsg }}</span>
       </div>
@@ -341,11 +339,11 @@ const {
   canConfirm,
   goBack,
   cancelProcess,
-  confirmAndCreate,
+  confirmAndCreate
 } = useEntidadDigitalConfirmation();
 
 definePageMeta({
   layout: "dashboard",
-  middleware: ["auth"],
+  middleware: ["auth"]
 });
 </script>

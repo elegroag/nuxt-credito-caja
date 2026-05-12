@@ -3,7 +3,7 @@ import { useOficinas } from "@/composables/oficinas/useOficinas";
 
 definePageMeta({
   layout: "dashboard",
-  middleware: ["auth"],
+  middleware: ["auth"]
 });
 
 const {
@@ -12,14 +12,14 @@ const {
   loadingConvenio,
   oficinasCredito,
   datosGeneralesCredito,
-  cargarOficinas,
+  cargarOficinas
 } = useOficinas();
 
 const fmtMoney = (val: number) =>
   new Intl.NumberFormat("es-CO", {
     style: "currency",
     currency: "COP",
-    minimumFractionDigits: 0,
+    minimumFractionDigits: 0
   }).format(val);
 
 const statItems = computed(() => [
@@ -27,40 +27,40 @@ const statItems = computed(() => [
     icon: "i-lucide-user",
     label: "Jefe crédito",
     value: datosGeneralesCredito.value?.jefcre || "-",
-    large: false,
+    large: false
   },
   {
     icon: "i-lucide-briefcase",
     label: "Cargo",
     value: datosGeneralesCredito.value?.carjefcre || "-",
-    large: false,
+    large: false
   },
   {
     icon: "i-lucide-circle-dollar-sign",
     label: "Valor máximo",
     value: fmtMoney(Number(datosGeneralesCredito.value?.valmax || 7000000)),
-    large: true,
+    large: true
   },
   {
     icon: "i-lucide-calendar",
     label: "Máximo de cuotas",
     value: String(datosGeneralesCredito.value?.cuomax || 36),
-    large: true,
+    large: true
   },
   {
     icon: "i-lucide-graduation-cap",
     label: "Director",
     value: datosGeneralesCredito.value?.diradm || "-",
     large: false,
-    wide: true,
+    wide: true
   },
   {
     icon: "i-lucide-users",
     label: "Cargo director",
     value: datosGeneralesCredito.value?.cardiradm || "-",
     large: false,
-    wide: true,
-  },
+    wide: true
+  }
 ]);
 </script>
 
@@ -101,7 +101,10 @@ const statItems = computed(() => [
         v-if="loadingParametros"
         class="flex items-center justify-center py-10 gap-2 text-muted-foreground"
       >
-        <UIcon name="i-lucide-loader-circle" class="w-5 h-5 animate-spin" />
+        <UIcon
+          name="i-lucide-loader-circle"
+          class="w-5 h-5 animate-spin"
+        />
         <span class="text-sm">Cargando oficinas…</span>
       </div>
 
@@ -115,7 +118,10 @@ const statItems = computed(() => [
       />
 
       <!-- Grid de oficinas -->
-      <div v-else class="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
+      <div
+        v-else
+        class="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3"
+      >
         <div
           v-for="oficina in oficinasCredito"
           :key="oficina.ofiafi"
@@ -207,7 +213,10 @@ const statItems = computed(() => [
         v-if="loadingParametros"
         class="flex items-center justify-center py-10 gap-2 text-muted-foreground"
       >
-        <UIcon name="i-lucide-loader-circle" class="w-5 h-5 animate-spin" />
+        <UIcon
+          name="i-lucide-loader-circle"
+          class="w-5 h-5 animate-spin"
+        />
         <span class="text-sm">Cargando datos…</span>
       </div>
 
@@ -221,17 +230,23 @@ const statItems = computed(() => [
       />
 
       <!-- Stats grid -->
-      <div v-else class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
+      <div
+        v-else
+        class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4"
+      >
         <div
           v-for="item in statItems"
           :key="item.label"
           :class="[
             'rounded-xl border border-border bg-muted/30 p-4 transition-shadow hover:shadow-sm',
-            item.wide ? 'sm:col-span-2' : '',
+            item.wide ? 'sm:col-span-2' : ''
           ]"
         >
           <div class="flex items-center gap-2 mb-2">
-            <UIcon :name="item.icon" class="w-4 h-4 text-primary" />
+            <UIcon
+              :name="item.icon"
+              class="w-4 h-4 text-primary"
+            />
             <span
               class="text-xs font-semibold uppercase tracking-wide text-muted-foreground"
             >
@@ -241,7 +256,7 @@ const statItems = computed(() => [
           <p
             :class="[
               'font-semibold text-foreground',
-              item.large ? 'text-2xl' : 'text-sm',
+              item.large ? 'text-2xl' : 'text-sm'
             ]"
           >
             {{ item.value }}

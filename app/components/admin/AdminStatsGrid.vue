@@ -73,10 +73,15 @@
       <UCard>
         <div class="flex items-center gap-2 mb-4">
           <BarChart3 class="h-5 w-5 text-muted-foreground" />
-          <h3 class="text-lg font-semibold">Distribución por Estados</h3>
+          <h3 class="text-lg font-semibold">
+            Distribución por Estados
+          </h3>
         </div>
 
-        <div v-if="stats.solicitudesPorEstado.length > 0" class="space-y-3">
+        <div
+          v-if="stats.solicitudesPorEstado.length > 0"
+          class="space-y-3"
+        >
           <div
             v-for="item in stats.solicitudesPorEstado"
             :key="item.estado"
@@ -98,7 +103,7 @@
                   class="h-2 rounded-full"
                   :style="{
                     backgroundColor: item.color,
-                    width: `${(item.count / stats.totalSolicitudes) * 100}%`,
+                    width: `${(item.count / stats.totalSolicitudes) * 100}%`
                   }"
                 />
               </div>
@@ -106,9 +111,14 @@
           </div>
         </div>
 
-        <div v-else class="text-center py-8 text-muted-foreground">
+        <div
+          v-else
+          class="text-center py-8 text-muted-foreground"
+        >
           <BarChart3 class="h-12 w-12 mx-auto mb-2 opacity-50" />
-          <p class="text-sm">No hay datos disponibles</p>
+          <p class="text-sm">
+            No hay datos disponibles
+          </p>
         </div>
       </UCard>
 
@@ -116,10 +126,15 @@
       <UCard>
         <div class="flex items-center gap-2 mb-4">
           <Building class="h-5 w-5 text-muted-foreground" />
-          <h3 class="text-lg font-semibold">Top Empresas</h3>
+          <h3 class="text-lg font-semibold">
+            Top Empresas
+          </h3>
         </div>
 
-        <div v-if="stats.topEmpresas.length > 0" class="space-y-3">
+        <div
+          v-if="stats.topEmpresas.length > 0"
+          class="space-y-3"
+        >
           <div
             v-for="(empresa, index) in stats.topEmpresas"
             :key="empresa.nombre"
@@ -132,22 +147,33 @@
                 {{ index + 1 }}
               </div>
               <div>
-                <p class="font-medium text-sm">{{ empresa.nombre }}</p>
+                <p class="font-medium text-sm">
+                  {{ empresa.nombre }}
+                </p>
                 <p class="text-xs text-muted-foreground">
                   {{ empresa.convenio }}
                 </p>
               </div>
             </div>
             <div class="text-right">
-              <p class="font-semibold text-sm">{{ empresa.trabajadores }}</p>
-              <p class="text-xs text-muted-foreground">trabajadores</p>
+              <p class="font-semibold text-sm">
+                {{ empresa.trabajadores }}
+              </p>
+              <p class="text-xs text-muted-foreground">
+                trabajadores
+              </p>
             </div>
           </div>
         </div>
 
-        <div v-else class="text-center py-8 text-muted-foreground">
+        <div
+          v-else
+          class="text-center py-8 text-muted-foreground"
+        >
           <Building class="h-12 w-12 mx-auto mb-2 opacity-50" />
-          <p class="text-sm">No hay empresas con convenios</p>
+          <p class="text-sm">
+            No hay empresas con convenios
+          </p>
         </div>
       </UCard>
     </div>
@@ -163,12 +189,12 @@ import {
   Clock,
   CheckCircle,
   DollarSign,
-  BarChart3,
+  BarChart3
 } from "lucide-vue-next";
 import AdminStatsCard from "./AdminStatsCard.vue";
 
 interface Props {
-  stats: AdminStats;
+  stats: AdminStats
 }
 
 const props = defineProps<Props>();
@@ -177,7 +203,7 @@ const props = defineProps<Props>();
 const tasaActivas = computed(() => {
   if (props.stats.totalSolicitudes === 0) return 0;
   return Math.round(
-    (props.stats.solicitudesActivas / props.stats.totalSolicitudes) * 100,
+    (props.stats.solicitudesActivas / props.stats.totalSolicitudes) * 100
   );
 });
 </script>

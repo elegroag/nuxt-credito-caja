@@ -3,7 +3,7 @@ import { useCreateUser } from "~/composables/admin/useCreateUser";
 
 definePageMeta({
   layout: "dashboard",
-  middleware: ["auth"],
+  middleware: ["auth"]
 });
 
 const { loading, errors, form, handleSubmit, goBack } = useCreateUser();
@@ -11,19 +11,19 @@ const { loading, errors, form, handleSubmit, goBack } = useCreateUser();
 const opcionesRoles = [
   { label: "Administrador", value: "administrator" },
   { label: "Asesor", value: "adviser" },
-  { label: "Trabajador", value: "user_trabajador" },
+  { label: "Trabajador", value: "user_trabajador" }
 ];
 
 const opcionesEstado = [
   { label: "Activo", value: false },
-  { label: "Inactivo", value: true },
+  { label: "Inactivo", value: true }
 ];
 
 const opcionesTipoDoc = [
   { label: "Cédula de Ciudadanía", value: "CC" },
   { label: "Cédula de Extranjería", value: "CE" },
   { label: "Tarjeta de Identidad", value: "TI" },
-  { label: "Pasaporte", value: "PA" },
+  { label: "Pasaporte", value: "PA" }
 ];
 </script>
 
@@ -56,7 +56,10 @@ const opcionesTipoDoc = [
       :title="errors.general"
     />
 
-    <form @submit.prevent="handleSubmit" class="space-y-6">
+    <form
+      class="space-y-6"
+      @submit.prevent="handleSubmit"
+    >
       <!-- Información Básica -->
       <UPageCard
         title="Información Básica"
@@ -81,7 +84,11 @@ const opcionesTipoDoc = [
             </template>
           </UFormField>
 
-          <UFormField label="Email" required :error="errors.email">
+          <UFormField
+            label="Email"
+            required
+            :error="errors.email"
+          >
             <UInput
               v-model="form.email"
               type="email"
@@ -95,7 +102,11 @@ const opcionesTipoDoc = [
             </template>
           </UFormField>
 
-          <UFormField label="Contraseña" required :error="errors.password">
+          <UFormField
+            label="Contraseña"
+            required
+            :error="errors.password"
+          >
             <UInput
               v-model="form.password"
               type="password"
@@ -127,7 +138,11 @@ const opcionesTipoDoc = [
             </template>
           </UFormField>
 
-          <UFormField label="Roles" required :error="errors.roles">
+          <UFormField
+            label="Roles"
+            required
+            :error="errors.roles"
+          >
             <USelectMenu
               v-model="form.roles"
               :items="opcionesRoles"
@@ -161,7 +176,11 @@ const opcionesTipoDoc = [
         :ui="{ container: 'sm:p-6' }"
       >
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <UFormField label="Nombres" required :error="errors.nombre">
+          <UFormField
+            label="Nombres"
+            required
+            :error="errors.nombre"
+          >
             <UInput
               v-model="form.nombre"
               placeholder="Nombres del usuario"
@@ -174,7 +193,11 @@ const opcionesTipoDoc = [
             </template>
           </UFormField>
 
-          <UFormField label="Apellidos" required :error="errors.apellido">
+          <UFormField
+            label="Apellidos"
+            required
+            :error="errors.apellido"
+          >
             <UInput
               v-model="form.apellido"
               placeholder="Apellidos del usuario"

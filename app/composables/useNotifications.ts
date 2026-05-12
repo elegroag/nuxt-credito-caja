@@ -39,10 +39,7 @@ export function useNotifications() {
   /**
    * Cargar notificaciones del usuario
    */
-  const loadNotifications = async (
-    onlyUnread = false,
-    limit = 50,
-  ): Promise<void> => {
+  const loadNotifications = async (onlyUnread = false, limit = 50): Promise<void> => {
     loading.value = true;
     error.value = null;
 
@@ -108,9 +105,7 @@ export function useNotifications() {
 
       if (response.success) {
         // Actualizar localmente
-        const notification = notifications.value.find(
-          (n) => n.id === notificationId,
-        );
+        const notification = notifications.value.find((n) => n.id === notificationId);
         if (notification) {
           notification.read_at = new Date().toISOString();
         }
@@ -163,9 +158,7 @@ export function useNotifications() {
   /**
    * Eliminar notificación
    */
-  const deleteNotification = async (
-    notificationId: string,
-  ): Promise<boolean> => {
+  const deleteNotification = async (notificationId: string): Promise<boolean> => {
     try {
       await ready;
 
@@ -176,9 +169,7 @@ export function useNotifications() {
 
       if (response.success) {
         // Remover localmente
-        const index = notifications.value.findIndex(
-          (n) => n.id === notificationId,
-        );
+        const index = notifications.value.findIndex((n) => n.id === notificationId);
         const notification = notifications.value[index];
         if (index !== -1 && notification) {
           const wasUnread = !notification.read_at;
@@ -239,12 +230,8 @@ export function useNotifications() {
 
   // Computadas
   const hasUnread = computed(() => unreadCount.value > 0);
-  const unreadNotifications = computed(() =>
-    notifications.value.filter((n) => !n.read_at),
-  );
-  const readNotifications = computed(() =>
-    notifications.value.filter((n) => n.read_at),
-  );
+  const unreadNotifications = computed(() => notifications.value.filter((n) => !n.read_at));
+  const readNotifications = computed(() => notifications.value.filter((n) => n.read_at));
 
   /**
    * Formatear fecha relativa
@@ -267,7 +254,7 @@ export function useNotifications() {
     return notificationDate.toLocaleDateString("es-CO", {
       year: "numeric",
       month: "short",
-      day: "numeric",
+      day: "numeric"
     });
   };
 
@@ -284,7 +271,7 @@ export function useNotifications() {
       documento_requerido: "lucide:file-text",
       estado_actualizado: "lucide:refresh-cw",
       comentario_nuevo: "lucide:message-circle",
-      recordatorio: "lucide:bell",
+      recordatorio: "lucide:bell"
     };
     return icons[type] || "lucide:bell";
   };
@@ -302,7 +289,7 @@ export function useNotifications() {
       documento_requerido: "text-blue-600",
       estado_actualizado: "text-blue-600",
       comentario_nuevo: "text-purple-600",
-      recordatorio: "text-yellow-600",
+      recordatorio: "text-yellow-600"
     };
     return colors[type] || "text-gray-600";
   };
@@ -336,6 +323,6 @@ export function useNotifications() {
     togglePolling,
     formatRelativeTime,
     getNotificationIcon,
-    getNotificationColor,
+    getNotificationColor
   };
 }

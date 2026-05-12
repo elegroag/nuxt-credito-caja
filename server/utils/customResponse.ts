@@ -1,10 +1,10 @@
 export interface CustomResponseAttributes {
-  success: boolean;
-  data?: any;
-  message: string;
-  errors?: Record<string, string>[];
-  error?: string;
-  tracer?: string;
+  success: boolean
+  data?: any
+  message: string
+  errors?: Record<string, string>[]
+  error?: string
+  tracer?: string
 }
 
 export class CustomResponse {
@@ -14,36 +14,36 @@ export class CustomResponse {
 
   static success(
     data: any,
-    message = "Operación exitosa",
+    message = "Operación exitosa"
   ): CustomResponseAttributes {
     return {
       success: true,
       data,
-      message,
+      message
     };
   }
 
   static fail(
     errors: Record<string, string>[],
-    message = "Validación fallida",
+    message = "Validación fallida"
   ): CustomResponseAttributes {
     return {
       success: false,
       errors,
-      message,
+      message
     };
   }
 
   static error(
     error: string,
     message = "Error en el proceso",
-    tracer?: string,
+    tracer?: string
   ): CustomResponseAttributes {
     return {
       success: false,
       error,
       message,
-      tracer: tracer || this.generateId(),
+      tracer: tracer || this.generateId()
     };
   }
 
@@ -51,7 +51,7 @@ export class CustomResponse {
     return {
       success: true,
       data,
-      message,
+      message
     };
   }
 }

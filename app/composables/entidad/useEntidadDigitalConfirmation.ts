@@ -14,7 +14,7 @@ export function useEntidadDigitalConfirmation() {
     loading,
     errorMsg,
     result,
-    crear,
+    crear
   } = useEntidadDigital();
 
   const claveLocal = ref("");
@@ -27,14 +27,14 @@ export function useEntidadDigitalConfirmation() {
 
   const canConfirm = computed(() => {
     return (
-      verificationData.value &&
-      claveLocal.value &&
-      claveConfirmLocal.value &&
-      claveLocal.value.length >= 10 &&
-      claveLocal.value === claveConfirmLocal.value &&
-      termsAccepted.value &&
-      privacyAccepted.value &&
-      !loading.value
+      verificationData.value
+      && claveLocal.value
+      && claveConfirmLocal.value
+      && claveLocal.value.length >= 10
+      && claveLocal.value === claveConfirmLocal.value
+      && termsAccepted.value
+      && privacyAccepted.value
+      && !loading.value
     );
   });
 
@@ -46,7 +46,7 @@ export function useEntidadDigitalConfirmation() {
       verificationData.value = JSON.parse(completeData);
       verificationData.value = {
         ...verificationData.value,
-        ...JSON.parse(basicData),
+        ...JSON.parse(basicData)
       };
     } else {
       router.push("/entidad-digital");
@@ -63,7 +63,7 @@ export function useEntidadDigitalConfirmation() {
   const cancelProcess = async () => {
     if (
       confirm(
-        "¿Estás seguro de que deseas cancelar el proceso? Se perderán todos los datos capturados.",
+        "¿Estás seguro de que deseas cancelar el proceso? Se perderán todos los datos capturados."
       )
     ) {
       await storage.removeItem("capturedDocuments");
@@ -120,8 +120,8 @@ export function useEntidadDigitalConfirmation() {
       }
     } catch (error: any) {
       console.error("Error creando entidad digital:", error);
-      errorMsg.value =
-        error?.data?.error || error?.message || "Error creating digital entity";
+      errorMsg.value
+        = error?.data?.error || error?.message || "Error creating digital entity";
     }
   };
 
@@ -138,6 +138,6 @@ export function useEntidadDigitalConfirmation() {
     canConfirm,
     goBack,
     cancelProcess,
-    confirmAndCreate,
+    confirmAndCreate
   };
 }

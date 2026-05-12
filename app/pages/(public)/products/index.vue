@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 definePageMeta({
-  layout: "public",
+  layout: "public"
 });
 
 const products = [
@@ -13,7 +13,7 @@ const products = [
     color: "primary",
     featured: true,
     amount: "$1M - $50M",
-    term: "12 - 60 meses",
+    term: "12 - 60 meses"
   },
   {
     id: 2,
@@ -23,7 +23,7 @@ const products = [
     icon: "i-lucide-home",
     color: "accent",
     amount: "$50M - $500M",
-    term: "60 - 240 meses",
+    term: "60 - 240 meses"
   },
   {
     id: 3,
@@ -33,7 +33,7 @@ const products = [
     icon: "i-lucide-graduation-cap",
     color: "secondary",
     amount: "$1M - $30M",
-    term: "12 - 48 meses",
+    term: "12 - 48 meses"
   },
   {
     id: 4,
@@ -43,7 +43,7 @@ const products = [
     icon: "i-lucide-plane",
     color: "primary",
     amount: "$500K - $20M",
-    term: "6 - 24 meses",
+    term: "6 - 24 meses"
   },
   {
     id: 5,
@@ -53,7 +53,7 @@ const products = [
     icon: "i-lucide-shirt",
     color: "accent",
     amount: "$500K - $10M",
-    term: "3 - 18 meses",
+    term: "3 - 18 meses"
   },
   {
     id: 6,
@@ -63,23 +63,23 @@ const products = [
     icon: "i-lucide-settings",
     color: "muted",
     amount: "A convenir",
-    term: "Flexible",
-  },
+    term: "Flexible"
+  }
 ];
 
 const features = [
   {
     icon: "i-lucide-zap",
     title: "Aprobación rápida",
-    desc: "Respuesta en minutos",
+    desc: "Respuesta en minutos"
   },
   {
     icon: "i-lucide-shield-check",
     title: "100% Seguro",
-    desc: "Tus datos protegidos",
+    desc: "Tus datos protegidos"
   },
   { icon: "i-lucide-file-check", title: "Sin papeleo", desc: "Todo digital" },
-  { icon: "i-lucide-clock", title: "24/7", desc: "Solicita cuando quieras" },
+  { icon: "i-lucide-clock", title: "24/7", desc: "Solicita cuando quieras" }
 ];
 
 const getColorClass = (color: string) => {
@@ -87,7 +87,7 @@ const getColorClass = (color: string) => {
     primary: "bg-primary/10 text-primary group-hover:bg-primary/20",
     accent: "bg-accent/10 text-accent group-hover:bg-accent/20",
     secondary: "bg-secondary/10 text-secondary group-hover:bg-secondary/20",
-    muted: "bg-muted text-muted-foreground group-hover:bg-muted-foreground/10",
+    muted: "bg-muted text-muted-foreground group-hover:bg-muted-foreground/10"
   };
   return map[color] || map.primary;
 };
@@ -127,7 +127,9 @@ const getColorClass = (color: string) => {
             <p class="text-sm font-medium text-foreground">
               {{ feature.title }}
             </p>
-            <p class="text-xs text-muted-foreground">{{ feature.desc }}</p>
+            <p class="text-xs text-muted-foreground">
+              {{ feature.desc }}
+            </p>
           </div>
         </div>
       </div>
@@ -155,7 +157,10 @@ const getColorClass = (color: string) => {
               class="w-12 h-12 rounded-xl flex items-center justify-center mb-4 transition-colors"
               :class="getColorClass(product.color)"
             >
-              <UIcon :name="product.icon" class="w-5 h-5" />
+              <UIcon
+                :name="product.icon"
+                class="w-5 h-5"
+              />
             </div>
 
             <!-- Content -->
@@ -171,11 +176,17 @@ const getColorClass = (color: string) => {
               class="flex items-center gap-4 text-xs text-muted-foreground mb-4"
             >
               <div class="flex items-center gap-1">
-                <UIcon name="i-lucide-banknote" class="w-3.5 h-3.5" />
+                <UIcon
+                  name="i-lucide-banknote"
+                  class="w-3.5 h-3.5"
+                />
                 <span>{{ product.amount }}</span>
               </div>
               <div class="flex items-center gap-1">
-                <UIcon name="i-lucide-calendar" class="w-3.5 h-3.5" />
+                <UIcon
+                  name="i-lucide-calendar"
+                  class="w-3.5 h-3.5"
+                />
                 <span>{{ product.term }}</span>
               </div>
             </div>
@@ -207,10 +218,20 @@ const getColorClass = (color: string) => {
             tus necesidades.
           </p>
           <div class="flex flex-col sm:flex-row gap-4 justify-center">
-            <UButton to="/contact" color="neutral" variant="solid" size="lg">
+            <UButton
+              to="/contact"
+              color="neutral"
+              variant="solid"
+              size="lg"
+            >
               Hablar con un asesor
             </UButton>
-            <UButton to="/" color="neutral" variant="outline" size="lg">
+            <UButton
+              to="/"
+              color="neutral"
+              variant="outline"
+              size="lg"
+            >
               Simular crédito
             </UButton>
           </div>

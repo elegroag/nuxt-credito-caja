@@ -3,12 +3,18 @@
     <!-- Header -->
     <div class="mb-6">
       <div class="flex items-center gap-4 mb-4">
-        <UButton variant="outline" @click="volverADetalle()" class="shrink-0">
+        <UButton
+          variant="outline"
+          class="shrink-0"
+          @click="volverADetalle()"
+        >
           <ChevronLeft class="h-4 w-4 mr-2" />
           Volver a Detalles
         </UButton>
         <div>
-          <h1 class="text-2xl font-bold text-gray-900">Registro de Acciones</h1>
+          <h1 class="text-2xl font-bold text-gray-900">
+            Registro de Acciones
+          </h1>
           <p class="text-sm text-gray-500">
             Gestionar estado y notificaciones de la solicitud
           </p>
@@ -25,7 +31,9 @@
         name="lucide:loader-2"
         class="w-10 h-10 animate-spin text-primary"
       />
-      <p class="text-gray-500">Cargando información...</p>
+      <p class="text-gray-500">
+        Cargando información...
+      </p>
     </div>
 
     <!-- Error State -->
@@ -37,15 +45,24 @@
         name="lucide:alert-circle"
         class="w-8 h-8 mx-auto mb-2 text-red-500"
       />
-      <h3 class="font-bold mb-1">Error al cargar la información</h3>
+      <h3 class="font-bold mb-1">
+        Error al cargar la información
+      </h3>
       <p>{{ error }}</p>
-      <UButton class="mt-4" variant="outline" @click="cargarSolicitud">
+      <UButton
+        class="mt-4"
+        variant="outline"
+        @click="cargarSolicitud"
+      >
         Reintentar
       </UButton>
     </div>
 
     <!-- Formulario -->
-    <div v-else-if="solicitud" class="space-y-6">
+    <div
+      v-else-if="solicitud"
+      class="space-y-6"
+    >
       <!-- Información de la Solicitud -->
       <UCard>
         <h2 class="text-lg font-semibold mb-4 flex items-center gap-2">
@@ -84,9 +101,9 @@
             </label>
             <p class="text-lg">
               {{
-                solicitud.solicitante?.nombres +
-                  " " +
-                  solicitud.solicitante?.apellidos || "-"
+                solicitud.solicitante?.nombres
+                  + " "
+                  + solicitud.solicitante?.apellidos || "-"
               }}
             </p>
           </div>
@@ -100,7 +117,10 @@
           Cambiar Estado de la Solicitud
         </h2>
 
-        <form @submit.prevent="handleSubmit" class="space-y-6">
+        <form
+          class="space-y-6"
+          @submit.prevent="handleSubmit"
+        >
           <!-- Selector de Estado -->
           <div>
             <label
@@ -115,7 +135,12 @@
               class="select select-bordered w-full"
               required
             >
-              <option value="" disabled>Seleccione un estado</option>
+              <option
+                value=""
+                disabled
+              >
+                Seleccione un estado
+              </option>
               <option
                 v-for="estado in estados"
                 :key="estado.id"
@@ -135,9 +160,14 @@
             class="bg-blue-50 border border-blue-200 rounded-lg p-4"
           >
             <div class="flex items-start gap-3">
-              <Icon name="lucide:info" class="h-5 w-5 text-blue-600 mt-0.5" />
+              <Icon
+                name="lucide:info"
+                class="h-5 w-5 text-blue-600 mt-0.5"
+              />
               <div>
-                <h3 class="font-medium text-blue-900">Cambio de Estado</h3>
+                <h3 class="font-medium text-blue-900">
+                  Cambio de Estado
+                </h3>
                 <p class="text-sm text-blue-700 mt-1">
                   La solicitud pasará de
                   <strong>{{
@@ -164,7 +194,7 @@
               rows="4"
               class="textarea textarea-bordered w-full"
               placeholder="Escriba un mensaje que será enviado al solicitante sobre este cambio de estado..."
-            ></textarea>
+            />
             <p class="text-xs text-gray-500 mt-1">
               Este mensaje será incluido en la notificación al solicitante
               (opcional)
@@ -179,7 +209,9 @@
                 class="h-5 w-5 text-yellow-600 mt-0.5"
               />
               <div>
-                <h3 class="font-medium text-yellow-900">Importante</h3>
+                <h3 class="font-medium text-yellow-900">
+                  Importante
+                </h3>
                 <p class="text-sm text-yellow-700 mt-1">
                   El cambio de estado actualizará el timeline de la solicitud y
                   se registrará en el historial. Esta acción no se puede
@@ -202,15 +234,19 @@
                 name="lucide:loader-2"
                 class="h-4 w-4 animate-spin"
               />
-              <Icon v-else name="lucide:save" class="h-4 w-4" />
+              <Icon
+                v-else
+                name="lucide:save"
+                class="h-4 w-4"
+              />
               {{ loadingAccion ? "Guardando..." : "Registrar Acción" }}
             </UButton>
 
             <UButton
               type="button"
               variant="outline"
-              @click="volverADetalle()"
               :disabled="loadingAccion"
+              @click="volverADetalle()"
             >
               Cancelar
             </UButton>
@@ -230,10 +266,14 @@
             :key="index"
             class="flex items-start gap-3 pb-3 border-b last:border-b-0"
           >
-            <div class="shrink-0 w-2 h-2 rounded-full bg-blue-500 mt-2"></div>
+            <div class="shrink-0 w-2 h-2 rounded-full bg-blue-500 mt-2" />
             <div class="flex-1">
-              <p class="font-medium text-gray-900">{{ item.estado }}</p>
-              <p class="text-sm text-gray-600">{{ item.detalle }}</p>
+              <p class="font-medium text-gray-900">
+                {{ item.estado }}
+              </p>
+              <p class="text-sm text-gray-600">
+                {{ item.detalle }}
+              </p>
               <p class="text-xs text-gray-400 mt-1">
                 {{ new Date(item.fecha).toLocaleString("es-CO") }}
               </p>
@@ -265,12 +305,12 @@ const {
   cargarSolicitud,
   registrarAccion,
   getNombreEstado,
-  volverADetalle,
+  volverADetalle
 } = useAccionesSolicitud();
 
 const handleSubmit = async () => {
   const confirmacion = confirm(
-    `¿Está seguro de cambiar el estado de la solicitud a "${getNombreEstado(estadoSeleccionado.value)}"?`,
+    `¿Está seguro de cambiar el estado de la solicitud a "${getNombreEstado(estadoSeleccionado.value)}"?`
   );
 
   if (!confirmacion) return;
@@ -287,6 +327,6 @@ const handleSubmit = async () => {
 
 definePageMeta({
   layout: "dashboard",
-  middleware: ["auth"],
+  middleware: ["auth"]
 });
 </script>

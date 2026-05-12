@@ -6,7 +6,7 @@ export const useConyugeTrabajador = () => {
 
   const buscarConyuge = async (
     cedulaTrabajador: string,
-    estado = "A",
+    estado = "A"
   ): Promise<ConyugeData[]> => {
     loading.value = true;
     error.value = null;
@@ -16,14 +16,14 @@ export const useConyugeTrabajador = () => {
         "/api/postulante/conyuge-trabajador",
         {
           cedtra: cedulaTrabajador,
-          estado: estado || "A",
+          estado: estado || "A"
         },
         {
           auth: true,
           headers: {
-            accept: "*/*",
-          },
-        },
+            accept: "*/*"
+          }
+        }
       );
 
       if (response.success && response.data && response.data.length > 0) {
@@ -34,8 +34,8 @@ export const useConyugeTrabajador = () => {
         return [];
       }
     } catch (err) {
-      const errorMessage =
-        err instanceof Error ? err.message : "Error desconocido";
+      const errorMessage
+        = err instanceof Error ? err.message : "Error desconocido";
       error.value = errorMessage;
       console.error("Error buscando cónyuge:", err);
       return [];
@@ -55,6 +55,6 @@ export const useConyugeTrabajador = () => {
     error: readonly(error),
     data: readonly(data),
     buscarConyuge,
-    limpiarDatos,
+    limpiarDatos
   };
 };

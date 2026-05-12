@@ -12,7 +12,7 @@ export default defineEventHandler(async (event: H3Event) => {
     if (!session?.user?.username) {
       throw createError({
         statusCode: 401,
-        message: "No session found",
+        message: "No session found"
       });
     }
 
@@ -23,12 +23,12 @@ export default defineEventHandler(async (event: H3Event) => {
     const result = await solicitudSrv.getSolicitudesByUser(
       session.user.username,
       limit,
-      offset,
+      offset
     );
 
     return CustomResponse.success(
       { data: result.data, total: result.total, limit: result.limit, offset: result.offset },
-      "Solicitudes obtenidas exitosamente",
+      "Solicitudes obtenidas exitosamente"
     );
   } catch (e: any) {
     const status = Number(e?.statusCode || e?.response?.status || 502);
@@ -36,7 +36,7 @@ export default defineEventHandler(async (event: H3Event) => {
 
     return CustomResponse.error(
       e?.data?.error || e?.message || "Error conectando con backend",
-      "Error al obtener solicitudes.",
+      "Error al obtener solicitudes."
     );
   }
 });

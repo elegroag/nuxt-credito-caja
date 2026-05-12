@@ -1,9 +1,9 @@
-import { setup } from '@nuxt/test-utils/e2e'
+import { setup } from "@nuxt/test-utils/e2e";
 
 beforeAll(async () => {
   await setup({
-    rootDir: '.',
+    rootDir: ".",
     server: true,
-    port: 4000,
-  })
-})
+    port: 4000
+  });
+});

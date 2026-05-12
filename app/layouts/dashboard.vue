@@ -17,7 +17,7 @@
           v-if="userMenuOpen"
           class="fixed inset-0 z-40"
           @click="userMenuOpen = false"
-        ></div>
+        />
       </div>
     </div>
   </div>

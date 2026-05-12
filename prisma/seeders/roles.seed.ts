@@ -15,13 +15,13 @@ export const roles = [
       "trabajadores.read",
       "empresas.read",
       "reports.read",
-      "system.admin",
+      "system.admin"
     ],
     color: "#DC2626",
     orden: 1,
     activo: true,
     created_at: "2026-02-25 02:06:11.0",
-    updated_at: "2026-02-25 02:06:11.0",
+    updated_at: "2026-02-25 02:06:11.0"
   },
   {
     id: 2,
@@ -33,13 +33,13 @@ export const roles = [
       "solicitudes.update",
       "trabajadores.read",
       "empresas.read",
-      "reports.read",
+      "reports.read"
     ],
     color: "#2563EB",
     orden: 2,
     activo: true,
     created_at: "2026-02-25 02:06:11.0",
-    updated_at: "2026-02-25 02:06:11.0",
+    updated_at: "2026-02-25 02:06:11.0"
   },
   {
     id: 3,
@@ -49,13 +49,13 @@ export const roles = [
       "solicitudes.create",
       "solicitudes.read",
       "solicitudes.update",
-      "empresas.read",
+      "empresas.read"
     ],
     color: "#059669",
     orden: 3,
     activo: true,
     created_at: "2026-02-25 02:06:11.0",
-    updated_at: "2026-02-25 02:06:11.0",
+    updated_at: "2026-02-25 02:06:11.0"
   },
   {
     id: 4,
@@ -66,6 +66,6 @@ export const roles = [
     orden: 4,
     activo: true,
     created_at: "2026-02-25 02:06:11.0",
-    updated_at: "2026-02-25 02:06:11.0",
-  },
+    updated_at: "2026-02-25 02:06:11.0"
+  }
 ];

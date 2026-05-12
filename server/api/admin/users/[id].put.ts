@@ -3,7 +3,7 @@ import {
   defineEventHandler,
   getRouterParam,
   readValidatedBody,
-  setResponseStatus,
+  setResponseStatus
 } from "h3";
 import usersAdmService from "~~/server/services/admin/users-adm.service";
 import { CustomResponse } from "~~/server/utils/customResponse";
@@ -48,7 +48,7 @@ const updateUserSchema = z.object({
   telefono: z
     .string()
     .max(20, "El teléfono no puede exceder 20 caracteres")
-    .optional(),
+    .optional()
 });
 
 export default defineEventHandler(async (event: H3Event) => {
@@ -98,9 +98,9 @@ export default defineEventHandler(async (event: H3Event) => {
         username: user.username,
         email: user.email,
         full_name: user.full_name,
-        roles: user.roles,
+        roles: user.roles
       },
-      "Usuario actualizado exitosamente",
+      "Usuario actualizado exitosamente"
     );
   } catch (e: any) {
     const status = Number(e?.statusCode || e?.response?.status || 502);
@@ -108,7 +108,7 @@ export default defineEventHandler(async (event: H3Event) => {
 
     return CustomResponse.error(
       e?.data?.error || e?.message || "Error conectando con backend",
-      "Error al actualizar usuario.",
+      "Error al actualizar usuario."
     );
   }
 });

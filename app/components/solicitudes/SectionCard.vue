@@ -16,12 +16,12 @@
 
 <script setup lang="ts">
 interface Props {
-  title: string;
-  iconBgClass?: string;
+  title: string
+  iconBgClass?: string
 }
 
 withDefaults(defineProps<Props>(), {
   iconBgClass:
-    "bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400",
+    "bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400"
 });
 </script>

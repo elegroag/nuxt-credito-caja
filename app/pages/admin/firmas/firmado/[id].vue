@@ -8,8 +8,15 @@
             class="flex flex-col md:flex-row md:items-center md:justify-between gap-4"
           >
             <div class="flex items-center gap-4">
-              <UButton variant="outline" @click="volver" color="neutral">
-                <UIcon name="i-lucide-chevron-left" class="w-4 h-4 mr-2" />
+              <UButton
+                variant="outline"
+                color="neutral"
+                @click="volver"
+              >
+                <UIcon
+                  name="i-lucide-chevron-left"
+                  class="w-4 h-4 mr-2"
+                />
                 Volver
               </UButton>
               <div>
@@ -35,7 +42,9 @@
           name="i-lucide-loader-2"
           class="w-10 h-10 animate-spin text-primary"
         />
-        <p class="text-muted-foreground">Cargando información...</p>
+        <p class="text-muted-foreground">
+          Cargando información...
+        </p>
       </div>
 
       <!-- Error State -->
@@ -51,20 +60,28 @@
           <h3 class="text-xl font-bold text-destructive mb-2">
             Error al cargar la información
           </h3>
-          <p class="text-destructive/80 mb-4">{{ error }}</p>
+          <p class="text-destructive/80 mb-4">
+            {{ error }}
+          </p>
           <UButton
             color="destructive"
             variant="outline"
             @click="cargarSolicitud"
           >
-            <UIcon name="i-lucide-refresh-cw" class="w-4 h-4 mr-2" />
+            <UIcon
+              name="i-lucide-refresh-cw"
+              class="w-4 h-4 mr-2"
+            />
             Reintentar
           </UButton>
         </div>
       </UPageCard>
 
       <!-- Contenido Principal -->
-      <div v-else-if="solicitud" class="space-y-6">
+      <div
+        v-else-if="solicitud"
+        class="space-y-6"
+      >
         <!-- Información de la Solicitud -->
         <UPageCard>
           <template #header>
@@ -72,7 +89,10 @@
               <div
                 class="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center"
               >
-                <UIcon name="i-lucide-file-text" class="w-5 h-5 text-primary" />
+                <UIcon
+                  name="i-lucide-file-text"
+                  class="w-5 h-5 text-primary"
+                />
               </div>
               <h2 class="text-xl font-bold text-foreground">
                 Información de la Solicitud
@@ -95,14 +115,16 @@
               </p>
               <p class="text-lg text-foreground">
                 {{
-                  solicitud.solicitante?.nombres +
-                    " " +
-                    solicitud.solicitante?.apellidos || "-"
+                  solicitud.solicitante?.nombres
+                    + " "
+                    + solicitud.solicitante?.apellidos || "-"
                 }}
               </p>
             </div>
             <div class="space-y-2">
-              <p class="text-sm font-medium text-muted-foreground">Estado</p>
+              <p class="text-sm font-medium text-muted-foreground">
+                Estado
+              </p>
               <UBadge
                 :color="getEstadoColor(solicitud.estado)"
                 variant="subtle"
@@ -120,7 +142,10 @@
               <div
                 class="w-10 h-10 bg-success/10 rounded-lg flex items-center justify-center"
               >
-                <UIcon name="i-lucide-users" class="w-5 h-5 text-success" />
+                <UIcon
+                  name="i-lucide-users"
+                  class="w-5 h-5 text-success"
+                />
               </div>
               <h2 class="text-xl font-bold text-foreground">
                 Gestión de Firmantes
@@ -129,7 +154,7 @@
           </template>
 
           <GestionFirmantes
-            :solicitudId="solicitud.numero_solicitud"
+            :solicitud-id="solicitud.numero_solicitud"
             :firmantes="firmantes"
           />
         </UPageCard>
@@ -147,7 +172,7 @@ import { useApi } from "~/composables/useApi";
 import { useSession } from "~/composables/useSession";
 import type {
   SolicitudCredito,
-  Firmante,
+  Firmante
 } from "#shared/types/solicitud-credito";
 
 const route = useRoute();
@@ -157,7 +182,7 @@ const { ready } = useSession();
 
 // Función para obtener color del estado
 const getEstadoColor = (
-  estado: string,
+  estado: string
 ): "primary" | "secondary" | "accent" | "destructive" | "muted" | "neutral" => {
   const estadoColors: Record<
     string,
@@ -170,7 +195,7 @@ const getEstadoColor = (
     EN_FIRMA: "secondary",
     FIRMADO: "primary",
     APROBADO: "primary",
-    RECHAZADO: "destructive",
+    RECHAZADO: "destructive"
   };
   return estadoColors[estado] || "muted";
 };
@@ -192,8 +217,8 @@ const cargarSolicitud = async () => {
   try {
     await ready;
     const response = await getJson<{
-      success: boolean;
-      data: SolicitudCredito;
+      success: boolean
+      data: SolicitudCredito
     }>(`/api/admin/solicitudes/${solicitudId.value}`, { auth: true });
 
     if (response.success) {
@@ -210,8 +235,8 @@ const cargarSolicitud = async () => {
     }
   } catch (e: unknown) {
     console.error("Error al cargar solicitud:", e);
-    const message =
-      e instanceof Error
+    const message
+      = e instanceof Error
         ? e.message
         : "No se pudo cargar la información de la solicitud.";
     error.value = message;
@@ -232,7 +257,7 @@ onMounted(() => {
 
 definePageMeta({
   layout: "dashboard",
-  middleware: ["auth"],
+  middleware: ["auth"]
 });
 </script>
 

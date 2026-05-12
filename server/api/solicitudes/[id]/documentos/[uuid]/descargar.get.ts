@@ -3,7 +3,7 @@ import {
   defineEventHandler,
   getRouterParam,
   setResponseStatus,
-  sendStream,
+  sendStream
 } from "h3";
 import { createReadStream } from "fs";
 import prisma from "~~/lib/prisma";
@@ -19,7 +19,7 @@ export default defineEventHandler(async (event: H3Event) => {
       setResponseStatus(event, 401);
       return CustomResponse.error(
         "No hay sesión activa",
-        "Error de autenticación",
+        "Error de autenticación"
       );
     }
 
@@ -27,7 +27,7 @@ export default defineEventHandler(async (event: H3Event) => {
       setResponseStatus(event, 400);
       return CustomResponse.error(
         "ID de solicitud no proporcionado",
-        "Error de validación",
+        "Error de validación"
       );
     }
 
@@ -35,19 +35,19 @@ export default defineEventHandler(async (event: H3Event) => {
       setResponseStatus(event, 400);
       return CustomResponse.error(
         "UUID de documento no proporcionado",
-        "Error de validación",
+        "Error de validación"
       );
     }
 
     const solicitud = await prisma.solicitudes_credito.findUnique({
-      where: { numero_solicitud: solicitudId },
+      where: { numero_solicitud: solicitudId }
     });
 
     if (!solicitud) {
       setResponseStatus(event, 404);
       return CustomResponse.error(
         "Solicitud no encontrada",
-        "Recurso no encontrado",
+        "Recurso no encontrado"
       );
     }
 
@@ -55,7 +55,7 @@ export default defineEventHandler(async (event: H3Event) => {
       setResponseStatus(event, 403);
       return CustomResponse.error(
         "No tienes permiso para descargar documentos de esta solicitud",
-        "Acceso denegado",
+        "Acceso denegado"
       );
     }
 
@@ -63,15 +63,15 @@ export default defineEventHandler(async (event: H3Event) => {
       where: {
         solicitud_id: solicitudId,
         api_filename: documentoUuid,
-        activo: true,
-      },
+        activo: true
+      }
     });
 
     if (!documento) {
       setResponseStatus(event, 404);
       return CustomResponse.error(
         "Documento no encontrado",
-        "Recurso no encontrado",
+        "Recurso no encontrado"
       );
     }
 
@@ -79,7 +79,7 @@ export default defineEventHandler(async (event: H3Event) => {
       setResponseStatus(event, 404);
       return CustomResponse.error(
         "Ruta del documento no disponible",
-        "Recurso no disponible",
+        "Recurso no disponible"
       );
     }
 
@@ -87,7 +87,7 @@ export default defineEventHandler(async (event: H3Event) => {
 
     setResponseHeaders(event, {
       "Content-Type": documento.tipo_mime || "application/octet-stream",
-      "Content-Disposition": `attachment; filename="${documento.nombre_original}"`,
+      "Content-Disposition": `attachment; filename="${documento.nombre_original}"`
     });
 
     const fileStream = createReadStream(filePath);
@@ -99,7 +99,7 @@ export default defineEventHandler(async (event: H3Event) => {
 
     return CustomResponse.error(
       error?.data?.error || error?.message || "Error al descargar documento",
-      "Error al descargar documento.",
+      "Error al descargar documento."
     );
   }
 });

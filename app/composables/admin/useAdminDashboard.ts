@@ -20,7 +20,7 @@ export function useAdminDashboard() {
     solicitudesPorEstado: [],
     actividadReciente: [],
     usuariosPorRol: [],
-    topEmpresas: [],
+    topEmpresas: []
   });
 
   // Última actualización
@@ -31,14 +31,14 @@ export function useAdminDashboard() {
     try {
       type UsuariosStatsResponse = {
         data: {
-          trabajadores?: number;
-          usuariosPorRol?: Array<{ rol: string; count: number }>;
-        };
+          trabajadores?: number
+          usuariosPorRol?: Array<{ rol: string, count: number }>
+        }
       };
 
       const response = await getJson<UsuariosStatsResponse>(
         "/api/admin/users/estadisticas",
-        { auth: true },
+        { auth: true }
       );
       const data = response.data;
 
@@ -54,7 +54,7 @@ export function useAdminDashboard() {
     try {
       const response = await getJson<{ data: unknown }>(
         "/api/admin/empresas-convenios",
-        { auth: true },
+        { auth: true }
       );
       void response;
     } catch (e: unknown) {
@@ -68,95 +68,95 @@ export function useAdminDashboard() {
       type DashboardResponse = {
         data: {
           solicitudes?: {
-            total?: number;
-            activas?: number;
-            activos?: number;
-            pendientesFirma?: number;
-            tasaAprobacion?: number;
-            montoTotalAprobado?: number;
+            total?: number
+            activas?: number
+            activos?: number
+            pendientesFirma?: number
+            tasaAprobacion?: number
+            montoTotalAprobado?: number
             porEstado?: Array<{
-              estado: string;
-              count: string | number;
-              color: string;
-            }>;
-          };
+              estado: string
+              count: string | number
+              color: string
+            }>
+          }
           convenios?: {
-            activos?: number;
+            activos?: number
             topEmpresas?: Array<{
-              razon_social: string;
-              nit: string;
-              numero_empleados: string;
-              tipo_empresa: string;
-            }>;
-          };
+              razon_social: string
+              nit: string
+              numero_empleados: string
+              tipo_empresa: string
+            }>
+          }
           usuarios?: {
-            trabajadores?: number;
-            porRol?: Array<{ role: string; count: string | number }>;
-          };
+            trabajadores?: number
+            porRol?: Array<{ role: string, count: string | number }>
+          }
           actividadReciente?: {
             solicitudesRecientes?: Array<{
-              numero_solicitud: string;
-              estado: string;
-              created_at: string;
-              owner_username: string;
-            }>;
+              numero_solicitud: string
+              estado: string
+              created_at: string
+              owner_username: string
+            }>
             usuariosRecientes?: Array<{
-              username: string;
-              created_at: string;
-              full_name: string;
-              roles: string[];
-            }>;
-          };
-        };
+              username: string
+              created_at: string
+              full_name: string
+              roles: string[]
+            }>
+          }
+        }
       };
 
       const response = await getJson<DashboardResponse>(
         "/api/admin/dashboard/estadisticas",
-        { auth: true },
+        { auth: true }
       );
       const data = response.data;
 
       const solicitudes = data?.solicitudes;
       stats.value.totalSolicitudes = solicitudes?.total ?? 0;
-      stats.value.solicitudesActivas =
-        solicitudes?.activos ?? solicitudes?.activas ?? 0;
-      stats.value.solicitudesPendientesFirma =
-        solicitudes?.pendientesFirma ?? 0;
+      stats.value.solicitudesActivas
+        = solicitudes?.activos ?? solicitudes?.activas ?? 0;
+      stats.value.solicitudesPendientesFirma
+        = solicitudes?.pendientesFirma ?? 0;
       stats.value.tasaAprobacion = solicitudes?.tasaAprobacion ?? 0;
       stats.value.montoTotalAprobado = solicitudes?.montoTotalAprobado ?? 0;
-      stats.value.solicitudesPorEstado =
-        solicitudes?.porEstado?.map((e) => ({
+      stats.value.solicitudesPorEstado
+        = solicitudes?.porEstado?.map(e => ({
           estado: e.estado,
           count: Number(e.count),
-          color: e.color,
+          color: e.color
         })) ?? [];
 
       const convenios = data?.convenios;
       stats.value.conveniosActivos = convenios?.activos ?? 0;
-      stats.value.topEmpresas =
-        convenios?.topEmpresas?.map((e) => ({
+      stats.value.topEmpresas
+        = convenios?.topEmpresas?.map(e => ({
           nombre: e.razon_social,
           convenio: e.tipo_empresa,
-          trabajadores: Number(e.numero_empleados),
+          trabajadores: Number(e.numero_empleados)
         })) ?? [];
 
       const usuarios = data?.usuarios;
       if (usuarios) {
-        stats.value.trabajadoresRegistrados =
-          usuarios.trabajadores ?? stats.value.trabajadoresRegistrados;
-        stats.value.usuariosPorRol =
-          usuarios.porRol?.map((r) => ({
+        stats.value.trabajadoresRegistrados
+          = usuarios.trabajadores ?? stats.value.trabajadoresRegistrados;
+        stats.value.usuariosPorRol
+          = usuarios.porRol?.map(r => ({
             rol: r.role,
-            count: Number(r.count),
+            count: Number(r.count)
           })) ?? stats.value.usuariosPorRol;
       }
 
       // Transformar actividadReciente al formato esperado por el frontend
       const actividades: Array<{
-        id: string;
-        tipo: string;
-        descripcion: string;
-        fecha: string;
+        id: string
+        tipo: string
+        descripcion: string
+        fecha: string
       }> = [];
 
       if (data?.actividadReciente?.solicitudesRecientes) {
@@ -165,7 +165,7 @@ export function useAdminDashboard() {
             id: s.numero_solicitud,
             tipo: "solicitud",
             descripcion: `Nueva solicitud ${s.numero_solicitud} - Estado: ${s.estado}`,
-            fecha: s.created_at || new Date().toISOString(),
+            fecha: s.created_at || new Date().toISOString()
           });
         });
       }
@@ -176,14 +176,14 @@ export function useAdminDashboard() {
             id: u.username,
             tipo: "usuario",
             descripcion: `Nuevo usuario registrado: ${u.full_name}`,
-            fecha: u.created_at,
+            fecha: u.created_at
           });
         });
       }
 
       // Ordenar por fecha descendente
       actividades.sort(
-        (a, b) => new Date(b.fecha).getTime() - new Date(a.fecha).getTime(),
+        (a, b) => new Date(b.fecha).getTime() - new Date(a.fecha).getTime()
       );
 
       stats.value.actividadReciente = actividades;
@@ -205,8 +205,8 @@ export function useAdminDashboard() {
 
       lastUpdated.value = new Date();
     } catch (e: unknown) {
-      error.value =
-        e instanceof Error ? e.message : "Error al cargar las estadísticas";
+      error.value
+        = e instanceof Error ? e.message : "Error al cargar las estadísticas";
       console.error("Error en cargarEstadisticas:", e);
     } finally {
       loading.value = false;
@@ -221,16 +221,16 @@ export function useAdminDashboard() {
   // Computed properties para facilitar el uso
   const tieneDatos = computed(
     () =>
-      stats.value.totalSolicitudes > 0 ||
-      stats.value.conveniosActivos > 0 ||
-      stats.value.trabajadoresRegistrados > 0,
+      stats.value.totalSolicitudes > 0
+      || stats.value.conveniosActivos > 0
+      || stats.value.trabajadoresRegistrados > 0
   );
 
   const tiempoSinActualizar = computed(() => {
     if (!lastUpdated.value) return null;
     const ahora = new Date();
     const diffMinutos = Math.floor(
-      (ahora.getTime() - lastUpdated.value.getTime()) / (1000 * 60),
+      (ahora.getTime() - lastUpdated.value.getTime()) / (1000 * 60)
     );
 
     if (diffMinutos < 1) return "Actualizado ahora";
@@ -267,6 +267,6 @@ export function useAdminDashboard() {
     refrescarEstadisticas,
     totalUsuarios,
     cargarEstadisticasUsuarios,
-    cargarEstadisticasConvenios,
+    cargarEstadisticasConvenios
   };
 }

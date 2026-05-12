@@ -17,13 +17,13 @@ export function useAdminUsers() {
   const filtros = ref({
     rol: null as string | null,
     busqueda: "",
-    estado: null as string | null,
+    estado: null as string | null
   });
 
   // Paginación
   const paginacion = ref<Paginacion>({
     limit: 10,
-    offset: 0,
+    offset: 0
   });
 
   // Debounce para búsqueda
@@ -31,10 +31,10 @@ export function useAdminUsers() {
 
   // Computed properties
   const paginaActual = computed(
-    () => Math.floor(paginacion.value.offset / paginacion.value.limit) + 1,
+    () => Math.floor(paginacion.value.offset / paginacion.value.limit) + 1
   );
   const totalPaginas = computed(() =>
-    Math.ceil(totalUsuarios.value / paginacion.value.limit),
+    Math.ceil(totalUsuarios.value / paginacion.value.limit)
   );
 
   const paginasVisibles = computed(() => {
@@ -43,7 +43,7 @@ export function useAdminUsers() {
     const mitad = Math.floor(maxPaginasVisibles / 2);
 
     let inicio = Math.max(1, paginaActual.value - mitad);
-    let fin = Math.min(totalPaginas.value, inicio + maxPaginasVisibles - 1);
+    const fin = Math.min(totalPaginas.value, inicio + maxPaginasVisibles - 1);
 
     if (fin - inicio + 1 < maxPaginasVisibles) {
       inicio = Math.max(1, fin - maxPaginasVisibles + 1);
@@ -67,7 +67,7 @@ export function useAdminUsers() {
       // Construir query params
       const params = new URLSearchParams({
         limit: paginacion.value.limit.toString(),
-        offset: paginacion.value.offset.toString(),
+        offset: paginacion.value.offset.toString()
       });
 
       if (filtros.value.rol) {
@@ -83,14 +83,14 @@ export function useAdminUsers() {
       }
 
       const response = await $fetch<{
-        success: boolean;
+        success: boolean
         data: {
-          usuarios: Usuario[];
-          total: number;
-          conteo_roles: Record<string, number>;
-          conteo_estados: Record<string, number>;
-        };
-        message?: string;
+          usuarios: Usuario[]
+          total: number
+          conteo_roles: Record<string, number>
+          conteo_estados: Record<string, number>
+        }
+        message?: string
       }>(`/api/admin/users?${params.toString()}`);
 
       if (response.success && response.data) {
@@ -149,18 +149,18 @@ export function useAdminUsers() {
       const nuevoEstado = usuario.estado === "active" ? "inactive" : "active";
 
       const response = await $fetch<{
-        success: boolean;
-        message: string;
+        success: boolean
+        message: string
       }>(`/api/admin/users/${usuario.id}`, {
         method: "PUT",
         body: {
-          disabled: nuevoEstado === "inactive",
-        },
+          disabled: nuevoEstado === "inactive"
+        }
       });
 
       if (response.success) {
         // Actualizar el usuario localmente
-        const index = usuarios.value.findIndex((u) => u.id === usuario.id);
+        const index = usuarios.value.findIndex(u => u.id === usuario.id);
         if (index !== -1 && usuarios.value[index]) {
           usuarios.value[index].estado = nuevoEstado;
 
@@ -169,14 +169,14 @@ export function useAdminUsers() {
             conteoEstados.value.active = (conteoEstados.value.active || 0) + 1;
             conteoEstados.value.inactive = Math.max(
               0,
-              (conteoEstados.value.inactive || 0) - 1,
+              (conteoEstados.value.inactive || 0) - 1
             );
           } else {
-            conteoEstados.value.inactive =
-              (conteoEstados.value.inactive || 0) + 1;
+            conteoEstados.value.inactive
+              = (conteoEstados.value.inactive || 0) + 1;
             conteoEstados.value.active = Math.max(
               0,
-              (conteoEstados.value.active || 0) - 1,
+              (conteoEstados.value.active || 0) - 1
             );
           }
         }
@@ -207,7 +207,7 @@ export function useAdminUsers() {
     filtros.value = {
       rol: null,
       busqueda: "",
-      estado: null,
+      estado: null
     };
     paginacion.value.offset = 0;
     cargarUsuarios();
@@ -229,13 +229,13 @@ export function useAdminUsers() {
     const roles: Record<string, string> = {
       administrator: "Administrador",
       user_trabajador: "Trabajador",
-      user_empresa: "Empresa",
+      user_empresa: "Empresa"
     };
     return roles[rol] || rol;
   };
 
   const getRolVariant = (
-    rol: string,
+    rol: string
   ): "solid" | "outline" | "soft" | "subtle" => {
     const variants: Record<
       string,
@@ -243,7 +243,7 @@ export function useAdminUsers() {
     > = {
       administrator: "solid",
       user_trabajador: "soft",
-      user_empresa: "outline",
+      user_empresa: "outline"
     };
     return variants[rol] || "soft";
   };
@@ -252,13 +252,13 @@ export function useAdminUsers() {
     const estados: Record<string, string> = {
       active: "Activo",
       inactive: "Inactivo",
-      suspended: "Suspendido",
+      suspended: "Suspendido"
     };
     return estados[estado] || estado;
   };
 
   const getEstadoVariant = (
-    estado: string,
+    estado: string
   ): "solid" | "outline" | "soft" | "subtle" => {
     const variants: Record<
       string,
@@ -266,7 +266,7 @@ export function useAdminUsers() {
     > = {
       active: "soft",
       inactive: "outline",
-      suspended: "solid",
+      suspended: "solid"
     };
     return variants[estado] || "soft";
   };
@@ -281,7 +281,7 @@ export function useAdminUsers() {
         month: "long",
         day: "numeric",
         hour: "2-digit",
-        minute: "2-digit",
+        minute: "2-digit"
       });
     } catch {
       return dateString;
@@ -323,6 +323,6 @@ export function useAdminUsers() {
     getRolVariant,
     getEstadoLabel,
     getEstadoVariant,
-    formatDate,
+    formatDate
   };
 }

@@ -22,7 +22,7 @@ export function useLogin() {
     try {
       const response = await postJson<any>("/api/auth/login", {
         username: username.value,
-        password: password.value,
+        password: password.value
       });
       const data = response.data;
 
@@ -85,14 +85,14 @@ export function useLogin() {
                   telefono:
                     typeof trabajadorData.empresa.telefono === "string"
                       ? trabajadorData.empresa.telefono
-                      : "",
+                      : ""
                 }
               : {
                   ciudad_codigo: "",
                   direccion: "",
                   nit: "",
                   razon_social: "",
-                  telefono: "",
+                  telefono: ""
                 },
           estado:
             typeof trabajadorData.estado === "string"
@@ -159,7 +159,7 @@ export function useLogin() {
           antiguedad_meses:
             typeof trabajadorData.antiguedad_meses === "number"
               ? trabajadorData.antiguedad_meses
-              : 0,
+              : 0
         };
       }
 
@@ -180,12 +180,12 @@ export function useLogin() {
               : "",
           nombres: typeof user?.nombres === "string" ? user.nombres : "",
           apellidos: typeof user?.apellidos === "string" ? user.apellidos : "",
-          trabajador,
-        },
+          trabajador
+        }
       });
 
-      const redirect =
-        typeof route.query.redirect === "string"
+      const redirect
+        = typeof route.query.redirect === "string"
           ? route.query.redirect
           : "/dash";
       await navigateTo(redirect.startsWith("/") ? redirect : "/dash");
@@ -196,8 +196,8 @@ export function useLogin() {
       const code = e?.data?.code;
 
       if (status === 404 && code === "USER_NOT_FOUND") {
-        const redirect =
-          typeof route.query.redirect === "string" ? route.query.redirect : "/";
+        const redirect
+          = typeof route.query.redirect === "string" ? route.query.redirect : "/";
         const q = new URLSearchParams();
         if (username.value.trim()) q.set("username", username.value.trim());
         if (redirect) q.set("redirect", redirect);
@@ -205,8 +205,8 @@ export function useLogin() {
         return false;
       }
 
-      errorMsg.value =
-        e?.data?.error || e?.message || "No fue posible iniciar sesión";
+      errorMsg.value
+        = e?.data?.error || e?.message || "No fue posible iniciar sesión";
       return false;
     } finally {
       loading.value = false;
@@ -218,8 +218,8 @@ export function useLogin() {
     await ready;
 
     if (isAuthenticated.value) {
-      const redirect =
-        typeof route.query.redirect === "string"
+      const redirect
+        = typeof route.query.redirect === "string"
           ? route.query.redirect
           : "/dash";
       await navigateTo(redirect.startsWith("/") ? redirect : "/dash");
@@ -232,6 +232,6 @@ export function useLogin() {
     loading,
     errorMsg,
     login,
-    checkAuthAndRedirect,
+    checkAuthAndRedirect
   };
 }

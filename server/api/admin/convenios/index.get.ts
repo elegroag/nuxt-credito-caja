@@ -10,7 +10,7 @@ const querySchema = z.object({
   limit: z.coerce.number().int().positive().default(20),
   estado: z.string().optional(),
   nit: z.string().optional(),
-  busqueda: z.string().optional(),
+  busqueda: z.string().optional()
 });
 
 export default defineEventHandler(async (event: H3Event) => {
@@ -26,7 +26,7 @@ export default defineEventHandler(async (event: H3Event) => {
       limit,
       estado,
       nit,
-      busqueda,
+      busqueda
     });
 
     return CustomResponse.success(result, "Convenios obtenidos exitosamente");
@@ -36,7 +36,7 @@ export default defineEventHandler(async (event: H3Event) => {
 
     return CustomResponse.error(
       e?.data?.error || e?.message || "Error conectando con backend",
-      "Error al obtener convenios.",
+      "Error al obtener convenios."
     );
   }
 });

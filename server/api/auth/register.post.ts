@@ -14,12 +14,12 @@ const bodySchema = z.object({
     .string()
     .toUpperCase()
     .trim()
-    .refine((val) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val), {
-      message: "Email is not valid",
+    .refine(val => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val), {
+      message: "Email is not valid"
     }),
   confirmar_password: z.string(),
   username: z.string().min(3, "Username must be at least 3 characters"),
-  password: z.string().min(8, "Password must be at least 8 characters"),
+  password: z.string().min(8, "Password must be at least 8 characters")
 });
 
 export default defineEventHandler(async (event: H3Event) => {
@@ -35,7 +35,7 @@ export default defineEventHandler(async (event: H3Event) => {
 
     return CustomResponse.error(
       e?.data?.error || e?.message || "Error conectando con backend",
-      "Error en registro.",
+      "Error en registro."
     );
   }
 });

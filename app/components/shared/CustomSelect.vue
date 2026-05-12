@@ -1,8 +1,14 @@
 <template>
   <div class="form-group">
-    <label v-if="label" class="form-label">
+    <label
+      v-if="label"
+      class="form-label"
+    >
       {{ label }}
-      <span v-if="required" class="text-red-500">*</span>
+      <span
+        v-if="required"
+        class="text-red-500"
+      >*</span>
     </label>
 
     <USelectMenu
@@ -16,12 +22,18 @@
     />
 
     <!-- Mensaje de error -->
-    <div v-if="hasError" class="error-message">
+    <div
+      v-if="hasError"
+      class="error-message"
+    >
       <span class="text-red-500 text-sm">{{ errorMessage }}</span>
     </div>
 
     <!-- Mensaje de ayuda -->
-    <div v-if="helpText && !errorMessage" class="help-message">
+    <div
+      v-if="helpText && !errorMessage"
+      class="help-message"
+    >
       <span class="text-gray-400 text-sm">{{ helpText }}</span>
     </div>
   </div>
@@ -32,30 +44,30 @@ import { computed } from "vue";
 
 // Types
 type SelectValue = NormalizedOption | undefined;
-type RawOption =
-  | { label: string; value: string | number | boolean }
-  | string
-  | number;
-type NormalizedOption =
-  | string
-  | { label: string; value: string | number | boolean };
+type RawOption
+  = | { label: string, value: string | number | boolean }
+    | string
+    | number;
+type NormalizedOption
+  = | string
+    | { label: string, value: string | number | boolean };
 
 interface Props {
-  modelValue?: SelectValue;
-  options?: RawOption[];
-  label?: string;
-  placeholder?: string;
-  required?: boolean;
-  disabled?: boolean;
-  loading?: boolean;
-  clearable?: boolean;
-  searchable?: boolean;
-  errorMessage?: string;
-  helpText?: string;
+  modelValue?: SelectValue
+  options?: RawOption[]
+  label?: string
+  placeholder?: string
+  required?: boolean
+  disabled?: boolean
+  loading?: boolean
+  clearable?: boolean
+  searchable?: boolean
+  errorMessage?: string
+  helpText?: string
 }
 
 interface Emits {
-  "update:modelValue": [value: SelectValue];
+  "update:modelValue": [value: SelectValue]
 }
 
 // Props con valores por defecto
@@ -70,7 +82,7 @@ const props = withDefaults(defineProps<Props>(), {
   clearable: true,
   searchable: true,
   errorMessage: "",
-  helpText: "",
+  helpText: ""
 });
 
 const emit = defineEmits<Emits>();
@@ -87,7 +99,7 @@ const selectedValue = computed<SelectValue>({
     } else {
       emit("update:modelValue", value);
     }
-  },
+  }
 });
 
 const hasError = computed(() => Boolean(props.errorMessage));
@@ -97,11 +109,11 @@ const normalizeOption = (option: RawOption): NormalizedOption => {
   if (typeof option === "string" || typeof option === "number") {
     return String(option);
   }
-  return option as { label: string; value: string | number | boolean };
+  return option as { label: string, value: string | number | boolean };
 };
 
 const normalizedOptions = computed<NormalizedOption[]>(() =>
-  props.options.map(normalizeOption),
+  props.options.map(normalizeOption)
 );
 </script>
 

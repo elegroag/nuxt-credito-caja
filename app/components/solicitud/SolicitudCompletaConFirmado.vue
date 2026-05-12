@@ -2,16 +2,23 @@
   <div class="container mx-auto p-4 space-y-6">
     <!-- Header -->
     <div class="text-center">
-      <h1 class="text-3xl font-bold mb-2">Nueva Solicitud de Crédito</h1>
+      <h1 class="text-3xl font-bold mb-2">
+        Nueva Solicitud de Crédito
+      </h1>
       <p class="text-base-content/70">
         Complete todos los pasos para generar su solicitud
       </p>
     </div>
 
     <!-- Validación de Convenio (si aplica) -->
-    <div v-if="mostrarValidacionConvenio" class="card bg-base-100 shadow-xl">
+    <div
+      v-if="mostrarValidacionConvenio"
+      class="card bg-base-100 shadow-xl"
+    >
       <div class="card-body">
-        <h2 class="card-title">Validar Convenio Empresarial</h2>
+        <h2 class="card-title">
+          Validar Convenio Empresarial
+        </h2>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div class="form-control">
@@ -48,7 +55,10 @@
           @click="validarConvenio"
         >
           <span v-if="!loadingConvenio">Validar Convenio</span>
-          <span v-else class="loading loading-spinner loading-sm"></span>
+          <span
+            v-else
+            class="loading loading-spinner loading-sm"
+          />
         </button>
 
         <!-- Resultado de validación -->
@@ -81,21 +91,40 @@
     />
 
     <!-- Progreso del flujo -->
-    <div v-if="solicitudCreada" class="card bg-base-200">
+    <div
+      v-if="solicitudCreada"
+      class="card bg-base-200"
+    >
       <div class="card-body">
-        <h3 class="card-title text-sm">Progreso del Proceso</h3>
+        <h3 class="card-title text-sm">
+          Progreso del Proceso
+        </h3>
         <ul class="steps steps-vertical lg:steps-horizontal w-full">
-          <li class="step step-primary">Solicitud Creada</li>
-          <li class="step" :class="{ 'step-primary': convenioValidado }">
+          <li class="step step-primary">
+            Solicitud Creada
+          </li>
+          <li
+            class="step"
+            :class="{ 'step-primary': convenioValidado }"
+          >
             Convenio {{ convenioValidado ? "Validado" : "Pendiente" }}
           </li>
-          <li class="step" :class="{ 'step-primary': pdfGenerado }">
+          <li
+            class="step"
+            :class="{ 'step-primary': pdfGenerado }"
+          >
             PDF {{ pdfGenerado ? "Generado" : "Pendiente" }}
           </li>
-          <li class="step" :class="{ 'step-primary': firmadoIniciado }">
+          <li
+            class="step"
+            :class="{ 'step-primary': firmadoIniciado }"
+          >
             Firmado {{ firmadoIniciado ? "Iniciado" : "Pendiente" }}
           </li>
-          <li class="step" :class="{ 'step-primary': firmadoCompletado }">
+          <li
+            class="step"
+            :class="{ 'step-primary': firmadoCompletado }"
+          >
             {{ firmadoCompletado ? "Completado" : "En Proceso" }}
           </li>
         </ul>
@@ -112,18 +141,18 @@ import PDFActions from "~/components/solicitud/PDFActions.vue";
 import FirmadoStatus from "~/components/solicitud/FirmadoStatus.vue";
 
 interface Props {
-  solicitudId?: string;
-  mostrarValidacionConvenio?: boolean;
+  solicitudId?: string
+  mostrarValidacionConvenio?: boolean
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  mostrarValidacionConvenio: true,
+  mostrarValidacionConvenio: true
 });
 
 const emit = defineEmits<{
-  convenioValidado: [elegible: boolean];
-  pdfGenerado: [];
-  firmadoCompletado: [];
+  convenioValidado: [elegible: boolean]
+  pdfGenerado: []
+  firmadoCompletado: []
 }>();
 
 // Convenio
@@ -132,7 +161,7 @@ const {
   error: errorConvenio,
   isElegible,
   validarConvenio: validarConvenioFn,
-  getMensajeError,
+  getMensajeError
 } = useConvenioValidation();
 
 const nitEmpresa = ref("");
@@ -152,7 +181,7 @@ const mensajeConvenio = computed(() => {
       titulo: "✅ Elegible para Convenio Empresarial",
       descripcion:
         "El trabajador cumple con todos los requisitos y tiene beneficios especiales",
-      tipo: "success" as const,
+      tipo: "success" as const
     };
   }
 
@@ -162,7 +191,7 @@ const mensajeConvenio = computed(() => {
 const validarConvenio = async () => {
   const elegible = await validarConvenioFn(
     nitEmpresa.value,
-    cedulaTrabajador.value,
+    cedulaTrabajador.value
   );
   convenioValidado.value = true;
   emit("convenioValidado", elegible);

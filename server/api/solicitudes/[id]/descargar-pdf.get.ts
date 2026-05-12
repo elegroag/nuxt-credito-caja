@@ -22,8 +22,8 @@ export default defineEventHandler(async (event: H3Event) => {
     const solicitud = await prisma.solicitudes_credito.findUnique({
       where: { numero_solicitud: solicitudId },
       include: {
-        pdfs_generados: true,
-      },
+        pdfs_generados: true
+      }
     });
 
     if (!solicitud) {
@@ -59,7 +59,7 @@ export default defineEventHandler(async (event: H3Event) => {
 
     setResponseHeaders(event, {
       "Content-Type": "application/pdf",
-      "Content-Disposition": `attachment; filename="${pdfFilename}"`,
+      "Content-Disposition": `attachment; filename="${pdfFilename}"`
     });
 
     return pdfBuffer;
@@ -70,7 +70,7 @@ export default defineEventHandler(async (event: H3Event) => {
 
     return CustomResponse.error(
       error?.data?.error || error?.message || "Error al descargar el PDF",
-      "Error al descargar PDF.",
+      "Error al descargar PDF."
     );
   }
 });

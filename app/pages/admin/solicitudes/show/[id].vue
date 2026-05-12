@@ -4,7 +4,7 @@ import { useShowSolicitud } from "~/composables/admin/useShowSolicitud";
 
 definePageMeta({
   layout: "dashboard",
-  middleware: ["auth"],
+  middleware: ["auth"]
 });
 
 const {
@@ -24,20 +24,20 @@ const {
   descargarDocumento,
   goBack,
   cargarSolicitud,
-  iniciarFirmado,
+  iniciarFirmado
 } = useShowSolicitud();
 
 const handleIniciarFirmado = async () => {
   const confirmacion = confirm(
-    "¿Está seguro de iniciar el proceso de firmado digital? Se enviará el documento al proveedor de firmas.",
+    "¿Está seguro de iniciar el proceso de firmado digital? Se enviará el documento al proveedor de firmas."
   );
   if (!confirmacion) return;
   const resultado = await iniciarFirmado();
   alert(
-    resultado?.message ||
-      (resultado?.success
-        ? "Proceso iniciado exitosamente"
-        : "Error al iniciar el proceso"),
+    resultado?.message
+    || (resultado?.success
+      ? "Proceso iniciado exitosamente"
+      : "Error al iniciar el proceso")
   );
 };
 </script>
@@ -64,7 +64,10 @@ const handleIniciarFirmado = async () => {
           </p>
         </div>
       </div>
-      <div v-if="solicitud" class="flex items-center gap-2">
+      <div
+        v-if="solicitud"
+        class="flex items-center gap-2"
+      >
         <UButton
           variant="outline"
           color="neutral"
@@ -92,7 +95,9 @@ const handleIniciarFirmado = async () => {
         name="i-lucide-loader-circle"
         class="w-8 h-8 animate-spin text-primary"
       />
-      <p class="text-sm">Cargando detalles de la solicitud…</p>
+      <p class="text-sm">
+        Cargando detalles de la solicitud…
+      </p>
     </div>
 
     <!-- Error -->
@@ -110,8 +115,9 @@ const handleIniciarFirmado = async () => {
           variant="outline"
           color="neutral"
           @click="cargarSolicitud"
-          >Reintentar</UButton
         >
+          Reintentar
+        </UButton>
       </template>
     </UAlert>
 
@@ -125,10 +131,16 @@ const handleIniciarFirmado = async () => {
       />
 
       <!-- Información General -->
-      <UPageCard title="Información General" :ui="{ container: 'sm:p-6' }">
+      <UPageCard
+        title="Información General"
+        :ui="{ container: 'sm:p-6' }"
+      >
         <template #title>
           <span class="flex items-center gap-2">
-            <UIcon name="i-lucide-file-text" class="w-4 h-4 text-primary" />
+            <UIcon
+              name="i-lucide-file-text"
+              class="w-4 h-4 text-primary"
+            />
             Información General
           </span>
         </template>
@@ -146,9 +158,14 @@ const handleIniciarFirmado = async () => {
               Estado
             </p>
             <div class="flex items-center gap-2 mt-1">
-              <UBadge color="primary" variant="subtle">{{
-                solicitud.estado || "-"
-              }}</UBadge>
+              <UBadge
+                color="primary"
+                variant="subtle"
+              >
+                {{
+                  solicitud.estado || "-"
+                }}
+              </UBadge>
               <UProgress
                 :model-value="
                   estadoProgressPercent(String(solicitud.estado || ''))
@@ -205,7 +222,10 @@ const handleIniciarFirmado = async () => {
       <UPageCard :ui="{ container: 'sm:p-6' }">
         <template #title>
           <span class="flex items-center gap-2">
-            <UIcon name="i-lucide-user" class="w-4 h-4 text-primary" />
+            <UIcon
+              name="i-lucide-user"
+              class="w-4 h-4 text-primary"
+            />
             Datos del Solicitante
           </span>
         </template>
@@ -225,8 +245,8 @@ const handleIniciarFirmado = async () => {
             </p>
             <p class="text-base text-foreground mt-0.5">
               {{
-                getTipoIdentificacion(solicitud.solicitante?.tipo_documento) ||
-                "-"
+                getTipoIdentificacion(solicitud.solicitante?.tipo_documento)
+                  || "-"
               }}
             </p>
           </div>
@@ -325,7 +345,10 @@ const handleIniciarFirmado = async () => {
       <UPageCard :ui="{ container: 'sm:p-6' }">
         <template #title>
           <span class="flex items-center gap-2">
-            <UIcon name="i-lucide-building-2" class="w-4 h-4 text-primary" />
+            <UIcon
+              name="i-lucide-building-2"
+              class="w-4 h-4 text-primary"
+            />
             Información Laboral
           </span>
         </template>
@@ -336,8 +359,8 @@ const handleIniciarFirmado = async () => {
             </p>
             <p class="text-base text-foreground mt-0.5">
               {{
-                solicitud.payload?.informacion_laboral?.empresa_razon_social ||
-                "-"
+                solicitud.payload?.informacion_laboral?.empresa_razon_social
+                  || "-"
               }}
             </p>
           </div>
@@ -376,7 +399,7 @@ const handleIniciarFirmado = async () => {
             <p class="text-base text-foreground mt-0.5">
               {{
                 getCiudadDescripcion(
-                  solicitud.payload?.informacion_laboral?.empresa_ciudad,
+                  solicitud.payload?.informacion_laboral?.empresa_ciudad
                 ) || "-"
               }}
             </p>
@@ -388,7 +411,7 @@ const handleIniciarFirmado = async () => {
             <p class="text-base text-foreground mt-0.5">
               {{
                 getCargoDescripcion(
-                  solicitud.payload?.informacion_laboral?.cargo,
+                  solicitud.payload?.informacion_laboral?.cargo
                 ) || "-"
               }}
             </p>
@@ -428,7 +451,10 @@ const handleIniciarFirmado = async () => {
       <UPageCard :ui="{ container: 'sm:p-6' }">
         <template #title>
           <span class="flex items-center gap-2">
-            <UIcon name="i-lucide-dollar-sign" class="w-4 h-4 text-primary" />
+            <UIcon
+              name="i-lucide-dollar-sign"
+              class="w-4 h-4 text-primary"
+            />
             Información Financiera
           </span>
         </template>
@@ -441,7 +467,7 @@ const handleIniciarFirmado = async () => {
               {{
                 fmtMoney(
                   solicitud.payload?.ingresos_descuentos
-                    ?.salario_basico_mensual || 0,
+                    ?.salario_basico_mensual || 0
                 )
               }}
             </p>
@@ -453,8 +479,8 @@ const handleIniciarFirmado = async () => {
             <p class="text-base font-semibold text-foreground mt-0.5">
               {{
                 fmtMoney(
-                  solicitud.payload?.ingresos_descuentos?.subsidio_transporte ||
-                    0,
+                  solicitud.payload?.ingresos_descuentos?.subsidio_transporte
+                    || 0
                 )
               }}
             </p>
@@ -466,7 +492,7 @@ const handleIniciarFirmado = async () => {
             <p class="text-base font-semibold text-foreground mt-0.5">
               {{
                 fmtMoney(
-                  solicitud.payload?.ingresos_descuentos?.salud_pension || 0,
+                  solicitud.payload?.ingresos_descuentos?.salud_pension || 0
                 )
               }}
             </p>
@@ -478,7 +504,7 @@ const handleIniciarFirmado = async () => {
             <p class="text-base font-semibold text-foreground mt-0.5">
               {{
                 fmtMoney(
-                  solicitud.payload?.ingresos_descuentos?.total_ingresos || 0,
+                  solicitud.payload?.ingresos_descuentos?.total_ingresos || 0
                 )
               }}
             </p>
@@ -490,7 +516,7 @@ const handleIniciarFirmado = async () => {
             <p class="text-base font-semibold text-foreground mt-0.5">
               {{
                 fmtMoney(
-                  solicitud.payload?.ingresos_descuentos?.total_descuentos || 0,
+                  solicitud.payload?.ingresos_descuentos?.total_descuentos || 0
                 )
               }}
             </p>
@@ -502,8 +528,8 @@ const handleIniciarFirmado = async () => {
             <p class="text-base font-semibold text-foreground mt-0.5">
               {{
                 fmtMoney(
-                  solicitud.payload?.ingresos_descuentos?.total_neto_recibido ||
-                    0,
+                  solicitud.payload?.ingresos_descuentos?.total_neto_recibido
+                    || 0
                 )
               }}
             </p>
@@ -515,7 +541,10 @@ const handleIniciarFirmado = async () => {
       <UPageCard :ui="{ container: 'sm:p-6' }">
         <template #title>
           <span class="flex items-center gap-2">
-            <UIcon name="i-lucide-trending-up" class="w-4 h-4 text-primary" />
+            <UIcon
+              name="i-lucide-trending-up"
+              class="w-4 h-4 text-primary"
+            />
             Información Económica
           </span>
         </template>
@@ -527,7 +556,7 @@ const handleIniciarFirmado = async () => {
             <p class="text-base font-semibold text-foreground mt-0.5">
               {{
                 fmtMoney(
-                  solicitud.payload?.informacion_economica?.total_activos || 0,
+                  solicitud.payload?.informacion_economica?.total_activos || 0
                 )
               }}
             </p>
@@ -539,7 +568,7 @@ const handleIniciarFirmado = async () => {
             <p class="text-base font-semibold text-foreground mt-0.5">
               {{
                 fmtMoney(
-                  solicitud.payload?.informacion_economica?.total_pasivos || 0,
+                  solicitud.payload?.informacion_economica?.total_pasivos || 0
                 )
               }}
             </p>
@@ -551,7 +580,7 @@ const handleIniciarFirmado = async () => {
             <p class="text-base font-semibold text-foreground mt-0.5">
               {{
                 fmtMoney(
-                  solicitud.payload?.informacion_economica?.arrendamientos || 0,
+                  solicitud.payload?.informacion_economica?.arrendamientos || 0
                 )
               }}
             </p>
@@ -563,7 +592,7 @@ const handleIniciarFirmado = async () => {
             <p class="text-base font-semibold text-foreground mt-0.5">
               {{
                 fmtMoney(
-                  solicitud.payload?.informacion_economica?.total_gastos || 0,
+                  solicitud.payload?.informacion_economica?.total_gastos || 0
                 )
               }}
             </p>
@@ -574,8 +603,8 @@ const handleIniciarFirmado = async () => {
             </p>
             <p class="text-base text-foreground mt-0.5">
               {{
-                solicitud.payload?.informacion_economica?.gastos_descripcion ||
-                "-"
+                solicitud.payload?.informacion_economica?.gastos_descripcion
+                  || "-"
               }}
             </p>
           </div>
@@ -594,7 +623,10 @@ const handleIniciarFirmado = async () => {
       <UPageCard :ui="{ container: 'sm:p-6' }">
         <template #title>
           <span class="flex items-center gap-2">
-            <UIcon name="i-lucide-paperclip" class="w-4 h-4 text-primary" />
+            <UIcon
+              name="i-lucide-paperclip"
+              class="w-4 h-4 text-primary"
+            />
             Documentos Adjuntos
           </span>
         </template>
@@ -651,8 +683,13 @@ const handleIniciarFirmado = async () => {
           v-else
           class="flex flex-col items-center justify-center py-10 gap-2 text-muted-foreground"
         >
-          <UIcon name="i-lucide-paperclip" class="w-10 h-10 opacity-20" />
-          <p class="text-sm font-medium">No hay documentos adjuntos</p>
+          <UIcon
+            name="i-lucide-paperclip"
+            class="w-10 h-10 opacity-20"
+          />
+          <p class="text-sm font-medium">
+            No hay documentos adjuntos
+          </p>
           <p class="text-xs">
             Esta solicitud no tiene documentos cargados actualmente.
           </p>

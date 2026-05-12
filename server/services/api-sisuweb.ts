@@ -11,14 +11,14 @@ const apiSisuweb = () => {
   const basic_password = config.apiSISU.basic_password;
   const baseUrl = {
     pro: config.apiSISU.url_pro,
-    dev: config.apiSISU.url_dev,
+    dev: config.apiSISU.url_dev
   };
 
   const authHeader = (accessToken: string) => {
     return {
-      Authorization: `${type_auth} ${accessToken}`,
+      "Authorization": `${type_auth} ${accessToken}`,
       "Content-Type": "application/json",
-      Accept: "application/json",
+      "Accept": "application/json"
     };
   };
 
@@ -28,11 +28,11 @@ const apiSisuweb = () => {
         if (!basic_user || !basic_password) {
           throw createError({
             statusCode: 401,
-            message: "Basic user or password not configured",
+            message: "Basic user or password not configured"
           });
         }
         return Buffer.from(`${basic_user}:${basic_password}`).toString(
-          "base64",
+          "base64"
         );
       }
 
@@ -41,8 +41,8 @@ const apiSisuweb = () => {
         method: "POST",
         body: {
           client_id: client_id,
-          password: password,
-        },
+          password: password
+        }
       });
 
       if (dataToken.success) {
@@ -58,7 +58,7 @@ const apiSisuweb = () => {
 
       return {
         error:
-          e?.data?.error || e?.message || "Error conectando con SISUWEB API",
+          e?.data?.error || e?.message || "Error conectando con SISUWEB API"
       };
     }
   };
@@ -66,12 +66,12 @@ const apiSisuweb = () => {
   const getJson = async <T>(
     path: string,
     opts?: {
-      auth?: boolean;
-      headers?: Record<string, string>;
-    },
+      auth?: boolean
+      headers?: Record<string, string>
+    }
   ) => {
     const headers: Record<string, string> = {
-      ...(opts?.headers || {}),
+      ...(opts?.headers || {})
     };
     const token = await getToken();
 
@@ -79,7 +79,7 @@ const apiSisuweb = () => {
       throw createError({
         statusCode: 401,
         message: "Bad token no valid",
-        data: token,
+        data: token
       });
     }
 
@@ -90,7 +90,7 @@ const apiSisuweb = () => {
     const url = env === "pro" ? baseUrl.pro : baseUrl.dev;
     const response = await ofetch<T>(`${url}/${path}`, {
       method: "GET",
-      headers,
+      headers
     });
     return response;
   };
@@ -99,12 +99,12 @@ const apiSisuweb = () => {
     path: string,
     body: any,
     opts?: {
-      auth?: boolean;
-      headers?: Record<string, string>;
-    },
+      auth?: boolean
+      headers?: Record<string, string>
+    }
   ) => {
     const headers: Record<string, string> = {
-      ...(opts?.headers || {}),
+      ...(opts?.headers || {})
     };
     const token = await getToken();
 
@@ -112,7 +112,7 @@ const apiSisuweb = () => {
       throw createError({
         statusCode: 401,
         message: "Bad token no valid",
-        data: token,
+        data: token
       });
     }
 
@@ -124,7 +124,7 @@ const apiSisuweb = () => {
     const response = await ofetch<T>(`${url}/${path}`, {
       method: "POST",
       headers,
-      body,
+      body
     });
 
     return response;
@@ -134,12 +134,12 @@ const apiSisuweb = () => {
     path: string,
     body: any,
     opts?: {
-      auth?: boolean;
-      headers?: Record<string, string>;
-    },
+      auth?: boolean
+      headers?: Record<string, string>
+    }
   ) => {
     const headers: Record<string, string> = {
-      ...(opts?.headers || {}),
+      ...(opts?.headers || {})
     };
     const token = await getToken();
 
@@ -147,7 +147,7 @@ const apiSisuweb = () => {
       throw createError({
         statusCode: 401,
         message: "Bad token no valid",
-        data: token,
+        data: token
       });
     }
 
@@ -159,7 +159,7 @@ const apiSisuweb = () => {
     const response = await ofetch<T>(`${url}/${path}`, {
       method: "PUT",
       headers,
-      body,
+      body
     });
 
     return response;
@@ -168,12 +168,12 @@ const apiSisuweb = () => {
   const deleteJson = async <T>(
     path: string,
     opts?: {
-      auth?: boolean;
-      headers?: Record<string, string>;
-    },
+      auth?: boolean
+      headers?: Record<string, string>
+    }
   ) => {
     const headers: Record<string, string> = {
-      ...(opts?.headers || {}),
+      ...(opts?.headers || {})
     };
     const token = await getToken();
 
@@ -181,7 +181,7 @@ const apiSisuweb = () => {
       throw createError({
         statusCode: 401,
         message: "Bad token no valid",
-        data: token,
+        data: token
       });
     }
 
@@ -192,7 +192,7 @@ const apiSisuweb = () => {
     const url = env === "pro" ? baseUrl.pro : baseUrl.dev;
     const response = await ofetch<T>(`${url}/${path}`, {
       method: "DELETE",
-      headers,
+      headers
     });
 
     return response;
@@ -203,7 +203,7 @@ const apiSisuweb = () => {
     getJson,
     postJson,
     putJson,
-    deleteJson,
+    deleteJson
   };
 };
 

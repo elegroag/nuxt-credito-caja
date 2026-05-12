@@ -2,13 +2,18 @@
   <div class="bg-white shadow-xl rounded-2xl p-6 lg:p-8">
     <div class="space-y-6">
       <div class="text-center">
-        <h1 class="text-2xl font-bold tracking-tight">Verificar identidad</h1>
+        <h1 class="text-2xl font-bold tracking-tight">
+          Verificar identidad
+        </h1>
         <p class="text-sm text-muted-foreground mt-1">
           Ingresa el código de 6 dígitos enviado a tu correo.
         </p>
       </div>
 
-      <form @submit.prevent="handleSubmit" class="space-y-6">
+      <form
+        class="space-y-6"
+        @submit.prevent="handleSubmit"
+      >
         <div
           v-if="error"
           class="rounded-lg border border-red-500/50 bg-red-50 p-3 text-sm text-red-600"
@@ -66,7 +71,7 @@
 import { useVerify } from "~/composables/auth/useVerify";
 
 definePageMeta({
-  layout: "auth",
+  layout: "auth"
 });
 
 // Obtener parámetros de la URL
@@ -86,7 +91,7 @@ const {
   onBackspace,
   reset,
   initialize,
-  verifyCode,
+  verifyCode
 } = useVerify();
 
 // Inicializar el composable con los parámetros de URL

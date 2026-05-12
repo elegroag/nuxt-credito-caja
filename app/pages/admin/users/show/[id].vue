@@ -3,8 +3,14 @@
     <!-- Header -->
     <div class="mb-6">
       <div class="flex items-center gap-4 mb-4">
-        <UButton variant="outline" @click="goBack()">
-          <Icon name="lucide:chevron-left" class="w-4 h-4 mr-2" />
+        <UButton
+          variant="outline"
+          @click="goBack()"
+        >
+          <Icon
+            name="lucide:chevron-left"
+            class="w-4 h-4 mr-2"
+          />
           Volver
         </UButton>
         <div>
@@ -21,9 +27,14 @@
     </div>
 
     <!-- Loading State -->
-    <div v-if="loading" class="flex flex-col items-center justify-center py-16">
+    <div
+      v-if="loading"
+      class="flex flex-col items-center justify-center py-16"
+    >
       <ArrowPathIcon class="w-10 h-10 animate-spin text-blue-500 mb-4" />
-      <p class="text-gray-500">Cargando información del usuario...</p>
+      <p class="text-gray-500">
+        Cargando información del usuario...
+      </p>
     </div>
 
     <!-- Error State -->
@@ -32,12 +43,22 @@
       class="flex flex-col items-center justify-center py-16"
     >
       <NoSymbolIcon class="w-10 h-10 text-red-500 mb-4" />
-      <p class="text-red-600 mb-4">{{ error }}</p>
-      <UButton variant="outline" @click="cargarUsuario">Reintentar</UButton>
+      <p class="text-red-600 mb-4">
+        {{ error }}
+      </p>
+      <UButton
+        variant="outline"
+        @click="cargarUsuario"
+      >
+        Reintentar
+      </UButton>
     </div>
 
     <!-- User Details -->
-    <div v-else-if="usuario" class="space-y-6">
+    <div
+      v-else-if="usuario"
+      class="space-y-6"
+    >
       <!-- Información Principal -->
       <div class="bg-white rounded-lg border border-gray-200 shadow-sm">
         <div class="p-6">
@@ -81,20 +102,26 @@
 
             <!-- Acciones -->
             <div class="flex items-center gap-2">
-              <UButton variant="outline" @click="editarUsuario">
+              <UButton
+                variant="outline"
+                @click="editarUsuario"
+              >
                 <PencilIcon class="w-4 h-4 mr-2" />
                 Editar
               </UButton>
               <UButton
-                @click="toggleEstadoUsuario"
                 :color="usuario.estado === 'active' ? 'destructive' : 'primary'"
                 variant="outline"
+                @click="toggleEstadoUsuario"
               >
                 <NoSymbolIcon
                   v-if="usuario.estado === 'active'"
                   class="w-4 h-4 mr-2"
                 />
-                <CheckIcon v-else class="w-4 h-4 mr-2" />
+                <CheckIcon
+                  v-else
+                  class="w-4 h-4 mr-2"
+                />
                 {{ usuario.estado === "active" ? "Desactivar" : "Activar" }}
               </UButton>
             </div>
@@ -116,31 +143,27 @@
             <div class="space-y-4">
               <div class="grid grid-cols-2 gap-4">
                 <div>
-                  <label class="block text-sm font-medium text-gray-500"
-                    >Nombre</label
-                  >
-                  <p class="text-sm text-gray-900">{{ usuario.nombre }}</p>
+                  <label class="block text-sm font-medium text-gray-500">Nombre</label>
+                  <p class="text-sm text-gray-900">
+                    {{ usuario.nombre }}
+                  </p>
                 </div>
                 <div>
-                  <label class="block text-sm font-medium text-gray-500"
-                    >Apellido</label
-                  >
-                  <p class="text-sm text-gray-900">{{ usuario.apellido }}</p>
+                  <label class="block text-sm font-medium text-gray-500">Apellido</label>
+                  <p class="text-sm text-gray-900">
+                    {{ usuario.apellido }}
+                  </p>
                 </div>
               </div>
               <div class="grid grid-cols-2 gap-4">
                 <div>
-                  <label class="block text-sm font-medium text-gray-500"
-                    >Tipo Documento</label
-                  >
+                  <label class="block text-sm font-medium text-gray-500">Tipo Documento</label>
                   <p class="text-sm text-gray-900">
                     {{ getTipoDocumentoLabel(usuario.tipo_documento) }}
                   </p>
                 </div>
                 <div>
-                  <label class="block text-sm font-medium text-gray-500"
-                    >Número Documento</label
-                  >
+                  <label class="block text-sm font-medium text-gray-500">Número Documento</label>
                   <p class="text-sm text-gray-900">
                     {{ usuario.numero_documento }}
                   </p>
@@ -148,18 +171,14 @@
               </div>
               <div class="grid grid-cols-2 gap-4">
                 <div>
-                  <label class="block text-sm font-medium text-gray-500"
-                    >Teléfono</label
-                  >
+                  <label class="block text-sm font-medium text-gray-500">Teléfono</label>
                   <p class="text-sm text-gray-900 flex items-center gap-1">
                     <PhoneIcon class="w-4 h-4 text-gray-400" />
                     {{ usuario.telefono || "No registrado" }}
                   </p>
                 </div>
                 <div>
-                  <label class="block text-sm font-medium text-gray-500"
-                    >Código Categoría</label
-                  >
+                  <label class="block text-sm font-medium text-gray-500">Código Categoría</label>
                   <p class="text-sm text-gray-900">
                     {{ usuario.codigo_categoria || "No aplica" }}
                   </p>
@@ -180,18 +199,14 @@
             </h3>
             <div class="space-y-4">
               <div>
-                <label class="block text-sm font-medium text-gray-500"
-                  >Nombre de Usuario</label
-                >
+                <label class="block text-sm font-medium text-gray-500">Nombre de Usuario</label>
                 <p class="text-sm text-gray-900 flex items-center gap-1">
                   <UserCircleIcon class="w-4 h-4 text-gray-400" />
                   {{ usuario.username }}
                 </p>
               </div>
               <div>
-                <label class="block text-sm font-medium text-gray-500"
-                  >Email</label
-                >
+                <label class="block text-sm font-medium text-gray-500">Email</label>
                 <p class="text-sm text-gray-900 flex items-center gap-1">
                   <EnvelopeIcon class="w-4 h-4 text-gray-400" />
                   {{ usuario.email }}
@@ -199,9 +214,7 @@
               </div>
               <div class="grid grid-cols-2 gap-4">
                 <div>
-                  <label class="block text-sm font-medium text-gray-500"
-                    >Rol</label
-                  >
+                  <label class="block text-sm font-medium text-gray-500">Rol</label>
                   <p class="text-sm text-gray-900">
                     <Badge :variant="getRolVariant(usuario.rol)">
                       {{ getRolLabel(usuario.rol) }}
@@ -209,9 +222,7 @@
                   </p>
                 </div>
                 <div>
-                  <label class="block text-sm font-medium text-gray-500"
-                    >Estado</label
-                  >
+                  <label class="block text-sm font-medium text-gray-500">Estado</label>
                   <p class="text-sm text-gray-900">
                     <Badge :variant="getEstadoVariant(usuario.estado)">
                       {{ getEstadoLabel(usuario.estado) }}
@@ -221,18 +232,14 @@
               </div>
               <div class="grid grid-cols-2 gap-4">
                 <div>
-                  <label class="block text-sm font-medium text-gray-500"
-                    >Fecha Creación</label
-                  >
+                  <label class="block text-sm font-medium text-gray-500">Fecha Creación</label>
                   <p class="text-sm text-gray-900 flex items-center gap-1">
                     <CalendarIcon class="w-4 h-4 text-gray-400" />
                     {{ formatDate(usuario.fecha_creacion) }}
                   </p>
                 </div>
                 <div>
-                  <label class="block text-sm font-medium text-gray-500"
-                    >Último Acceso</label
-                  >
+                  <label class="block text-sm font-medium text-gray-500">Último Acceso</label>
                   <p class="text-sm text-gray-900 flex items-center gap-1">
                     <ClockIcon class="w-4 h-4 text-gray-400" />
                     {{ formatDate(usuario.ultimo_acceso) }}
@@ -258,18 +265,14 @@
           </h3>
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label class="block text-sm font-medium text-gray-500"
-                >NIT Empresa</label
-              >
+              <label class="block text-sm font-medium text-gray-500">NIT Empresa</label>
               <p class="text-sm text-gray-900 flex items-center gap-1">
                 <BuildingOffice2Icon class="w-4 h-4 text-gray-400" />
                 {{ usuario.empresa_nit || "No registrado" }}
               </p>
             </div>
             <div>
-              <label class="block text-sm font-medium text-gray-500"
-                >Razón Social</label
-              >
+              <label class="block text-sm font-medium text-gray-500">Razón Social</label>
               <p class="text-sm text-gray-900">
                 {{ usuario.empresa_razon_social || "No registrada" }}
               </p>
@@ -292,42 +295,32 @@
           </h3>
           <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             <div>
-              <label class="block text-sm font-medium text-gray-500"
-                >Dirección</label
-              >
+              <label class="block text-sm font-medium text-gray-500">Dirección</label>
               <p class="text-sm text-gray-900 flex items-center gap-1">
                 <MapPinIcon class="w-4 h-4 text-gray-400" />
                 {{ usuario.direccion || "No registrada" }}
               </p>
             </div>
             <div>
-              <label class="block text-sm font-medium text-gray-500"
-                >Ciudad</label
-              >
+              <label class="block text-sm font-medium text-gray-500">Ciudad</label>
               <p class="text-sm text-gray-900">
                 {{ usuario.ciudad || "No registrada" }}
               </p>
             </div>
             <div>
-              <label class="block text-sm font-medium text-gray-500"
-                >Barrio</label
-              >
+              <label class="block text-sm font-medium text-gray-500">Barrio</label>
               <p class="text-sm text-gray-900">
                 {{ usuario.barrio || "No registrado" }}
               </p>
             </div>
             <div>
-              <label class="block text-sm font-medium text-gray-500"
-                >Tipo Vivienda</label
-              >
+              <label class="block text-sm font-medium text-gray-500">Tipo Vivienda</label>
               <p class="text-sm text-gray-900">
                 {{ getTipoViviendaLabel(usuario.tipo_vivienda || "") }}
               </p>
             </div>
             <div>
-              <label class="block text-sm font-medium text-gray-500"
-                >Personas a Cargo</label
-              >
+              <label class="block text-sm font-medium text-gray-500">Personas a Cargo</label>
               <p class="text-sm text-gray-900 flex items-center gap-1">
                 <UserGroupIcon class="w-4 h-4 text-gray-400" />
                 {{ usuario.personas_a_cargo || 0 }}
@@ -362,12 +355,12 @@ import {
   ArrowPathIcon,
   NoSymbolIcon,
   CheckIcon,
-  PencilIcon,
+  PencilIcon
 } from "@heroicons/vue/24/outline";
 
 definePageMeta({
   layout: "dashboard",
-  middleware: ["auth"],
+  middleware: ["auth"]
 });
 
 // Usar el composable
@@ -385,7 +378,7 @@ const {
   getEstadoVariant,
   getTipoDocumentoLabel,
   getTipoViviendaLabel,
-  formatDate,
+  formatDate
 } = useShowUser();
 
 // Lifecycle

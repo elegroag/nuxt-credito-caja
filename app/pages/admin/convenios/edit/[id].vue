@@ -9,7 +9,9 @@
         @click="goBack()"
       />
       <div>
-        <h1 class="text-xl font-semibold text-foreground">Editar Convenio</h1>
+        <h1 class="text-xl font-semibold text-foreground">
+          Editar Convenio
+        </h1>
         <p class="text-sm text-muted-foreground">
           Modifique la información del convenio empresarial
         </p>
@@ -26,12 +28,17 @@
     />
 
     <!-- Loading State -->
-    <div v-if="loading" class="flex flex-col items-center justify-center py-16">
+    <div
+      v-if="loading"
+      class="flex flex-col items-center justify-center py-16"
+    >
       <UIcon
         name="i-lucide-loader-2"
         class="w-10 h-10 animate-spin text-primary mb-4"
       />
-      <p class="text-muted-foreground">Cargando información del convenio...</p>
+      <p class="text-muted-foreground">
+        Cargando información del convenio...
+      </p>
     </div>
 
     <!-- Error State -->
@@ -39,13 +46,27 @@
       v-else-if="error"
       class="flex flex-col items-center justify-center py-16"
     >
-      <UIcon name="i-lucide-x-circle" class="w-10 h-10 text-destructive mb-4" />
-      <p class="text-destructive mb-4">{{ error }}</p>
-      <UButton variant="outline" @click="cargarConvenio">Reintentar</UButton>
+      <UIcon
+        name="i-lucide-x-circle"
+        class="w-10 h-10 text-destructive mb-4"
+      />
+      <p class="text-destructive mb-4">
+        {{ error }}
+      </p>
+      <UButton
+        variant="outline"
+        @click="cargarConvenio"
+      >
+        Reintentar
+      </UButton>
     </div>
 
     <!-- Formulario -->
-    <form v-else-if="convenio" @submit.prevent="handleSubmit" class="space-y-6">
+    <form
+      v-else-if="convenio"
+      class="space-y-6"
+      @submit.prevent="handleSubmit"
+    >
       <!-- Información de la Empresa -->
       <UPageCard
         title="Información de la Empresa"
@@ -53,7 +74,11 @@
         :ui="{ container: 'sm:p-6' }"
       >
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <UFormField label="NIT" required :error="errors.nit">
+          <UFormField
+            label="NIT"
+            required
+            :error="errors.nit"
+          >
             <UInput
               v-model="form.nit"
               type="number"
@@ -145,7 +170,10 @@
         :ui="{ container: 'sm:p-6' }"
       >
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <UFormField label="Teléfono" :error="errors.telefono">
+          <UFormField
+            label="Teléfono"
+            :error="errors.telefono"
+          >
             <UInput
               v-model="form.telefono"
               type="tel"
@@ -159,7 +187,10 @@
             </template>
           </UFormField>
 
-          <UFormField label="Correo Electrónico" :error="errors.correo">
+          <UFormField
+            label="Correo Electrónico"
+            :error="errors.correo"
+          >
             <UInput
               v-model="form.correo"
               type="email"
@@ -200,12 +231,15 @@
             </template>
           </UFormField>
 
-          <UFormField label="Estado" :error="errors.estado">
+          <UFormField
+            label="Estado"
+            :error="errors.estado"
+          >
             <USelectMenu
               v-model="form.estado"
               :items="[
                 { label: 'Activo', value: 'Activo' },
-                { label: 'Inactivo', value: 'Inactivo' },
+                { label: 'Inactivo', value: 'Inactivo' }
               ]"
               value-key="value"
               placeholder="Seleccionar estado"
@@ -251,7 +285,7 @@ import { useApi } from "~/composables/useApi";
 
 definePageMeta({
   layout: "dashboard",
-  middleware: ["auth"],
+  middleware: ["auth"]
 });
 
 const router = useRouter();
@@ -270,7 +304,7 @@ const form = reactive({
   telefono: "",
   correo: "",
   fecha_vencimiento: "",
-  estado: "Activo" as "Activo" | "Inactivo",
+  estado: "Activo" as "Activo" | "Inactivo"
 });
 
 // Cargar datos del convenio
@@ -283,8 +317,8 @@ const cargarConvenio = async () => {
     const response = await api.getJson<any>(
       `/api/admin/convenios/${route.params.id}`,
       {
-        auth: true,
-      },
+        auth: true
+      }
     );
 
     console.log("Respuesta del convenio:", response);
@@ -297,17 +331,17 @@ const cargarConvenio = async () => {
       form.nit = String(convenio.value.nit || "");
       form.razon_social = String(convenio.value.razon_social || "");
       form.representante_documento = String(
-        convenio.value.representante_documento || "",
+        convenio.value.representante_documento || ""
       );
       form.representante_nombre = String(
-        convenio.value.representante_nombre || "",
+        convenio.value.representante_nombre || ""
       );
       form.telefono = String(convenio.value.telefono || "");
       form.correo = String(convenio.value.correo || "");
       form.fecha_vencimiento = convenio.value.fecha_vencimiento
         ? new Date(convenio.value.fecha_vencimiento)
-            .toISOString()
-            .split("T")[0] || ""
+          .toISOString()
+          .split("T")[0] || ""
         : "";
       form.estado = (convenio.value.estado === "Activo" || convenio.value.estado === "Inactivo")
         ? convenio.value.estado as "Activo" | "Inactivo"
@@ -338,19 +372,19 @@ const validateForm = (): boolean => {
   }
 
   if (
-    typeof form.representante_documento !== "string" ||
-    !form.representante_documento.trim()
+    typeof form.representante_documento !== "string"
+    || !form.representante_documento.trim()
   ) {
-    errors.value.representante_documento =
-      "El documento del representante es requerido";
+    errors.value.representante_documento
+      = "El documento del representante es requerido";
   }
 
   if (
-    typeof form.representante_nombre !== "string" ||
-    !form.representante_nombre.trim()
+    typeof form.representante_nombre !== "string"
+    || !form.representante_nombre.trim()
   ) {
-    errors.value.representante_nombre =
-      "El nombre del representante es requerido";
+    errors.value.representante_nombre
+      = "El nombre del representante es requerido";
   }
 
   if (form.correo && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.correo)) {
@@ -385,9 +419,9 @@ const handleSubmit = async () => {
         telefono: form.telefono.trim(),
         correo: form.correo.trim(),
         fecha_vencimiento: form.fecha_vencimiento || "",
-        estado: form.estado,
+        estado: form.estado
       },
-      { auth: true },
+      { auth: true }
     );
 
     if (response) {

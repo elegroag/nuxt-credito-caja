@@ -7,7 +7,7 @@ export default defineEventHandler(async (event: H3Event) => {
   try {
     const grupos = await prisma.solicitudes_credito.groupBy({
       by: ["estado"],
-      _count: { estado: true },
+      _count: { estado: true }
     });
 
     const conteo: Record<string, number> = {};

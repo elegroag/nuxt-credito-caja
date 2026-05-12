@@ -14,7 +14,7 @@ export const solicitudPayload = [
       empresa_direccion: "CR 11 10 34 BRR LA COOPERATIVA",
       empresa_razon_social: "CAJA DE COMPENSACION FAMILIAR DEL CAQUETA",
       nombramiento_o_pagador: null,
-      tiempo_servicio_unidad: "meses",
+      tiempo_servicio_unidad: "meses"
     },
     ingresos_descuentos: {
       moneda: "COP",
@@ -30,7 +30,7 @@ export const solicitudPayload = [
       otras_deducciones: 0,
       subsidio_transporte: 0,
       total_neto_recibido: 4406984,
-      salario_basico_mensual: 4790200,
+      salario_basico_mensual: 4790200
     },
     informacion_economica: {
       otros: 0,
@@ -40,13 +40,13 @@ export const solicitudPayload = [
       total_activos: 0,
       total_pasivos: 0,
       arrendamientos: 0,
-      gastos_descripcion: null,
+      gastos_descripcion: null
     },
     propiedades: [],
     deudas: [],
     referencias: {
       familiares: [],
-      personales: [],
+      personales: []
     },
     linea_credito: {
       auxest: "131010100403",
@@ -64,9 +64,9 @@ export const solicitudPayload = [
       tasa_interes: 14,
       numero_cuotas: 60,
       total_intereses: 2593876.7973399498,
-      detalle_modalidad: "CREDITO LIBRE INVERSION",
+      detalle_modalidad: "CREDITO LIBRE INVERSION"
     },
     created_at: "2026-03-18 01:30:33.0",
-    updated_at: "2026-03-18 01:30:33.0",
-  },
+    updated_at: "2026-03-18 01:30:33.0"
+  }
 ];

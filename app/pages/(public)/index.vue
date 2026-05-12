@@ -4,18 +4,18 @@ import type { ButtonProps } from "@nuxt/ui";
 const links = ref<ButtonProps[]>([
   {
     label: "Get started",
-    color: "neutral",
+    color: "neutral"
   },
   {
     label: "Learn more",
     color: "neutral",
     variant: "subtle",
-    trailingIcon: "i-lucide-arrow-right",
-  },
+    trailingIcon: "i-lucide-arrow-right"
+  }
 ]);
 
 definePageMeta({
-  layout: "public",
+  layout: "public"
 });
 </script>
 
@@ -34,7 +34,7 @@ definePageMeta({
       alt="Illustration"
       class="w-full rounded-lg"
       loading="lazy"
-    />
+    >
   </UPageCTA>
   <PublicProcess />
   <PublicTestimonials />

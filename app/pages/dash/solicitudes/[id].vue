@@ -24,15 +24,26 @@
           name="lucide:alert-circle"
           class="w-12 h-12 mx-auto mb-4 text-red-500 dark:text-red-400"
         />
-        <h3 class="text-xl font-bold mb-2">Error al cargar la solicitud</h3>
-        <p class="mb-4">{{ error }}</p>
-        <UButton class="mt-4" variant="outline" @click="cargarSolicitud">
+        <h3 class="text-xl font-bold mb-2">
+          Error al cargar la solicitud
+        </h3>
+        <p class="mb-4">
+          {{ error }}
+        </p>
+        <UButton
+          class="mt-4"
+          variant="outline"
+          @click="cargarSolicitud"
+        >
           Reintentar
         </UButton>
       </div>
 
       <!-- Solicitud Details -->
-      <div v-else-if="solicitud" class="space-y-6">
+      <div
+        v-else-if="solicitud"
+        class="space-y-6"
+      >
         <!-- Header -->
         <SolicitudHeader
           :numero-solicitud="numeroSolicitudDisplay"
@@ -63,8 +74,8 @@
         <AccionesCard
           :solicitud-id="solicitud.numero_solicitud"
           :mostrar-enviar="
-            solicitud.estado === 'DOCUMENTOS_CARGADOS' ||
-            solicitud.estado === 'POSTULADO'
+            solicitud.estado === 'DOCUMENTOS_CARGADOS'
+              || solicitud.estado === 'POSTULADO'
           "
           :tiene-pdf="tienePdf"
           @descargar-pdf="descargarPdf"
@@ -90,8 +101,9 @@
               variant="outline"
               :disabled="eliminando"
               @click="close"
-              >Cancelar</UButton
             >
+              Cancelar
+            </UButton>
             <UButton
               color="destructive"
               :loading="eliminando"
@@ -121,7 +133,7 @@ import { useSolicitudDetailsPage } from "~/composables/solicitud/useSolicitudDet
 
 definePageMeta({
   layout: "dashboard",
-  middleware: ["auth"],
+  middleware: ["auth"]
 });
 
 const {
@@ -153,6 +165,6 @@ const {
   // Funciones principales
   cargarSolicitud,
   descargarPdf,
-  eliminarSolicitud,
+  eliminarSolicitud
 } = useSolicitudDetailsPage();
 </script>

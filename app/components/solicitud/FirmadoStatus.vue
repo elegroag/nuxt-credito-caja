@@ -2,7 +2,9 @@
   <UCard>
     <div class="flex items-center gap-2 mb-4">
       <FileSignatureIcon class="h-5 w-5 text-muted-foreground" />
-      <h2 class="text-lg font-semibold">Firma Digital</h2>
+      <h2 class="text-lg font-semibold">
+        Firma Digital
+      </h2>
     </div>
 
     <div class="space-y-4">
@@ -16,17 +18,23 @@
       />
 
       <!-- Progreso de firmado -->
-      <div v-if="enProceso" class="space-y-2">
+      <div
+        v-if="enProceso"
+        class="space-y-2"
+      >
         <div class="flex justify-between text-sm">
           <span>Progreso de firmado</span>
           <span class="font-bold">{{ porcentajeCompletado }}%</span>
         </div>
-        <UProgress :model-value="porcentajeCompletado" status />
+        <UProgress
+          :model-value="porcentajeCompletado"
+          status
+        />
         <p class="text-xs text-muted-foreground">
           {{ estadoActual?.firmantes_completados || 0 }} de
           {{
-            (estadoActual?.firmantes_completados || 0) +
-            (estadoActual?.firmantes_pendientes || 0)
+            (estadoActual?.firmantes_completados || 0)
+              + (estadoActual?.firmantes_pendientes || 0)
           }}
           firmantes han completado
         </p>
@@ -99,21 +107,21 @@ import { FileSignature as FileSignatureIcon } from "lucide-vue-next";
 import { useFirmadoDigital } from "~/composables/solicitud/useFirmadoDigital";
 
 interface Props {
-  solicitudId: string;
-  autoActualizar?: boolean;
-  intervaloPolling?: number;
+  solicitudId: string
+  autoActualizar?: boolean
+  intervaloPolling?: number
 }
 
 const props = withDefaults(defineProps<Props>(), {
   autoActualizar: true,
-  intervaloPolling: 10000, // 10 segundos
+  intervaloPolling: 10000 // 10 segundos
 });
 
 const emit = defineEmits<{
-  firmadoIniciado: [data: any];
-  firmadoCompletado: [];
-  firmadoRechazado: [];
-  estadoActualizado: [estado: string];
+  firmadoIniciado: [data: any]
+  firmadoCompletado: []
+  firmadoRechazado: []
+  estadoActualizado: [estado: string]
 }>();
 
 const {
@@ -129,7 +137,7 @@ const {
   puedeReintentar,
   iniciarFirmado,
   consultarEstado,
-  iniciarPolling,
+  iniciarPolling
 } = useFirmadoDigital();
 
 let pollingIntervalId: number | null = null;
@@ -180,7 +188,7 @@ const startPolling = () => {
         emit("firmadoRechazado");
         stopPolling();
       }
-    },
+    }
   ) as unknown as number;
 };
 

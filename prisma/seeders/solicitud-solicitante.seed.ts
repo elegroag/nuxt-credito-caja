@@ -34,6 +34,6 @@ export const solicitudSolicitante = [
     tipo_contrato: "fijo",
     sector_economico: "1",
     created_at: "2026-03-18 01:30:33.0",
-    updated_at: "2026-03-18 01:30:33.0",
-  },
+    updated_at: "2026-03-18 01:30:33.0"
+  }
 ];

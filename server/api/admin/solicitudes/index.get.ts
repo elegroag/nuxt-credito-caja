@@ -8,7 +8,7 @@ import { z } from "zod";
 const querySchema = z.object({
   limit: z.coerce.number().int().positive().default(20),
   skip: z.coerce.number().int().nonnegative().default(0),
-  estado: z.string().optional(),
+  estado: z.string().optional()
 });
 
 export default defineEventHandler(async (event: H3Event) => {
@@ -22,7 +22,7 @@ export default defineEventHandler(async (event: H3Event) => {
     const result = await service.getSolicitudesPaginadas({
       limit,
       skip,
-      estado,
+      estado
     });
 
     return CustomResponse.success(result, "Solicitudes obtenidas exitosamente");
@@ -32,7 +32,7 @@ export default defineEventHandler(async (event: H3Event) => {
 
     return CustomResponse.error(
       e?.data?.error || e?.message || "Error conectando con backend",
-      "Error al obtener solicitudes.",
+      "Error al obtener solicitudes."
     );
   }
 });

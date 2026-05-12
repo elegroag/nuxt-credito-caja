@@ -13,7 +13,7 @@ export default defineEventHandler(async (event: H3Event) => {
     }
 
     const resultado = await procesoFirmadoAdm.iniciarFirmado({
-      solicitudId: id,
+      solicitudId: id
     });
 
     if (!resultado.success) {
@@ -28,7 +28,7 @@ export default defineEventHandler(async (event: H3Event) => {
 
     return CustomResponse.error(
       e?.data?.error || e?.message || "Error conectando con backend",
-      "Error al iniciar firmado.",
+      "Error al iniciar firmado."
     );
   }
 });

@@ -10,7 +10,10 @@
         rel="noopener noreferrer"
         class="inline-flex items-center gap-1.5 font-medium text-primary hover:text-primary/80 transition-colors"
       >
-        <UIcon name="i-lucide-external-link" class="w-3.5 h-3.5" />
+        <UIcon
+          name="i-lucide-external-link"
+          class="w-3.5 h-3.5"
+        />
         Visitar Comfaca
       </a>
     </div>

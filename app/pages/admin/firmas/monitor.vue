@@ -14,13 +14,13 @@
         <div class="flex items-center gap-3">
           <!-- Toggle Polling -->
           <button
-            @click="togglePolling"
             :class="[
               'flex items-center gap-2 px-4 py-2 rounded-lg border transition-colors',
               pollingEnabled
                 ? 'bg-green-50 border-green-300 text-green-700 hover:bg-green-100'
-                : 'bg-gray-50 border-gray-300 text-gray-700 hover:bg-gray-100',
+                : 'bg-gray-50 border-gray-300 text-gray-700 hover:bg-gray-100'
             ]"
+            @click="togglePolling"
           >
             <Icon
               :name="pollingEnabled ? 'lucide:radio' : 'lucide:radio-tower'"
@@ -38,8 +38,8 @@
           <!-- Botón Refrescar -->
           <UButton
             variant="outline"
-            @click="refrescarTodos"
             :disabled="loading"
+            @click="refrescarTodos"
           >
             <Icon
               :name="loading ? 'lucide:loader-2' : 'lucide:refresh-cw'"
@@ -55,10 +55,11 @@
         v-if="ultimaActualizacion"
         class="flex items-center gap-2 text-xs text-gray-500"
       >
-        <Icon name="lucide:clock" class="h-3 w-3" />
-        <span
-          >Última actualización: {{ formatearFecha(ultimaActualizacion) }}</span
-        >
+        <Icon
+          name="lucide:clock"
+          class="h-3 w-3"
+        />
+        <span>Última actualización: {{ formatearFecha(ultimaActualizacion) }}</span>
       </div>
     </div>
 
@@ -112,22 +113,28 @@
         <UCard>
           <div class="flex flex-wrap items-center gap-4">
             <div class="flex items-center gap-2">
-              <Icon name="lucide:filter" class="h-4 w-4 text-gray-500" />
+              <Icon
+                name="lucide:filter"
+                class="h-4 w-4 text-gray-500"
+              />
               <span class="text-sm font-medium text-gray-700">Filtrar:</span>
             </div>
             <div class="flex flex-wrap gap-2">
               <button
                 v-for="estado in estadosDisponibles"
                 :key="estado.value"
-                @click="cambiarFiltroEstado(estado.value)"
                 :class="[
                   'flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium rounded-md border transition-colors',
                   estadoFiltro === estado.value
                     ? 'bg-blue-600 text-white border-blue-600'
-                    : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50',
+                    : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
                 ]"
+                @click="cambiarFiltroEstado(estado.value)"
               >
-                <Icon :name="estado.icon" class="h-3.5 w-3.5" />
+                <Icon
+                  :name="estado.icon"
+                  class="h-3.5 w-3.5"
+                />
                 {{ estado.label }}
               </button>
             </div>
@@ -143,7 +150,9 @@
             name="lucide:loader-2"
             class="h-12 w-12 animate-spin text-blue-600"
           />
-          <p class="text-gray-600">Cargando procesos de firma...</p>
+          <p class="text-gray-600">
+            Cargando procesos de firma...
+          </p>
         </div>
 
         <!-- Error State -->
@@ -152,8 +161,13 @@
           class="rounded-lg bg-red-50 border border-red-200 p-4"
         >
           <div class="flex items-center gap-2 text-red-800">
-            <Icon name="lucide:alert-circle" class="h-5 w-5" />
-            <p class="font-medium">{{ error }}</p>
+            <Icon
+              name="lucide:alert-circle"
+              class="h-5 w-5"
+            />
+            <p class="font-medium">
+              {{ error }}
+            </p>
           </div>
         </div>
 
@@ -162,14 +176,20 @@
           v-else-if="solicitudes.length === 0"
           class="flex flex-col items-center justify-center py-16 space-y-4"
         >
-          <Icon name="lucide:file-signature" class="h-16 w-16 text-gray-400" />
+          <Icon
+            name="lucide:file-signature"
+            class="h-16 w-16 text-gray-400"
+          />
           <p class="text-gray-600 text-lg">
             No hay procesos con el filtro seleccionado
           </p>
         </div>
 
         <!-- Lista de Solicitudes -->
-        <div v-else class="space-y-3">
+        <div
+          v-else
+          class="space-y-3"
+        >
           <UCard
             v-for="solicitud in solicitudes"
             :key="solicitud.numero_solicitud"
@@ -192,13 +212,19 @@
                 </div>
                 <div class="space-y-1 text-xs">
                   <div class="flex items-center gap-2 text-gray-600">
-                    <Icon name="lucide:building" class="h-3.5 w-3.5" />
+                    <Icon
+                      name="lucide:building"
+                      class="h-3.5 w-3.5"
+                    />
                     <span>{{
                       convenioActivo?.razon_social || "Sin convenio"
                     }}</span>
                   </div>
                   <div class="flex items-center gap-2 text-gray-600">
-                    <Icon name="lucide:calendar" class="h-3.5 w-3.5" />
+                    <Icon
+                      name="lucide:calendar"
+                      class="h-3.5 w-3.5"
+                    />
                     <span>{{ formatearFecha(solicitud.created_at) }}</span>
                   </div>
                 </div>
@@ -211,7 +237,7 @@
                     <span
                       :class="[
                         'inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium border',
-                        getEstadoColor(solicitud.proceso_firmado?.estado || ''),
+                        getEstadoColor(solicitud.proceso_firmado?.estado || '')
                       ]"
                     >
                       <Icon
@@ -226,7 +252,9 @@
 
                   <div class="grid grid-cols-2 gap-2 text-xs">
                     <div class="bg-green-50 p-2 rounded">
-                      <p class="text-gray-600">Completados</p>
+                      <p class="text-gray-600">
+                        Completados
+                      </p>
                       <p class="font-semibold text-green-700">
                         {{
                           solicitud.proceso_firmado?.firmantes_completados || 0
@@ -234,7 +262,9 @@
                       </p>
                     </div>
                     <div class="bg-yellow-50 p-2 rounded">
-                      <p class="text-gray-600">Pendientes</p>
+                      <p class="text-gray-600">
+                        Pendientes
+                      </p>
                       <p class="font-semibold text-yellow-700">
                         {{
                           solicitud.proceso_firmado?.firmantes_pendientes || 0
@@ -259,7 +289,10 @@
                   class="w-full gap-2"
                   @click="verDetalles(solicitud.numero_solicitud)"
                 >
-                  <Icon name="lucide:eye" class="h-3.5 w-3.5" />
+                  <Icon
+                    name="lucide:eye"
+                    class="h-3.5 w-3.5"
+                  />
                   Ver
                 </UButton>
                 <UButton
@@ -268,7 +301,10 @@
                   class="w-full gap-2"
                   @click="handleConsultarEstado(solicitud.numero_solicitud)"
                 >
-                  <Icon name="lucide:refresh-cw" class="h-3.5 w-3.5" />
+                  <Icon
+                    name="lucide:refresh-cw"
+                    class="h-3.5 w-3.5"
+                  />
                   Actualizar
                 </UButton>
               </div>
@@ -288,10 +324,13 @@
             <UButton
               variant="outline"
               size="sm"
-              @click="paginaAnterior"
               :disabled="!hasPrevious || loading"
+              @click="paginaAnterior"
             >
-              <Icon name="lucide:chevron-left" class="h-4 w-4" />
+              <Icon
+                name="lucide:chevron-left"
+                class="h-4 w-4"
+              />
             </UButton>
             <span class="text-sm text-gray-700 px-3">
               Página {{ currentPage }} de {{ totalPages }}
@@ -299,10 +338,13 @@
             <UButton
               variant="outline"
               size="sm"
-              @click="siguientePagina"
               :disabled="!hasNext || loading"
+              @click="siguientePagina"
             >
-              <Icon name="lucide:chevron-right" class="h-4 w-4" />
+              <Icon
+                name="lucide:chevron-right"
+                class="h-4 w-4"
+              />
             </UButton>
           </div>
         </div>
@@ -329,7 +371,7 @@ import { a } from "vue-router/dist/index-D_VEAp3P.js";
 
 definePageMeta({
   layout: "dashboard",
-  middleware: ["auth"],
+  middleware: ["auth"]
 });
 
 const {
@@ -360,7 +402,7 @@ const {
   iniciarPolling,
   togglePolling,
   convenioActivo,
-  cargarConvenio,
+  cargarConvenio
 } = useMonitoreoFirmasRealTime();
 
 const handleConsultarEstado = async (solicitudId: string) => {

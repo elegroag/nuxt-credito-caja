@@ -4,7 +4,7 @@ import { useApi } from "~/composables/useApi";
 import { storage } from "~/composables/useStorage";
 import {
   getTiposDocumentoOptions,
-  getDefaultTipoDocumento,
+  getDefaultTipoDocumento
 } from "~/lib/tipos_documento";
 
 export function useRegistro() {
@@ -21,7 +21,7 @@ export function useRegistro() {
     email: "",
     username: "",
     password: "",
-    confirmar_password: "",
+    confirmar_password: ""
   });
 
   const loading = ref(false);
@@ -34,10 +34,10 @@ export function useRegistro() {
   // Validaciones para cada paso
   const validarPaso1 = computed(() => {
     return (
-      formData.value.tipo_documento &&
-      formData.value.numero_documento &&
-      formData.value.nombres &&
-      formData.value.apellidos
+      formData.value.tipo_documento
+      && formData.value.numero_documento
+      && formData.value.nombres
+      && formData.value.apellidos
     );
   });
 
@@ -47,11 +47,11 @@ export function useRegistro() {
 
   const validarPaso3 = computed(() => {
     return (
-      formData.value.username &&
-      formData.value.password &&
-      formData.value.confirmar_password &&
-      formData.value.password.length >= 8 &&
-      formData.value.password === formData.value.confirmar_password
+      formData.value.username
+      && formData.value.password
+      && formData.value.confirmar_password
+      && formData.value.password.length >= 8
+      && formData.value.password === formData.value.confirmar_password
     );
   });
 
@@ -72,7 +72,7 @@ export function useRegistro() {
           .toLowerCase();
         formData.value.username = `${nombrePart}${apellidoPart}`;
       }
-    },
+    }
   );
 
   const pasoSiguiente = () => {
@@ -103,7 +103,7 @@ export function useRegistro() {
 
       const response = await postJson<any>(
         "/api/auth/register",
-        formData.value,
+        formData.value
       );
 
       if (response) {
@@ -115,7 +115,7 @@ export function useRegistro() {
           numero_documento: formData.value.numero_documento,
           nombres: formData.value.nombres,
           apellidos: formData.value.apellidos,
-          roles: response.user?.roles || ["user"],
+          roles: response.user?.roles || ["user"]
         };
         await storage.setItem("comfaca_credito_user", JSON.stringify(userData));
 
@@ -129,18 +129,18 @@ export function useRegistro() {
       return false;
     } catch (err: any) {
       if (err.response?.status === 409) {
-        error.value =
-          "El usuario ya existe. Por favor, usa otro nombre de usuario o inicia sesión.";
+        error.value
+          = "El usuario ya existe. Por favor, usa otro nombre de usuario o inicia sesión.";
       } else if (err.response?.data?.error) {
         error.value = err.response.data.error;
       } else {
         error.value = "Error en el registro. Por favor, inténtalo de nuevo.";
       }
 
-      errorMsg.value =
-        err?.data?.error ||
-        err?.message ||
-        "No fue posible registrar el usuario";
+      errorMsg.value
+        = err?.data?.error
+          || err?.message
+          || "No fue posible registrar el usuario";
       return false;
     } finally {
       loading.value = false;
@@ -160,6 +160,6 @@ export function useRegistro() {
     validarPaso3,
     pasoSiguiente,
     pasoAnterior,
-    registrar,
+    registrar
   };
 }

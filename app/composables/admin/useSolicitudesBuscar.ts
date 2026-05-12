@@ -5,7 +5,7 @@
 import { computed, onMounted, ref } from "vue";
 
 export const useSolicitudesBuscar = (props: {
-  filtrosActivos: any;
+  filtrosActivos: any
 }): UseSolicitudesBuscar => {
   const { postJson, getJson } = useApi();
   const loading = ref(false);
@@ -16,18 +16,18 @@ export const useSolicitudesBuscar = (props: {
   // Opciones para filtros
   const opcionesFiltro = ref<OpcionesFiltro>({
     estados: [],
-    usuarios: [],
+    usuarios: []
   });
 
   // Computed properties
   const tieneFiltrosActivos = computed(() => {
     const f = props.filtrosActivos.value;
     return !!(
-      f.numero_documento ||
-      f.nombre_usuario ||
-      f.owner_username ||
-      f.numero_solicitud ||
-      (f.estados && f.estados.length > 0)
+      f.numero_documento
+      || f.nombre_usuario
+      || f.owner_username
+      || f.numero_solicitud
+      || (f.estados && f.estados.length > 0)
     );
   });
 
@@ -39,7 +39,7 @@ export const useSolicitudesBuscar = (props: {
       return response.data || defaultValue;
     } else {
       throw new Error(
-        response?.message || "Error en la respuesta del servidor",
+        response?.message || "Error en la respuesta del servidor"
       );
     }
   };
@@ -58,7 +58,7 @@ export const useSolicitudesBuscar = (props: {
       if (payload?.estado) params.set("estado", payload.estado);
       const response = await getJson<any>(
         `/api/admin/solicitudes?${params.toString()}`,
-        { auth: true },
+        { auth: true }
       );
       const data = handleApiResponse(response, []);
       solicitudesCache.value = Array.isArray(data) ? data : [];
@@ -80,7 +80,7 @@ export const useSolicitudesBuscar = (props: {
     props.filtrosActivos.value = {
       ...props.filtrosActivos.value,
       ...nuevosFiltros,
-      skip: 0,
+      skip: 0
     };
     cargarSolicitudesFilter();
   };
@@ -91,7 +91,7 @@ export const useSolicitudesBuscar = (props: {
   const limpiarFiltros = () => {
     props.filtrosActivos.value = {
       skip: 0,
-      limit: 20,
+      limit: 20
     };
     cargarSolicitudesFilter();
   };
@@ -111,6 +111,6 @@ export const useSolicitudesBuscar = (props: {
     totalItems,
     tieneFiltrosActivos,
     aplicarFiltros,
-    limpiarFiltros,
+    limpiarFiltros
   };
 };

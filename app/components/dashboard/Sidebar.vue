@@ -12,8 +12,7 @@
       <span
         v-if="!sidebarCollapsed"
         class="text-lg font-semibold text-sidebar-foreground"
-        >Comfaca Crédito</span
-      >
+      >Comfaca Crédito</span>
     </div>
 
     <nav class="flex-1 overflow-y-auto px-3 py-4">
@@ -35,7 +34,10 @@
             :class="getMenuItemClasses(item.to)"
             :title="sidebarCollapsed ? item.label : undefined"
           >
-            <component :is="item.icon" class="h-5 w-5 shrink-0" />
+            <component
+              :is="item.icon"
+              class="h-5 w-5 shrink-0"
+            />
             <span v-show="!sidebarCollapsed">{{ item.label }}</span>
           </NuxtLink>
         </div>
@@ -51,7 +53,10 @@
         >
           {{ _abbr(session.user?.username || "Usuario") }}
         </div>
-        <div v-show="!sidebarCollapsed" class="min-w-0 flex-1">
+        <div
+          v-show="!sidebarCollapsed"
+          class="min-w-0 flex-1"
+        >
           <div class="truncate text-sm font-medium text-sidebar-foreground">
             {{ session.user?.username || "Usuario" }}
           </div>
@@ -81,15 +86,13 @@
         >
           CC
         </div>
-        <span class="text-lg font-semibold text-sidebar-foreground"
-          >Comfaca Crédito</span
-        >
+        <span class="text-lg font-semibold text-sidebar-foreground">Comfaca Crédito</span>
       </div>
       <UButton
         variant="ghost"
         size="md"
-        @click="sidebarOpen = false"
         class="text-sidebar-foreground"
+        @click="sidebarOpen = false"
       >
         <X class="h-5 w-5" />
       </UButton>
@@ -111,10 +114,13 @@
             v-for="item in group"
             :key="item.to"
             :to="item.to"
-            @click="sidebarOpen = false"
             :class="getMobileMenuItemClasses(item.to)"
+            @click="sidebarOpen = false"
           >
-            <component :is="item.icon" class="h-5 w-5" />
+            <component
+              :is="item.icon"
+              class="h-5 w-5"
+            />
             {{ item.label }}
           </NuxtLink>
         </div>
@@ -138,21 +144,21 @@ const {
   navItems,
   groupedNavItems,
   isActive,
-  _abbr,
+  _abbr
 } = useDashboardLayout();
 
 const { getPrimaryRoleDisplay } = usePermissions();
 
 const sidebarDesktopClasses = computed(() => {
-  const baseClasses =
-    "hidden h-screen flex-col border-r border-sidebar-border bg-sidebar transition-all duration-300 lg:flex shrink-0";
+  const baseClasses
+    = "hidden h-screen flex-col border-r border-sidebar-border bg-sidebar transition-all duration-300 lg:flex shrink-0";
   const widthClass = sidebarCollapsed.value ? "w-16" : "w-64";
   return cn(baseClasses, widthClass);
 });
 
 const sidebarMobileClasses = computed(() => {
-  const baseClasses =
-    "fixed inset-y-0 left-0 z-50 w-64 h-screen transform border-r border-sidebar-border bg-sidebar transition-transform duration-300 lg:hidden";
+  const baseClasses
+    = "fixed inset-y-0 left-0 z-50 w-64 h-screen transform border-r border-sidebar-border bg-sidebar transition-transform duration-300 lg:hidden";
   const transformClass = sidebarOpen.value
     ? "translate-x-0"
     : "-translate-x-full";
@@ -160,8 +166,8 @@ const sidebarMobileClasses = computed(() => {
 });
 
 const getMenuItemClasses = (href: string) => {
-  const baseClasses =
-    "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors";
+  const baseClasses
+    = "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors";
   const activeClasses = isActive(href)
     ? "bg-sidebar-primary text-sidebar-primary-foreground"
     : "text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground";
@@ -171,8 +177,8 @@ const getMenuItemClasses = (href: string) => {
 };
 
 const getMobileMenuItemClasses = (href: string) => {
-  const baseClasses =
-    "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors";
+  const baseClasses
+    = "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors";
   const activeClasses = isActive(href)
     ? "bg-sidebar-primary text-sidebar-primary-foreground"
     : "text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground";

@@ -17,8 +17,8 @@
             Seleccionar Punto de Asesoría
           </h2>
           <button
-            @click="closeModal"
             class="text-gray-400 hover:text-gray-600 transition-colors"
+            @click="closeModal"
           >
             <XMarkIcon class="h-5 w-5" />
           </button>
@@ -31,11 +31,17 @@
 
       <!-- Body -->
       <div class="px-6 py-4 overflow-y-auto max-h-[60vh]">
-        <div v-if="loading" class="flex justify-center py-8">
+        <div
+          v-if="loading"
+          class="flex justify-center py-8"
+        >
           <ArrowPathIcon class="h-6 w-6 animate-spin text-blue-600" />
         </div>
 
-        <div v-else-if="!puntosAsesoria?.length" class="text-center py-8">
+        <div
+          v-else-if="!puntosAsesoria?.length"
+          class="text-center py-8"
+        >
           <ExclamationTriangleIcon
             class="h-12 w-12 text-gray-400 mx-auto mb-4"
           />
@@ -44,23 +50,24 @@
           </p>
         </div>
 
-        <div v-else class="space-y-3">
+        <div
+          v-else
+          class="space-y-3"
+        >
           <div
             v-for="punto in puntosAsesoria"
             :key="punto.numero"
             class="border rounded-lg p-4 hover:border-blue-500 hover:bg-blue-50 cursor-pointer transition-all"
             :class="{
               'border-blue-500 bg-blue-50':
-                selectedPunto?.numero === punto.numero,
+                selectedPunto?.numero === punto.numero
             }"
             @click="selectPunto(punto)"
           >
             <div class="flex items-start justify-between">
               <div class="flex-1">
                 <div class="flex items-center gap-2 mb-2">
-                  <span class="font-semibold text-gray-900"
-                    >Punto {{ punto.numero }}</span
-                  >
+                  <span class="font-semibold text-gray-900">Punto {{ punto.numero }}</span>
                   <span
                     class="px-2 py-1 text-xs rounded-full"
                     :class="
@@ -113,8 +120,16 @@
       <!-- Footer -->
       <div class="border-t px-6 py-4 bg-gray-50">
         <div class="flex justify-end gap-3">
-          <UButton variant="outline" @click="closeModal"> Cancelar </UButton>
-          <UButton :disabled="!selectedPunto" @click="confirmSelection">
+          <UButton
+            variant="outline"
+            @click="closeModal"
+          >
+            Cancelar
+          </UButton>
+          <UButton
+            :disabled="!selectedPunto"
+            @click="confirmSelection"
+          >
             Continuar
           </UButton>
         </div>
@@ -129,23 +144,23 @@ import {
   XMarkIcon,
   ArrowPathIcon,
   ExclamationTriangleIcon,
-  CheckCircleIcon,
+  CheckCircleIcon
 } from "@heroicons/vue/24/outline";
 import type { PuntoAsesoria } from "#shared/types/adviser";
 
 interface Props {
-  isOpen: boolean;
-  puntosAsesoria?: PuntoAsesoria[];
-  loading?: boolean;
+  isOpen: boolean
+  puntosAsesoria?: PuntoAsesoria[]
+  loading?: boolean
 }
 
 interface Emits {
-  (e: "close"): void;
-  (e: "select", punto: PuntoAsesoria): void;
+  (e: "close"): void
+  (e: "select", punto: PuntoAsesoria): void
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  loading: false,
+  loading: false
 });
 
 const emit = defineEmits<Emits>();
@@ -159,7 +174,7 @@ watch(
     if (!newValue) {
       selectedPunto.value = null;
     }
-  },
+  }
 );
 
 const closeModal = () => {

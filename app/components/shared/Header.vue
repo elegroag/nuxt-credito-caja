@@ -8,16 +8,16 @@ const items = computed<NavigationMenuItem[]>(() => [
   {
     label: "Productos",
     to: "/products",
-    active: route.path.startsWith("/products"),
+    active: route.path.startsWith("/products")
   },
   {
     label: "Nosotros",
-    to: "/about",
+    to: "/about"
   },
   {
     label: "Contacto",
-    to: "/contact",
-  },
+    to: "/contact"
+  }
 ]);
 
 const isLoginPage = computed(() => route.path === "/login");
@@ -27,14 +27,17 @@ const responsiveMenu = computed(() => [
   ...items.value,
   isLoginPage.value
     ? { label: "Crear cuenta", to: "/registro", active: false }
-    : { label: "Iniciar sesión", to: "/login", active: isLoginPage.value },
+    : { label: "Iniciar sesión", to: "/login", active: isLoginPage.value }
 ]);
 </script>
 
 <template>
   <UHeader>
     <template #title>
-      <NuxtLink to="/" class="flex items-center gap-2">
+      <NuxtLink
+        to="/"
+        class="flex items-center gap-2"
+      >
         <div
           class="w-10 h-10 bg-primary rounded-lg flex items-center justify-center"
         >
@@ -52,9 +55,7 @@ const responsiveMenu = computed(() => [
             />
           </svg>
         </div>
-        <span class="text-xl font-semibold text-foreground"
-          >Comfaca Crédito</span
-        >
+        <span class="text-xl font-semibold text-foreground">Comfaca Crédito</span>
       </NuxtLink>
     </template>
 
@@ -67,8 +68,8 @@ const responsiveMenu = computed(() => [
         :items="[
           {
             label: 'Dashboard',
-            to: '/dash',
-          },
+            to: '/dash'
+          }
         ]"
       />
     </ClientOnly>
@@ -76,7 +77,10 @@ const responsiveMenu = computed(() => [
     <template #right>
       <UColorModeButton />
 
-      <UTooltip text="Open on GitHub" :kbds="['meta', 'G']">
+      <UTooltip
+        text="Open on GitHub"
+        :kbds="['meta', 'G']"
+      >
         <UButton
           color="neutral"
           variant="ghost"

@@ -19,7 +19,7 @@ export default defineEventHandler(async (event: H3Event) => {
     }
 
     const solicitud = await prisma.solicitudes_credito.findUnique({
-      where: { numero_solicitud: solicitudId },
+      where: { numero_solicitud: solicitudId }
     });
 
     if (!solicitud) {
@@ -33,7 +33,7 @@ export default defineEventHandler(async (event: H3Event) => {
     }
 
     await prisma.solicitudes_credito.delete({
-      where: { numero_solicitud: solicitudId },
+      where: { numero_solicitud: solicitudId }
     });
 
     return CustomResponse.success(null, "Solicitud eliminada exitosamente");
@@ -44,7 +44,7 @@ export default defineEventHandler(async (event: H3Event) => {
 
     return CustomResponse.error(
       error?.data?.error || error?.message || "Error al eliminar la solicitud",
-      "Error al eliminar solicitud.",
+      "Error al eliminar solicitud."
     );
   }
 });

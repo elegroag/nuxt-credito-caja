@@ -6,6 +6,6 @@ export default defineEventHandler(async (event) => {
     status: "ok",
     timestamp: new Date().toISOString(),
     app: "Sistema de Creditos Comfaca",
-    version: "1.0.0",
+    version: "1.0.0"
   };
 });

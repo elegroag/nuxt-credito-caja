@@ -1,7 +1,9 @@
 <template>
   <div class="mx-auto max-w-5xl p-4 sm:p-8">
     <div class="rounded-xl border border-zinc-200 bg-white p-6 shadow-sm">
-      <h1 class="text-2xl font-semibold tracking-tight">Documentos</h1>
+      <h1 class="text-2xl font-semibold tracking-tight">
+        Documentos
+      </h1>
       <p class="mt-2 text-sm text-zinc-600">
         Este módulo estará disponible próximamente.
       </p>
@@ -20,7 +22,7 @@
 
 <script setup lang="ts">
 definePageMeta({
-  layout: 'dashboard',
-  middleware: ['auth']
-})
+  layout: "dashboard",
+  middleware: ["auth"]
+});
 </script>

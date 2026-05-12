@@ -15,12 +15,12 @@ export default defineEventHandler(async (event: H3Event) => {
     const result = await prisma.notifications.updateMany({
       where: {
         owner_username: session.user.username,
-        read_at: null,
+        read_at: null
       },
       data: {
         read_at: new Date(),
-        updated_at: new Date(),
-      },
+        updated_at: new Date()
+      }
     });
 
     return CustomResponse.success({ marked_count: result.count }, "Notificaciones marcadas como leídas");
@@ -31,7 +31,7 @@ export default defineEventHandler(async (event: H3Event) => {
 
     return CustomResponse.error(
       error?.data?.error || error?.message || "Error al marcar todas las notificaciones como leídas",
-      "Error al marcar leídas.",
+      "Error al marcar leídas."
     );
   }
 });

@@ -79,7 +79,7 @@ export const useRevisionStep = (props: RevisionProps) => {
           : "",
         cuota_mensual: parsed.cuotaMensual
           ? `$${parsed.cuotaMensual.toLocaleString("es-CO")}`
-          : "",
+          : ""
       };
     } catch (error) {
       console.error("Error obteniendo datos del simulador:", error);
@@ -147,6 +147,6 @@ export const useRevisionStep = (props: RevisionProps) => {
     getResumenPropiedades,
     getResumenDeudas,
     getResumenReferenciasFamiliares,
-    getResumenReferenciasPersonales,
+    getResumenReferenciasPersonales
   };
 };

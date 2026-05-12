@@ -30,7 +30,7 @@ async function main() {
   await seedUsers();
   await seedSessions();
   await seedPersonalAccessTokens();
-  //await seedNotifications();
+  // await seedNotifications();
   await seedNumeroSolicitudes();
   await seedSolicitudesCredito();
   await seedSolicitudSolicitante();
@@ -38,7 +38,7 @@ async function main() {
   await seedSolicitudTimeline();
   await seedSolicitudDocumentos();
   await seedDocumentosPostulantes();
-  //await seedPdfsGenerados();
+  // await seedPdfsGenerados();
   await seedFirmantesSolicitud();
 }
 
@@ -48,7 +48,7 @@ async function seedEstadosSolicitud() {
   const countEstados = await prisma.estados_solicitud.count();
   if (countEstados == 0) {
     await prisma.estados_solicitud.createMany({
-      data: estadosSolicitud as any[],
+      data: estadosSolicitud as any[]
     });
     console.log("✅ Estados de solicitud seeded");
   } else {
@@ -70,12 +70,12 @@ async function seedUsers() {
           ? new Date(user.email_verified_at).toISOString()
           : null,
         created_at: new Date(user.created_at).toISOString(),
-        updated_at: new Date(user.updated_at).toISOString(),
+        updated_at: new Date(user.updated_at).toISOString()
       };
     });
 
     await prisma.users.createMany({
-      data: userData as any,
+      data: userData as any
     });
     console.log("✅ Users seeded");
   } else {
@@ -92,12 +92,12 @@ async function seedRoles() {
       return {
         ...role,
         created_at: new Date(role.created_at).toISOString(),
-        updated_at: new Date(role.updated_at).toISOString(),
+        updated_at: new Date(role.updated_at).toISOString()
       };
     });
 
     await prisma.roles.createMany({
-      data: rolesData as any,
+      data: rolesData as any
     });
     console.log("✅ Roles seeded");
   } else {
@@ -114,11 +114,11 @@ async function seedModules() {
       return {
         ...module,
         created_at: new Date(module.created_at).toISOString(),
-        updated_at: new Date(module.updated_at).toISOString(),
+        updated_at: new Date(module.updated_at).toISOString()
       };
     });
     await prisma.modules.createMany({
-      data: modulesData as any,
+      data: modulesData as any
     });
     console.log("✅ Modules seeded");
   } else {
@@ -135,11 +135,11 @@ async function seedTipoDocumentos() {
       return {
         ...tipo,
         created_at: new Date(tipo.created_at).toISOString(),
-        updated_at: new Date(tipo.updated_at).toISOString(),
+        updated_at: new Date(tipo.updated_at).toISOString()
       };
     });
     await prisma.tipo_documentos.createMany({
-      data: tipoDocumentosData as any,
+      data: tipoDocumentosData as any
     });
     console.log("✅ Tipo documentos seeded");
   } else {
@@ -158,11 +158,11 @@ async function seedEmpresasConvenio() {
         created_at: new Date(empresa.created_at).toISOString(),
         updated_at: new Date(empresa.updated_at).toISOString(),
         fecha_convenio: new Date(empresa.fecha_convenio).toISOString(),
-        fecha_vencimiento: new Date(empresa.fecha_vencimiento).toISOString(),
+        fecha_vencimiento: new Date(empresa.fecha_vencimiento).toISOString()
       };
     });
     await prisma.empresas_convenio.createMany({
-      data: empresasData as any,
+      data: empresasData as any
     });
     console.log("✅ Empresas convenio seeded");
   } else {
@@ -176,7 +176,7 @@ async function seedSessions() {
   const countSessions = await prisma.sessions.count();
   if (countSessions == 0) {
     await prisma.sessions.createMany({
-      data: sessions as any,
+      data: sessions as any
     });
     console.log("✅ Sessions seeded");
   } else {
@@ -199,11 +199,11 @@ async function seedPersonalAccessTokens() {
           ? new Date(token.expires_at).toISOString()
           : null,
         created_at: new Date(token.created_at).toISOString(),
-        updated_at: new Date(token.updated_at).toISOString(),
+        updated_at: new Date(token.updated_at).toISOString()
       };
     });
     await prisma.personal_access_tokens.createMany({
-      data: tokensData as any,
+      data: tokensData as any
     });
     console.log("✅ Personal access tokens seeded");
   } else {
@@ -223,11 +223,11 @@ async function seedNotifications() {
           ? new Date(notification.read_at).toISOString()
           : null,
         created_at: new Date(notification.created_at).toISOString(),
-        updated_at: new Date(notification.updated_at).toISOString(),
+        updated_at: new Date(notification.updated_at).toISOString()
       };
     });
     await prisma.notifications.createMany({
-      data: notificationsData as any,
+      data: notificationsData as any
     });
     console.log("✅ Notifications seeded");
   } else {
@@ -244,11 +244,11 @@ async function seedNumeroSolicitudes() {
       return {
         ...numero,
         created_at: new Date(numero.created_at).toISOString(),
-        updated_at: new Date(numero.updated_at).toISOString(),
+        updated_at: new Date(numero.updated_at).toISOString()
       };
     });
     await prisma.numero_solicitudes.createMany({
-      data: numeroData as any,
+      data: numeroData as any
     });
     console.log("✅ Numero solicitudes seeded");
   } else {
@@ -269,18 +269,18 @@ async function seedSolicitudesCredito() {
               ...solicitud.pdf_generado,
               generated_at: solicitud.pdf_generado.generated_at
                 ? new Date(solicitud.pdf_generado.generated_at).toISOString()
-                : null,
+                : null
             }
           : null,
         created_at: new Date(solicitud.created_at).toISOString(),
         updated_at: new Date(solicitud.updated_at).toISOString(),
         fecha_radicado: solicitud.fecha_radicado
           ? new Date(solicitud.fecha_radicado).toISOString()
-          : null,
+          : null
       };
     });
     await prisma.solicitudes_credito.createMany({
-      data: solicitudesData as any,
+      data: solicitudesData as any
     });
     console.log("✅ Solicitudes credito seeded");
   } else {
@@ -303,11 +303,11 @@ async function seedSolicitudSolicitante() {
           ? new Date(solicitante.fecha_expedicion).toISOString()
           : null,
         created_at: new Date(solicitante.created_at).toISOString(),
-        updated_at: new Date(solicitante.updated_at).toISOString(),
+        updated_at: new Date(solicitante.updated_at).toISOString()
       };
     });
     await prisma.solicitud_solicitante.createMany({
-      data: solicitanteData as any,
+      data: solicitanteData as any
     });
     console.log("✅ Solicitud solicitante seeded");
   } else {
@@ -324,11 +324,11 @@ async function seedSolicitudPayload() {
       return {
         ...payload,
         created_at: new Date(payload.created_at).toISOString(),
-        updated_at: new Date(payload.updated_at).toISOString(),
+        updated_at: new Date(payload.updated_at).toISOString()
       };
     });
     await prisma.solicitud_payload.createMany({
-      data: payloadData as any,
+      data: payloadData as any
     });
     console.log("✅ Solicitud payload seeded");
   } else {
@@ -346,11 +346,11 @@ async function seedSolicitudTimeline() {
         ...timeline,
         fecha: new Date(timeline.fecha).toISOString(),
         created_at: new Date(timeline.created_at).toISOString(),
-        updated_at: new Date(timeline.updated_at).toISOString(),
+        updated_at: new Date(timeline.updated_at).toISOString()
       };
     });
     await prisma.solicitud_timeline.createMany({
-      data: timelineData as any,
+      data: timelineData as any
     });
     console.log("✅ Solicitud timeline seeded");
   } else {
@@ -370,11 +370,11 @@ async function seedSolicitudDocumentos() {
           ? new Date(documento.deleted_at).toISOString()
           : null,
         created_at: new Date(documento.created_at).toISOString(),
-        updated_at: new Date(documento.updated_at).toISOString(),
+        updated_at: new Date(documento.updated_at).toISOString()
       };
     });
     await prisma.solicitud_documentos.createMany({
-      data: documentosData as any,
+      data: documentosData as any
     });
     console.log("✅ Solicitud documentos seeded");
   } else {
@@ -391,11 +391,11 @@ async function seedDocumentosPostulantes() {
       return {
         ...postulante,
         created_at: new Date(postulante.created_at).toISOString(),
-        updated_at: new Date(postulante.updated_at).toISOString(),
+        updated_at: new Date(postulante.updated_at).toISOString()
       };
     });
     await prisma.documentos_postulantes.createMany({
-      data: postulantesData as any,
+      data: postulantesData as any
     });
     console.log("✅ Documentos postulantes seeded");
   } else {
@@ -416,12 +416,12 @@ async function seedPdfsGenerados() {
         generado_en: {
           fecha: new Date(pdf.generado_en.fecha).toISOString(),
           usuario: pdf.generado_en.usuario,
-          version: pdf.generado_en.version,
-        },
+          version: pdf.generado_en.version
+        }
       };
     });
     await prisma.pdfs_generados.createMany({
-      data: pdfsData as any,
+      data: pdfsData as any
     });
     console.log("✅ PDFs generados seeded");
   } else {
@@ -438,11 +438,11 @@ async function seedFirmantesSolicitud() {
       return {
         ...firmante,
         created_at: new Date(firmante.created_at).toISOString(),
-        updated_at: new Date(firmante.updated_at).toISOString(),
+        updated_at: new Date(firmante.updated_at).toISOString()
       };
     });
     await prisma.firmantes_solicitud.createMany({
-      data: firmantesData as any,
+      data: firmantesData as any
     });
     console.log("✅ Firmantes solicitud seeded");
   } else {

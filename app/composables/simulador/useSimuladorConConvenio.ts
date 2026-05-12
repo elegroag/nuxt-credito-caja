@@ -21,7 +21,7 @@ export function useSimuladorConConvenio() {
 
   // Computed
   const isElegible = computed(
-    () => !!convenio.value && convenio.value.estado === "Activo",
+    () => !!convenio.value && convenio.value.estado === "Activo"
   );
 
   // Mensaje de éxito cuando hay convenio con beneficios
@@ -30,7 +30,7 @@ export function useSimuladorConConvenio() {
     return {
       titulo: "¡Tienes convenio con COMFACA!",
       empresa: convenio.value.razon_social,
-      items: getBeneficiosFromConvenio(convenio.value),
+      items: getBeneficiosFromConvenio(convenio.value)
     };
   });
 
@@ -40,7 +40,7 @@ export function useSimuladorConConvenio() {
     return {
       titulo: "Sin convenio empresarial",
       descripcion: errorConvenio.value,
-      tipo: "info" as const,
+      tipo: "info" as const
     };
   });
 
@@ -76,24 +76,24 @@ export function useSimuladorConConvenio() {
       console.log("Consultando convenios activos...");
 
       const response = await getJson<{
-        success: boolean;
-        data: ConvenioActivo[];
+        success: boolean
+        data: ConvenioActivo[]
       }>("/api/convenios/activo", { auth: true });
 
       console.log("Respuesta convenios:", response);
 
       // Verificar si hay convenios activos
       if (
-        response.success &&
-        Array.isArray(response.data) &&
-        response.data.length > 0
+        response.success
+        && Array.isArray(response.data)
+        && response.data.length > 0
       ) {
         // Tomar el primer convenio activo que coincida con el NIT
-        const convenioEncontrado =
-          response.data.find(
-            (c) =>
-              c.nit === nitEmpresa.value ||
-              String(c.nit) === String(nitEmpresa.value),
+        const convenioEncontrado
+          = response.data.find(
+            c =>
+              c.nit === nitEmpresa.value
+              || String(c.nit) === String(nitEmpresa.value)
           ) || response.data[0]; // Si no coincide el NIT, tomar el primero
 
         convenio.value = convenioEncontrado ?? null;
@@ -106,8 +106,8 @@ export function useSimuladorConConvenio() {
       // No hay convenios
       convenio.value = null;
       convenioVerificado.value = true;
-      errorConvenio.value =
-        "No se encontró un convenio activo para tu empresa.";
+      errorConvenio.value
+        = "No se encontró un convenio activo para tu empresa.";
 
       return false;
     } catch (err: any) {
@@ -152,6 +152,6 @@ export function useSimuladorConConvenio() {
 
     // Métodos
     validarConvenioAntesDSimular,
-    resetearConvenio,
+    resetearConvenio
   };
 }

@@ -8,6 +8,6 @@ export const solicitudTimeline = [
     usuario_username: "elegro",
     automatico: true,
     created_at: "2026-03-18 01:30:34.0",
-    updated_at: "2026-03-18 01:30:34.0",
-  },
+    updated_at: "2026-03-18 01:30:34.0"
+  }
 ];

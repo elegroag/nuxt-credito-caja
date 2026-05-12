@@ -1,5 +1,8 @@
 <template>
-  <label class="grid gap-1" v-bind="$attrs">
+  <label
+    class="grid gap-1"
+    v-bind="$attrs"
+  >
     <span class="text-sm font-medium text-muted-foreground">{{ label }}</span>
     <slot />
   </label>
@@ -8,5 +11,5 @@
 <script setup lang="ts">
 defineProps<{
   label: string
-}>()
+}>();
 </script>

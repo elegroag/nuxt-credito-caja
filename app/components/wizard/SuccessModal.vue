@@ -24,12 +24,14 @@
           Tu solicitud fue enviada y quedó en estado
           <span
             class="font-bold text-secondary-foreground bg-secondary/30 px-1.5 py-0.5 rounded"
-            >Postulado</span
-          >.
+          >Postulado</span>.
         </p>
 
         <div class="space-y-4 text-left">
-          <div v-if="solicitudId" class="rounded-lg bg-muted p-3 space-y-1">
+          <div
+            v-if="solicitudId"
+            class="rounded-lg bg-muted p-3 space-y-1"
+          >
             <div
               class="text-[10px] font-bold uppercase tracking-wider text-muted-foreground"
             >
@@ -77,16 +79,16 @@
 import { CheckCircle2, ClipboardList, FileText } from "lucide-vue-next";
 
 interface Props {
-  isOpen: boolean;
-  solicitudId?: string;
-  filename?: string;
+  isOpen: boolean
+  solicitudId?: string
+  filename?: string
 }
 
 defineProps<Props>();
 
 defineEmits<{
-  close: [];
-  viewSolicitudes: [];
-  goToDocumentos: [];
+  close: []
+  viewSolicitudes: []
+  goToDocumentos: []
 }>();
 </script>

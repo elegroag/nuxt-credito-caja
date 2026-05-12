@@ -20,7 +20,7 @@ export const useSolicitudDetailsPage = () => {
     buscarTipoVivienda,
     buscarTipoContrato,
     getEstadoNombre,
-    getEstadoBadgeClass,
+    getEstadoBadgeClass
   } = useParametrosDetalles();
 
   const solicitudId = route.params.id as string;
@@ -32,9 +32,9 @@ export const useSolicitudDetailsPage = () => {
 
   const numeroSolicitudDisplay = computed(() => {
     return (
-      solicitud.value?.payload?.solicitud?.numero_solicitud ||
-      solicitud.value?.numero_solicitud ||
-      "-"
+      solicitud.value?.payload?.solicitud?.numero_solicitud
+      || solicitud.value?.numero_solicitud
+      || "-"
     );
   });
 
@@ -48,34 +48,34 @@ export const useSolicitudDetailsPage = () => {
     {
       id: "POSTULADO",
       nombre: "Postulación Inicial",
-      descripcion: "Solicitud de crédito iniciada y datos básicos registrados",
+      descripcion: "Solicitud de crédito iniciada y datos básicos registrados"
     },
     {
       id: "DOCUMENTOS_CARGADOS",
       nombre: "Documentación Completada",
       descripcion:
-        "Todos los documentos requeridos han sido cargados exitosamente",
+        "Todos los documentos requeridos han sido cargados exitosamente"
     },
     {
       id: "ENVIADO_VALIDACION",
       nombre: "Enviado para Validación",
-      descripcion: "Solicitud enviada para validación por asesores",
+      descripcion: "Solicitud enviada para validación por asesores"
     },
     {
       id: "PENDIENTE_FIRMADO",
       nombre: "Pendiente de Firma",
-      descripcion: "La solicitud está lista para ser firmada electrónicamente",
+      descripcion: "La solicitud está lista para ser firmada electrónicamente"
     },
     {
       id: "FIRMADO",
       nombre: "Solicitud Firmada",
-      descripcion: "La solicitud ha sido firmada y está lista para ser enviada",
+      descripcion: "La solicitud ha sido firmada y está lista para ser enviada"
     },
     {
       id: "ENVIADO_PENDIENTE_APROBACION",
       nombre: "En Proceso de Aprobación",
-      descripcion: "La solicitud está siendo evaluada por el comité de crédito",
-    },
+      descripcion: "La solicitud está siendo evaluada por el comité de crédito"
+    }
   ];
 
   // Estados con fechas reales del timeline
@@ -84,11 +84,11 @@ export const useSolicitudDetailsPage = () => {
 
     return estadosTimelineBase.map((estado) => {
       const timelineEntry = solicitud.value?.timeline?.find(
-        (t) => t.estado === estado.id,
+        t => t.estado === estado.id
       );
       return {
         ...estado,
-        fecha: timelineEntry ? fmtDate(timelineEntry.fecha) : undefined,
+        fecha: timelineEntry ? fmtDate(timelineEntry.fecha) : undefined
       };
     });
   });
@@ -99,7 +99,7 @@ export const useSolicitudDetailsPage = () => {
     return new Intl.NumberFormat("es-CO", {
       style: "currency",
       currency: "COP",
-      minimumFractionDigits: 0,
+      minimumFractionDigits: 0
     }).format(value);
   };
 
@@ -108,7 +108,7 @@ export const useSolicitudDetailsPage = () => {
     return new Date(dateString).toLocaleDateString("es-CO", {
       year: "numeric",
       month: "long",
-      day: "numeric",
+      day: "numeric"
     });
   };
 
@@ -118,14 +118,14 @@ export const useSolicitudDetailsPage = () => {
     try {
       await ready;
       const response = await getJson<{
-        success: boolean;
-        data: SolicitudCreditoResponse;
+        success: boolean
+        data: SolicitudCreditoResponse
       }>(`/api/solicitudes/${solicitudId}`, { auth: true });
       solicitud.value = response.data;
     } catch (e: any) {
       console.error(e);
-      error.value =
-        e.message || "No se pudo cargar la información de la solicitud.";
+      error.value
+        = e.message || "No se pudo cargar la información de la solicitud.";
     } finally {
       loading.value = false;
     }
@@ -142,7 +142,7 @@ export const useSolicitudDetailsPage = () => {
 
       const baseUrl = String(config.public.backendBaseUrl || "").replace(
         /\/+$/,
-        "",
+        ""
       );
       const url = `${baseUrl}/api/solicitudes/${solicitudId}/descargar-pdf`;
 
@@ -151,15 +151,15 @@ export const useSolicitudDetailsPage = () => {
       const response = await fetch(url, {
         method: "GET",
         headers: {
-          ...headers,
-        },
+          ...headers
+        }
       });
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
         console.error(
           "Error descargando PDF:",
-          errorData.message || "El PDF no está disponible",
+          errorData.message || "El PDF no está disponible"
         );
         return;
       }
@@ -174,7 +174,7 @@ export const useSolicitudDetailsPage = () => {
 
       if (contentDisposition) {
         const filenameMatch = contentDisposition.match(
-          /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/,
+          /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/
         );
         if (filenameMatch && filenameMatch[1]) {
           filename = filenameMatch[1].replace(/['"]/g, "");
@@ -196,7 +196,7 @@ export const useSolicitudDetailsPage = () => {
     try {
       await ready;
       await deleteJson(`/api/solicitudes/${solicitudId}`, {
-        auth: true,
+        auth: true
       });
 
       // Redirigir a la página de solicitudes después de eliminar
@@ -245,6 +245,6 @@ export const useSolicitudDetailsPage = () => {
     // Funciones principales
     cargarSolicitud,
     descargarPdf,
-    eliminarSolicitud,
+    eliminarSolicitud
   };
 };

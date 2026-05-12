@@ -8,29 +8,29 @@ const statsAdminDashboard = (event: any) => {
   const statsSolicitudes = async () => {
     const aprobadas = await prisma.solicitudes_credito.count({
       where: {
-        estado: "APROBADA",
-      },
+        estado: "APROBADA"
+      }
     });
 
     const activas = await prisma.solicitudes_credito.count({
       where: {
-        estado: "ACTIVA",
-      },
+        estado: "ACTIVA"
+      }
     });
 
     const pendientesFirma = await prisma.solicitudes_credito.count({
       where: {
-        estado: "PENDIENTE_FIRMA",
-      },
+        estado: "PENDIENTE_FIRMA"
+      }
     });
 
     const montoAprobado = await prisma.solicitudes_credito.aggregate({
       _sum: {
-        valor_solicitud: true,
+        valor_solicitud: true
       },
       where: {
-        estado: "APROBADA",
-      },
+        estado: "APROBADA"
+      }
     });
 
     const total = await prisma.solicitudes_credito.count();
@@ -40,11 +40,11 @@ const statsAdminDashboard = (event: any) => {
     // Obtener todos los estados de la tabla estados_solicitud
     const estados = await prisma.estados_solicitud.findMany({
       where: {
-        activo: true,
+        activo: true
       },
       orderBy: {
-        orden: "asc",
-      },
+        orden: "asc"
+      }
     });
 
     // Contar solicitudes por cada estado
@@ -52,17 +52,17 @@ const statsAdminDashboard = (event: any) => {
       estados.map(async (estado: any) => {
         const count = await prisma.solicitudes_credito.count({
           where: {
-            estado: estado.id,
-          },
+            estado: estado.id
+          }
         });
 
         return {
           estado: estado.id,
           nombre: estado.nombre,
           count: String(count),
-          color: estado.color,
+          color: estado.color
         };
-      }),
+      })
     );
 
     const solicitudesPorMesRaw = await prisma.$queryRaw`
@@ -80,10 +80,10 @@ const statsAdminDashboard = (event: any) => {
         mes: item.mes,
         nombre: new Date(item.mes + "-01").toLocaleString("es-ES", {
           month: "long",
-          year: "numeric",
+          year: "numeric"
         }),
-        count: Number(item.count),
-      }),
+        count: Number(item.count)
+      })
     );
 
     const montoTotalAprobado = montoAprobado["_sum"].valor_solicitud;
@@ -96,15 +96,15 @@ const statsAdminDashboard = (event: any) => {
       montoTotalAprobado,
       tasaAprobacion,
       porEstado: solicitudesPorEstado,
-      porMes: solicitudesPorMes,
+      porMes: solicitudesPorMes
     };
   };
 
   const statsConvenios = async () => {
     const activos = await prisma.empresas_convenio.count({
       where: {
-        estado: "Activo",
-      },
+        estado: "Activo"
+      }
     });
 
     const totalEmpresasRaw = await prisma.$queryRaw`
@@ -116,21 +116,21 @@ const statsAdminDashboard = (event: any) => {
     const topEmpresas = await prisma.empresas_convenio.findMany({
       take: 5,
       orderBy: {
-        numero_empleados: "desc",
+        numero_empleados: "desc"
       },
       select: {
         razon_social: true,
         nit: true,
         numero_empleados: true,
-        tipo_empresa: true,
-      },
+        tipo_empresa: true
+      }
     });
 
     const porTipo = await prisma.empresas_convenio.groupBy({
       by: ["tipo_empresa"],
       _count: {
-        id: true,
-      },
+        id: true
+      }
     });
 
     return {
@@ -140,12 +140,12 @@ const statsAdminDashboard = (event: any) => {
         razon_social: empresa.razon_social,
         nit: String(empresa.nit),
         numero_empleados: String(empresa.numero_empleados),
-        tipo_empresa: empresa.tipo_empresa,
+        tipo_empresa: empresa.tipo_empresa
       })),
       porTipo: porTipo.map((tipo: any) => ({
         tipo_empresa: tipo.tipo_empresa,
-        count: String(tipo._count.id),
-      })),
+        count: String(tipo._count.id)
+      }))
     };
   };
 
@@ -154,14 +154,14 @@ const statsAdminDashboard = (event: any) => {
 
     const activos = await prisma.users.count({
       where: {
-        disabled: false,
-      },
+        disabled: false
+      }
     });
 
     const users = await prisma.users.findMany({
       select: {
-        roles: true,
-      },
+        roles: true
+      }
     });
 
     // Aplanar roles y contar cada rol individualmente
@@ -175,20 +175,20 @@ const statsAdminDashboard = (event: any) => {
 
     const porRol = Object.entries(roleCounts).map(([role, count]) => ({
       role,
-      count: String(count),
+      count: String(count)
     }));
 
     // Usuarios nuevos en últimos 30 días
     const recientes = await prisma.users.count({
       where: {
         created_at: {
-          gte: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000),
-        },
-      },
+          gte: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000)
+        }
+      }
     });
 
     const trabajadores = porRol?.find(
-      (rol) => rol.role === "user_trabajador",
+      rol => rol.role === "user_trabajador"
     )?.count;
 
     return {
@@ -196,7 +196,7 @@ const statsAdminDashboard = (event: any) => {
       activos,
       porRol,
       recientes,
-      trabajadores,
+      trabajadores
     };
   };
 
@@ -204,33 +204,33 @@ const statsAdminDashboard = (event: any) => {
     const solicitudesRecientes = await prisma.solicitudes_credito.findMany({
       take: 5,
       orderBy: {
-        created_at: "desc",
+        created_at: "desc"
       },
       select: {
         numero_solicitud: true,
         estado: true,
         created_at: true,
-        owner_username: true,
-      },
+        owner_username: true
+      }
     });
 
     const usuariosRecientes = await prisma.users.findMany({
       take: 5,
       orderBy: {
-        created_at: "desc",
+        created_at: "desc"
       },
       select: {
         username: true,
         created_at: true,
         roles: true,
         numero_documento: true,
-        full_name: true,
-      },
+        full_name: true
+      }
     });
 
     return {
       solicitudesRecientes,
-      usuariosRecientes,
+      usuariosRecientes
     };
   };
 
@@ -238,7 +238,7 @@ const statsAdminDashboard = (event: any) => {
     solicitudes: statsSolicitudes,
     convenios: statsConvenios,
     usuarios: statsUsuarios,
-    actividadReciente: actividadReciente,
+    actividadReciente: actividadReciente
   };
 };
 

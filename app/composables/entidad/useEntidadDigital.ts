@@ -17,7 +17,7 @@ export function useEntidadDigital() {
     isCapturasConfirmadas,
     formatTimeRemaining,
     generateQR,
-    cleanup,
+    cleanup
   } = useEntidadDigitalQr();
 
   // Form state
@@ -48,8 +48,8 @@ export function useEntidadDigital() {
     const r = route.query.redirect;
 
     if (
-      typeof t === "string" &&
-      (t === "CC" || t === "CE" || t === "NIT" || t === "PAS")
+      typeof t === "string"
+      && (t === "CC" || t === "CE" || t === "NIT" || t === "PAS")
     ) {
       tipoIdentificacion.value = t;
     }
@@ -112,7 +112,7 @@ export function useEntidadDigital() {
 
     const basicData = {
       tipoIdentificacion: tipoIdentificacion.value,
-      numeroIdentificacion: numeroIdentificacion.value,
+      numeroIdentificacion: numeroIdentificacion.value
     };
     await storage.setItem("basicFormData", JSON.stringify(basicData));
 
@@ -166,15 +166,15 @@ export function useEntidadDigital() {
         numero_identificacion: numeroIdentificacion.value,
         clave: clave.value,
         documentos,
-        selfie,
+        selfie
       });
 
       if (redirectTo.value) {
         await navigateTo(redirectTo.value);
       }
     } catch (e: any) {
-      errorMsg.value =
-        e?.data?.error || e?.message || "Error creando entidad digital";
+      errorMsg.value
+        = e?.data?.error || e?.message || "Error creando entidad digital";
     } finally {
       loading.value = false;
     }
@@ -203,6 +203,6 @@ export function useEntidadDigital() {
     formatTimeRemaining,
     generateQR: _generateQR,
     nextToQR,
-    goBack,
+    goBack
   };
 }

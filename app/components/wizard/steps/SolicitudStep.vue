@@ -2,13 +2,23 @@
   <div class="grid gap-4">
     <div class="grid gap-4 sm:grid-cols-2">
       <!-- Fecha radicado -->
-      <FormField label="Fecha radicado" class="sm:col-span-2">
-        <UInput v-model="form.solicitud.fecha_radicado" type="date" disabled />
+      <FormField
+        label="Fecha radicado"
+        class="sm:col-span-2"
+      >
+        <UInput
+          v-model="form.solicitud.fecha_radicado"
+          type="date"
+          disabled
+        />
       </FormField>
 
       <!-- Campos de solicitud -->
       <FormField label="Número solicitud">
-        <UInput v-model="form.solicitud.numero_solicitud" disabled />
+        <UInput
+          v-model="form.solicitud.numero_solicitud"
+          disabled
+        />
       </FormField>
       <FormField label="Número comprobante">
         <UInput v-model="form.solicitud.numero_comprobante" />
@@ -22,7 +32,10 @@
         />
       </FormField>
       <FormField label="Categoría">
-        <UInput v-model="form.solicitante.codigo_categoria" disabled />
+        <UInput
+          v-model="form.solicitante.codigo_categoria"
+          disabled
+        />
       </FormField>
       <FormField label="Rol en solicitud">
         <CustomSelect
@@ -69,7 +82,7 @@
           v-model="form.solicitud.ha_tenido_credito"
           :items="[
             { label: 'Sí', value: true },
-            { label: 'No', value: false },
+            { label: 'No', value: false }
           ]"
         />
       </FormField>
@@ -82,7 +95,7 @@ import FormField from "~/components/shared/FormField.vue";
 import CustomSelect from "~/components/shared/CustomSelect.vue";
 import type {
   SelectOption,
-  SolicitudProps,
+  SolicitudProps
 } from "~~/shared/types/solicitud-credito";
 
 const props = defineProps<SolicitudProps>();
@@ -92,14 +105,14 @@ const rolesOptions: SelectOption[] = [
   { label: "Trabajador", value: "T" },
   { label: "Solicitante", value: "S" },
   { label: "Codeudor", value: "C" },
-  { label: "Empleador", value: "E" },
+  { label: "Empleador", value: "E" }
 ];
 
 // Opciones para productos basadas en tiposInversion
 const productosOptions = computed<SelectOption[]>(() => {
-  return (props.tiposInversion || []).map((tipo) => ({
+  return (props.tiposInversion || []).map(tipo => ({
     label: tipo.detalle,
-    value: tipo.tipinv,
+    value: tipo.tipinv
   }));
 });
 
@@ -108,13 +121,13 @@ watch(
   () => props.form.solicitud.producto_tipo,
   (newValue) => {
     if (
-      typeof newValue === "object" &&
-      newValue !== null &&
-      "value" in newValue
+      typeof newValue === "object"
+      && newValue !== null
+      && "value" in newValue
     ) {
       props.form.solicitud.producto_tipo = String(newValue.value);
     }
   },
-  { immediate: true, deep: true },
+  { immediate: true, deep: true }
 );
 </script>

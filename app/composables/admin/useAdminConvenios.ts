@@ -3,7 +3,7 @@ import { useApi } from "~/composables/useApi";
 import type {
   EmpresaConvenio,
   PaginationInfo,
-  ConveniosResponse,
+  ConveniosResponse
 } from "~~/shared/types/convenios";
 
 export function useAdminConvenios() {
@@ -18,20 +18,20 @@ export function useAdminConvenios() {
   const filtros = reactive({
     estado: null as string | null,
     nit: "",
-    busqueda: "",
+    busqueda: ""
   });
 
   // Paginación
   const paginacion = reactive({
     page: 1,
     limit: 20,
-    offset: 0,
+    offset: 0
   });
 
   // Computed properties
   const paginaActual = computed(() => paginacion.page);
   const totalPaginas = computed(() =>
-    Math.ceil(totalEmpresas.value / paginacion.limit),
+    Math.ceil(totalEmpresas.value / paginacion.limit)
   );
 
   const paginasVisibles = computed(() => {
@@ -87,8 +87,8 @@ export function useAdminConvenios() {
       const response = await api.getJson<any>(
         `/api/admin/convenios?${params.toString()}`,
         {
-          auth: true,
-        },
+          auth: true
+        }
       );
 
       console.log("Respuesta de la API:", response);
@@ -104,8 +104,8 @@ export function useAdminConvenios() {
         if (data.pagination) {
           paginacion.page = data.pagination.page;
           paginacion.limit = data.pagination.limit;
-          paginacion.offset =
-            (data.pagination.page - 1) * data.pagination.limit;
+          paginacion.offset
+            = (data.pagination.page - 1) * data.pagination.limit;
         }
       } else {
         console.warn("Estructura de respuesta inesperada:", response);
@@ -180,23 +180,23 @@ export function useAdminConvenios() {
       await api.putJson(
         `/api/admin/empresas-convenios/${empresa.id}/estado`,
         {
-          estado: nuevoEstado,
+          estado: nuevoEstado
         },
-        { auth: true },
+        { auth: true }
       );
 
       // Actualizar estado localmente
-      const index = empresas.value.findIndex((e) => e.id === empresa.id);
+      const index = empresas.value.findIndex(e => e.id === empresa.id);
       const empresaIndex = empresas.value[index];
       if (index !== -1 && empresaIndex) {
         empresaIndex.estado = nuevoEstado;
 
         // Actualizar conteos
         const estadoAnterior = empresa.estado || "unknown";
-        conteoEstados.value[estadoAnterior] =
-          (conteoEstados.value[estadoAnterior] || 0) - 1;
-        conteoEstados.value[nuevoEstado] =
-          (conteoEstados.value[nuevoEstado] || 0) + 1;
+        conteoEstados.value[estadoAnterior]
+          = (conteoEstados.value[estadoAnterior] || 0) - 1;
+        conteoEstados.value[nuevoEstado]
+          = (conteoEstados.value[nuevoEstado] || 0) + 1;
       }
     } catch (err: any) {
       console.error("Error al cambiar estado de la empresa:", err);
@@ -208,18 +208,18 @@ export function useAdminConvenios() {
     try {
       const api = useApi();
       await api.deleteJson(`/api/admin/empresas-convenios/${empresa.id}`, {
-        auth: true,
+        auth: true
       });
 
       // Eliminar del listado local
-      const index = empresas.value.findIndex((e) => e.id === empresa.id);
+      const index = empresas.value.findIndex(e => e.id === empresa.id);
       if (index !== -1) {
         empresas.value.splice(index, 1);
         totalEmpresas.value--;
 
         // Actualizar conteos
-        conteoEstados.value[empresa.estado] =
-          (conteoEstados.value[empresa.estado] || 0) - 1;
+        conteoEstados.value[empresa.estado]
+          = (conteoEstados.value[empresa.estado] || 0) - 1;
       }
     } catch (err: any) {
       console.error("Error al eliminar empresa:", err);
@@ -242,20 +242,20 @@ export function useAdminConvenios() {
   const getEstadoLabel = (estado: string) => {
     const labels: Record<string, string> = {
       Activo: "Activo",
-      Inactivo: "Inactivo",
+      Inactivo: "Inactivo"
     };
     return labels[estado] || estado;
   };
 
   const getEstadoVariant = (
-    estado: string,
+    estado: string
   ): "solid" | "outline" | "soft" | "subtle" => {
     const variants: Record<
       string,
       "solid" | "outline" | "soft" | "subtle"
     > = {
       Activo: "solid",
-      Inactivo: "outline",
+      Inactivo: "outline"
     };
     return variants[estado] || "soft";
   };
@@ -265,7 +265,7 @@ export function useAdminConvenios() {
     return new Date(dateString).toLocaleDateString("es-CO", {
       day: "2-digit",
       month: "2-digit",
-      year: "numeric",
+      year: "numeric"
     });
   };
 
@@ -298,6 +298,6 @@ export function useAdminConvenios() {
     // Utilidades
     getEstadoLabel,
     getEstadoVariant,
-    formatDate,
+    formatDate
   };
 }

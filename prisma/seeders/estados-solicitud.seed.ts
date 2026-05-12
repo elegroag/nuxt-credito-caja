@@ -7,7 +7,7 @@ export const estadosSolicitud = [
     color: "#10B981",
     activo: true,
     created_at: null,
-    updated_at: null,
+    updated_at: null
   },
   {
     id: "CANCELADA",
@@ -17,7 +17,7 @@ export const estadosSolicitud = [
     color: "#6B7280",
     activo: true,
     created_at: null,
-    updated_at: null,
+    updated_at: null
   },
   {
     id: "DESESTIMADA",
@@ -27,7 +27,7 @@ export const estadosSolicitud = [
     color: "#F97316",
     activo: true,
     created_at: null,
-    updated_at: null,
+    updated_at: null
   },
   {
     id: "DESISTE",
@@ -37,7 +37,7 @@ export const estadosSolicitud = [
     color: "#6B7280",
     activo: true,
     created_at: null,
-    updated_at: null,
+    updated_at: null
   },
   {
     id: "DOCUMENTOS_CARGADOS",
@@ -47,7 +47,7 @@ export const estadosSolicitud = [
     color: "#3B82F6",
     activo: true,
     created_at: null,
-    updated_at: null,
+    updated_at: null
   },
   {
     id: "ENVIADO_PENDIENTE_APROBACION",
@@ -57,7 +57,7 @@ export const estadosSolicitud = [
     color: "#8B5CF6",
     activo: true,
     created_at: null,
-    updated_at: null,
+    updated_at: null
   },
   {
     id: "ENVIADO_VALIDACION",
@@ -67,7 +67,7 @@ export const estadosSolicitud = [
     color: "#F59E0B",
     activo: true,
     created_at: null,
-    updated_at: null,
+    updated_at: null
   },
   {
     id: "FIRMADO",
@@ -77,7 +77,7 @@ export const estadosSolicitud = [
     color: "#0D9488",
     activo: true,
     created_at: null,
-    updated_at: null,
+    updated_at: null
   },
   {
     id: "PENDIENTE_FIRMADO",
@@ -87,7 +87,7 @@ export const estadosSolicitud = [
     color: "#f5e20b",
     activo: true,
     created_at: null,
-    updated_at: null,
+    updated_at: null
   },
   {
     id: "POSTULADO",
@@ -97,7 +97,7 @@ export const estadosSolicitud = [
     color: "#6B7280",
     activo: true,
     created_at: null,
-    updated_at: null,
+    updated_at: null
   },
   {
     id: "RECHAZADA",
@@ -107,6 +107,6 @@ export const estadosSolicitud = [
     color: "#EF4444",
     activo: true,
     created_at: null,
-    updated_at: null,
-  },
+    updated_at: null
+  }
 ];

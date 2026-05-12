@@ -12,7 +12,7 @@ export default defineEventHandler(async (event: H3Event) => {
     if (!session?.user?.username) {
       throw createError({
         statusCode: 401,
-        message: "No session found",
+        message: "No session found"
       });
     }
 
@@ -25,7 +25,7 @@ export default defineEventHandler(async (event: H3Event) => {
 
     return CustomResponse.error(
       e?.data?.error || e?.message || "Error conectando con backend",
-      "Error al obtener notificaciones.",
+      "Error al obtener notificaciones."
     );
   }
 });

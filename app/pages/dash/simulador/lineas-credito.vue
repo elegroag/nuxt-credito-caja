@@ -1,19 +1,26 @@
 <template>
   <div class="mx-auto max-w-7xl p-4 sm:p-8">
     <div class="mb-8">
-      <h1 class="text-3xl font-bold text-foreground mb-2">Líneas de Crédito</h1>
+      <h1 class="text-3xl font-bold text-foreground mb-2">
+        Líneas de Crédito
+      </h1>
       <p class="text-muted-foreground">
         Explora nuestras líneas de crédito organizadas por modalidad.
       </p>
     </div>
 
     <!-- Estado de carga -->
-    <div v-if="loading" class="flex justify-center items-center min-h-[400px]">
+    <div
+      v-if="loading"
+      class="flex justify-center items-center min-h-[400px]"
+    >
       <div class="text-center">
         <div
           class="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"
-        ></div>
-        <p class="text-muted-foreground">Cargando líneas de crédito...</p>
+        />
+        <p class="text-muted-foreground">
+          Cargando líneas de crédito...
+        </p>
       </div>
     </div>
 
@@ -26,14 +33,26 @@
         class="border-destructive/50 bg-destructive/5 max-w-md text-center"
       >
         <AlertCircle class="h-12 w-12 text-destructive mx-auto mb-4" />
-        <h3 class="text-lg font-semibold mb-2">Error al cargar</h3>
-        <p class="text-muted-foreground">{{ error }}</p>
-        <UButton @click="fetchLineasCredito" class="mt-4"> Reintentar </UButton>
+        <h3 class="text-lg font-semibold mb-2">
+          Error al cargar
+        </h3>
+        <p class="text-muted-foreground">
+          {{ error }}
+        </p>
+        <UButton
+          class="mt-4"
+          @click="fetchLineasCredito"
+        >
+          Reintentar
+        </UButton>
       </UCard>
     </div>
 
     <!-- Galería de modalidades -->
-    <div v-else class="space-y-8">
+    <div
+      v-else
+      class="space-y-8"
+    >
       <div
         v-for="modalidad in modalidadesAgrupadas"
         :key="modalidad.modxml4"
@@ -45,7 +64,10 @@
         >
           <div class="flex items-center gap-3">
             <div class="p-3 bg-primary/20 rounded-full">
-              <Icon :name="modalidad.icono" class="h-8 w-8 text-primary" />
+              <Icon
+                :name="modalidad.icono"
+                class="h-8 w-8 text-primary"
+              />
             </div>
             <div>
               <h2 class="text-xl font-bold text-foreground">
@@ -56,7 +78,10 @@
               </p>
             </div>
           </div>
-          <Badge variant="secondary" class="ml-auto">
+          <Badge
+            variant="secondary"
+            class="ml-auto"
+          >
             {{ modalidad.lineas.length }} líneas disponibles
           </Badge>
         </div>
@@ -71,7 +96,9 @@
           >
             <div class="flex items-start justify-between mb-3">
               <div class="flex-1">
-                <p class="text-base font-semibold mb-1">{{ linea.detalle }}</p>
+                <p class="text-base font-semibold mb-1">
+                  {{ linea.detalle }}
+                </p>
                 <p class="text-xs text-muted-foreground">
                   Código: {{ linea.tipcre }}
                 </p>
@@ -93,9 +120,7 @@
                 <span class="font-medium">{{ fmt(linea.estcre) }}</span>
               </div>
               <div class="flex justify-between">
-                <span class="text-muted-foreground"
-                  >Pago seguro requerido:</span
-                >
+                <span class="text-muted-foreground">Pago seguro requerido:</span>
                 <span class="font-medium">{{
                   linea.pagseg === "S" ? "Sí" : "No"
                 }}</span>
@@ -126,13 +151,11 @@
               </div>
 
               <div class="flex items-center justify-between text-xs">
-                <span class="text-muted-foreground"
-                  >Documentos requeridos:</span
-                >
+                <span class="text-muted-foreground">Documentos requeridos:</span>
                 <span class="font-medium">
                   {{
                     (linea.documentos || []).filter(
-                      (d: any) => d?.obliga === "S",
+                      (d: any) => d?.obliga === "S"
                     ).length
                   }}
                   obligatorios
@@ -170,6 +193,6 @@ const {
   fetchLineasCredito,
   seleccionarLinea,
   simularLinea,
-  fmt,
+  fmt
 } = useLineasCredito();
 </script>

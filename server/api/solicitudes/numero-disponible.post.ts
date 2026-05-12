@@ -9,11 +9,11 @@ export default defineEventHandler(async (event: H3Event) => {
     const linea_credito = payload.linea_credito;
     const ultimo_numero = await prisma.numero_solicitudes.findFirst({
       where: {
-        linea_credito: linea_credito,
+        linea_credito: linea_credito
       },
       orderBy: {
-        numeric_secuencia: "desc",
-      },
+        numeric_secuencia: "desc"
+      }
     });
     const nuevaSecuencia = (ultimo_numero?.numeric_secuencia ?? 0) + 1;
     const now = new Date();
@@ -27,7 +27,7 @@ export default defineEventHandler(async (event: H3Event) => {
 
     return CustomResponse.error(
       e?.data?.error || e?.message || "Error conectando con backend",
-      "Error al obtener número disponible.",
+      "Error al obtener número disponible."
     );
   }
 });

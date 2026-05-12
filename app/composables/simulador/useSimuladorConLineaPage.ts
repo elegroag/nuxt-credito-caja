@@ -19,7 +19,7 @@ export const useSimuladorConLineaPage = () => {
     convenioVerificado,
     isElegible,
     getMensajeError,
-    validarConvenioAntesDSimular,
+    validarConvenioAntesDSimular
   } = useSimuladorConConvenio();
 
   const tipcre = computed(() => route.params.tipcre as string);
@@ -32,13 +32,13 @@ export const useSimuladorConLineaPage = () => {
 
   // Objeto reactive para el input de monto con validación
   const montoInput = reactive<{
-    val: string;
-    valid: boolean;
-    cls: string;
-    hint: string;
-    hintClass: string;
-    pct: number;
-    pctColor: "primary" | "secondary" | "accent" | "destructive" | "muted" | "neutral";
+    val: string
+    valid: boolean
+    cls: string
+    hint: string
+    hintClass: string
+    pct: number
+    pctColor: "primary" | "secondary" | "accent" | "destructive" | "muted" | "neutral"
   }>({
     val: "",
     valid: false,
@@ -46,7 +46,7 @@ export const useSimuladorConLineaPage = () => {
     hint: "Ingresa un monto entre 200.000 y el máximo permitido",
     hintClass: "",
     pct: 0,
-    pctColor: "neutral",
+    pctColor: "neutral"
   });
 
   // Usar el hook especializado para líneas de crédito
@@ -77,7 +77,7 @@ export const useSimuladorConLineaPage = () => {
     fmt,
     fmtPct,
     reset,
-    cambiarTipoTasa,
+    cambiarTipoTasa
   } = useSimuladorWithLinea(lineaSeleccionada);
 
   const navigateToLineas = () => {
@@ -146,8 +146,8 @@ export const useSimuladorConLineaPage = () => {
       montoInput.hint = "✓ Monto válido";
       montoInput.hintClass = "success";
       montoInput.pct = Math.round((v / valmax) * 100);
-      montoInput.pctColor =
-        v < valmax * 0.33
+      montoInput.pctColor
+        = v < valmax * 0.33
           ? "primary"
           : v < valmax * 0.66
             ? "secondary"
@@ -169,9 +169,9 @@ export const useSimuladorConLineaPage = () => {
       } else {
         // Consultar API si no está en cache
         const response = await getJson<{
-          success: boolean;
-          message: string;
-          data: any[];
+          success: boolean
+          message: string
+          data: any[]
         }>("/api/lineas_credito/tipo-creditos", { auth: true });
 
         if (response.success) {
@@ -182,15 +182,15 @@ export const useSimuladorConLineaPage = () => {
 
           // Obtener la línea específica
           lineaSeleccionada.value = response.data.find(
-            (linea) => linea.tipcre === tipcre.value,
+            linea => linea.tipcre === tipcre.value
           );
 
           if (!lineaSeleccionada.value) {
             error.value = "Línea de crédito no encontrada";
           }
         } else {
-          error.value =
-            response.message || "Error al cargar la línea de crédito";
+          error.value
+            = response.message || "Error al cargar la línea de crédito";
         }
       }
 
@@ -204,17 +204,17 @@ export const useSimuladorConLineaPage = () => {
 
       // Establecer tasa según categoría del trabajador
       if (
-        trabajador.value?.codigo_categoria &&
-        lineaSeleccionada.value?.categorias
+        trabajador.value?.codigo_categoria
+        && lineaSeleccionada.value?.categorias
       ) {
         const categoriaTrabajador = String(
-          trabajador.value.codigo_categoria,
+          trabajador.value.codigo_categoria
         ).toLowerCase();
         const categoriaLinea = lineaSeleccionada.value.categorias.find(
           (cat: any) =>
-            cat &&
-            cat.codcat &&
-            String(cat.codcat).toLowerCase() === categoriaTrabajador,
+            cat
+            && cat.codcat
+            && String(cat.codcat).toLowerCase() === categoriaTrabajador
         );
 
         if (categoriaLinea && categoriaLinea.facfin) {
@@ -230,8 +230,8 @@ export const useSimuladorConLineaPage = () => {
       }
     } catch (err) {
       console.error("Error cargando línea crédito:", err);
-      error.value =
-        "No se pudo cargar la línea de crédito. Por favor, intenta nuevamente.";
+      error.value
+        = "No se pudo cargar la línea de crédito. Por favor, intenta nuevamente.";
     } finally {
       loading.value = false;
     }
@@ -245,7 +245,7 @@ export const useSimuladorConLineaPage = () => {
         montoInput.val = value;
         validarMonto();
       }
-    },
+    }
   });
 
   // Computed para manejar el v-model del input de tasa
@@ -260,7 +260,7 @@ export const useSimuladorConLineaPage = () => {
       } else {
         tasaMensualInput.value = value;
       }
-    },
+    }
   });
 
   // Función para guardar datos manualmente (solo cuando se pulse el botón)
@@ -284,7 +284,7 @@ export const useSimuladorConLineaPage = () => {
         tieneConvenio: isElegible.value,
         convenioVerificado: convenioVerificado.value,
         nitEmpresa: nitEmpresa.value,
-        cedulaTrabajador: cedulaTrabajador.value,
+        cedulaTrabajador: cedulaTrabajador.value
       });
     }
   };
@@ -298,7 +298,7 @@ export const useSimuladorConLineaPage = () => {
         validarMonto();
       }
     },
-    { immediate: true },
+    { immediate: true }
   );
 
   // Watch para validar convenio cuando el trabajador esté disponible
@@ -312,7 +312,7 @@ export const useSimuladorConLineaPage = () => {
       console.log("Watch trabajador:", {
         nit,
         cedula,
-        convenioVerificado: convenioVerificado.value,
+        convenioVerificado: convenioVerificado.value
       });
 
       if (nit && cedula && !convenioVerificado.value) {
@@ -323,7 +323,7 @@ export const useSimuladorConLineaPage = () => {
         console.log("Resultado:", resultado);
       }
     },
-    { immediate: true },
+    { immediate: true }
   );
 
   // Cargar datos al montar el componente
@@ -384,6 +384,6 @@ export const useSimuladorConLineaPage = () => {
     navigateToLineas,
     cargarLineaCredito,
     saveDataManual,
-    validarMontoMaximo,
+    validarMontoMaximo
   };
 };

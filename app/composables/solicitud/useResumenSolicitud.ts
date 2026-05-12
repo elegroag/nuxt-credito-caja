@@ -13,8 +13,8 @@ export const useResumenSolicitud = () => {
   const solicitudId = route.params.id as string;
 
   // Composable de documentos
-  const { cargarDocumentos, documentosCargados, documentosRequeridos } =
-    useDocumentos(solicitudId);
+  const { cargarDocumentos, documentosCargados, documentosRequeridos }
+    = useDocumentos(solicitudId);
 
   // Estado
   const solicitud = ref<SolicitudCredito | null>(null);
@@ -26,16 +26,16 @@ export const useResumenSolicitud = () => {
   const todosDocumentosCompletos = computed(() => {
     if (!documentosRequeridos.value) return false;
     const obligatorios = documentosRequeridos.value.filter(
-      (d) => d.obligatorio,
+      d => d.obligatorio
     );
-    return obligatorios.every((d) => getDocumentoCargado(d.id));
+    return obligatorios.every(d => getDocumentoCargado(d.id));
   });
 
   // Métodos
   const getDocumentoCargado = (reqId: string) => {
     if (!documentosCargados.value) return null;
     return documentosCargados.value.find(
-      (d) => d.documento_requerido_id === reqId,
+      d => d.documento_requerido_id === reqId
     );
   };
 
@@ -46,8 +46,8 @@ export const useResumenSolicitud = () => {
     try {
       // Cargar datos de la solicitud
       const response = await getJson<{
-        success: boolean;
-        data: SolicitudCredito;
+        success: boolean
+        data: SolicitudCredito
       }>(`/api/solicitudes/${solicitudId}`, { auth: true });
       solicitud.value = response.data;
 
@@ -55,8 +55,8 @@ export const useResumenSolicitud = () => {
       await cargarDocumentos();
     } catch (e: any) {
       console.error(e);
-      errorSolicitud.value =
-        e.message || "No se pudo cargar la información de la solicitud.";
+      errorSolicitud.value
+        = e.message || "No se pudo cargar la información de la solicitud.";
     } finally {
       loadingSolicitud.value = false;
     }
@@ -86,20 +86,20 @@ export const useResumenSolicitud = () => {
 
       // Primero cambiar el estado a ENVIADO_VALIDACION
       const estadoResponse = await postJson<{
-        success: boolean;
-        message?: string;
+        success: boolean
+        message?: string
       }>(
         `/api/solicitudes/${solicitudId}/cambiar-estado`,
         {
-          estado: "ENVIADO_VALIDACION",
+          estado: "ENVIADO_VALIDACION"
         },
-        { auth: true },
+        { auth: true }
       );
 
       if (!estadoResponse.success) {
-        errorSolicitud.value =
-          estadoResponse.message ||
-          "Error al cambiar el estado de la solicitud";
+        errorSolicitud.value
+          = estadoResponse.message
+            || "Error al cambiar el estado de la solicitud";
         return;
       }
 
@@ -107,14 +107,14 @@ export const useResumenSolicitud = () => {
 
       // Generar oficio PDF usando el endpoint existente
       const pdfResponse = await postJson<{
-        success: boolean;
-        message?: string;
+        success: boolean
+        message?: string
       }>(
         `/api/solicitudes/${solicitudId}/generar-pdf`,
         {
-          fecha_envio: new Date().toISOString(),
+          fecha_envio: new Date().toISOString()
         },
-        { auth: true },
+        { auth: true }
       );
 
       console.log("Response generacion PDF:", pdfResponse);
@@ -127,8 +127,8 @@ export const useResumenSolicitud = () => {
       }
     } catch (e: any) {
       console.error(e);
-      errorSolicitud.value =
-        e.message || "Error al enviar la solicitud para validación.";
+      errorSolicitud.value
+        = e.message || "Error al enviar la solicitud para validación.";
     } finally {
       enviando.value = false;
     }
@@ -154,6 +154,6 @@ export const useResumenSolicitud = () => {
 
     // Datos del composable de documentos
     documentosCargados,
-    documentosRequeridos,
+    documentosRequeridos
   };
 };

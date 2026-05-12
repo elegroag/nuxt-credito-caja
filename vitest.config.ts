@@ -10,13 +10,13 @@ export default defineVitestConfig({
       "@": new URL("./app/", import.meta.url).pathname,
       "@/**": new URL("./app/", import.meta.url).pathname,
       "@tests": new URL("./tests/", import.meta.url).pathname,
-      "@tests/*": new URL("./tests/", import.meta.url).pathname,
+      "@tests/*": new URL("./tests/", import.meta.url).pathname
     },
     exclude: [
       "**/node_modules/**",
       "**/.nuxt/**",
       "**/dist/**",
-      "tests/e2e/**",
+      "tests/e2e/**"
     ],
     include: ["tests/integration/**/*.spec.ts"],
     testTimeout: 60_000,
@@ -29,7 +29,7 @@ export default defineVitestConfig({
         lines: 80,
         functions: 80,
         branches: 75,
-        statements: 80,
+        statements: 80
       },
       include: ["server/**/*.ts", "app/**/*.ts"],
       exclude: [
@@ -38,8 +38,8 @@ export default defineVitestConfig({
         "nuxt.config.ts",
         "**/*.d.ts",
         "**/index.ts",
-        "server/plugins/**",
-      ],
-    },
-  },
+        "server/plugins/**"
+      ]
+    }
+  }
 });

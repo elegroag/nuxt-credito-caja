@@ -9,7 +9,7 @@ export default defineEventHandler(async (event) => {
     if (!authorization) {
       throw createError({
         statusCode: 401,
-        statusMessage: "No autorizado",
+        statusMessage: "No autorizado"
       });
     }
 
@@ -19,10 +19,10 @@ export default defineEventHandler(async (event) => {
     const response = await $fetch(`${config.backendBaseUrl}/api/auth/perfil`, {
       method: "PUT",
       headers: {
-        Authorization: authorization,
-        "Content-Type": "application/json",
+        "Authorization": authorization,
+        "Content-Type": "application/json"
       },
-      body,
+      body
     });
 
     return CustomResponse.success(response, "Perfil actualizado exitosamente");
@@ -35,7 +35,7 @@ export default defineEventHandler(async (event) => {
 
     throw createError({
       statusCode: 500,
-      statusMessage: "Error al actualizar el perfil del usuario",
+      statusMessage: "Error al actualizar el perfil del usuario"
     });
   }
 });

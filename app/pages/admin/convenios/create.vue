@@ -27,7 +27,10 @@
       :title="errors.general"
     />
 
-    <form @submit.prevent="handleSubmit" class="space-y-6">
+    <form
+      class="space-y-6"
+      @submit.prevent="handleSubmit"
+    >
       <!-- Información de la Empresa -->
       <UPageCard
         title="Información de la Empresa"
@@ -35,7 +38,11 @@
         :ui="{ container: 'sm:p-6' }"
       >
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <UFormField label="NIT" required :error="errors.nit">
+          <UFormField
+            label="NIT"
+            required
+            :error="errors.nit"
+          >
             <UInput
               v-model="form.nit"
               type="number"
@@ -123,7 +130,10 @@
         :ui="{ container: 'sm:p-6' }"
       >
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <UFormField label="Teléfono" :error="errors.telefono">
+          <UFormField
+            label="Teléfono"
+            :error="errors.telefono"
+          >
             <UInput
               v-model="form.telefono"
               type="tel"
@@ -136,7 +146,10 @@
               <span class="text-destructive">{{ errors.telefono }}</span>
             </template>
           </UFormField>
-          <UFormField label="Correo Electrónico" :error="errors.correo">
+          <UFormField
+            label="Correo Electrónico"
+            :error="errors.correo"
+          >
             <UInput
               v-model="form.correo"
               type="email"
@@ -176,7 +189,10 @@
               }}</span>
             </template>
           </UFormField>
-          <UFormField label="Estado Inicial" :error="errors.estado">
+          <UFormField
+            label="Estado Inicial"
+            :error="errors.estado"
+          >
             <USelect
               v-model="form.estado"
               :items="opcionesEstado"
@@ -224,7 +240,7 @@ import { useApi } from "~/composables/useApi";
 
 definePageMeta({
   layout: "dashboard",
-  middleware: ["auth"],
+  middleware: ["auth"]
 });
 
 const router = useRouter();
@@ -240,12 +256,12 @@ const form = reactive({
   telefono: "",
   correo: "",
   fecha_vencimiento: "",
-  estado: "Activo",
+  estado: "Activo"
 });
 
 const opcionesEstado = [
   { label: "Activo", value: "Activo" },
-  { label: "Inactivo", value: "Inactivo" },
+  { label: "Inactivo", value: "Inactivo" }
 ];
 
 // Validación del formulario
@@ -263,16 +279,16 @@ const validateForm = (): boolean => {
   }
 
   if (!form.representante_documento) {
-    errors.value.representante_documento =
-      "El documento del representante es requerido";
+    errors.value.representante_documento
+      = "El documento del representante es requerido";
   } else if (!/^\d{5,15}$/.test(form.representante_documento.toString())) {
-    errors.value.representante_documento =
-      "El documento debe ser un número de 5 a 15 dígitos";
+    errors.value.representante_documento
+      = "El documento debe ser un número de 5 a 15 dígitos";
   }
 
   if (!form.representante_nombre.trim()) {
-    errors.value.representante_nombre =
-      "El nombre del representante es requerido";
+    errors.value.representante_nombre
+      = "El nombre del representante es requerido";
   }
 
   if (form.correo && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.correo)) {
@@ -306,8 +322,8 @@ const handleSubmit = async () => {
         telefono: form.telefono.trim(),
         correo: form.correo.trim(),
         fecha_vencimiento: form.fecha_vencimiento || "",
-        estado: form.estado,
-      },
+        estado: form.estado
+      }
     });
 
     if (response.success) {

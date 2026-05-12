@@ -2,31 +2,31 @@ import { ref, computed } from "#imports";
 import { useApi } from "~/composables/useApi";
 
 interface PDFGenerationResponse {
-  success: boolean;
+  success: boolean
   data: {
-    solicitud_id: string;
-    pdf_path: string;
-    pdf_filename: string;
-    convenio: boolean;
-    firmantes: number;
-    generado_en: string;
-  };
-  message: string;
+    solicitud_id: string
+    pdf_path: string
+    pdf_filename: string
+    convenio: boolean
+    firmantes: number
+    generado_en: string
+  }
+  message: string
 }
 
 interface PDFEstadoResponse {
-  success: boolean;
+  success: boolean
   data: {
-    solicitud_id: string;
-    tiene_pdf: boolean;
+    solicitud_id: string
+    tiene_pdf: boolean
     pdf_generado: {
-      filename: string;
-      generado_en: string;
-      archivo_existe: boolean;
-      path: string | null;
-    } | null;
-  };
-  message: string;
+      filename: string
+      generado_en: string
+      archivo_existe: boolean
+      path: string | null
+    } | null
+  }
+  message: string
 }
 
 export function usePDFGenerator() {
@@ -40,9 +40,9 @@ export function usePDFGenerator() {
   const tienePDF = computed(() => estadoPdf.value?.tiene_pdf ?? false);
   const pdfFilename = computed(
     () =>
-      pdfData.value?.pdf_filename ??
-      estadoPdf.value?.pdf_generado?.filename ??
-      null,
+      pdfData.value?.pdf_filename
+      ?? estadoPdf.value?.pdf_generado?.filename
+      ?? null
   );
 
   /**
@@ -58,7 +58,7 @@ export function usePDFGenerator() {
       const response = await api.postJson<PDFGenerationResponse>(
         path,
         {},
-        { auth: true },
+        { auth: true }
       );
 
       if (response.success && response.data) {
@@ -74,8 +74,8 @@ export function usePDFGenerator() {
       if (errorData?.error_type === "NOT_FOUND") {
         error.value = "No se encontró la solicitud";
       } else if (errorData?.error_type === "VALIDATION_ERROR") {
-        error.value =
-          errorData.message || "Datos insuficientes para generar el PDF";
+        error.value
+          = errorData.message || "Datos insuficientes para generar el PDF";
       } else {
         error.value = "Error al generar el PDF. Intente nuevamente.";
       }
@@ -100,7 +100,7 @@ export function usePDFGenerator() {
 
       const baseUrl = String(config.public.backendBaseUrl || "").replace(
         /\/+$/,
-        "",
+        ""
       );
       const url = `${baseUrl}/api/solicitudes/${solicitudId}/descargar-pdf`;
 
@@ -109,15 +109,15 @@ export function usePDFGenerator() {
       const response = await fetch(url, {
         method: "GET",
         headers: {
-          ...headers,
-        },
+          ...headers
+        }
       });
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
-        error.value =
-          errorData.message ||
-          "El PDF no está disponible. Por favor genérelo primero.";
+        error.value
+          = errorData.message
+            || "El PDF no está disponible. Por favor genérelo primero.";
         return false;
       }
 
@@ -131,7 +131,7 @@ export function usePDFGenerator() {
 
       if (contentDisposition) {
         const filenameMatch = contentDisposition.match(
-          /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/,
+          /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/
         );
         if (filenameMatch && filenameMatch[1]) {
           filename = filenameMatch[1].replace(/['"]/g, "");
@@ -167,7 +167,7 @@ export function usePDFGenerator() {
 
       const baseUrl = String(config.public.backendBaseUrl || "").replace(
         /\/+$/,
-        "",
+        ""
       );
       const url = `${baseUrl}/api/solicitudes/${solicitudId}/descargar-pdf`;
 
@@ -176,15 +176,15 @@ export function usePDFGenerator() {
       const response = await fetch(url, {
         method: "GET",
         headers: {
-          ...headers,
-        },
+          ...headers
+        }
       });
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
-        error.value =
-          errorData.message ||
-          "El PDF no está disponible. Por favor genérelo primero.";
+        error.value
+          = errorData.message
+            || "El PDF no está disponible. Por favor genérelo primero.";
         return false;
       }
 
@@ -194,8 +194,8 @@ export function usePDFGenerator() {
       const newWindow = window.open(blobUrl, "_blank");
 
       if (!newWindow) {
-        error.value =
-          "Por favor permita ventanas emergentes para visualizar el PDF";
+        error.value
+          = "Por favor permita ventanas emergentes para visualizar el PDF";
         window.URL.revokeObjectURL(blobUrl);
         return false;
       }
@@ -224,7 +224,7 @@ export function usePDFGenerator() {
     try {
       const response = await api.getJson<PDFEstadoResponse>(
         `/api/solicitudes/${solicitudId}/estado-pdf`,
-        { auth: true },
+        { auth: true }
       );
 
       if (response.success && response.data) {
@@ -247,13 +247,13 @@ export function usePDFGenerator() {
    * Genera y descarga el PDF en una sola operación
    */
   const generarYDescargarPDF = async (
-    solicitudId: string,
+    solicitudId: string
   ): Promise<boolean> => {
     const generado = await generarPDF(solicitudId);
 
     if (generado) {
       // Pequeña espera para asegurar que el archivo esté listo
-      await new Promise((resolve) => setTimeout(resolve, 500));
+      await new Promise(resolve => setTimeout(resolve, 500));
       await descargarPDF(solicitudId);
       return true;
     }
@@ -300,6 +300,6 @@ export function usePDFGenerator() {
     visualizarPDF,
     verificarEstadoPDF,
     generarYDescargarPDF,
-    limpiarEstado,
+    limpiarEstado
   };
 }

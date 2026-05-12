@@ -19,7 +19,7 @@ export default defineEventHandler(async (event: H3Event) => {
     }
 
     const notification = await prisma.notifications.findUnique({
-      where: { id },
+      where: { id }
     });
 
     if (!notification) {
@@ -36,8 +36,8 @@ export default defineEventHandler(async (event: H3Event) => {
       where: { id },
       data: {
         read_at: new Date(),
-        updated_at: new Date(),
-      },
+        updated_at: new Date()
+      }
     });
 
     return CustomResponse.ok(null, "Notificación marcada como leída");
@@ -48,7 +48,7 @@ export default defineEventHandler(async (event: H3Event) => {
 
     return CustomResponse.error(
       error?.data?.error || error?.message || "Error al marcar notificación como leída",
-      "Error al marcar lectura.",
+      "Error al marcar lectura."
     );
   }
 });

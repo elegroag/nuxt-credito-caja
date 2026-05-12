@@ -31,7 +31,10 @@
       />
     </FormField>
     <FormField label="Fecha ingreso">
-      <UInput v-model="form.informacion_laboral.fecha_ingreso" type="date" />
+      <UInput
+        v-model="form.informacion_laboral.fecha_ingreso"
+        type="date"
+      />
     </FormField>
     <FormField label="Tipo contrato">
       <CustomSelect
@@ -71,7 +74,7 @@ import type { LaboralProps } from "~~/shared/types/solicitud-credito";
 const props = withDefaults(defineProps<LaboralProps>(), {
   ciudades: () => [],
   tiposContrato: () => [],
-  ocupaciones: () => [],
+  ocupaciones: () => []
 });
 
 const {
@@ -79,6 +82,6 @@ const {
   tiempoUnidadOptions,
   cargosOptions,
   ciudadesOptions,
-  tiposContratoOptions,
+  tiposContratoOptions
 } = useLaboralStep(props);
 </script>

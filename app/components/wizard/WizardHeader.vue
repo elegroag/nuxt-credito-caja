@@ -19,8 +19,8 @@
           variant="outline"
           size="sm"
           :disabled="currentStep === 0"
-          @click="$emit('prev')"
           type="button"
+          @click="$emit('prev')"
         >
           <ChevronLeft class="mr-2 h-4 w-4" />
           {{ prevText }}
@@ -29,8 +29,8 @@
         <UButton
           v-if="currentStep < totalSteps - 1"
           size="sm"
-          @click="$emit('next')"
           type="button"
+          @click="$emit('next')"
         >
           {{ nextText }}
           <ChevronRight class="ml-2 h-4 w-4" />
@@ -40,8 +40,8 @@
           <UButton
             size="sm"
             :disabled="primaryButtonDisabled"
-            @click="$emit('primary-action')"
             type="button"
+            @click="$emit('primary-action')"
           >
             <Send class="mr-2 h-4 w-4" />
             {{ primaryButtonText }}
@@ -60,8 +60,8 @@
             ? 'bg-primary text-primary-foreground shadow-sm'
             : 'bg-muted text-muted-foreground hover:bg-accent hover:text-accent-foreground'
         "
-        @click="$emit('step-change', index)"
         type="button"
+        @click="$emit('step-change', index)"
       >
         {{ step.short }}
       </button>
@@ -74,20 +74,20 @@ import { ChevronLeft, ChevronRight, FileCode, Send } from "lucide-vue-next";
 
 // Definición de interfaces
 interface Step {
-  key: string;
-  title: string;
-  short: string;
+  key: string
+  title: string
+  short: string
 }
 
 interface Props {
-  currentStep: number;
-  totalSteps: number;
-  title: string;
-  steps: Step[];
-  prevText?: string;
-  nextText?: string;
-  primaryButtonText?: string;
-  primaryButtonDisabled?: boolean;
+  currentStep: number
+  totalSteps: number
+  title: string
+  steps: Step[]
+  prevText?: string
+  nextText?: string
+  primaryButtonText?: string
+  primaryButtonDisabled?: boolean
 }
 
 // Props con valores por defecto
@@ -95,15 +95,15 @@ const props = withDefaults(defineProps<Props>(), {
   prevText: "Atrás",
   nextText: "Siguiente",
   primaryButtonText: "Enviar",
-  primaryButtonDisabled: false,
+  primaryButtonDisabled: false
 });
 
 // Emits
 interface Emits {
-  (e: "prev"): void;
-  (e: "next"): void;
-  (e: "step-change", index: number): void;
-  (e: "primary-action"): void;
+  (e: "prev"): void
+  (e: "next"): void
+  (e: "step-change", index: number): void
+  (e: "primary-action"): void
 }
 
 defineEmits<Emits>();

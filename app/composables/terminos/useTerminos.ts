@@ -1,26 +1,26 @@
-import { onMounted } from 'vue'
-import { useParametros } from '~/composables/useParametros'
+import { onMounted } from "vue";
+import { useParametros } from "~/composables/useParametros";
 
 export function useTerminos() {
   const {
     cargarParametros,
     loading: loadingParametros,
     error: errorParametros,
-    getMotivosRechazo,
-  } = useParametros()
+    getMotivosRechazo
+  } = useParametros();
 
   const cargarTerminos = async () => {
-    await cargarParametros()
-  }
+    await cargarParametros();
+  };
 
   onMounted(async () => {
-    await cargarTerminos()
-  })
+    await cargarTerminos();
+  });
 
   return {
     loadingParametros,
     errorParametros,
     motivosRechazo: getMotivosRechazo,
-    cargarTerminos,
-  }
+    cargarTerminos
+  };
 }

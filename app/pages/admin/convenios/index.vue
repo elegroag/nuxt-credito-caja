@@ -5,7 +5,7 @@ import { useAdminConvenios } from "~/composables/admin/useAdminConvenios";
 
 definePageMeta({
   layout: "dashboard",
-  middleware: ["auth"],
+  middleware: ["auth"]
 });
 
 const {
@@ -27,7 +27,7 @@ const {
   eliminarEmpresa,
   cambiarLimite,
   aplicarFiltros,
-  formatDate,
+  formatDate
 } = useAdminConvenios();
 
 onMounted(() => cargarEmpresas());
@@ -68,7 +68,7 @@ const importarExcel = async () => {
     formData.append("file", archivoImportar.value);
     const response = await $fetch("/api/admin/empresas-convenios/import", {
       method: "POST",
-      body: formData,
+      body: formData
     });
     resultadoImportacion.value = response as Record<string, any>;
     await recargarDatos();
@@ -87,35 +87,35 @@ type Empresa = (typeof empresas.value)[number];
 const columns: TableColumn<Empresa>[] = [
   {
     accessorKey: "nit",
-    header: "NIT",
+    header: "NIT"
   },
   {
     accessorKey: "razon_social",
-    header: "Razón Social",
+    header: "Razón Social"
   },
   {
     accessorKey: "representante_nombre",
-    header: "Representante",
+    header: "Representante"
   },
   {
     accessorKey: "estado",
-    header: "Estado",
+    header: "Estado"
   },
   {
     accessorKey: "fecha_convenio",
     header: "Fecha Convenio",
-    cell: ({ row }) => formatDate(row.getValue("fecha_convenio")),
+    cell: ({ row }) => formatDate(row.getValue("fecha_convenio"))
   },
   {
     accessorKey: "fecha_vencimiento",
     header: "Vencimiento",
-    cell: ({ row }) => formatDate(row.getValue("fecha_vencimiento")),
+    cell: ({ row }) => formatDate(row.getValue("fecha_vencimiento"))
   },
   {
     id: "acciones",
     header: () => "",
-    meta: { class: { th: "text-right", td: "text-right" } },
-  },
+    meta: { class: { th: "text-right", td: "text-right" } }
+  }
 ];
 
 // Opciones de página
@@ -123,12 +123,12 @@ const opcionesLimite = [
   { label: "10 / pág", value: 10 },
   { label: "20 / pág", value: 20 },
   { label: "50 / pág", value: 50 },
-  { label: "100 / pág", value: 100 },
+  { label: "100 / pág", value: 100 }
 ];
 const opcionesEstado = [
   { label: "Todos", value: null },
   { label: "Activo", value: "Activo" },
-  { label: "Inactivo", value: "Inactivo" },
+  { label: "Inactivo", value: "Inactivo" }
 ];
 </script>
 
@@ -142,7 +142,10 @@ const opcionesEstado = [
         <h1
           class="text-xl font-semibold text-foreground flex items-center gap-2"
         >
-          <UIcon name="i-lucide-building-2" class="w-5 h-5 text-primary" />
+          <UIcon
+            name="i-lucide-building-2"
+            class="w-5 h-5 text-primary"
+          />
           Administración de Convenios
         </h1>
         <p class="mt-1 text-sm text-muted-foreground">
@@ -188,7 +191,9 @@ const opcionesEstado = [
           <p class="text-xs text-muted-foreground uppercase tracking-wide">
             Total
           </p>
-          <p class="text-2xl font-bold text-foreground">{{ totalEmpresas }}</p>
+          <p class="text-2xl font-bold text-foreground">
+            {{ totalEmpresas }}
+          </p>
         </div>
         <UIcon
           name="i-lucide-building-2"
@@ -238,8 +243,8 @@ const opcionesEstado = [
             :items="opcionesEstado"
             value-key="value"
             label-key="label"
-            @change="aplicarFiltros"
             class="w-full"
+            @change="aplicarFiltros"
           />
         </UFormField>
         <UFormField label="Buscar">
@@ -247,8 +252,8 @@ const opcionesEstado = [
             v-model="filtros.busqueda"
             placeholder="Razón social, NIT, representante..."
             icon="i-lucide-search"
-            @input="debounceSearch"
             class="w-full"
+            @input="debounceSearch"
           />
         </UFormField>
         <UFormField label="NIT">
@@ -256,8 +261,8 @@ const opcionesEstado = [
             v-model="filtros.nit"
             placeholder="NIT de la empresa..."
             icon="i-lucide-hash"
-            @input="debounceSearch"
             class="w-full"
+            @input="debounceSearch"
           />
         </UFormField>
       </div>
@@ -270,18 +275,24 @@ const opcionesEstado = [
       >
         <p class="text-sm font-medium text-foreground">
           Empresas con convenios
-          <UBadge color="neutral" variant="subtle" class="ml-2">{{
-            totalEmpresas
-          }}</UBadge>
+          <UBadge
+            color="neutral"
+            variant="subtle"
+            class="ml-2"
+          >
+            {{
+              totalEmpresas
+            }}
+          </UBadge>
         </p>
         <USelect
           v-model.number="paginacion.limit"
           :items="opcionesLimite"
           value-key="value"
           label-key="label"
-          @change="cambiarLimite"
           size="sm"
           class="w-32"
+          @change="cambiarLimite"
         />
       </div>
 
@@ -294,11 +305,16 @@ const opcionesEstado = [
           name="i-lucide-loader-circle"
           class="w-8 h-8 animate-spin text-primary"
         />
-        <p class="text-sm">Cargando convenios…</p>
+        <p class="text-sm">
+          Cargando convenios…
+        </p>
       </div>
 
       <!-- Error -->
-      <div v-else-if="error" class="p-6">
+      <div
+        v-else-if="error"
+        class="p-6"
+      >
         <UAlert
           color="destructive"
           variant="subtle"
@@ -311,8 +327,9 @@ const opcionesEstado = [
               variant="outline"
               color="neutral"
               @click="cargarEmpresas"
-              >Reintentar</UButton
             >
+              Reintentar
+            </UButton>
           </template>
         </UAlert>
       </div>
@@ -322,19 +339,32 @@ const opcionesEstado = [
         v-else-if="empresas.length === 0"
         class="flex flex-col items-center justify-center py-16 gap-2 text-muted-foreground"
       >
-        <UIcon name="i-lucide-building-2" class="w-10 h-10 opacity-30" />
-        <p class="text-sm">No se encontraron empresas con convenios</p>
+        <UIcon
+          name="i-lucide-building-2"
+          class="w-10 h-10 opacity-30"
+        />
+        <p class="text-sm">
+          No se encontraron empresas con convenios
+        </p>
       </div>
 
       <!-- UTable -->
-      <UTable v-else :data="empresas" :columns="columns" class="w-full">
+      <UTable
+        v-else
+        :data="empresas"
+        :columns="columns"
+        class="w-full"
+      >
         <template #razon_social-cell="{ row }">
           <div>
             <p class="font-medium text-foreground text-sm">
               {{ row.original.razon_social }}
             </p>
             <p class="text-xs text-muted-foreground flex items-center gap-1">
-              <UIcon name="i-lucide-mail" class="w-3 h-3" />
+              <UIcon
+                name="i-lucide-mail"
+                class="w-3 h-3"
+              />
               {{ row.original.correo }}
             </p>
           </div>
@@ -346,7 +376,10 @@ const opcionesEstado = [
               {{ row.original.representante_nombre }}
             </p>
             <p class="text-xs text-muted-foreground flex items-center gap-1">
-              <UIcon name="i-lucide-id-card" class="w-3 h-3" />
+              <UIcon
+                name="i-lucide-id-card"
+                class="w-3 h-3"
+              />
               {{ row.original.representante_documento }}
             </p>
           </div>
@@ -429,16 +462,23 @@ const opcionesEstado = [
       title="Importar Empresas desde Excel"
     >
       <template #body>
-        <div v-if="!resultadoImportacion" class="space-y-4">
+        <div
+          v-if="!resultadoImportacion"
+          class="space-y-4"
+        >
           <div
             class="rounded-lg bg-muted/40 p-3 text-xs text-muted-foreground space-y-1"
           >
-            <p class="font-semibold text-foreground">Columnas requeridas:</p>
+            <p class="font-semibold text-foreground">
+              Columnas requeridas:
+            </p>
             <p>
               NIT · Razón Social · Representante Documento · Representante
               Nombre
             </p>
-            <p class="font-semibold text-foreground mt-2">Opcionales:</p>
+            <p class="font-semibold text-foreground mt-2">
+              Opcionales:
+            </p>
             <p>Teléfono · Correo · Fecha Vencimiento · Estado</p>
           </div>
 
@@ -446,19 +486,25 @@ const opcionesEstado = [
             <UInput
               type="file"
               accept=".xlsx,.xls"
-              @change="manejarArchivoSeleccionado"
               class="w-full"
+              @change="manejarArchivoSeleccionado"
             />
           </UFormField>
 
-          <p v-if="archivoImportar" class="text-xs text-muted-foreground">
+          <p
+            v-if="archivoImportar"
+            class="text-xs text-muted-foreground"
+          >
             {{ archivoImportar.name }} —
             {{ Number((archivoImportar.size / 1024).toFixed(2)) }} KB
           </p>
         </div>
 
         <!-- Resultado -->
-        <div v-else class="space-y-4">
+        <div
+          v-else
+          class="space-y-4"
+        >
           <UAlert
             color="primary"
             variant="subtle"

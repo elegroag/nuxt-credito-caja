@@ -6,7 +6,7 @@ import { z } from "zod";
 
 const bodySchema = z.object({
   cedtra: z.string().min(3, "Cédula debe tener al menos 3 caracteres"),
-  estado: z.string().min(1, "Estado es requerido"),
+  estado: z.string().min(1, "Estado es requerido")
 });
 
 export default defineEventHandler(async (event: H3Event) => {
@@ -15,7 +15,7 @@ export default defineEventHandler(async (event: H3Event) => {
 
     const conyugeTrabajador = await datosApiSisuwebService().conyugeTrabajador({
       cedtra,
-      estado,
+      estado
     });
 
     return CustomResponse.success(conyugeTrabajador, "Solicitudes obtenidas exitosamente");
@@ -25,7 +25,7 @@ export default defineEventHandler(async (event: H3Event) => {
 
     return CustomResponse.error(
       e?.data?.error || e?.message || "Error conectando con backend",
-      "Error al obtener conyuge trabajador.",
+      "Error al obtener conyuge trabajador."
     );
   }
 });

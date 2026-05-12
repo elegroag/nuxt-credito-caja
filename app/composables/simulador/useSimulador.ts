@@ -21,18 +21,18 @@ export function useSimulador() {
   // Computed properties con validación y saneamiento
   const montoSan = computed(() => Math.max(0, _num(monto.value)));
   const plazoMesesSan = computed(() =>
-    Math.max(1, Math.floor(_num(plazoMeses.value) || 1)),
+    Math.max(1, Math.floor(_num(plazoMeses.value) || 1))
   );
   const tasaEASan = computed(() => Math.max(0, _num(tasaEfectivaAnual.value)));
   const tasaMensualSan = computed(() =>
-    Math.max(0, _num(tasaMensualInput.value)),
+    Math.max(0, _num(tasaMensualInput.value))
   );
 
   const ingresosBrutosSan = computed(() =>
-    Math.max(0, _num(ingresosMensuales.value)),
+    Math.max(0, _num(ingresosMensuales.value))
   );
   const descuentosSan = computed(() =>
-    Math.max(0, _num(descuentosMensuales.value)),
+    Math.max(0, _num(descuentosMensuales.value))
   );
 
   const capacidadPagoMaxima = computed(() => {
@@ -86,12 +86,12 @@ export function useSimulador() {
 
   const totalPagar = computed(() => cuotaMensual.value * plazoMesesSan.value);
   const intereses = computed(() =>
-    Math.max(0, totalPagar.value - montoSan.value),
+    Math.max(0, totalPagar.value - montoSan.value)
   );
 
   // Cálculos de capacidad
   const capacidadDisponible = computed(() =>
-    Math.max(0, capacidadPagoMaxima.value - descuentosSan.value),
+    Math.max(0, capacidadPagoMaxima.value - descuentosSan.value)
   );
   const maxCuotaPermitida = computed(() => capacidadDisponible.value);
   const margen = computed(() => maxCuotaPermitida.value - cuotaMensual.value);
@@ -103,7 +103,7 @@ export function useSimulador() {
     return new Intl.NumberFormat("es-CO", {
       style: "currency",
       currency: "COP",
-      maximumFractionDigits: 0,
+      maximumFractionDigits: 0
     }).format(n);
   };
 
@@ -197,6 +197,6 @@ export function useSimulador() {
     fmtPct,
     reset,
     updateValues,
-    cambiarTipoTasa,
+    cambiarTipoTasa
   };
 }

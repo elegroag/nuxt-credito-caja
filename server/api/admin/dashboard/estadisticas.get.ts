@@ -12,9 +12,9 @@ export default defineEventHandler(async (event: H3Event) => {
         convenios: await stats.convenios(),
         usuarios: await stats.usuarios(),
         actividadReciente: await stats.actividadReciente(),
-        ultimaActualizacion: new Date().toISOString(),
+        ultimaActualizacion: new Date().toISOString()
       },
-      "Consulta completada exitosamente",
+      "Consulta completada exitosamente"
     );
   } catch (e: any) {
     const status = Number(e?.statusCode || e?.response?.status || 502);
@@ -22,7 +22,7 @@ export default defineEventHandler(async (event: H3Event) => {
 
     return CustomResponse.error(
       e?.data?.error || e?.message || "Error conectando con backend",
-      "Error al obtener estadísticas.",
+      "Error al obtener estadísticas."
     );
   }
 });

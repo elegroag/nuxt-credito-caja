@@ -19,7 +19,7 @@ export default defineEventHandler(async (event: H3Event) => {
     }
 
     const notification = await prisma.notifications.findUnique({
-      where: { id },
+      where: { id }
     });
 
     if (!notification) {
@@ -33,7 +33,7 @@ export default defineEventHandler(async (event: H3Event) => {
     }
 
     await prisma.notifications.delete({
-      where: { id },
+      where: { id }
     });
 
     return CustomResponse.ok(null, "Notificación eliminada exitosamente");
@@ -44,7 +44,7 @@ export default defineEventHandler(async (event: H3Event) => {
 
     return CustomResponse.error(
       error?.data?.error || error?.message || "Error al eliminar notificación",
-      "Error al eliminar notificación.",
+      "Error al eliminar notificación."
     );
   }
 });

@@ -6,7 +6,12 @@
       >
         Deudas
       </div>
-      <UButton variant="outline" size="sm" type="button" @click="addDeuda">
+      <UButton
+        variant="outline"
+        size="sm"
+        type="button"
+        @click="addDeuda"
+      >
         <Plus class="mr-2 h-4 w-4" />
         Agregar
       </UButton>
@@ -28,7 +33,9 @@
         class="border-border/50 bg-muted/20"
       >
         <div class="flex flex-row items-center justify-between mb-3">
-          <p class="text-sm font-semibold">Deuda #{{ Number(idx) + 1 }}</p>
+          <p class="text-sm font-semibold">
+            Deuda #{{ Number(idx) + 1 }}
+          </p>
           <UButton
             variant="ghost"
             size="sm"
@@ -46,10 +53,18 @@
             <UInput v-model="d.concepto" />
           </FormField>
           <FormField label="Valor cuota">
-            <UInput v-model.number="d.valor_cuota" type="number" min="0" />
+            <UInput
+              v-model.number="d.valor_cuota"
+              type="number"
+              min="0"
+            />
           </FormField>
           <FormField label="Saldo obligación">
-            <UInput v-model.number="d.saldo_obligacion" type="number" min="0" />
+            <UInput
+              v-model.number="d.saldo_obligacion"
+              type="number"
+              min="0"
+            />
           </FormField>
         </div>
       </UCard>

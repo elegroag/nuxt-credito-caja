@@ -21,7 +21,7 @@ export function useShowSolicitud() {
     return new Intl.NumberFormat("es-CO", {
       style: "currency",
       currency: "COP",
-      minimumFractionDigits: 0,
+      minimumFractionDigits: 0
     }).format(value);
   };
 
@@ -30,17 +30,17 @@ export function useShowSolicitud() {
     return new Date(dateString).toLocaleDateString("es-CO", {
       year: "numeric",
       month: "long",
-      day: "numeric",
+      day: "numeric"
     });
   };
 
   const estadoBadgeClass = (estado: string) => {
     const classes: Record<string, string> = {
-      Postulado: "bg-gray-100 text-gray-700",
+      "Postulado": "bg-gray-100 text-gray-700",
       "Documentos cargados": "bg-yellow-100 text-yellow-700",
-      Firmado: "bg-green-100 text-green-700",
-      Aprobado: "bg-emerald-100 text-emerald-700",
-      Rechazado: "bg-red-100 text-red-700",
+      "Firmado": "bg-green-100 text-green-700",
+      "Aprobado": "bg-emerald-100 text-emerald-700",
+      "Rechazado": "bg-red-100 text-red-700"
     };
     return classes[estado] || "bg-gray-100 text-gray-700";
   };
@@ -53,20 +53,20 @@ export function useShowSolicitud() {
 
   const getTipoIdentificacion = (tipo: string | undefined) => {
     const tipos: Record<string, string> = {
-      "1": "Cédula de Ciudadanía",
-      "2": "Cédula de Extranjería",
-      "3": "Tarjeta de Identidad",
-      "4": "Pasaporte",
+      1: "Cédula de Ciudadanía",
+      2: "Cédula de Extranjería",
+      3: "Tarjeta de Identidad",
+      4: "Pasaporte"
     };
     return tipo ? tipos[tipo] || tipo : "";
   };
 
   const getCargoDescripcion = (cargo: string | undefined) => {
     const cargos: Record<string, string> = {
-      "2519": "Profesional",
-      "2520": "Técnico",
-      "2521": "Auxiliar",
-      "2522": "Operativo",
+      2519: "Profesional",
+      2520: "Técnico",
+      2521: "Auxiliar",
+      2522: "Operativo"
     };
     return cargo ? cargos[cargo] || cargo : "";
   };
@@ -93,7 +93,7 @@ export function useShowSolicitud() {
       "77001": "Sincelejo - Sucre",
       "78001": "Montería - Córdoba",
       "80001": "Barranquilla - Atlántico",
-      "85001": "Santa Marta - Magdalena",
+      "85001": "Santa Marta - Magdalena"
     };
     return ciudad ? ciudades[ciudad] || ciudad : "";
   };
@@ -103,7 +103,7 @@ export function useShowSolicitud() {
       propia: "Propia",
       arrendada: "Arrendada",
       familiar: "Casa de familiar",
-      otra: "Otra",
+      otra: "Otra"
     };
     return tipo ? tipos[tipo] || tipo : "";
   };
@@ -117,12 +117,12 @@ export function useShowSolicitud() {
   };
 
   const getDocumentoNombre = (documento: {
-    nombre_original?: unknown;
-    id?: unknown;
+    nombre_original?: unknown
+    id?: unknown
   }): string => {
     if (
-      typeof documento?.nombre_original === "string" &&
-      documento.nombre_original.trim()
+      typeof documento?.nombre_original === "string"
+      && documento.nombre_original.trim()
     ) {
       return documento.nombre_original;
     }
@@ -138,10 +138,10 @@ export function useShowSolicitud() {
   const descargarDocumento = async (documento: any) => {
     try {
       const path = urlFor(
-        `/api/solicitudes/${solicitudId}/documentos/${documento.documento_uuid}/descargar`,
+        `/api/solicitudes/${solicitudId}/documentos/${documento.documento_uuid}/descargar`
       );
       const headers: Record<string, string> = {
-        ...(authHeader.value as Record<string, string>),
+        ...(authHeader.value as Record<string, string>)
       };
 
       const res = await fetch(path, { method: "GET", headers });
@@ -170,14 +170,14 @@ export function useShowSolicitud() {
     try {
       await ready;
       const response = await getJson<{
-        success: boolean;
-        data: SolicitudCredito;
+        success: boolean
+        data: SolicitudCredito
       }>(`/api/admin/solicitudes/${solicitudId}`, { auth: true });
       solicitud.value = response.data;
     } catch (e: any) {
       console.error(e);
-      error.value =
-        e.message || "No se pudo cargar la información de la solicitud.";
+      error.value
+        = e.message || "No se pudo cargar la información de la solicitud.";
     } finally {
       loading.value = false;
     }
@@ -188,43 +188,43 @@ export function useShowSolicitud() {
     {
       id: "POSTULADO",
       nombre: "Postulado",
-      descripcion: "Solicitud creada y registrada en el sistema",
+      descripcion: "Solicitud creada y registrada en el sistema"
     },
     {
       id: "DOCUMENTOS_CARGADOS",
       nombre: "Documentos cargados",
-      descripcion: "Documentación requerida adjuntada",
+      descripcion: "Documentación requerida adjuntada"
     },
     {
       id: "ENVIADO_VALIDACION",
       nombre: "Enviado para validación",
-      descripcion: "En proceso de revisión por asesores",
+      descripcion: "En proceso de revisión por asesores"
     },
     {
       id: "PENDIENTE_FIRMADO",
       nombre: "Pendiente de firmado",
-      descripcion: "Esperando firma digital del documento",
+      descripcion: "Esperando firma digital del documento"
     },
     {
       id: "FIRMADO",
       nombre: "Firmado",
-      descripcion: "Documento firmado digitalmente",
+      descripcion: "Documento firmado digitalmente"
     },
     {
       id: "ENVIADO_PENDIENTE_APROBACION",
       nombre: "Enviado (pendiente de aprobación)",
-      descripcion: "Solicitud en evaluación final",
+      descripcion: "Solicitud en evaluación final"
     },
     {
       id: "APROBADO",
       nombre: "Aprobado",
-      descripcion: "Crédito aprobado",
+      descripcion: "Crédito aprobado"
     },
     {
       id: "DESEMBOLSADO",
       nombre: "Desembolsado",
-      descripcion: "Monto desembolsado al solicitante",
-    },
+      descripcion: "Monto desembolsado al solicitante"
+    }
   ]);
 
   // Función para iniciar proceso de firmado
@@ -234,9 +234,9 @@ export function useShowSolicitud() {
     loadingFirmado.value = true;
     try {
       const response = await postJson<{
-        success: boolean;
-        data: any;
-        message: string;
+        success: boolean
+        data: any
+        message: string
       }>(`/api/solicitudes/${solicitudId}/iniciar-firmado`, {}, { auth: true });
 
       if (response.success) {
@@ -244,7 +244,7 @@ export function useShowSolicitud() {
         return {
           success: true,
           message:
-            response.message || "Proceso de firmado iniciado exitosamente",
+            response.message || "Proceso de firmado iniciado exitosamente"
         };
       } else {
         throw new Error(response.message || "Error al iniciar firmado");
@@ -253,7 +253,7 @@ export function useShowSolicitud() {
       console.error("Error al iniciar firmado:", e);
       return {
         success: false,
-        message: e.message || "Error al iniciar el proceso de firmado",
+        message: e.message || "Error al iniciar el proceso de firmado"
       };
     } finally {
       loadingFirmado.value = false;
@@ -305,6 +305,6 @@ export function useShowSolicitud() {
     cargarSolicitud,
 
     // Funciones de firmado
-    iniciarFirmado,
+    iniciarFirmado
   };
 }

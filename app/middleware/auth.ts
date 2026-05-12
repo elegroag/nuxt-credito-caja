@@ -2,20 +2,20 @@ import type { RouteLocationNormalized } from "vue-router";
 import { useSession } from "~/composables/useSession";
 import {
   shouldApplyAuthMiddleware,
-  hasPermissionForRoute,
+  hasPermissionForRoute
 } from "~/config/auth.config";
 
 export default defineNuxtRouteMiddleware(
   async (to: RouteLocationNormalized) => {
-    if (process.server) return;
+    if (import.meta.server) return;
 
     // Verificar si se debe aplicar middleware de autenticación
     if (!shouldApplyAuthMiddleware(to.path)) {
       return;
     }
 
-    const { isAuthenticated, validateToken, clearSession, ready } =
-      useSession();
+    const { isAuthenticated, validateToken, clearSession, ready }
+      = useSession();
 
     // Esperar a que la sesión se cargue desde el storage
     await ready;
@@ -41,7 +41,7 @@ export default defineNuxtRouteMiddleware(
     if (
       !hasPermissionForRoute(
         to.path,
-        useSession().session.value.user?.roles || [],
+        useSession().session.value.user?.roles || []
       )
     ) {
       return navigateTo("/dash");
@@ -49,5 +49,5 @@ export default defineNuxtRouteMiddleware(
 
     // Token válido y permisos correctos, permitir acceso
     return;
-  },
+  }
 );

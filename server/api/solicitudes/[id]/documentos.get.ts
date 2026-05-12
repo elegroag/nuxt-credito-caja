@@ -34,7 +34,7 @@ const mapDocumentoCargado = (doc: any): any => ({
   documento_uuid: doc.api_filename || doc.saved_filename,
   updated_at: doc.updated_at?.toISOString?.() || String(doc.updated_at),
   activo: doc.activo,
-  solicitud_id: doc.solicitud_id,
+  solicitud_id: doc.solicitud_id
 });
 
 export default defineEventHandler(async (event: H3Event) => {
@@ -53,7 +53,7 @@ export default defineEventHandler(async (event: H3Event) => {
     }
 
     const solicitud = await prisma.solicitudes_credito.findUnique({
-      where: { numero_solicitud: solicitudId },
+      where: { numero_solicitud: solicitudId }
     });
 
     if (!solicitud) {
@@ -69,18 +69,18 @@ export default defineEventHandler(async (event: H3Event) => {
     const documentos = await prisma.documentos_postulantes.findMany({
       where: {
         solicitud_id: solicitudId,
-        activo: true,
+        activo: true
       },
       orderBy: {
-        created_at: "desc",
-      },
+        created_at: "desc"
+      }
     });
 
     const documentosMapeados = documentos.map(mapDocumentoCargado);
 
     return CustomResponse.success(
       { documentos: documentosMapeados, count: documentosMapeados.length },
-      "Documentos listados exitosamente",
+      "Documentos listados exitosamente"
     );
   } catch (error: any) {
     console.error("Error al listar documentos:", error);
@@ -89,7 +89,7 @@ export default defineEventHandler(async (event: H3Event) => {
 
     return CustomResponse.error(
       error?.data?.error || error?.message || "Error al listar documentos",
-      "Error al listar documentos.",
+      "Error al listar documentos."
     );
   }
 });

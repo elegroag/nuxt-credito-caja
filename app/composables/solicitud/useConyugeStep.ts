@@ -16,19 +16,19 @@ export const useConyugeStep = (props: ConyugeProps) => {
   const buscarDatosConyuge = async (cedulaTrabajador: string) => {
     console.log(
       "[ConyugeStep] Buscando datos del cónyuge para trabajador:",
-      cedulaTrabajador,
+      cedulaTrabajador
     );
     console.log("[ConyugeStep] Estado de form.conyuge:", props.form.conyuge);
 
     // Verificar que el objeto conyuge exista
     if (!props.form.conyuge) {
       console.warn(
-        "[ConyugeStep] form.conyuge no está disponible, esperando...",
+        "[ConyugeStep] form.conyuge no está disponible, esperando..."
       );
       await nextTick();
       if (!props.form.conyuge) {
         console.error(
-          "[ConyugeStep] form.conyuge sigue sin estar disponible después de nextTick",
+          "[ConyugeStep] form.conyuge sigue sin estar disponible después de nextTick"
         );
         loadingLocal.value = false;
         return;
@@ -45,7 +45,7 @@ export const useConyugeStep = (props: ConyugeProps) => {
         // Validar que conyugeData exista
         if (!conyugeData) {
           console.warn(
-            "[ConyugeStep] No se encontraron datos válidos del cónyuge",
+            "[ConyugeStep] No se encontraron datos válidos del cónyuge"
           );
           return;
         }
@@ -66,13 +66,13 @@ export const useConyugeStep = (props: ConyugeProps) => {
               nombre: "Empresa del cónyuge", // Valor por defecto ya que no viene en la API
               direccion: conyugeData.direccion || "",
               telefono: conyugeData.telefono || "",
-              email: conyugeData.email || "",
+              email: conyugeData.email || ""
             };
           }
         }
       } else {
         console.log(
-          "[ConyugeStep] No se encontraron cónyuges para este trabajador",
+          "[ConyugeStep] No se encontraron cónyuges para este trabajador"
         );
       }
     } catch (error) {
@@ -88,13 +88,13 @@ export const useConyugeStep = (props: ConyugeProps) => {
     props.toggleConyuge(checked);
 
     // Si se está activando el cónyuge y tenemos la cédula del trabajador, buscar datos
-    const cedulaTrabajador =
-      session.value?.user?.trabajador?.cedula ||
-      session.value?.user?.trabajador?.cedtra;
+    const cedulaTrabajador
+      = session.value?.user?.trabajador?.cedula
+        || session.value?.user?.trabajador?.cedtra;
     console.log("[ConyugeStep] Cédula del trabajador:", cedulaTrabajador);
     console.log(
       "[ConyugeStep] Datos del trabajador en sesión:",
-      session.value?.user?.trabajador,
+      session.value?.user?.trabajador
     );
 
     if (checked && cedulaTrabajador) {
@@ -116,7 +116,7 @@ export const useConyugeStep = (props: ConyugeProps) => {
         nombre: "",
         direccion: "",
         telefono: "",
-        email: "",
+        email: ""
       };
     } else {
       props.form.conyuge!.empresa = null;
@@ -130,6 +130,6 @@ export const useConyugeStep = (props: ConyugeProps) => {
     // Funciones
     buscarDatosConyuge,
     toggleConyugeHandler,
-    toggleEmpresaConyuge,
+    toggleEmpresaConyuge
   };
 };

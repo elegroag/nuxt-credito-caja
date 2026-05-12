@@ -3,10 +3,10 @@ import path from "path";
 import { useRuntimeConfig } from "#imports";
 
 interface PdfGenerado {
-  url?: string;
-  content?: string;
-  path?: string;
-  nombre?: string;
+  url?: string
+  content?: string
+  path?: string
+  nombre?: string
 }
 
 class DocumentoStorage {
@@ -34,7 +34,7 @@ class DocumentoStorage {
   async guardarPdf(
     solicitudId: string,
     contenido: string | Buffer,
-    nombre?: string,
+    nombre?: string
   ): Promise<string> {
     await this.inicializarStorage();
 
@@ -55,7 +55,7 @@ class DocumentoStorage {
    */
   async obtenerPdf(
     solicitudId: string,
-    nombre?: string,
+    nombre?: string
   ): Promise<string | null> {
     await this.inicializarStorage();
 
@@ -111,7 +111,7 @@ class DocumentoStorage {
    * Soporta diferentes formatos: URL, contenido base64, o ruta de archivo
    */
   async obtenerContenidoDesdePdfGenerado(
-    pdfGenerado: PdfGenerado,
+    pdfGenerado: PdfGenerado
   ): Promise<string | null> {
     if (!pdfGenerado) {
       return null;
@@ -138,7 +138,7 @@ class DocumentoStorage {
       try {
         const { ofetch } = await import("ofetch");
         const respuesta = await ofetch(pdfGenerado.url, {
-          responseType: "arrayBuffer",
+          responseType: "arrayBuffer"
         });
         return Buffer.from(respuesta).toString("base64");
       } catch (error) {
@@ -155,7 +155,7 @@ class DocumentoStorage {
    */
   async guardarPdfDeSolicitud(
     solicitudId: string,
-    pdfGenerado: PdfGenerado,
+    pdfGenerado: PdfGenerado
   ): Promise<string | null> {
     const contenido = await this.obtenerContenidoDesdePdfGenerado(pdfGenerado);
 

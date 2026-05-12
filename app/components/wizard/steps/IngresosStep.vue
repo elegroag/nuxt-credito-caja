@@ -45,12 +45,11 @@
     </FormField>
 
     <div class="col-span-full mt-4 flex items-center gap-2">
-      <div class="h-px flex-1 bg-border"></div>
+      <div class="h-px flex-1 bg-border" />
       <span
         class="text-xs font-bold uppercase tracking-wider text-muted-foreground"
-        >Descuentos</span
-      >
-      <div class="h-px flex-1 bg-border"></div>
+      >Descuentos</span>
+      <div class="h-px flex-1 bg-border" />
     </div>
 
     <FormField label="Salud y pensión">
@@ -144,12 +143,12 @@ watch(
     () => props.form.ingresos_descuentos.subsidio_transporte,
     () => props.form.ingresos_descuentos.horas_extras,
     () => props.form.ingresos_descuentos.comisiones,
-    () => props.form.ingresos_descuentos.otros_ingresos,
+    () => props.form.ingresos_descuentos.otros_ingresos
   ],
   () => {
     autocalcularIngresos();
   },
-  { deep: true },
+  { deep: true }
 );
 
 // Auto-calcular totales cuando cambian los valores de descuentos
@@ -159,11 +158,11 @@ watch(
     () => props.form.ingresos_descuentos.libranzas_comfaca,
     () => props.form.ingresos_descuentos.otras_libranzas,
     () => props.form.ingresos_descuentos.judiciales,
-    () => props.form.ingresos_descuentos.otras_deducciones,
+    () => props.form.ingresos_descuentos.otras_deducciones
   ],
   () => {
     autocalcularIngresos();
   },
-  { deep: true },
+  { deep: true }
 );
 </script>

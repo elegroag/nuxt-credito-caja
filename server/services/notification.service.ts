@@ -8,12 +8,12 @@ const notificationService = () => {
   const getNotifications = async (username: string) => {
     const notifications = await prisma.notifications.findMany({
       where: {
-        owner_username: username,
+        owner_username: username
       },
       orderBy: {
-        created_at: "desc",
+        created_at: "desc"
       },
-      take: 50,
+      take: 50
     });
 
     return notifications.map((notification: any) => ({
@@ -21,7 +21,7 @@ const notificationService = () => {
       type: notification.type,
       data: notification.data,
       read_at: notification.read_at?.toISOString() || null,
-      created_at: notification.created_at?.toISOString() || null,
+      created_at: notification.created_at?.toISOString() || null
     }));
   };
 
@@ -29,8 +29,8 @@ const notificationService = () => {
     const count = await prisma.notifications.count({
       where: {
         owner_username: username,
-        read_at: null,
-      },
+        read_at: null
+      }
     });
 
     return String(count);
@@ -38,7 +38,7 @@ const notificationService = () => {
 
   const markAsRead = async (id: string, username: string) => {
     const notification = await prisma.notifications.findUnique({
-      where: { id },
+      where: { id }
     });
 
     if (!notification || notification.owner_username !== username) {
@@ -48,13 +48,13 @@ const notificationService = () => {
     const updated = await prisma.notifications.update({
       where: { id },
       data: {
-        read_at: new Date(),
-      },
+        read_at: new Date()
+      }
     });
 
     return {
       id: String(updated.id),
-      read_at: updated.read_at?.toISOString() || null,
+      read_at: updated.read_at?.toISOString() || null
     };
   };
 
@@ -62,22 +62,22 @@ const notificationService = () => {
     const result = await prisma.notifications.updateMany({
       where: {
         owner_username: username,
-        read_at: null,
+        read_at: null
       },
       data: {
-        read_at: new Date(),
-      },
+        read_at: new Date()
+      }
     });
 
     return {
-      count: String(result.count),
+      count: String(result.count)
     };
   };
 
   const createNotification = async (data: {
-    owner_username: string;
-    type: string;
-    data: any;
+    owner_username: string
+    type: string
+    data: any
   }) => {
     const notification = await prisma.notifications.create({
       data: {
@@ -89,8 +89,8 @@ const notificationService = () => {
         notifiable_id: "1",
         read_at: null,
         created_at: new Date(),
-        updated_at: new Date(),
-      },
+        updated_at: new Date()
+      }
     });
 
     return {
@@ -98,7 +98,7 @@ const notificationService = () => {
       type: notification.type,
       data: notification.data,
       read_at: notification.read_at?.toISOString() || null,
-      created_at: notification.created_at?.toISOString() || null,
+      created_at: notification.created_at?.toISOString() || null
     };
   };
 
@@ -107,7 +107,7 @@ const notificationService = () => {
     getUnreadCount,
     markAsRead,
     markAllAsRead,
-    createNotification,
+    createNotification
   };
 };
 

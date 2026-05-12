@@ -7,7 +7,10 @@
       <FolderOpen class="h-5 w-5" />
     </template>
 
-    <div v-if="documentos.length === 0" class="text-center py-12">
+    <div
+      v-if="documentos.length === 0"
+      class="text-center py-12"
+    >
       <FolderOpen
         class="h-16 w-16 mx-auto mb-4 text-gray-300 dark:text-gray-600"
       />
@@ -16,7 +19,10 @@
       </p>
     </div>
 
-    <div v-else class="space-y-3">
+    <div
+      v-else
+      class="space-y-3"
+    >
       <div
         v-for="doc in documentos"
         :key="doc.id"
@@ -52,13 +58,13 @@ import SectionCard from "./SectionCard.vue";
 import Badge from "@/components/shared/Badge.vue";
 
 interface Documento {
-  id: string;
-  nombre_original: string;
-  created_at: string;
+  id: string
+  nombre_original: string
+  created_at: string
 }
 
 interface Props {
-  documentos: Documento[];
+  documentos: Documento[]
 }
 
 const props = defineProps<Props>();
@@ -68,7 +74,7 @@ const formatDate = (dateString: string): string => {
   return new Date(dateString).toLocaleDateString("es-CO", {
     year: "numeric",
     month: "long",
-    day: "numeric",
+    day: "numeric"
   });
 };
 </script>

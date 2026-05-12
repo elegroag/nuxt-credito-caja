@@ -1,23 +1,23 @@
 import { describe, it, expect, vi } from "vitest";
-//@ts-ignore
+// @ts-ignore
 import mockDatosGenerales from "@tests/mocks/api-creditos-datos-generales.json";
+
+// @ts-ignore
+import datosApiSisuwebService from "~~/server/services/shared/datos-api-sisuweb.service";
+// @ts-ignore
+import apiSisuweb from "~~/server/services/api-sisuweb";
 
 vi.mock("~~/server/services/api-sisuweb", () => ({
   default: vi.fn(() => ({
-    postJson: vi.fn(),
-  })),
+    postJson: vi.fn()
+  }))
 }));
-
-//@ts-ignore
-import datosApiSisuwebService from "~~/server/services/shared/datos-api-sisuweb.service";
-//@ts-ignore
-import apiSisuweb from "~~/server/services/api-sisuweb";
 
 describe("datosApiSisuwebService", () => {
   describe("dataGeneral", () => {
     it("retorna los datos generales cuando la API responde exitosamente", async () => {
       vi.mocked(apiSisuweb).mockReturnValue({
-        postJson: vi.fn().mockResolvedValue(mockDatosGenerales),
+        postJson: vi.fn().mockResolvedValue(mockDatosGenerales)
       });
 
       const service = datosApiSisuwebService();
@@ -31,11 +31,11 @@ describe("datosApiSisuwebService", () => {
     it("lanza error cuando la API retorna success: false", async () => {
       const mockResponse = {
         success: false,
-        error: "Error de prueba",
+        error: "Error de prueba"
       };
 
       vi.mocked(apiSisuweb).mockReturnValue({
-        postJson: vi.fn().mockResolvedValue(mockResponse),
+        postJson: vi.fn().mockResolvedValue(mockResponse)
       });
 
       const service = datosApiSisuwebService();
@@ -45,24 +45,24 @@ describe("datosApiSisuwebService", () => {
 
     it("lanza error cuando la API responde null", async () => {
       vi.mocked(apiSisuweb).mockReturnValue({
-        postJson: vi.fn().mockResolvedValue(null),
+        postJson: vi.fn().mockResolvedValue(null)
       });
 
       const service = datosApiSisuwebService();
 
       await expect(service.dataGeneral()).rejects.toThrow(
-        "Error al obtener los datos generales",
+        "Error al obtener los datos generales"
       );
     });
 
     it("retorna null cuando data es null pero success es true", async () => {
       const mockResponse = {
         success: true,
-        data: null,
+        data: null
       };
 
       vi.mocked(apiSisuweb).mockReturnValue({
-        postJson: vi.fn().mockResolvedValue(mockResponse),
+        postJson: vi.fn().mockResolvedValue(mockResponse)
       });
 
       const service = datosApiSisuwebService();

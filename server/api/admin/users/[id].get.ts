@@ -33,7 +33,7 @@ export default defineEventHandler(async (event: H3Event) => {
 
     return CustomResponse.error(
       e?.data?.error || e?.message || "Error conectando con backend",
-      "Error al obtener usuario.",
+      "Error al obtener usuario."
     );
   }
 });

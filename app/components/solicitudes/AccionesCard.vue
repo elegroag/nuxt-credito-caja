@@ -32,16 +32,21 @@
       </NuxtLink>
 
       <UButton
-        @click="$emit('descargar-pdf')"
         variant="outline"
         class="gap-2 border-purple-200 text-purple-700 hover:bg-purple-50 dark:border-purple-800 dark:text-purple-400 dark:hover:bg-purple-900/20"
         :disabled="!tienePdf"
+        @click="$emit('descargar-pdf')"
       >
         <Download class="h-4 w-4" />
         Descargar PDF
       </UButton>
 
-      <UButton @click="$emit('eliminar')" color="destructive" variant="outline" class="gap-2">
+      <UButton
+        color="destructive"
+        variant="outline"
+        class="gap-2"
+        @click="$emit('eliminar')"
+      >
         <Trash2 class="h-4 w-4" />
         Eliminar Solicitud
       </UButton>
@@ -55,20 +60,20 @@ import {
   PenTool,
   Download,
   Trash2,
-  Settings,
+  Settings
 } from "lucide-vue-next";
 import SectionCard from "./SectionCard.vue";
 
 interface Props {
-  solicitudId: string;
-  mostrarEnviar: boolean;
-  tienePdf: boolean;
+  solicitudId: string
+  mostrarEnviar: boolean
+  tienePdf: boolean
 }
 
 const props = defineProps<Props>();
 
 defineEmits<{
-  (e: "descargar-pdf"): void;
-  (e: "eliminar"): void;
+  (e: "descargar-pdf"): void
+  (e: "eliminar"): void
 }>();
 </script>

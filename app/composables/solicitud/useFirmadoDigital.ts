@@ -2,29 +2,29 @@ import { ref, computed } from "#imports";
 import { useApi } from "~/composables/useApi";
 
 interface FirmadoIniciarResponse {
-  success: boolean;
+  success: boolean
   data: {
-    solicitud_id: string;
-    transaccion_id: string;
-    estado: string;
-    urls_firma: Record<string, string>;
-    firmantes: number;
-    mensaje: string;
-  };
-  message: string;
+    solicitud_id: string
+    transaccion_id: string
+    estado: string
+    urls_firma: Record<string, string>
+    firmantes: number
+    mensaje: string
+  }
+  message: string
 }
 
 interface FirmadoEstadoResponse {
-  success: boolean;
+  success: boolean
   data: {
-    solicitud_id: string;
-    transaccion_id: string;
-    estado: string;
-    firmantes_completados: number;
-    firmantes_pendientes: number;
-    fecha_consulta: string;
-  };
-  message: string;
+    solicitud_id: string
+    transaccion_id: string
+    estado: string
+    firmantes_completados: number
+    firmantes_pendientes: number
+    fecha_consulta: string
+  }
+  message: string
 }
 
 type EstadoFirmado = "PENDIENTE_FIRMADO" | "FIRMADO" | "RECHAZADO" | "EXPIRADO";
@@ -38,19 +38,19 @@ export function useFirmadoDigital() {
   const estadoActual = ref<FirmadoEstadoResponse["data"] | null>(null);
 
   const enProceso = computed(
-    () => estadoActual.value?.estado === "PENDIENTE_FIRMADO",
+    () => estadoActual.value?.estado === "PENDIENTE_FIRMADO"
   );
   const firmadoCompleto = computed(
-    () => estadoActual.value?.estado === "FIRMADO",
+    () => estadoActual.value?.estado === "FIRMADO"
   );
   const firmadoRechazado = computed(
-    () => estadoActual.value?.estado === "RECHAZADO",
+    () => estadoActual.value?.estado === "RECHAZADO"
   );
   const porcentajeCompletado = computed(() => {
     if (!estadoActual.value) return 0;
-    const total =
-      estadoActual.value.firmantes_completados +
-      estadoActual.value.firmantes_pendientes;
+    const total
+      = estadoActual.value.firmantes_completados
+        + estadoActual.value.firmantes_pendientes;
     if (total === 0) return 0;
     return Math.round((estadoActual.value.firmantes_completados / total) * 100);
   });
@@ -67,7 +67,7 @@ export function useFirmadoDigital() {
       const response = await api.postJson<FirmadoIniciarResponse>(
         `/api/solicitudes/${solicitudId}/iniciar-firmado`,
         {},
-        { auth: true },
+        { auth: true }
       );
 
       if (response.success && response.data) {
@@ -78,24 +78,24 @@ export function useFirmadoDigital() {
           estado: response.data.estado,
           firmantes_completados: 0,
           firmantes_pendientes: response.data.firmantes,
-          fecha_consulta: new Date().toISOString(),
+          fecha_consulta: new Date().toISOString()
         };
         return true;
       }
 
-      error.value =
-        response.message || "Error al iniciar el proceso de firmado";
+      error.value
+        = response.message || "Error al iniciar el proceso de firmado";
       return false;
     } catch (err: any) {
       const errorData = err.data;
 
       if (errorData?.error_type === "NOT_FOUND") {
-        error.value =
-          "No se encontró la solicitud o el PDF no ha sido generado";
+        error.value
+          = "No se encontró la solicitud o el PDF no ha sido generado";
       } else if (errorData?.error_type === "VALIDATION_ERROR") {
-        error.value =
-          errorData.message ||
-          "Faltan datos requeridos para iniciar el firmado";
+        error.value
+          = errorData.message
+            || "Faltan datos requeridos para iniciar el firmado";
       } else {
         error.value = "Error al iniciar el firmado. Intente nuevamente.";
       }
@@ -111,7 +111,7 @@ export function useFirmadoDigital() {
    * Consulta el estado actual del proceso de firmado
    */
   const consultarEstado = async (
-    solicitudId: string,
+    solicitudId: string
   ): Promise<EstadoFirmado | null> => {
     loading.value = true;
     error.value = null;
@@ -119,7 +119,7 @@ export function useFirmadoDigital() {
     try {
       const response = await api.getJson<FirmadoEstadoResponse>(
         `/api/solicitudes/${solicitudId}/estado-firmado`,
-        { auth: true },
+        { auth: true }
       );
 
       if (response.success && response.data) {
@@ -151,7 +151,7 @@ export function useFirmadoDigital() {
   const iniciarPolling = (
     solicitudId: string,
     intervalo: number = 5000,
-    callback?: (estado: EstadoFirmado) => void,
+    callback?: (estado: EstadoFirmado) => void
   ) => {
     const intervalId = setInterval(async () => {
       const estado = await consultarEstado(solicitudId);
@@ -182,8 +182,8 @@ export function useFirmadoDigital() {
   const mensajeEstado = computed(() => {
     if (!estadoActual.value) return null;
 
-    const { estado, firmantes_completados, firmantes_pendientes } =
-      estadoActual.value;
+    const { estado, firmantes_completados, firmantes_pendientes }
+      = estadoActual.value;
 
     switch (estado) {
       case "PENDIENTE_FIRMADO":
@@ -191,7 +191,7 @@ export function useFirmadoDigital() {
           titulo: "Documento en proceso de firma",
           descripcion: `${firmantes_completados} de ${firmantes_completados + firmantes_pendientes} firmantes han completado su firma`,
           tipo: "info" as const,
-          icono: "pending",
+          icono: "pending"
         };
 
       case "FIRMADO":
@@ -199,7 +199,7 @@ export function useFirmadoDigital() {
           titulo: "Documento firmado exitosamente",
           descripcion: "Todos los firmantes han completado el proceso",
           tipo: "success" as const,
-          icono: "check_circle",
+          icono: "check_circle"
         };
 
       case "RECHAZADO":
@@ -207,7 +207,7 @@ export function useFirmadoDigital() {
           titulo: "Firma rechazada",
           descripcion: "Uno o más firmantes rechazaron el documento",
           tipo: "error" as const,
-          icono: "cancel",
+          icono: "cancel"
         };
 
       case "EXPIRADO":
@@ -215,7 +215,7 @@ export function useFirmadoDigital() {
           titulo: "Proceso expirado",
           descripcion: "El tiempo para firmar el documento ha expirado",
           tipo: "warning" as const,
-          icono: "schedule",
+          icono: "schedule"
         };
 
       default:
@@ -223,7 +223,7 @@ export function useFirmadoDigital() {
           titulo: "Estado desconocido",
           descripcion: estado,
           tipo: "info" as const,
-          icono: "info",
+          icono: "info"
         };
     }
   });
@@ -233,8 +233,8 @@ export function useFirmadoDigital() {
    */
   const puedeReintentar = computed(() => {
     return (
-      estadoActual.value?.estado === "RECHAZADO" ||
-      estadoActual.value?.estado === "EXPIRADO"
+      estadoActual.value?.estado === "RECHAZADO"
+      || estadoActual.value?.estado === "EXPIRADO"
     );
   });
 
@@ -266,6 +266,6 @@ export function useFirmadoDigital() {
     iniciarFirmado,
     consultarEstado,
     iniciarPolling,
-    limpiarEstado,
+    limpiarEstado
   };
 }

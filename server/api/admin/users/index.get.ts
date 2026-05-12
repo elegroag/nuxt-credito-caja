@@ -10,7 +10,7 @@ const querySchema = z.object({
   offset: z.coerce.number().int().nonnegative().default(0),
   rol: z.string().optional(),
   estado: z.string().optional(),
-  busqueda: z.string().optional(),
+  busqueda: z.string().optional()
 });
 
 export default defineEventHandler(async (event: H3Event) => {
@@ -29,7 +29,7 @@ export default defineEventHandler(async (event: H3Event) => {
 
     if (rol) {
       usuariosFiltrados = usuariosFiltrados.filter((user: any) =>
-        user.roles?.includes(rol),
+        user.roles?.includes(rol)
       );
     }
 
@@ -46,9 +46,9 @@ export default defineEventHandler(async (event: H3Event) => {
       const busquedaLower = busqueda.toLowerCase();
       usuariosFiltrados = usuariosFiltrados.filter(
         (user: any) =>
-          user.full_name?.toLowerCase().includes(busquedaLower) ||
-          user.email?.toLowerCase().includes(busquedaLower) ||
-          user.username?.toLowerCase().includes(busquedaLower),
+          user.full_name?.toLowerCase().includes(busquedaLower)
+          || user.email?.toLowerCase().includes(busquedaLower)
+          || user.username?.toLowerCase().includes(busquedaLower)
       );
     }
 
@@ -66,7 +66,7 @@ export default defineEventHandler(async (event: H3Event) => {
     const conteoEstados = {
       active: 0,
       inactive: 0,
-      suspended: 0,
+      suspended: 0
     };
 
     usuariosFiltrados.forEach((user: any) => {
@@ -96,7 +96,7 @@ export default defineEventHandler(async (event: H3Event) => {
           ? "active"
           : "inactive",
       fecha_creacion: user.created_at,
-      telefono: user.phone,
+      telefono: user.phone
     }));
 
     return CustomResponse.success(
@@ -104,9 +104,9 @@ export default defineEventHandler(async (event: H3Event) => {
         usuarios: usuariosTransformados,
         total: result.total,
         conteo_roles: conteoRoles,
-        conteo_estados: conteoEstados,
+        conteo_estados: conteoEstados
       },
-      "Usuarios obtenidos exitosamente",
+      "Usuarios obtenidos exitosamente"
     );
   } catch (e: any) {
     const status = Number(e?.statusCode || e?.response?.status || 502);
@@ -114,7 +114,7 @@ export default defineEventHandler(async (event: H3Event) => {
 
     return CustomResponse.error(
       e?.data?.error || e?.message || "Error conectando con backend",
-      "Error al obtener usuarios.",
+      "Error al obtener usuarios."
     );
   }
 });

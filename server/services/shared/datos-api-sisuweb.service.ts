@@ -8,19 +8,19 @@ const datosApiSisuwebService = () => {
       "creditos/datos-generales",
       {},
       {
-        auth: true,
-      },
+        auth: true
+      }
     );
     if (!responseApi) {
       throw createError({
         statusCode: 500,
-        message: "Error al obtener los datos generales",
+        message: "Error al obtener los datos generales"
       });
     }
     if (!responseApi.success) {
       throw createError({
         statusCode: 500,
-        message: responseApi.error || "Error al obtener los datos generales",
+        message: responseApi.error || "Error al obtener los datos generales"
       });
     }
     return responseApi.data || null;
@@ -31,19 +31,19 @@ const datosApiSisuwebService = () => {
       "creditos/tipo-creditos",
       {},
       {
-        auth: true,
-      },
+        auth: true
+      }
     );
     if (!responseApi) {
       throw createError({
         statusCode: 500,
-        message: "Error al obtener los tipos de créditos",
+        message: "Error al obtener los tipos de créditos"
       });
     }
     if (!responseApi.success) {
       throw createError({
         statusCode: 500,
-        message: responseApi.error || "Error al obtener los tipos de créditos",
+        message: responseApi.error || "Error al obtener los tipos de créditos"
       });
     }
     return responseApi.data || null;
@@ -54,19 +54,19 @@ const datosApiSisuwebService = () => {
       "creditos/crear-solicitud",
       payload,
       {
-        auth: true,
-      },
+        auth: true
+      }
     );
     if (!responseApi) {
       throw createError({
         statusCode: 500,
-        message: "Error al crear la solicitud de crédito",
+        message: "Error al crear la solicitud de crédito"
       });
     }
     if (!responseApi.success) {
       throw createError({
         statusCode: 500,
-        message: responseApi.error || "Error al crear la solicitud de crédito",
+        message: responseApi.error || "Error al crear la solicitud de crédito"
       });
     }
     return responseApi.data || null;
@@ -77,20 +77,20 @@ const datosApiSisuwebService = () => {
       "affiliation/listar_conyuges_trabajador",
       payload,
       {
-        auth: true,
-      },
+        auth: true
+      }
     );
     if (!responseApi) {
       throw createError({
         statusCode: 500,
-        message: "Error al obtener el conyuge del trabajador",
+        message: "Error al obtener el conyuge del trabajador"
       });
     }
     if (!responseApi.success) {
       throw createError({
         statusCode: 500,
         message:
-          responseApi.error || "Error al obtener el conyuge del trabajador",
+          responseApi.error || "Error al obtener el conyuge del trabajador"
       });
     }
     return responseApi.data || null;
@@ -101,7 +101,7 @@ const datosApiSisuwebService = () => {
     dataGeneral,
     tipoCreditos,
     crearSolicitudCredito,
-    conyugeTrabajador,
+    conyugeTrabajador
   };
 };
 

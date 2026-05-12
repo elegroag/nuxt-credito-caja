@@ -1,16 +1,32 @@
 <template>
   <UCard>
     <div class="flex items-center justify-between mb-4">
-      <h3 class="text-lg font-semibold text-gray-900">Cambios Recientes</h3>
-      <Icon name="lucide:activity" class="h-5 w-5 text-gray-500" />
+      <h3 class="text-lg font-semibold text-gray-900">
+        Cambios Recientes
+      </h3>
+      <Icon
+        name="lucide:activity"
+        class="h-5 w-5 text-gray-500"
+      />
     </div>
 
-    <div v-if="cambios.length === 0" class="text-center py-8">
-      <Icon name="lucide:inbox" class="h-12 w-12 text-gray-400 mx-auto mb-2" />
-      <p class="text-sm text-gray-500">No hay cambios recientes</p>
+    <div
+      v-if="cambios.length === 0"
+      class="text-center py-8"
+    >
+      <Icon
+        name="lucide:inbox"
+        class="h-12 w-12 text-gray-400 mx-auto mb-2"
+      />
+      <p class="text-sm text-gray-500">
+        No hay cambios recientes
+      </p>
     </div>
 
-    <div v-else class="space-y-3 max-h-96 overflow-y-auto">
+    <div
+      v-else
+      class="space-y-3 max-h-96 overflow-y-auto"
+    >
       <div
         v-for="(cambio, index) in cambios"
         :key="index"
@@ -30,7 +46,10 @@
             <span :class="getColorTexto(cambio.estadoAnterior)">
               {{ cambio.estadoAnterior }}
             </span>
-            <Icon name="lucide:arrow-right" class="h-3 w-3 inline mx-1" />
+            <Icon
+              name="lucide:arrow-right"
+              class="h-3 w-3 inline mx-1"
+            />
             <span :class="getColorTexto(cambio.estadoNuevo)">
               {{ cambio.estadoNuevo }}
             </span>
@@ -40,10 +59,13 @@
           </p>
         </div>
         <button
-          @click="$emit('ver-detalle', cambio.solicitudId)"
           class="flex-shrink-0 text-blue-600 hover:text-blue-800"
+          @click="$emit('ver-detalle', cambio.solicitudId)"
         >
-          <Icon name="lucide:external-link" class="h-4 w-4" />
+          <Icon
+            name="lucide:external-link"
+            class="h-4 w-4"
+          />
         </button>
       </div>
     </div>
@@ -52,21 +74,21 @@
 
 <script setup lang="ts">
 interface Cambio {
-  solicitudId: string;
-  nombreSolicitante: string;
-  estadoAnterior: string;
-  estadoNuevo: string;
-  timestamp: Date;
+  solicitudId: string
+  nombreSolicitante: string
+  estadoAnterior: string
+  estadoNuevo: string
+  timestamp: Date
 }
 
 interface Props {
-  cambios: Cambio[];
+  cambios: Cambio[]
 }
 
 defineProps<Props>();
 
 defineEmits<{
-  "ver-detalle": [solicitudId: string];
+  "ver-detalle": [solicitudId: string]
 }>();
 
 const formatearFechaRelativa = (fecha: Date): string => {
@@ -88,7 +110,7 @@ const getEstadoIcon = (estado: string): string => {
     FIRMADO: "lucide:check-circle",
     RECHAZADO: "lucide:x-circle",
     EXPIRADO: "lucide:alert-circle",
-    CANCELADO: "lucide:ban",
+    CANCELADO: "lucide:ban"
   };
   return iconos[estado] || "lucide:help-circle";
 };
@@ -99,7 +121,7 @@ const getColorIcono = (estado: string): string => {
     FIRMADO: "text-green-600",
     RECHAZADO: "text-red-600",
     EXPIRADO: "text-gray-600",
-    CANCELADO: "text-orange-600",
+    CANCELADO: "text-orange-600"
   };
   return colores[estado] || "text-gray-600";
 };
@@ -110,7 +132,7 @@ const getColorTexto = (estado: string): string => {
     FIRMADO: "text-green-700 font-medium",
     RECHAZADO: "text-red-700 font-medium",
     EXPIRADO: "text-gray-700 font-medium",
-    CANCELADO: "text-orange-700 font-medium",
+    CANCELADO: "text-orange-700 font-medium"
   };
   return colores[estado] || "text-gray-700";
 };

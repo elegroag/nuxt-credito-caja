@@ -16,7 +16,7 @@ export default defineEventHandler(async (event: H3Event) => {
 
     return CustomResponse.error(
       e?.data?.error || e?.message || "Error conectando con backend",
-      "Error en adviser.",
+      "Error en adviser."
     );
   }
 });

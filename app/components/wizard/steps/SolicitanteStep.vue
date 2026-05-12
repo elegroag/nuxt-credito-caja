@@ -41,7 +41,10 @@
     </FormField>
 
     <FormField label="Fecha nacimiento">
-      <UInput v-model="form.solicitante.fecha_nacimiento" type="date" />
+      <UInput
+        v-model="form.solicitante.fecha_nacimiento"
+        type="date"
+      />
     </FormField>
 
     <FormField label="Género">
@@ -83,7 +86,10 @@
     </FormField>
 
     <FormField label="Email">
-      <UInput v-model="form.solicitante.email" type="email" />
+      <UInput
+        v-model="form.solicitante.email"
+        type="email"
+      />
     </FormField>
 
     <FormField label="Teléfono (opcional)">
@@ -141,7 +147,7 @@
         v-model="form.solicitante.vive_con_nucleo_familiar"
         :items="[
           { label: 'Sí', value: true },
-          { label: 'No', value: false },
+          { label: 'No', value: false }
         ]"
       />
     </FormField>
@@ -155,11 +161,18 @@
     </FormField>
 
     <FormField label="Cargo">
-      <UInput :model-value="cargoDisplay" :readonly="true" />
+      <UInput
+        :model-value="cargoDisplay"
+        :readonly="true"
+      />
     </FormField>
 
     <FormField label="Salario (opcional)">
-      <UInput v-model.number="form.solicitante.salario" type="number" min="0" />
+      <UInput
+        v-model.number="form.solicitante.salario"
+        type="number"
+        min="0"
+      />
     </FormField>
 
     <FormField label="Código categoría">
@@ -204,7 +217,7 @@ const props = withDefaults(defineProps<SolocitanteProps>(), {
   nivelesEducativos: () => [],
   tiposVivienda: () => [],
   ocupaciones: () => [],
-  estadoCiviles: () => [],
+  estadoCiviles: () => []
 });
 
 const {
@@ -222,7 +235,7 @@ const {
   tiposContratoOptions,
 
   // Event handlers
-  handleCiudadChange,
+  handleCiudadChange
 } = useSolicitanteStep(props);
 
 // Cargar parámetros para obtener nombres de cargos

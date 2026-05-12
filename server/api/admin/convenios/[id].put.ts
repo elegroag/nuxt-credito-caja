@@ -21,7 +21,7 @@ const updateConvenioSchema = z.object({
   numero_empleados: z.number().int().nonnegative().optional(),
   tipo_empresa: z.string().max(100, "El tipo de empresa no puede exceder 100 caracteres").optional(),
   descripcion: z.string().optional(),
-  notas_internas: z.string().optional(),
+  notas_internas: z.string().optional()
 });
 
 export default defineEventHandler(async (event: H3Event) => {
@@ -43,9 +43,9 @@ export default defineEventHandler(async (event: H3Event) => {
         id: String(convenio.id),
         nit: String(convenio.nit),
         razon_social: convenio.razon_social,
-        estado: convenio.estado,
+        estado: convenio.estado
       },
-      "Convenio actualizado exitosamente",
+      "Convenio actualizado exitosamente"
     );
   } catch (e: any) {
     const status = Number(e?.statusCode || e?.response?.status || 502);
@@ -53,7 +53,7 @@ export default defineEventHandler(async (event: H3Event) => {
 
     return CustomResponse.error(
       e?.data?.error || e?.message || "Error conectando con backend",
-      "Error al actualizar convenio.",
+      "Error al actualizar convenio."
     );
   }
 });

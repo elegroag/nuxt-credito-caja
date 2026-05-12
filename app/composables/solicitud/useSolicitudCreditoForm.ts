@@ -18,7 +18,7 @@ const createInitialSolicitudCreditoForm = (): SolicitudCreditoPayload => ({
     detalle_modalidad: "",
     fecha_radicado: "",
     producto_tipo: "",
-    ha_tenido_credito: false,
+    ha_tenido_credito: false
   },
   linea_credito: {
     detalle_modalidad: "",
@@ -32,7 +32,7 @@ const createInitialSolicitudCreditoForm = (): SolicitudCreditoPayload => ({
     tipfin: "",
     tasa_interes: 0,
     total_intereses: 0,
-    total_pagar: 0,
+    total_pagar: 0
   },
   solicitante: {
     tipo_persona: "",
@@ -59,7 +59,7 @@ const createInitialSolicitudCreditoForm = (): SolicitudCreditoPayload => ({
     antiguedad_meses: 0,
     tipo_contrato: "",
     sector_economico: "",
-    codigo_categoria: "",
+    codigo_categoria: ""
   },
   conyuge: undefined,
   informacion_laboral: {
@@ -73,7 +73,7 @@ const createInitialSolicitudCreditoForm = (): SolicitudCreditoPayload => ({
     tipo_contrato: "",
     nombramiento_o_pagador: "",
     tiempo_servicio: 0,
-    tiempo_servicio_unidad: "meses",
+    tiempo_servicio_unidad: "meses"
   },
   ingresos_descuentos: {
     moneda: "COP",
@@ -89,7 +89,7 @@ const createInitialSolicitudCreditoForm = (): SolicitudCreditoPayload => ({
     judiciales: 0,
     otras_deducciones: 0,
     total_descuentos: 0,
-    total_neto_recibido: 0,
+    total_neto_recibido: 0
   },
   informacion_economica: {
     moneda: "COP",
@@ -99,14 +99,14 @@ const createInitialSolicitudCreditoForm = (): SolicitudCreditoPayload => ({
     total_gastos: 0,
     gastos_descripcion: "",
     total_activos: 0,
-    total_pasivos: 0,
+    total_pasivos: 0
   },
   propiedades: [],
   deudas: [],
   referencias: {
     familiares: [],
-    personales: [],
-  },
+    personales: []
+  }
 });
 
 const cloneInitialSolicitudCreditoForm = (): SolicitudCreditoPayload => {
@@ -116,19 +116,19 @@ const cloneInitialSolicitudCreditoForm = (): SolicitudCreditoPayload => {
 export const useSolicitudCreditoForm = () => {
   const form = useState<SolicitudCreditoPayload>(
     "solicitudCreditoForm",
-    cloneInitialSolicitudCreditoForm,
+    cloneInitialSolicitudCreditoForm
   );
   const hydrated = useState<boolean>(
     "solicitudCreditoFormHydrated",
-    () => false,
+    () => false
   );
   const persistenceInitialized = useState<boolean>(
     "solicitudCreditoFormPersistenceInitialized",
-    () => false,
+    () => false
   );
 
   const hydrate = () => {
-    if (!process.client || hydrated.value) {
+    if (!import.meta.client || hydrated.value) {
       return;
     }
 
@@ -145,7 +145,7 @@ export const useSolicitudCreditoForm = () => {
     } catch (error) {
       console.error(
         "Error cargando formulario de solicitud desde storage:",
-        error,
+        error
       );
       localStorage.removeItem(STORAGE_KEY);
     }
@@ -153,7 +153,7 @@ export const useSolicitudCreditoForm = () => {
 
   hydrate();
 
-  if (process.client && !persistenceInitialized.value) {
+  if (import.meta.client && !persistenceInitialized.value) {
     watch(
       form,
       (value) => {
@@ -162,18 +162,18 @@ export const useSolicitudCreditoForm = () => {
         } catch (error) {
           console.error(
             "Error guardando formulario de solicitud en storage:",
-            error,
+            error
           );
         }
       },
-      { deep: true },
+      { deep: true }
     );
 
     persistenceInitialized.value = true;
   }
 
   const clearPersistedForm = () => {
-    if (!process.client) {
+    if (!import.meta.client) {
       return;
     }
 
@@ -191,7 +191,7 @@ export const useSolicitudCreditoForm = () => {
       nombres_apellidos: "",
       ingresos_laborales: 0,
       trabaja: false,
-      telefono_movil: "",
+      telefono_movil: ""
     };
   };
 
@@ -209,30 +209,30 @@ export const useSolicitudCreditoForm = () => {
       nombre: "",
       direccion: "",
       telefono: "",
-      email: "",
+      email: ""
     };
   };
 
   const autocalcularIngresos = () => {
     const ing = form.value.ingresos_descuentos;
 
-    ing.total_ingresos =
-      Number(ing.salario_basico_mensual || 0) +
-      Number(ing.subsidio_transporte || 0) +
-      Number(ing.horas_extras || 0) +
-      Number(ing.comisiones || 0) +
-      Number(ing.otros_ingresos || 0);
+    ing.total_ingresos
+      = Number(ing.salario_basico_mensual || 0)
+        + Number(ing.subsidio_transporte || 0)
+        + Number(ing.horas_extras || 0)
+        + Number(ing.comisiones || 0)
+        + Number(ing.otros_ingresos || 0);
 
-    ing.total_descuentos =
-      Number(ing.salud_pension || 0) +
-      Number(ing.libranzas_comfaca || 0) +
-      Number(ing.otras_libranzas || 0) +
-      Number(ing.judiciales || 0) +
-      Number(ing.otras_deducciones || 0);
+    ing.total_descuentos
+      = Number(ing.salud_pension || 0)
+        + Number(ing.libranzas_comfaca || 0)
+        + Number(ing.otras_libranzas || 0)
+        + Number(ing.judiciales || 0)
+        + Number(ing.otras_deducciones || 0);
 
     ing.total_neto_recibido = Math.max(
       ing.total_ingresos - ing.total_descuentos,
-      0,
+      0
     );
   };
 
@@ -242,7 +242,7 @@ export const useSolicitudCreditoForm = () => {
       descripcion: "",
       ciudad: "",
       matricula_inmobiliaria: "",
-      valor_comercial: 0,
+      valor_comercial: 0
     });
   };
 
@@ -255,7 +255,7 @@ export const useSolicitudCreditoForm = () => {
       acreedor_nombre: "",
       concepto: "",
       valor_cuota: 0,
-      saldo_obligacion: 0,
+      saldo_obligacion: 0
     });
   };
 
@@ -288,6 +288,6 @@ export const useSolicitudCreditoForm = () => {
     addReferencia,
     removeReferencia,
     reset,
-    clearPersistedForm,
+    clearPersistedForm
   };
 };

@@ -3,8 +3,10 @@
     <div class="text-center">
       <div
         class="mx-auto mb-4 h-12 w-12 animate-spin rounded-full border-b-2 border-primary"
-      ></div>
-      <p class="text-muted-foreground">Preparando solicitud...</p>
+      />
+      <p class="text-muted-foreground">
+        Preparando solicitud...
+      </p>
     </div>
   </div>
 </template>
@@ -13,13 +15,13 @@
 import { onMounted } from "vue";
 import {
   DEFAULT_WIZARD_STEP_KEY,
-  getStoredWizardStepKey,
+  getStoredWizardStepKey
 } from "~/composables/solicitud/useWizardSolicitud";
 
 const router = useRouter();
 
 onMounted(async () => {
-  const stepKey = process.client
+  const stepKey = import.meta.client
     ? getStoredWizardStepKey()
     : DEFAULT_WIZARD_STEP_KEY;
   await router.replace(`/solicitud/${stepKey}`);

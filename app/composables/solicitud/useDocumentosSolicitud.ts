@@ -13,46 +13,46 @@ export const useDocumentosSolicitud = () => {
   const solicitudId = route.params.id as string;
   const buildDownloadUrl = (documentoUuid: string) =>
     urlFor(
-      `/api/solicitudes/${solicitudId}/documentos/${documentoUuid}/descargar`,
+      `/api/solicitudes/${solicitudId}/documentos/${documentoUuid}/descargar`
     );
   const extractDownloadError = (payload: unknown, status: number) => {
     if (!payload || typeof payload !== "object") {
       return `Error HTTP: ${status}`;
     }
     const data = payload as {
-      message?: string;
-      error?: string;
-      success?: boolean;
+      message?: string
+      error?: string
+      success?: boolean
       data?: {
-        message?: string;
-        error?: string;
-        success?: boolean;
-      };
+        message?: string
+        error?: string
+        success?: boolean
+      }
     };
     return (
-      data.message ||
-      data.error ||
-      data.data?.error ||
-      data.data?.message ||
-      `Error HTTP: ${status}`
+      data.message
+      || data.error
+      || data.data?.error
+      || data.data?.message
+      || `Error HTTP: ${status}`
     );
   };
   const getFilenameFromHeader = (
     contentDisposition: string | null,
-    defaultName: string,
+    defaultName: string
   ) => {
     if (!contentDisposition) return defaultName;
 
     // RFC 5987: filename*=utf-8''nombre%20archivo.pdf
     const filenameStarMatch = contentDisposition.match(
-      /filename\*\s*=\s*([^;]+)/i,
+      /filename\*\s*=\s*([^;]+)/i
     );
     if (filenameStarMatch && filenameStarMatch[1]) {
       const value = filenameStarMatch[1]?.trim();
       if (value) {
         const parts = value.split("''");
-        const encodedName: string =
-          parts.length === 2 ? (parts[1] ?? value) : value;
+        const encodedName: string
+          = parts.length === 2 ? (parts[1] ?? value) : value;
         try {
           return (
             decodeURIComponent(encodedName.replace(/['"]/g, "")) || defaultName
@@ -64,7 +64,7 @@ export const useDocumentosSolicitud = () => {
     }
 
     const fileNameMatch = contentDisposition.match(
-      /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/i,
+      /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/i
     );
     if (fileNameMatch && fileNameMatch[1]) {
       return fileNameMatch[1].replace(/['"]/g, "");
@@ -91,7 +91,7 @@ export const useDocumentosSolicitud = () => {
     documentosCargados,
     documentosRequeridos,
     progreso,
-    error: errorUpload,
+    error: errorUpload
   } = useDocumentos(solicitudId);
 
   // Estado local
@@ -108,34 +108,34 @@ export const useDocumentosSolicitud = () => {
       return undefined;
     }
     return documentosCargados.value.find(
-      (d) => d.documento_requerido_id === reqId,
+      d => d.documento_requerido_id === reqId
     );
   };
 
   // Computed properties
   const puedeContinuar = computed(() => {
     if (
-      !solicitud.value ||
-      !documentosRequeridos.value ||
-      !Array.isArray(documentosRequeridos.value)
+      !solicitud.value
+      || !documentosRequeridos.value
+      || !Array.isArray(documentosRequeridos.value)
     )
       return false;
     const obligatorios = documentosRequeridos.value.filter(
-      (d) => d.obligatorio,
+      d => d.obligatorio
     );
-    return obligatorios.every((req) => getDocumentoCargado(req.id));
+    return obligatorios.every(req => getDocumentoCargado(req.id));
   });
 
   const progresoDocumentos = computed(() => {
     if (
-      !documentosRequeridos.value ||
-      !Array.isArray(documentosRequeridos.value)
+      !documentosRequeridos.value
+      || !Array.isArray(documentosRequeridos.value)
     )
       return 0;
 
     // Contar cuántos documentos requeridos están cargados
-    const cargados = documentosRequeridos.value.filter((req) =>
-      getDocumentoCargado(req.id),
+    const cargados = documentosRequeridos.value.filter(req =>
+      getDocumentoCargado(req.id)
     ).length;
     const total = documentosRequeridos.value.length;
 
@@ -144,14 +144,14 @@ export const useDocumentosSolicitud = () => {
 
   const documentosCargadosCount = computed(() => {
     if (
-      !documentosRequeridos.value ||
-      !Array.isArray(documentosRequeridos.value)
+      !documentosRequeridos.value
+      || !Array.isArray(documentosRequeridos.value)
     )
       return 0;
 
     // Contar cuántos documentos requeridos están cargados
-    return documentosRequeridos.value.filter((req) =>
-      getDocumentoCargado(req.id),
+    return documentosRequeridos.value.filter(req =>
+      getDocumentoCargado(req.id)
     ).length;
   });
 
@@ -164,8 +164,8 @@ export const useDocumentosSolicitud = () => {
       await ready;
       // Cargar datos de la solicitud
       const response = await getJson<{
-        success: boolean;
-        data: SolicitudCredito;
+        success: boolean
+        data: SolicitudCredito
       }>(`/api/solicitudes/${solicitudId}`, { auth: true });
       solicitud.value = response.data;
 
@@ -173,8 +173,8 @@ export const useDocumentosSolicitud = () => {
       await cargarDocumentos();
     } catch (e: any) {
       console.error(e);
-      errorSolicitud.value =
-        e.message || "No se pudo cargar la información de la solicitud.";
+      errorSolicitud.value
+        = e.message || "No se pudo cargar la información de la solicitud.";
     } finally {
       loadingSolicitud.value = false;
     }
@@ -194,7 +194,7 @@ export const useDocumentosSolicitud = () => {
   const handleDelete = async (docCargadoId: string) => {
     // Encontrar a qué requerimiento pertenece para mostrar loading si es necesario
     const doc = documentosCargados.value?.find(
-      (d) => d.documento_uuid === docCargadoId,
+      d => d.documento_uuid === docCargadoId
     );
     if (doc) {
       cargandoId.value = doc.documento_requerido_id;
@@ -217,12 +217,12 @@ export const useDocumentosSolicitud = () => {
       const response = await fetch(url, {
         method: "GET",
         headers: {
-          ...headers,
-        },
+          ...headers
+        }
       });
 
-      const contentType =
-        response.headers.get("content-type")?.toLowerCase() || "";
+      const contentType
+        = response.headers.get("content-type")?.toLowerCase() || "";
 
       if (contentType.includes("application/json")) {
         const payload = await response.json().catch(() => null);
@@ -237,12 +237,12 @@ export const useDocumentosSolicitud = () => {
       const blob = await response.blob();
       const fileName = getFilenameFromHeader(
         response.headers.get("content-disposition"),
-        "documento",
+        "documento"
       );
       triggerDownload(blob, fileName);
     } catch (error) {
-      const message =
-        error instanceof Error ? error.message : "Error al descargar documento";
+      const message
+        = error instanceof Error ? error.message : "Error al descargar documento";
       console.error("Error al descargar documento:", error);
       downloadError.value = message;
       downloadErrorDialogOpen.value = true;
@@ -271,17 +271,17 @@ export const useDocumentosSolicitud = () => {
       await postJson(
         `/api/solicitudes/${solicitudId}/cambiar-estado`,
         {
-          estado: "DOCUMENTOS_CARGADOS",
+          estado: "DOCUMENTOS_CARGADOS"
         },
-        { auth: true },
+        { auth: true }
       );
 
       // Navegar al resumen
       router.push(`/dash/solicitud/resumen/${solicitudId}`);
     } catch (e: any) {
       console.error("Error al cambiar estado:", e);
-      errorSolicitud.value =
-        e.message || "Error al actualizar el estado de la solicitud";
+      errorSolicitud.value
+        = e.message || "Error al actualizar el estado de la solicitud";
     }
   };
 
@@ -321,6 +321,6 @@ export const useDocumentosSolicitud = () => {
     documentosCargados,
     documentosRequeridos,
     progreso,
-    errorUpload,
+    errorUpload
   };
 };

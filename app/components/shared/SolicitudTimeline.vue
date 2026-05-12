@@ -1,6 +1,8 @@
 <template>
   <UCard class="shadow-md hover:shadow-lg transition-shadow duration-200">
-    <h2 class="text-xl font-semibold mb-2">Estado del proceso</h2>
+    <h2 class="text-xl font-semibold mb-2">
+      Estado del proceso
+    </h2>
     <p>
       Aquí podras encontrar el estado actual de tu solicitud. Como tambien la
       informacion relacionada con el proceso y los documentos cargados.
@@ -9,7 +11,7 @@
     <div class="relative mt-8">
       <div
         class="absolute left-8 top-0 bottom-0 w-0.5 bg-linear-to-b from-sky-200 to-blue-200 dark:from-sky-700 dark:to-blue-700"
-      ></div>
+      />
 
       <div class="space-y-6">
         <!-- Estados completados -->
@@ -42,7 +44,10 @@
         </div>
 
         <!-- Estado actual -->
-        <div v-if="estadoActual" class="flex items-start">
+        <div
+          v-if="estadoActual"
+          class="flex items-start"
+        >
           <div
             class="relative z-10 flex items-center justify-center w-16 h-16 bg-linear-to-br from-sky-100 to-blue-100 dark:from-sky-900/30 dark:to-blue-900/30 rounded-full shadow-sm animate-pulse"
           >
@@ -96,22 +101,22 @@ import { computed } from "#imports";
 import { CheckCircle, Clock, FileText } from "lucide-vue-next";
 
 interface EstadoTimeline {
-  id: string;
-  nombre: string;
-  descripcion: string;
-  fecha?: string;
-  tiempoEstimado?: string;
+  id: string
+  nombre: string
+  descripcion: string
+  fecha?: string
+  tiempoEstimado?: string
 }
 
 interface Props {
-  estados: EstadoTimeline[];
-  estadoActualId?: string;
-  fechaEnvio?: string;
+  estados: EstadoTimeline[]
+  estadoActualId?: string
+  fechaEnvio?: string
 }
 
 const props = withDefaults(defineProps<Props>(), {
   estadoActualId: "",
-  fechaEnvio: "",
+  fechaEnvio: ""
 });
 
 // Computar estados según su posición
@@ -119,25 +124,25 @@ const estadosCompletados = computed(() => {
   if (!props.estadoActualId) return [];
 
   const currentIndex = props.estados.findIndex(
-    (e) => e.id === props.estadoActualId,
+    e => e.id === props.estadoActualId
   );
   if (currentIndex === -1) return [];
 
-  return props.estados.slice(0, currentIndex).map((estado) => ({
+  return props.estados.slice(0, currentIndex).map(estado => ({
     ...estado,
-    fecha: estado.id === "DOCUMENTOS_CARGADOS" ? props.fechaEnvio : undefined,
+    fecha: estado.id === "DOCUMENTOS_CARGADOS" ? props.fechaEnvio : undefined
   }));
 });
 
 const estadoActual = computed(() => {
   if (!props.estadoActualId) return null;
 
-  const estado = props.estados.find((e) => e.id === props.estadoActualId);
+  const estado = props.estados.find(e => e.id === props.estadoActualId);
   if (!estado) return null;
 
   return {
     ...estado,
-    tiempoEstimado: getTiempoEstimado(estado.id),
+    tiempoEstimado: getTiempoEstimado(estado.id)
   };
 });
 
@@ -145,7 +150,7 @@ const estadosFuturos = computed(() => {
   if (!props.estadoActualId) return props.estados;
 
   const currentIndex = props.estados.findIndex(
-    (e) => e.id === props.estadoActualId,
+    e => e.id === props.estadoActualId
   );
   if (currentIndex === -1) return [];
 
@@ -162,7 +167,7 @@ const getTiempoEstimado = (estadoId: string): string => {
     FIRMADO: "1-2 días hábiles",
     ENVIADO_PENDIENTE_APROBACION: "3-5 días hábiles",
     APROBADO: "1-2 días hábiles",
-    DESEMBOLSADO: "Inmediato",
+    DESEMBOLSADO: "Inmediato"
   };
 
   return tiempos[estadoId] || "";

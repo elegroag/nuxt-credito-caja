@@ -23,12 +23,12 @@ const jwtManager = () => {
    * @returns Token JWT firmado como string
    */
   const signJwt = async (
-    payload: Omit<JwtPayload, "iat" | "exp">,
+    payload: Omit<JwtPayload, "iat" | "exp">
   ): Promise<string> => {
     return new SignJWT({
       sub: String(payload.sub),
       email: payload.email,
-      roles: payload.roles,
+      roles: payload.roles
     })
       .setProtectedHeader({ alg: "HS256" })
       .setIssuedAt()
@@ -48,7 +48,7 @@ const jwtManager = () => {
   const verifyJwt = async (token: string): Promise<JwtPayload> => {
     const { payload } = await jwtVerify(token, getSecretKey(), {
       issuer: "sistema-creditos",
-      audience: "sistema-creditos-users",
+      audience: "sistema-creditos-users"
     });
 
     return {
@@ -56,7 +56,7 @@ const jwtManager = () => {
       email: payload.email as string,
       roles: payload.roles as string[],
       iat: payload.iat,
-      exp: payload.exp,
+      exp: payload.exp
     };
   };
 
@@ -68,7 +68,7 @@ const jwtManager = () => {
    * @returns Token sin el prefijo "Bearer", o null si no existe
    */
   const extractBearerToken = (
-    authHeader: string | undefined,
+    authHeader: string | undefined
   ): string | null => {
     if (!authHeader?.startsWith("Bearer ")) return null;
     return authHeader.slice(7);
@@ -77,7 +77,7 @@ const jwtManager = () => {
   return {
     signJwt,
     verifyJwt,
-    extractBearerToken,
+    extractBearerToken
   };
 };
 

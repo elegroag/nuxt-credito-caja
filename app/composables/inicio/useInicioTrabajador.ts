@@ -10,7 +10,7 @@ export function useInicioTrabajador() {
   const {
     cargarParametros,
     loading: loadingParametros,
-    error: errorParametros,
+    error: errorParametros
   } = useParametros();
 
   const loadingConvenio = ref(false);
@@ -18,23 +18,23 @@ export function useInicioTrabajador() {
   const convenioActivo = ref<ConvenioActivo | null>(null);
 
   const trabajadorEnSesion = computed<Trabajador | null>(
-    () => session.value.user?.trabajador ?? null,
+    () => session.value.user?.trabajador ?? null
   );
   const empresaTrabajador = computed(
-    () => trabajadorEnSesion.value?.empresa ?? null,
+    () => trabajadorEnSesion.value?.empresa ?? null
   );
 
   const cargarConvenioActivo = async () => {
-    if (!process.client) return;
+    if (!import.meta.client) return;
 
     loadingConvenio.value = true;
     errorConvenio.value = null;
 
     try {
       const response = await getJson<{
-        success: boolean;
-        message: string;
-        data: ConvenioActivo[];
+        success: boolean
+        message: string
+        data: ConvenioActivo[]
       }>("/api/convenios/activo", { auth: true });
 
       // La API devuelve un array, tomamos el primer convenio activo
@@ -45,8 +45,8 @@ export function useInicioTrabajador() {
         convenioActivo.value = null;
       }
     } catch (e: unknown) {
-      errorConvenio.value =
-        e instanceof Error
+      errorConvenio.value
+        = e instanceof Error
           ? e.message
           : "No fue posible cargar el convenio activo";
       convenioActivo.value = null;
@@ -99,6 +99,6 @@ export function useInicioTrabajador() {
 
     cargarInicioTrabajador,
     cargarConvenioActivo,
-    nombreBienvenida,
+    nombreBienvenida
   };
 }

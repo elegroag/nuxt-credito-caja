@@ -4,8 +4,8 @@ import { useNotifications } from "~/composables/useNotifications";
 export type FilterType = "all" | "unread" | "read";
 
 interface FilterOption {
-  value: FilterType;
-  label: string;
+  value: FilterType
+  label: string
 }
 
 export function useNotifyPage() {
@@ -22,7 +22,7 @@ export function useNotifyPage() {
     markAllAsRead,
     deleteNotification,
     startPolling,
-    stopPolling,
+    stopPolling
   } = useNotifications();
 
   const currentFilter = ref<FilterType>("all");
@@ -30,7 +30,7 @@ export function useNotifyPage() {
   const filters: FilterOption[] = [
     { value: "all", label: "Todas" },
     { value: "unread", label: "No leídas" },
-    { value: "read", label: "Leídas" },
+    { value: "read", label: "Leídas" }
   ];
 
   const filteredNotifications = computed(() => {
@@ -98,6 +98,6 @@ export function useNotifyPage() {
     getEmptyStateMessage,
     loadNotifications,
     startPolling,
-    stopPolling,
+    stopPolling
   };
 }

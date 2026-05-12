@@ -4,7 +4,7 @@
     <div class="space-y-4">
       <div class="flex items-center justify-between">
         <div class="flex items-center gap-2">
-          <div class="h-8 w-1 bg-primary rounded-full"></div>
+          <div class="h-8 w-1 bg-primary rounded-full" />
           <h3
             class="text-sm font-bold uppercase tracking-wider text-muted-foreground"
           >
@@ -38,7 +38,9 @@
           class="border-border/50 bg-muted/20 shadow-none"
         >
           <div class="flex flex-row items-center justify-between mb-3">
-            <p class="text-sm font-semibold">Familiar #{{ Number(idx) + 1 }}</p>
+            <p class="text-sm font-semibold">
+              Familiar #{{ Number(idx) + 1 }}
+            </p>
             <UButton
               variant="ghost"
               size="sm"
@@ -56,7 +58,10 @@
               />
             </FormField>
             <FormField label="Celular">
-              <UInput v-model="r.celular" placeholder="Número de celular" />
+              <UInput
+                v-model="r.celular"
+                placeholder="Número de celular"
+              />
             </FormField>
           </div>
         </UCard>
@@ -67,7 +72,7 @@
     <div class="space-y-4">
       <div class="flex items-center justify-between">
         <div class="flex items-center gap-2">
-          <div class="h-8 w-1 bg-secondary rounded-full"></div>
+          <div class="h-8 w-1 bg-secondary rounded-full" />
           <h3
             class="text-sm font-bold uppercase tracking-wider text-muted-foreground"
           >
@@ -101,7 +106,9 @@
           class="border-border/50 bg-muted/20 shadow-none"
         >
           <div class="flex flex-row items-center justify-between mb-3">
-            <p class="text-sm font-semibold">Personal #{{ Number(idx) + 1 }}</p>
+            <p class="text-sm font-semibold">
+              Personal #{{ Number(idx) + 1 }}
+            </p>
             <UButton
               variant="ghost"
               size="sm"
@@ -119,7 +126,10 @@
               />
             </FormField>
             <FormField label="Celular">
-              <UInput v-model="r.celular" placeholder="Número de celular" />
+              <UInput
+                v-model="r.celular"
+                placeholder="Número de celular"
+              />
             </FormField>
           </div>
         </UCard>
@@ -133,9 +143,9 @@ import { Plus, Trash2 } from "lucide-vue-next";
 import FormField from "~/components/shared/FormField.vue";
 
 interface Props {
-  form: any;
-  addReferencia: (type: "familiares" | "personales") => void;
-  removeReferencia: (type: "familiares" | "personales", index: number) => void;
+  form: any
+  addReferencia: (type: "familiares" | "personales") => void
+  removeReferencia: (type: "familiares" | "personales", index: number) => void
 }
 
 defineProps<Props>();

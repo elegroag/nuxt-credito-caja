@@ -1,6 +1,9 @@
 <template>
   <!-- Lista de Firmantes Actuales -->
-  <div v-if="firmantes.length > 0" class="mb-6">
+  <div
+    v-if="firmantes.length > 0"
+    class="mb-6"
+  >
     <h3 class="text-sm font-medium text-foreground mb-3">
       Firmantes Registrados ({{ firmantes.length }})
     </h3>
@@ -14,7 +17,10 @@
           <div
             class="mt-0.5 h-9 w-9 rounded-full bg-primary/10 flex items-center justify-center border border-primary/20 shrink-0"
           >
-            <UIcon name="i-lucide-user" class="w-4 h-4 text-primary" />
+            <UIcon
+              name="i-lucide-user"
+              class="w-4 h-4 text-primary"
+            />
           </div>
           <div class="min-w-0 flex-1">
             <div
@@ -34,22 +40,34 @@
             </div>
             <div class="mt-2 space-y-1 text-sm text-muted-foreground">
               <div class="flex items-center gap-2">
-                <UIcon name="i-lucide-check-circle" class="w-4 h-4" />
+                <UIcon
+                  name="i-lucide-check-circle"
+                  class="w-4 h-4"
+                />
                 <span class="truncate">
                   {{
                     getTipoDocumentoLabel(
-                      firmante.tipo_documento || getDefaultTipoDocumento(),
+                      firmante.tipo_documento || getDefaultTipoDocumento()
                     )
                   }}:
                   {{ firmante.numero_documento }}
                 </span>
               </div>
               <div class="flex items-center gap-2">
-                <UIcon name="i-lucide-mail" class="w-4 h-4" />
+                <UIcon
+                  name="i-lucide-mail"
+                  class="w-4 h-4"
+                />
                 <span class="truncate">{{ firmante.email }}</span>
               </div>
-              <div v-if="firmante.telefono" class="flex items-center gap-2">
-                <UIcon name="i-lucide-phone" class="w-4 h-4" />
+              <div
+                v-if="firmante.telefono"
+                class="flex items-center gap-2"
+              >
+                <UIcon
+                  name="i-lucide-phone"
+                  class="w-4 h-4"
+                />
                 <span class="truncate">{{ firmante.telefono }}</span>
               </div>
             </div>
@@ -58,22 +76,36 @@
         <UButton
           variant="outline"
           size="sm"
-          @click="eliminarFirmante(index)"
           color="destructive"
           title="Eliminar firmante"
+          @click="eliminarFirmante(index)"
         >
-          <UIcon name="i-lucide-trash-2" class="w-4 h-4" />
+          <UIcon
+            name="i-lucide-trash-2"
+            class="w-4 h-4"
+          />
         </UButton>
       </div>
     </div>
   </div>
 
-  <div v-else class="mb-6">
-    <UAlert color="primary" variant="subtle">
+  <div
+    v-else
+    class="mb-6"
+  >
+    <UAlert
+      color="primary"
+      variant="subtle"
+    >
       <template #icon>
-        <UIcon name="i-lucide-alert-triangle" class="w-4 h-4" />
+        <UIcon
+          name="i-lucide-alert-triangle"
+          class="w-4 h-4"
+        />
       </template>
-      <template #title>No hay firmantes registrados</template>
+      <template #title>
+        No hay firmantes registrados
+      </template>
       <template #description>
         Agregue al menos un firmante para poder iniciar el proceso de firma
         digital.
@@ -84,7 +116,10 @@
   <!-- Formulario para Agregar Nuevo Firmante -->
   <div class="border-t pt-6">
     <h3 class="font-medium text-foreground mb-4 flex items-center gap-2">
-      <UIcon name="i-lucide-user-plus" class="w-4 h-4 text-primary" />
+      <UIcon
+        name="i-lucide-user-plus"
+        class="w-4 h-4 text-primary"
+      />
       Agregar Nuevo Firmante
     </h3>
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -166,7 +201,10 @@
       class="mt-4"
       @click="handleAgregarFirmante"
     >
-      <UIcon name="i-lucide-user-plus" class="w-4 h-4 mr-2" />
+      <UIcon
+        name="i-lucide-user-plus"
+        class="w-4 h-4 mr-2"
+      />
       Agregar Firmante
     </UButton>
   </div>
@@ -178,15 +216,19 @@
       color="primary"
       size="lg"
       :disabled="loadingFirmado || firmantes.length === 0"
-      @click="handleIniciarFirmado"
       class="w-full md:w-auto"
+      @click="handleIniciarFirmado"
     >
       <UIcon
         v-if="loadingFirmado"
         name="i-lucide-loader-2"
         class="w-4 h-4 mr-2 animate-spin"
       />
-      <UIcon v-else name="i-lucide-send" class="w-4 h-4 mr-2" />
+      <UIcon
+        v-else
+        name="i-lucide-send"
+        class="w-4 h-4 mr-2"
+      />
       {{ loadingFirmado ? "Enviando..." : "Enviar para Firma Digital" }}
     </UButton>
     <p class="text-sm text-muted-foreground mt-2">
@@ -201,20 +243,20 @@ import { ref, watch } from "#imports";
 import {
   getTiposDocumentoOptions,
   getDefaultTipoDocumento,
-  getTipoDocumentoLabel,
+  getTipoDocumentoLabel
 } from "~/lib/tipos_documento";
 import { useApi } from "~/composables/useApi";
 import { useSession } from "~/composables/useSession";
 
 interface Props {
-  solicitudId: string;
-  firmantes: Firmante[];
+  solicitudId: string
+  firmantes: Firmante[]
 }
 
 interface Emits {
-  (e: "agregar-firmante"): void;
-  (e: "eliminar-firmante", index: number): void;
-  (e: "iniciar-firmado"): void;
+  (e: "agregar-firmante"): void
+  (e: "eliminar-firmante", index: number): void
+  (e: "iniciar-firmado"): void
 }
 
 const props = defineProps<Props>();
@@ -232,7 +274,7 @@ watch(
   (newFirmantes) => {
     firmantes.value = [...newFirmantes];
   },
-  { deep: true },
+  { deep: true }
 );
 
 // Gestión de firmantes
@@ -243,7 +285,7 @@ const nuevoFirmante = ref<Firmante>({
   numero_documento: "",
   tipo_documento: getDefaultTipoDocumento(), // Cédula de Ciudadanía
   rol: "Firmante",
-  telefono: "",
+  telefono: ""
 });
 
 const handleAgregarFirmante = () => {
@@ -262,13 +304,13 @@ const eliminarFirmante = (index: number) => {
 // Gestión de firmantes
 const agregarFirmante = () => {
   if (
-    !nuevoFirmante.value.nombre_completo ||
-    !nuevoFirmante.value.email ||
-    !nuevoFirmante.value.numero_documento
+    !nuevoFirmante.value.nombre_completo
+    || !nuevoFirmante.value.email
+    || !nuevoFirmante.value.numero_documento
   ) {
     return {
       success: false,
-      message: "Debe completar todos los campos requeridos del firmante",
+      message: "Debe completar todos los campos requeridos del firmante"
     };
   }
 
@@ -281,7 +323,7 @@ const agregarFirmante = () => {
     numero_documento: "",
     tipo_documento: getDefaultTipoDocumento(), // Cédula de Ciudadanía
     rol: "Firmante",
-    telefono: "",
+    telefono: ""
   };
 
   return { success: true, message: "Firmante agregado exitosamente" };
@@ -292,7 +334,7 @@ const iniciarProcesoDeFirmado = async () => {
   if (firmantes.value.length === 0) {
     return {
       success: false,
-      message: "Debe tener al menos un firmante para iniciar el proceso",
+      message: "Debe tener al menos un firmante para iniciar el proceso"
     };
   }
 
@@ -301,30 +343,30 @@ const iniciarProcesoDeFirmado = async () => {
     await ready;
 
     const response = await postJson<{
-      success: boolean;
-      message: string;
-      data?: unknown;
+      success: boolean
+      message: string
+      data?: unknown
     }>(`/api/solicitudes/${solicitudId}/iniciar-firmado`, {}, { auth: true });
 
     if (response.success) {
       return {
         success: true,
         message:
-          response.message ||
-          "Documento enviado para firma digital exitosamente",
+          response.message
+          || "Documento enviado para firma digital exitosamente"
       };
     } else {
       throw new Error(
-        response.message || "Error al iniciar proceso de firmado",
+        response.message || "Error al iniciar proceso de firmado"
       );
     }
   } catch (e: unknown) {
     console.error("Error al iniciar proceso de firmado:", e);
-    const message =
-      e instanceof Error ? e.message : "Error al iniciar el proceso de firmado";
+    const message
+      = e instanceof Error ? e.message : "Error al iniciar el proceso de firmado";
     return {
       success: false,
-      message,
+      message
     };
   } finally {
     loadingFirmado.value = false;
@@ -333,7 +375,7 @@ const iniciarProcesoDeFirmado = async () => {
 
 const handleIniciarFirmado = async () => {
   const confirmacion = confirm(
-    `¿Está seguro de enviar el documento para firma digital a ${firmantes.value.length} firmante(s)?`,
+    `¿Está seguro de enviar el documento para firma digital a ${firmantes.value.length} firmante(s)?`
   );
 
   if (!confirmacion) return;
@@ -342,7 +384,7 @@ const handleIniciarFirmado = async () => {
 
   if (resultado.success) {
     alert(
-      resultado.message || "Documento enviado para firma digital exitosamente",
+      resultado.message || "Documento enviado para firma digital exitosamente"
     );
   } else {
     alert(resultado.message || "Error al iniciar el proceso de firmado");

@@ -8,13 +8,21 @@
         Estima la cuota mensual, intereses y capacidad de pago.
       </p>
 
-      <UButton variant="soft" class="mt-3" size="lg" @click="navigateToLineas">
+      <UButton
+        variant="soft"
+        class="mt-3"
+        size="lg"
+        @click="navigateToLineas"
+      >
         Ver líneas de crédito
       </UButton>
     </div>
 
     <!-- Alerta de convenio -->
-    <div v-if="mensajeBeneficios" class="mb-6">
+    <div
+      v-if="mensajeBeneficios"
+      class="mb-6"
+    >
       <ConvenioAlert
         :titulo="mensajeBeneficios.titulo"
         :descripcion="`Su empresa ${mensajeBeneficios.empresa} tiene convenio con COMFACA. Beneficios: ${mensajeBeneficios.items.join(', ')}`"
@@ -44,11 +52,14 @@
       >
         <div class="space-y-6">
           <div class="space-y-2">
-            <label for="monto" class="text-sm font-medium">Monto (COP)</label>
+            <label
+              for="monto"
+              class="text-sm font-medium"
+            >Monto (COP)</label>
             <UInput
               id="monto"
-              type="number"
               v-model.number="monto"
+              type="number"
               step="10000"
               min="0"
             />
@@ -56,13 +67,14 @@
 
           <div class="grid gap-4 sm:grid-cols-2">
             <div class="space-y-2">
-              <label for="plazo" class="text-sm font-medium"
-                >Plazo (meses)</label
-              >
+              <label
+                for="plazo"
+                class="text-sm font-medium"
+              >Plazo (meses)</label>
               <UInput
                 id="plazo"
-                type="number"
                 v-model.number="plazoMeses"
+                type="number"
                 step="1"
                 min="1"
               />
@@ -74,14 +86,17 @@
                 v-model="tipoTasa"
                 :items="[
                   { label: 'Anual (EA)', value: 'anual' },
-                  { label: 'Mensual', value: 'mensual' },
+                  { label: 'Mensual', value: 'mensual' }
                 ]"
               />
             </div>
           </div>
 
           <div class="space-y-2">
-            <label for="tasa" class="text-sm font-medium">
+            <label
+              for="tasa"
+              class="text-sm font-medium"
+            >
               {{
                 tipoTasa === "anual"
                   ? "Tasa efectiva anual (EA %)"
@@ -90,22 +105,23 @@
             </label>
             <UInput
               id="tasa"
+              v-model.number="tasaInput"
               type="number"
               step="0.1"
-              v-model.number="tasaInput"
               min="0"
             />
           </div>
 
           <div class="grid gap-4 sm:grid-cols-2">
             <div class="space-y-2">
-              <label for="ingresos" class="text-sm font-medium"
-                >Ingresos mensuales <br /><small>Salario bruto.</small></label
-              >
+              <label
+                for="ingresos"
+                class="text-sm font-medium"
+              >Ingresos mensuales <br><small>Salario bruto.</small></label>
               <UInput
                 id="ingresos"
-                type="number"
                 v-model.number="ingresosMensuales"
+                type="number"
                 step="10000"
                 min="0"
               />
@@ -115,14 +131,15 @@
             </div>
 
             <div class="space-y-2">
-              <label for="descuentos" class="text-sm font-medium"
-                >Descuentos mensuales
-                <small>Obligaciones adquiridas.</small></label
-              >
+              <label
+                for="descuentos"
+                class="text-sm font-medium"
+              >Descuentos mensuales
+                <small>Obligaciones adquiridas.</small></label>
               <UInput
                 id="descuentos"
-                type="number"
                 v-model.number="descuentosMensuales"
+                type="number"
                 step="10000"
                 min="0"
               />
@@ -130,13 +147,14 @@
           </div>
 
           <div class="space-y-2">
-            <label for="maxEndeudamiento" class="text-sm font-medium"
-              >Máximo endeudamiento por ley (50%)</label
-            >
+            <label
+              for="maxEndeudamiento"
+              class="text-sm font-medium"
+            >Máximo endeudamiento por ley (50%)</label>
             <UInput
               id="maxEndeudamiento"
-              type="number"
               v-model.number="maxEndeudamientoPct"
+              type="number"
               min="0"
               max="100"
             />
@@ -190,7 +208,9 @@
           >
             Total a pagar
           </p>
-          <p class="text-2xl font-bold">{{ fmt(totalPagar) }}</p>
+          <p class="text-2xl font-bold">
+            {{ fmt(totalPagar) }}
+          </p>
           <p class="text-sm text-muted-foreground">
             Intereses estimados: {{ fmt(intereses) }}
           </p>
@@ -200,10 +220,18 @@
           :class="`border-2 ${apto ? 'border-secondary/50 bg-secondary/5' : 'border-destructive/50 bg-destructive/5'}`"
         >
           <div class="flex items-start gap-3">
-            <CheckCircle2 v-if="apto" class="h-5 w-5 text-secondary mt-0.5" />
-            <AlertCircle v-else class="h-5 w-5 text-destructive mt-0.5" />
+            <CheckCircle2
+              v-if="apto"
+              class="h-5 w-5 text-secondary mt-0.5"
+            />
+            <AlertCircle
+              v-else
+              class="h-5 w-5 text-destructive mt-0.5"
+            />
             <div>
-              <p class="text-base font-semibold mb-1">Evaluación rápida</p>
+              <p class="text-base font-semibold mb-1">
+                Evaluación rápida
+              </p>
               <p :class="apto ? 'text-secondary' : 'text-destructive'">
                 {{
                   apto
@@ -223,7 +251,9 @@
         </UCard>
 
         <UCard class="border-accent/30 bg-red-50">
-          <p class="text-base font-semibold mb-3">Resumen</p>
+          <p class="text-base font-semibold mb-3">
+            Resumen
+          </p>
           <div class="space-y-2 text-sm">
             <div class="flex justify-between">
               <span class="text-muted-foreground">Monto</span>
@@ -265,12 +295,23 @@
         </UCard>
 
         <div class="flex gap-3">
-          <NuxtLink to="/solicitud" class="flex-1">
-            <UButton variant="soft" class="w-full" size="lg">
+          <NuxtLink
+            to="/solicitud"
+            class="flex-1"
+          >
+            <UButton
+              variant="soft"
+              class="w-full"
+              size="lg"
+            >
               Continuar con solicitud
             </UButton>
           </NuxtLink>
-          <UButton variant="outline" size="lg" @click="reset">
+          <UButton
+            variant="outline"
+            size="lg"
+            @click="reset"
+          >
             Restablecer
           </UButton>
         </div>
@@ -320,6 +361,6 @@ const {
 
   // Computed y funciones específicas
   tasaInput,
-  navigateToLineas,
+  navigateToLineas
 } = useSimuladorPage();
 </script>

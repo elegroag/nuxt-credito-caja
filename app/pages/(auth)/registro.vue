@@ -16,43 +16,50 @@
               'relative flex h-10 w-10 items-center justify-center rounded-full border-2 text-sm font-bold transition-all',
               pasoActual >= i
                 ? 'border-primary bg-primary text-primary-foreground'
-                : 'border-muted bg-card text-muted-foreground',
+                : 'border-muted bg-card text-muted-foreground'
             )
           "
         >
-          <UIcon v-if="pasoActual > i" name="i-lucide-check" class="w-5 h-5" />
+          <UIcon
+            v-if="pasoActual > i"
+            name="i-lucide-check"
+            class="w-5 h-5"
+          />
           <span v-else>{{ i }}</span>
         </div>
       </div>
 
       <!-- Step Labels -->
       <div class="flex justify-between text-xs text-muted-foreground mb-6 px-2">
-        <span :class="{ 'text-primary font-medium': pasoActual === 1 }"
-          >Datos</span
-        >
-        <span :class="{ 'text-primary font-medium': pasoActual === 2 }"
-          >Contacto</span
-        >
-        <span :class="{ 'text-primary font-medium': pasoActual === 3 }"
-          >Seguridad</span
-        >
+        <span :class="{ 'text-primary font-medium': pasoActual === 1 }">Datos</span>
+        <span :class="{ 'text-primary font-medium': pasoActual === 2 }">Contacto</span>
+        <span :class="{ 'text-primary font-medium': pasoActual === 3 }">Seguridad</span>
       </div>
 
       <!-- Form -->
-      <form @submit.prevent="handleSubmit" class="space-y-5">
+      <form
+        class="space-y-5"
+        @submit.prevent="handleSubmit"
+      >
         <!-- Step 1: Personal Info -->
-        <div v-if="pasoActual === 1" class="space-y-4">
+        <div
+          v-if="pasoActual === 1"
+          class="space-y-4"
+        >
           <div class="grid grid-cols-2 gap-4">
             <div class="space-y-2">
-              <label class="text-sm font-medium text-foreground"
-                >Documento</label
-              >
+              <label class="text-sm font-medium text-foreground">Documento</label>
               <select
                 v-model="formData.tipo_documento"
                 required
                 class="w-full px-4 py-3 bg-muted/50 rounded-xl border-0 text-foreground text-sm focus:ring-2 focus:ring-primary/20 focus:bg-card transition-all"
               >
-                <option value="" disabled>Tipo</option>
+                <option
+                  value=""
+                  disabled
+                >
+                  Tipo
+                </option>
                 <option
                   v-for="tipo in tiposDocumento"
                   :key="tipo.value"
@@ -70,7 +77,7 @@
                 placeholder="123456789"
                 required
                 class="w-full px-4 py-3 bg-muted/50 rounded-xl border-0 text-foreground placeholder:text-muted-foreground focus:ring-2 focus:ring-primary/20 focus:bg-card transition-all"
-              />
+              >
             </div>
           </div>
           <div class="grid grid-cols-2 gap-4">
@@ -82,25 +89,26 @@
                 placeholder="Juan"
                 required
                 class="w-full px-4 py-3 bg-muted/50 rounded-xl border-0 text-foreground placeholder:text-muted-foreground focus:ring-2 focus:ring-primary/20 focus:bg-card transition-all"
-              />
+              >
             </div>
             <div class="space-y-2">
-              <label class="text-sm font-medium text-foreground"
-                >Apellidos</label
-              >
+              <label class="text-sm font-medium text-foreground">Apellidos</label>
               <input
                 v-model="formData.apellidos"
                 type="text"
                 placeholder="Pérez"
                 required
                 class="w-full px-4 py-3 bg-muted/50 rounded-xl border-0 text-foreground placeholder:text-muted-foreground focus:ring-2 focus:ring-primary/20 focus:bg-card transition-all"
-              />
+              >
             </div>
           </div>
         </div>
 
         <!-- Step 2: Contact -->
-        <div v-if="pasoActual === 2" class="space-y-4">
+        <div
+          v-if="pasoActual === 2"
+          class="space-y-4"
+        >
           <div class="space-y-2">
             <label class="text-sm font-medium text-foreground">Email</label>
             <div class="relative">
@@ -114,7 +122,7 @@
                 placeholder="tu@email.com"
                 required
                 class="w-full pl-11 pr-4 py-3 bg-muted/50 rounded-xl border-0 text-foreground placeholder:text-muted-foreground focus:ring-2 focus:ring-primary/20 focus:bg-card transition-all"
-              />
+              >
             </div>
           </div>
           <div class="space-y-2">
@@ -130,13 +138,16 @@
                 placeholder="3001234567"
                 required
                 class="w-full pl-11 pr-4 py-3 bg-muted/50 rounded-xl border-0 text-foreground placeholder:text-muted-foreground focus:ring-2 focus:ring-primary/20 focus:bg-card transition-all"
-              />
+              >
             </div>
           </div>
         </div>
 
         <!-- Step 3: Security -->
-        <div v-if="pasoActual === 3" class="space-y-4">
+        <div
+          v-if="pasoActual === 3"
+          class="space-y-4"
+        >
           <div class="space-y-2">
             <label class="text-sm font-medium text-foreground">Usuario</label>
             <div class="relative">
@@ -150,7 +161,7 @@
                 placeholder="Tu usuario"
                 required
                 class="w-full pl-11 pr-4 py-3 bg-muted/50 rounded-xl border-0 text-foreground placeholder:text-muted-foreground focus:ring-2 focus:ring-primary/20 focus:bg-card transition-all"
-              />
+              >
             </div>
             <p class="text-xs text-muted-foreground">
               Este será tu nombre de usuario para iniciar sesión
@@ -158,9 +169,7 @@
           </div>
           <div class="grid grid-cols-2 gap-4">
             <div class="space-y-2">
-              <label class="text-sm font-medium text-foreground"
-                >Contraseña</label
-              >
+              <label class="text-sm font-medium text-foreground">Contraseña</label>
               <input
                 v-model="formData.password"
                 type="password"
@@ -168,12 +177,10 @@
                 required
                 minlength="8"
                 class="w-full px-4 py-3 bg-muted/50 rounded-xl border-0 text-foreground placeholder:text-muted-foreground focus:ring-2 focus:ring-primary/20 focus:bg-card transition-all"
-              />
+              >
             </div>
             <div class="space-y-2">
-              <label class="text-sm font-medium text-foreground"
-                >Confirmar</label
-              >
+              <label class="text-sm font-medium text-foreground">Confirmar</label>
               <input
                 v-model="formData.confirmar_password"
                 type="password"
@@ -181,7 +188,7 @@
                 required
                 minlength="8"
                 class="w-full px-4 py-3 bg-muted/50 rounded-xl border-0 text-foreground placeholder:text-muted-foreground focus:ring-2 focus:ring-primary/20 focus:bg-card transition-all"
-              />
+              >
             </div>
           </div>
         </div>
@@ -196,7 +203,10 @@
             class="flex-1"
             @click="pasoAnterior"
           >
-            <UIcon name="i-lucide-arrow-left" class="w-4 h-4 mr-2" />
+            <UIcon
+              name="i-lucide-arrow-left"
+              class="w-4 h-4 mr-2"
+            />
             Atrás
           </UButton>
 
@@ -206,13 +216,16 @@
             color="primary"
             class="flex-1"
             :disabled="
-              (pasoActual === 1 && !validarPaso1) ||
-              (pasoActual === 2 && !validarPaso2)
+              (pasoActual === 1 && !validarPaso1)
+                || (pasoActual === 2 && !validarPaso2)
             "
             @click="pasoSiguiente"
           >
             Siguiente
-            <UIcon name="i-lucide-arrow-right" class="w-4 h-4 ml-2" />
+            <UIcon
+              name="i-lucide-arrow-right"
+              class="w-4 h-4 ml-2"
+            />
           </UButton>
 
           <UButton
@@ -224,7 +237,11 @@
             :disabled="!validarPaso3"
           >
             <template #leading>
-              <UIcon v-if="!loading" name="i-lucide-check" class="w-4 h-4" />
+              <UIcon
+                v-if="!loading"
+                name="i-lucide-check"
+                class="w-4 h-4"
+              />
             </template>
             {{ loading ? "Creando..." : "Crear cuenta" }}
           </UButton>
@@ -258,7 +275,7 @@
       :close="{
         color: 'destructive',
         variant: 'outline',
-        class: 'rounded-full',
+        class: 'rounded-full'
       }"
     >
       <template #body>
@@ -282,7 +299,7 @@ import { useRegistro } from "~/composables/auth/useRegistro";
 import { cn } from "@/lib/utils";
 
 definePageMeta({
-  layout: "auth",
+  layout: "auth"
 });
 
 const {
@@ -296,7 +313,7 @@ const {
   validarPaso3,
   pasoSiguiente,
   pasoAnterior,
-  registrar,
+  registrar
 } = useRegistro();
 
 const isModalOpen = ref(false);

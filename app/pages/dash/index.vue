@@ -5,7 +5,7 @@
       <div v-if="isAdministrator || isAdviser">
         <DashboardAdminAdviser />
       </div>
-      <br />
+      <br>
       <DashboardTrabajador />
     </div>
   </div>
@@ -16,7 +16,7 @@ import { usePermissions } from "~/composables/usePermissions";
 
 definePageMeta({
   layout: "dashboard",
-  middleware: ["auth"],
+  middleware: ["auth"]
 });
 
 const { isAdministrator, isAdviser } = usePermissions();

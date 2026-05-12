@@ -10,7 +10,7 @@ const {
   success,
   guardarPerfil,
   recargarPerfil,
-  resetPasswordForm,
+  resetPasswordForm
 } = usePerfil();
 
 const cancelarCambios = async () => {
@@ -26,7 +26,7 @@ const iniciales = computed(() => {
 
 definePageMeta({
   layout: "dashboard",
-  middleware: ["auth"],
+  middleware: ["auth"]
 });
 </script>
 
@@ -34,7 +34,12 @@ definePageMeta({
   <div class="mx-auto max-w-3xl px-4 py-6 sm:py-8 space-y-6">
     <!-- Header -->
     <div class="flex items-center gap-4">
-      <UAvatar :text="iniciales" size="xl" color="primary" variant="soft" />
+      <UAvatar
+        :text="iniciales"
+        size="xl"
+        color="primary"
+        variant="soft"
+      />
       <div>
         <h1 class="text-xl font-semibold text-foreground">
           {{ perfil.full_name || "Mi perfil" }}
@@ -77,7 +82,10 @@ definePageMeta({
       :title="error"
     />
 
-    <form @submit.prevent="guardarPerfil" class="space-y-6">
+    <form
+      class="space-y-6"
+      @submit.prevent="guardarPerfil"
+    >
       <!-- Información personal -->
       <UPageCard
         title="Información personal"
@@ -88,7 +96,11 @@ definePageMeta({
         <!-- Skeleton -->
         <template v-if="loading">
           <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 animate-pulse">
-            <div v-for="i in 4" :key="i" class="h-10 rounded-lg bg-muted" />
+            <div
+              v-for="i in 4"
+              :key="i"
+              class="h-10 rounded-lg bg-muted"
+            />
             <div class="h-10 rounded-lg bg-muted sm:col-span-2" />
             <div class="h-10 rounded-lg bg-muted" />
             <div class="h-10 rounded-lg bg-muted" />
@@ -97,7 +109,10 @@ definePageMeta({
 
         <template v-else>
           <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
-            <UFormField label="Usuario" hint="No modificable">
+            <UFormField
+              label="Usuario"
+              hint="No modificable"
+            >
               <UInput
                 v-model="perfil.username"
                 readonly
@@ -108,7 +123,10 @@ definePageMeta({
               />
             </UFormField>
 
-            <UFormField label="Tipo de documento" hint="No modificable">
+            <UFormField
+              label="Tipo de documento"
+              hint="No modificable"
+            >
               <UInput
                 v-model="perfil.tipo_documento"
                 readonly
@@ -166,7 +184,10 @@ definePageMeta({
               />
             </UFormField>
 
-            <UFormField label="Teléfono" hint="Ej: 3157145942">
+            <UFormField
+              label="Teléfono"
+              hint="Ej: 3157145942"
+            >
               <UInput
                 v-model="perfil.phone"
                 type="tel"

@@ -3,8 +3,8 @@
     <UButton
       variant="ghost"
       size="sm"
-      @click="router.back()"
       class="text-muted-foreground"
+      @click="router.back()"
     >
       ← Volver a inicio
     </UButton>
@@ -39,9 +39,9 @@ import { useRouter } from "vue-router";
 import Badge from "@/components/shared/Badge.vue";
 
 interface Props {
-  numeroSolicitud: string;
-  estadoNombre: string;
-  badgeClass: string;
+  numeroSolicitud: string
+  estadoNombre: string
+  badgeClass: string
 }
 
 const props = defineProps<Props>();

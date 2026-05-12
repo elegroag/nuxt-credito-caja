@@ -18,17 +18,17 @@
 
       <div class="flex shrink-0 flex-wrap items-center gap-2">
         <UButton
-          @click="refrescarEstadisticas"
           :disabled="loading"
           variant="outline"
           class="border-sky-200 bg-white/80 text-slate-700 shadow-sm hover:bg-sky-50 hover:border-sky-300"
+          @click="refrescarEstadisticas"
         >
           <ArrowPathIcon :class="['h-5 w-5 mr-2', loading && 'animate-spin']" />
           Actualizar
         </UButton>
         <UButton
-          @click="router.push('/admin/solicitudes')"
           class="bg-gradient-primary text-white shadow-sm hover:opacity-90"
+          @click="router.push('/admin/solicitudes')"
         >
           <Cog6ToothIcon class="h-5 w-5 mr-2" />
           Administración
@@ -38,15 +38,20 @@
   </div>
 
   <!-- Error State -->
-  <div v-if="error" class="rounded-lg bg-red-50 border border-red-200 p-4 mb-6">
+  <div
+    v-if="error"
+    class="rounded-lg bg-red-50 border border-red-200 p-4 mb-6"
+  >
     <div class="flex items-center gap-2 text-red-800">
       <ExclamationTriangleIcon class="h-5 w-5" />
-      <p class="font-medium">{{ error }}</p>
+      <p class="font-medium">
+        {{ error }}
+      </p>
       <UButton
         variant="outline"
         size="sm"
-        @click="refrescarEstadisticas"
         class="ml-auto border-red-200 bg-white/80 text-red-800 shadow-sm hover:bg-red-50 hover:border-red-300"
+        @click="refrescarEstadisticas"
       >
         Reintentar
       </UButton>
@@ -54,7 +59,10 @@
   </div>
 
   <!-- Loading State -->
-  <div v-if="loading && !tieneDatos" class="space-y-6">
+  <div
+    v-if="loading && !tieneDatos"
+    class="space-y-6"
+  >
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       <div
         v-for="i in 6"
@@ -71,7 +79,10 @@
   </div>
 
   <!-- Dashboard Content -->
-  <div v-else class="space-y-6">
+  <div
+    v-else
+    class="space-y-6"
+  >
     <AdminStatsGrid :stats="stats" />
 
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -87,10 +98,15 @@
       <UCard>
         <div class="flex items-center gap-2 mb-4">
           <UsersIcon class="h-5 w-5 text-muted-foreground" />
-          <h3 class="text-lg font-semibold">Usuarios por Rol</h3>
+          <h3 class="text-lg font-semibold">
+            Usuarios por Rol
+          </h3>
         </div>
 
-        <div v-if="stats.usuariosPorRol.length > 0" class="space-y-3">
+        <div
+          v-if="stats.usuariosPorRol.length > 0"
+          class="space-y-3"
+        >
           <div
             v-for="rol in stats.usuariosPorRol"
             :key="rol.rol"
@@ -109,9 +125,14 @@
           </div>
         </div>
 
-        <div v-else class="text-center py-8 text-muted-foreground">
+        <div
+          v-else
+          class="text-center py-8 text-muted-foreground"
+        >
           <Users class="h-12 w-12 mx-auto mb-2 opacity-50" />
-          <p class="text-sm">No hay datos de usuarios</p>
+          <p class="text-sm">
+            No hay datos de usuarios
+          </p>
         </div>
       </UCard>
     </div>
@@ -125,7 +146,7 @@ import {
   ArrowPathIcon,
   Cog6ToothIcon,
   ExclamationTriangleIcon,
-  UsersIcon,
+  UsersIcon
 } from "@heroicons/vue/24/outline";
 
 import AdminStatsGrid from "@/components/admin/AdminStatsGrid.vue";
@@ -141,6 +162,6 @@ const {
   tieneDatos,
   tiempoSinActualizar,
   refrescarEstadisticas,
-  totalUsuarios,
+  totalUsuarios
 } = useAdminDashboard();
 </script>

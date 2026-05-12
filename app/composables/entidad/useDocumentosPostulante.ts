@@ -10,7 +10,7 @@ export function useDocumentosPostulante() {
 
   const guardarDocumentos = async (
     documentos: DocumentosPostulante,
-    datosBasicos: { tipoIdentificacion: string; numeroIdentificacion: string },
+    datosBasicos: { tipoIdentificacion: string, numeroIdentificacion: string }
   ) => {
     loading.value = true;
     errorMsg.value = "";
@@ -22,7 +22,7 @@ export function useDocumentosPostulante() {
 
       for (const [tipo, url] of Object.entries(documentos) as [
         string,
-        string,
+        string
       ][]) {
         if (typeof url === "string") {
           // Si ya es base64 (data:image/...), usarlo directamente
@@ -45,18 +45,18 @@ export function useDocumentosPostulante() {
         postulante_id: datosBasicos.numeroIdentificacion,
         tipo_identificacion: datosBasicos.tipoIdentificacion,
         numero_identificacion: datosBasicos.numeroIdentificacion,
-        documentos: documentosBase64,
+        documentos: documentosBase64
       };
 
       result.value = await postJson<any>(
         "/api/entidad-digital/documentos",
-        payload,
+        payload
       );
 
       return result.value;
     } catch (error: any) {
-      errorMsg.value =
-        error?.data?.error || error?.message || "Error guardando documentos";
+      errorMsg.value
+        = error?.data?.error || error?.message || "Error guardando documentos";
       throw error;
     } finally {
       loading.value = false;
@@ -65,7 +65,7 @@ export function useDocumentosPostulante() {
 
   const guardarSelfie = async (
     selfie: string,
-    datosBasicos: { tipoIdentificacion: string; numeroIdentificacion: string },
+    datosBasicos: { tipoIdentificacion: string, numeroIdentificacion: string }
   ) => {
     loading.value = true;
     errorMsg.value = "";
@@ -88,18 +88,18 @@ export function useDocumentosPostulante() {
         postulante_id: datosBasicos.numeroIdentificacion,
         tipo_identificacion: datosBasicos.tipoIdentificacion,
         numero_identificacion: datosBasicos.numeroIdentificacion,
-        selfie: selfieBase64,
+        selfie: selfieBase64
       };
 
       result.value = await postJson<any>(
         "/api/entidad-digital/selfie",
-        payload,
+        payload
       );
 
       return result.value;
     } catch (error: any) {
-      errorMsg.value =
-        error?.data?.error || error?.message || "Error guardando selfie";
+      errorMsg.value
+        = error?.data?.error || error?.message || "Error guardando selfie";
       throw error;
     } finally {
       loading.value = false;
@@ -109,7 +109,7 @@ export function useDocumentosPostulante() {
   const guardarProcesoCompleto = async (
     documentos: DocumentosPostulante,
     selfie: string,
-    datosBasicos: { tipoIdentificacion: string; numeroIdentificacion: string },
+    datosBasicos: { tipoIdentificacion: string, numeroIdentificacion: string }
   ) => {
     loading.value = true;
     errorMsg.value = "";
@@ -121,7 +121,7 @@ export function useDocumentosPostulante() {
 
       for (const [tipo, url] of Object.entries(documentos) as [
         string,
-        string,
+        string
       ][]) {
         if (typeof url === "string") {
           if (url.startsWith("data:")) {
@@ -154,20 +154,20 @@ export function useDocumentosPostulante() {
         tipo_identificacion: datosBasicos.tipoIdentificacion,
         numero_identificacion: datosBasicos.numeroIdentificacion,
         documentos: documentosBase64,
-        selfie: selfieBase64,
+        selfie: selfieBase64
       };
 
       result.value = await postJson<any>(
         "/api/entidad-digital/completo",
-        payload,
+        payload
       );
 
       return result.value;
     } catch (error: any) {
-      errorMsg.value =
-        error?.data?.error ||
-        error?.message ||
-        "Error guardando proceso completo";
+      errorMsg.value
+        = error?.data?.error
+          || error?.message
+          || "Error guardando proceso completo";
       throw error;
     } finally {
       loading.value = false;
@@ -180,6 +180,6 @@ export function useDocumentosPostulante() {
     result,
     guardarDocumentos,
     guardarSelfie,
-    guardarProcesoCompleto,
+    guardarProcesoCompleto
   };
 }

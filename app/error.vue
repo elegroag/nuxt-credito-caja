@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import type { NuxtError } from '#app';
+import type { NuxtError } from "#app";
 
 const props = defineProps<{
-  error: NuxtError;
+  error: NuxtError
 }>();
 </script>
 
@@ -13,10 +13,10 @@ const props = defineProps<{
       size: 'xl',
       icon: 'i-lucide-arrow-left',
       // icon: 'humbleicons:brand-twitter',
-      class: 'rounded-full',
+      class: 'rounded-full'
     }"
     :ui="{
-      statusCode: 'text-9xl font-thin',
+      statusCode: 'text-9xl font-thin'
     }"
   />
 </template>

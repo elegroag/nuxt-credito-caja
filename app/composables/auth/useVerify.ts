@@ -12,7 +12,7 @@ export function useVerify() {
 
   // Computed properties
   const isComplete = computed((): boolean =>
-    digits.value.every((d) => d.length === 1),
+    digits.value.every(d => d.length === 1)
   );
 
   const code = computed((): string => digits.value.join(""));
@@ -24,7 +24,7 @@ export function useVerify() {
     null,
     null,
     null,
-    null,
+    null
   ]);
 
   // Métodos
@@ -64,7 +64,7 @@ export function useVerify() {
 
   const initialize = (
     initialCoddoc?: string | null,
-    initialDocumento?: string | null,
+    initialDocumento?: string | null
   ): void => {
     coddoc.value = initialCoddoc ?? null;
     documento.value = initialDocumento ?? null;
@@ -79,7 +79,7 @@ export function useVerify() {
       const formData: VerifyForm = {
         codigo: code.value,
         coddoc: coddoc.value,
-        documento: documento.value,
+        documento: documento.value
       };
 
       const { postJson } = useApi();
@@ -88,9 +88,9 @@ export function useVerify() {
       // Éxito - la página manejará la redirección
       return;
     } catch (err: any) {
-      error.value =
-        err.data?.message ||
-        "Error al verificar el código. Por favor, inténtalo de nuevo.";
+      error.value
+        = err.data?.message
+          || "Error al verificar el código. Por favor, inténtalo de nuevo.";
       throw err; // Re-lanzar para que la página pueda manejarlo si es necesario
     } finally {
       loading.value = false;
@@ -116,6 +116,6 @@ export function useVerify() {
     onBackspace,
     reset,
     initialize,
-    verifyCode,
+    verifyCode
   };
 }

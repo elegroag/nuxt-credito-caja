@@ -3,7 +3,7 @@ import {
   defineEventHandler,
   getRouterParam,
   setResponseStatus,
-  readBody,
+  readBody
 } from "h3";
 import prisma from "~~/lib/prisma";
 import { CustomResponse } from "~~/server/utils/customResponse";
@@ -12,7 +12,7 @@ import { CustomResponse } from "~~/server/utils/customResponse";
 const ESTADOS_PERMITIDOS = [
   "DOCUMENTOS_CARGADOS",
   "POSTULADO",
-  "ENVIADO_VALIDACION",
+  "ENVIADO_VALIDACION"
 ];
 
 export default defineEventHandler(async (event: H3Event) => {
@@ -24,7 +24,7 @@ export default defineEventHandler(async (event: H3Event) => {
       setResponseStatus(event, 401);
       return CustomResponse.error(
         "No hay sesión activa",
-        "Error de autenticación",
+        "Error de autenticación"
       );
     }
 
@@ -32,7 +32,7 @@ export default defineEventHandler(async (event: H3Event) => {
       setResponseStatus(event, 400);
       return CustomResponse.error(
         "ID de solicitud no proporcionado",
-        "Error de validación",
+        "Error de validación"
       );
     }
 
@@ -43,7 +43,7 @@ export default defineEventHandler(async (event: H3Event) => {
       setResponseStatus(event, 400);
       return CustomResponse.error(
         "Estado no proporcionado",
-        "Error de validación",
+        "Error de validación"
       );
     }
 
@@ -51,19 +51,19 @@ export default defineEventHandler(async (event: H3Event) => {
       setResponseStatus(event, 403);
       return CustomResponse.error(
         "Estado no permitido para este usuario",
-        "Acceso denegado",
+        "Acceso denegado"
       );
     }
 
     const solicitud = await prisma.solicitudes_credito.findUnique({
-      where: { numero_solicitud: solicitudId },
+      where: { numero_solicitud: solicitudId }
     });
 
     if (!solicitud) {
       setResponseStatus(event, 404);
       return CustomResponse.error(
         "Solicitud no encontrada",
-        "Recurso no encontrado",
+        "Recurso no encontrado"
       );
     }
 
@@ -71,7 +71,7 @@ export default defineEventHandler(async (event: H3Event) => {
       setResponseStatus(event, 403);
       return CustomResponse.error(
         "No tienes permiso para modificar esta solicitud",
-        "Acceso denegado",
+        "Acceso denegado"
       );
     }
 
@@ -79,17 +79,17 @@ export default defineEventHandler(async (event: H3Event) => {
       where: { numero_solicitud: solicitudId },
       data: {
         estado,
-        updated_at: new Date(),
-      },
+        updated_at: new Date()
+      }
     });
 
     return CustomResponse.success(
       {
         solicitud_id: solicitudId,
         estado: solicitudActualizada.estado,
-        updated_at: solicitudActualizada.updated_at,
+        updated_at: solicitudActualizada.updated_at
       },
-      "Estado actualizado exitosamente",
+      "Estado actualizado exitosamente"
     );
   } catch (error: any) {
     console.error("Error al cambiar estado:", error);
@@ -98,7 +98,7 @@ export default defineEventHandler(async (event: H3Event) => {
 
     return CustomResponse.error(
       error?.data?.error || error?.message || "Error al cambiar el estado",
-      "Error al cambiar estado.",
+      "Error al cambiar estado."
     );
   }
 });

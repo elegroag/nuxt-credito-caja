@@ -6,13 +6,13 @@
       <!-- Línea de fondo -->
       <div
         class="absolute left-0 top-1/2 transform -translate-y-1/2 w-full h-1 bg-muted -z-10"
-      ></div>
+      />
 
       <!-- Línea de progreso -->
       <div
         class="absolute left-0 top-1/2 transform -translate-y-1/2 h-1 bg-primary transition-all duration-500 ease-in-out -z-10"
         :style="{ width: `${progressPercentage}%` }"
-      ></div>
+      />
 
       <!-- Pasos -->
       <div
@@ -29,7 +29,7 @@
               ? 'border-primary text-primary font-bold'
               : isCompleted(index)
                 ? 'border-primary bg-primary text-primary-foreground'
-                : 'border-border text-muted-foreground',
+                : 'border-border text-muted-foreground'
           ]"
         >
           <UIcon
@@ -46,7 +46,7 @@
               ? 'text-primary'
               : isCompleted(index)
                 ? 'text-foreground'
-                : 'text-muted-foreground',
+                : 'text-muted-foreground'
           ]"
         >
           {{ step.label }}
@@ -54,7 +54,7 @@
       </div>
     </div>
     <!-- Espaciador para los textos absolutos -->
-    <div class="h-8"></div>
+    <div class="h-8" />
   </div>
 </template>
 
@@ -64,26 +64,26 @@ import { computed } from "vue";
 export type StepKey = "formulario" | "documentos" | "completado";
 
 interface Step {
-  key: StepKey;
-  label: string;
+  key: StepKey
+  label: string
 }
 
 const props = defineProps<{
-  currentStep: StepKey;
+  currentStep: StepKey
 }>();
 
 const emit = defineEmits<{
-  (e: "navigate", step: StepKey): void;
+  (e: "navigate", step: StepKey): void
 }>();
 
 const steps: Step[] = [
   { key: "formulario", label: "Solicitud" },
   { key: "documentos", label: "Documentos" },
-  { key: "completado", label: "Enviar para Validación" },
+  { key: "completado", label: "Enviar para Validación" }
 ];
 
 const currentIndex = computed(() =>
-  steps.findIndex((s) => s.key === props.currentStep),
+  steps.findIndex(s => s.key === props.currentStep)
 );
 
 const isCurrent = (key: StepKey) => key === props.currentStep;

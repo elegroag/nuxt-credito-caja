@@ -11,15 +11,15 @@
       <div class="grid gap-4 text-sm">
         <!-- Encabezado -->
         <div class="border-l-4 border-indigo-200 pl-4">
-          <h4 class="font-semibold text-indigo-700 mb-2">Encabezado</h4>
+          <h4 class="font-semibold text-indigo-700 mb-2">
+            Encabezado
+          </h4>
           <div class="grid grid-cols-1 md:grid-cols-2 gap-2 text-xs">
             <div
               v-for="(value, key) in getResumenEncabezado()"
               :key="String(key)"
             >
-              <span class="font-medium"
-                >{{ formatRevisionKey(String(key)) }}:</span
-              >
+              <span class="font-medium">{{ formatRevisionKey(String(key)) }}:</span>
               {{ formatValue(value) }}
             </div>
           </div>
@@ -27,15 +27,15 @@
 
         <!-- Solicitud -->
         <div class="border-l-4 border-green-200 pl-4">
-          <h4 class="font-semibold text-green-700 mb-2">Solicitud</h4>
+          <h4 class="font-semibold text-green-700 mb-2">
+            Solicitud
+          </h4>
           <div class="grid grid-cols-1 md:grid-cols-2 gap-2 text-xs">
             <div
               v-for="(value, key) in getResumenSolicitud()"
               :key="String(key)"
             >
-              <span class="font-medium"
-                >{{ formatRevisionKey(String(key)) }}:</span
-              >
+              <span class="font-medium">{{ formatRevisionKey(String(key)) }}:</span>
               {{ formatValue(value) }}
             </div>
           </div>
@@ -51,9 +51,7 @@
               v-for="(value, key) in getResumenSolicitante()"
               :key="String(key)"
             >
-              <span class="font-medium"
-                >{{ formatRevisionKey(String(key)) }}:</span
-              >
+              <span class="font-medium">{{ formatRevisionKey(String(key)) }}:</span>
               {{ formatValue(value) }}
             </div>
           </div>
@@ -72,9 +70,7 @@
               v-for="(value, key) in getResumenSimulador()"
               :key="String(key)"
             >
-              <span class="font-medium"
-                >{{ formatRevisionKey(String(key)) }}:</span
-              >
+              <span class="font-medium">{{ formatRevisionKey(String(key)) }}:</span>
               {{ formatValue(value) }}
             </div>
           </div>
@@ -85,12 +81,15 @@
           v-if="getResumenConyuge()"
           class="border-l-4 border-purple-200 pl-4"
         >
-          <h4 class="font-semibold text-purple-700 mb-2">Datos del Cónyuge</h4>
+          <h4 class="font-semibold text-purple-700 mb-2">
+            Datos del Cónyuge
+          </h4>
           <div class="grid grid-cols-1 md:grid-cols-2 gap-2 text-xs">
-            <div v-for="(value, key) in getResumenConyuge()" :key="String(key)">
-              <span class="font-medium"
-                >{{ formatRevisionKey(String(key)) }}:</span
-              >
+            <div
+              v-for="(value, key) in getResumenConyuge()"
+              :key="String(key)"
+            >
+              <span class="font-medium">{{ formatRevisionKey(String(key)) }}:</span>
               {{ formatValue(value) }}
             </div>
           </div>
@@ -102,10 +101,11 @@
             Información Laboral
           </h4>
           <div class="grid grid-cols-1 md:grid-cols-2 gap-2 text-xs">
-            <div v-for="(value, key) in getResumenLaboral()" :key="String(key)">
-              <span class="font-medium"
-                >{{ formatRevisionKey(String(key)) }}:</span
-              >
+            <div
+              v-for="(value, key) in getResumenLaboral()"
+              :key="String(key)"
+            >
+              <span class="font-medium">{{ formatRevisionKey(String(key)) }}:</span>
               {{ formatValue(value) }}
             </div>
           </div>
@@ -121,9 +121,7 @@
               v-for="(value, key) in getResumenIngresos()"
               :key="String(key)"
             >
-              <span class="font-medium"
-                >{{ formatRevisionKey(String(key)) }}:</span
-              >
+              <span class="font-medium">{{ formatRevisionKey(String(key)) }}:</span>
               {{ formatValue(value) }}
             </div>
           </div>
@@ -139,9 +137,7 @@
               v-for="(value, key) in getResumenEconomica()"
               :key="String(key)"
             >
-              <span class="font-medium"
-                >{{ formatRevisionKey(String(key)) }}:</span
-              >
+              <span class="font-medium">{{ formatRevisionKey(String(key)) }}:</span>
               {{ formatValue(value) }}
             </div>
           </div>
@@ -152,7 +148,9 @@
           v-if="getResumenPropiedades().length > 0"
           class="border-l-4 border-lime-200 pl-4"
         >
-          <h4 class="font-semibold text-lime-700 mb-2">Propiedades</h4>
+          <h4 class="font-semibold text-lime-700 mb-2">
+            Propiedades
+          </h4>
           <div
             v-for="(propiedad, index) in getResumenPropiedades()"
             :key="index"
@@ -162,10 +160,11 @@
               Propiedad {{ formatRevisionIndex(index) }}
             </div>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-2 text-xs ml-2">
-              <div v-for="(value, key) in propiedad" :key="String(key)">
-                <span class="font-medium"
-                  >{{ formatRevisionKey(String(key)) }}:</span
-                >
+              <div
+                v-for="(value, key) in propiedad"
+                :key="String(key)"
+              >
+                <span class="font-medium">{{ formatRevisionKey(String(key)) }}:</span>
                 {{ formatValue(value) }}
               </div>
             </div>
@@ -189,10 +188,11 @@
               Deuda {{ formatRevisionIndex(index) }}
             </div>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-2 text-xs ml-2">
-              <div v-for="(value, key) in deuda" :key="String(key)">
-                <span class="font-medium"
-                  >{{ formatRevisionKey(String(key)) }}:</span
-                >
+              <div
+                v-for="(value, key) in deuda"
+                :key="String(key)"
+              >
+                <span class="font-medium">{{ formatRevisionKey(String(key)) }}:</span>
                 {{ formatValue(value) }}
               </div>
             </div>
@@ -216,10 +216,11 @@
               Referencia {{ formatRevisionIndex(index) }}
             </div>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-2 text-xs ml-2">
-              <div v-for="(value, key) in referencia" :key="String(key)">
-                <span class="font-medium"
-                  >{{ formatRevisionKey(String(key)) }}:</span
-                >
+              <div
+                v-for="(value, key) in referencia"
+                :key="String(key)"
+              >
+                <span class="font-medium">{{ formatRevisionKey(String(key)) }}:</span>
                 {{ formatValue(value) }}
               </div>
             </div>
@@ -243,10 +244,11 @@
               Referencia {{ formatRevisionIndex(index) }}
             </div>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-2 text-xs ml-2">
-              <div v-for="(value, key) in referencia" :key="String(key)">
-                <span class="font-medium"
-                  >{{ formatRevisionKey(String(key)) }}:</span
-                >
+              <div
+                v-for="(value, key) in referencia"
+                :key="String(key)"
+              >
+                <span class="font-medium">{{ formatRevisionKey(String(key)) }}:</span>
                 {{ formatValue(value) }}
               </div>
             </div>
@@ -280,8 +282,7 @@
       >
         <pre
           class="overflow-auto text-[10px] text-foreground font-mono leading-relaxed"
-          >{{ prettyPayload }}</pre
-        >
+        >{{ prettyPayload }}</pre>
       </div>
     </UCard>
 
@@ -304,7 +305,7 @@ import type { RevisionProps } from "~~/shared/types/solicitud-credito";
 import {
   formatValue,
   formatRevisionKey,
-  formatRevisionIndex,
+  formatRevisionIndex
 } from "~~/shared/utils/formatters";
 
 const props = defineProps<RevisionProps>();
@@ -328,6 +329,6 @@ const {
   getResumenPropiedades,
   getResumenDeudas,
   getResumenReferenciasFamiliares,
-  getResumenReferenciasPersonales,
+  getResumenReferenciasPersonales
 } = useRevisionStep(props);
 </script>

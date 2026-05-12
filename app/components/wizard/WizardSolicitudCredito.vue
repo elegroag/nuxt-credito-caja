@@ -13,7 +13,10 @@
     />
 
     <div class="p-4 sm:p-6">
-      <form class="grid gap-4" @submit.prevent>
+      <form
+        class="grid gap-4"
+        @submit.prevent
+      >
         <SolicitudStep
           v-if="currentStepKey === 'solicitud'"
           :form="form"
@@ -116,7 +119,7 @@ import {
   ReferenciasStep,
   RevisionStep,
   SolicitanteStep,
-  SolicitudStep,
+  SolicitudStep
 } from "./steps";
 
 const props = defineProps<WizardProps>();
@@ -149,6 +152,6 @@ const {
   steps,
   successModalOpen,
   toggleConyuge,
-  toggleEmpresaConyuge,
+  toggleEmpresaConyuge
 } = useWizardSolicitud(props);
 </script>

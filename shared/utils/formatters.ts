@@ -5,7 +5,7 @@ export const formatCurrency = (value: number): string => {
 export const formatCurrencyIntl = (value: number) => {
   return new Intl.NumberFormat("es-CO", {
     minimumFractionDigits: 0,
-    maximumFractionDigits: 0,
+    maximumFractionDigits: 0
   }).format(value);
 };
 
@@ -13,7 +13,7 @@ export const formatDate = (dateString: string): string => {
   return new Date(dateString).toLocaleDateString("es-CO", {
     day: "2-digit",
     month: "2-digit",
-    year: "numeric",
+    year: "numeric"
   });
 };
 
@@ -32,7 +32,7 @@ export const formatValue = (value: any) => {
       style: "currency",
       currency: "COP",
       minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
+      maximumFractionDigits: 0
     });
   }
 
@@ -81,12 +81,12 @@ export const formatRevisionKey = (key: string) => {
     fecha_ingreso: "Fecha Ingreso",
     salario_basico_mensual: "Salario Básico",
     subsidio_transporte: "Subsidio Transporte",
-    salud_pension: "Salud y Pensión",
+    salud_pension: "Salud y Pensión"
   };
 
   return (
-    keyMap[key] ||
-    key.replace(/_/g, " ").replace(/\b\w/g, (l) => l.toUpperCase())
+    keyMap[key]
+    || key.replace(/_/g, " ").replace(/\b\w/g, l => l.toUpperCase())
   );
 };
 

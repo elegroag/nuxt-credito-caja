@@ -4,7 +4,7 @@ const PUBLIC_ROUTES: string[] = [
   "/api/auth/recovery",
   "/api/auth/adviser",
   "/api/auth/verify",
-  "/api/health",
+  "/api/health"
 ];
 
 export default defineEventHandler(async (event) => {
@@ -29,7 +29,7 @@ export default defineEventHandler(async (event) => {
     throw createError({
       statusCode: 401,
       statusMessage: "No autenticado",
-      message: "Debe iniciar sesión para acceder a este recurso",
+      message: "Debe iniciar sesión para acceder a este recurso"
     });
   }
 

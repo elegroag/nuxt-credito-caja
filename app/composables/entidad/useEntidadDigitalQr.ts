@@ -45,21 +45,21 @@ export function useEntidadDigitalQr() {
 
   const generateQR = async (
     username: string,
-    canvasRef: HTMLCanvasElement | null,
+    canvasRef: HTMLCanvasElement | null
   ) => {
     try {
       loadingQR.value = true;
       tokenExpired.value = false;
 
       const response = await getJson<QrTokenResponse>("/api/auth/qr-token", {
-        auth: true,
+        auth: true
       });
       if (!response.success)
         throw new Error(response.error || "Error al obtener token");
 
       const qrToken = response.data?.qr_token;
-      const backendUrl =
-        config.public.backendBaseUrl || "http://localhost:5001";
+      const backendUrl
+        = config.public.backendBaseUrl || "http://localhost:5001";
       const authUrl = `${backendUrl}/api/auth/mobile/authorize/${qrToken}`;
 
       await nextTick();
@@ -67,7 +67,7 @@ export function useEntidadDigitalQr() {
         await QRCode.toCanvas(canvasRef, authUrl, {
           width: 256,
           margin: 2,
-          color: { dark: "#000000", light: "#FFFFFF" },
+          color: { dark: "#000000", light: "#FFFFFF" }
         });
       }
 
@@ -101,6 +101,6 @@ export function useEntidadDigitalQr() {
     isCapturasConfirmadas,
     formatTimeRemaining,
     generateQR,
-    cleanup,
+    cleanup
   };
 }

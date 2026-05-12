@@ -6,7 +6,12 @@
       >
         Propiedades
       </div>
-      <UButton variant="outline" size="sm" type="button" @click="addPropiedad">
+      <UButton
+        variant="outline"
+        size="sm"
+        type="button"
+        @click="addPropiedad"
+      >
         <Plus class="mr-2 h-4 w-4" />
         Agregar
       </UButton>
@@ -57,7 +62,10 @@
               searchable
             />
           </FormField>
-          <FormField label="Descripción" class="sm:col-span-2">
+          <FormField
+            label="Descripción"
+            class="sm:col-span-2"
+          >
             <UInput v-model="p.descripcion" />
           </FormField>
 
@@ -67,12 +75,19 @@
           >
             <UInput v-model="p.matricula_inmobiliaria" />
           </FormField>
-          <FormField v-else label="Modelo o matrícula">
+          <FormField
+            v-else
+            label="Modelo o matrícula"
+          >
             <UInput v-model="p.modelo_o_matricula" />
           </FormField>
 
           <FormField label="Valor comercial">
-            <UInput v-model.number="p.valor_comercial" type="number" min="0" />
+            <UInput
+              v-model.number="p.valor_comercial"
+              type="number"
+              min="0"
+            />
           </FormField>
         </div>
       </UCard>
@@ -88,24 +103,24 @@ import FormField from "~/components/shared/FormField.vue";
 import CustomSelect from "~/components/shared/CustomSelect.vue";
 import type {
   SelectOption,
-  PropiedadesProps,
+  PropiedadesProps
 } from "~~/shared/types/solicitud-credito";
 
 const props = withDefaults(defineProps<PropiedadesProps>(), {
-  ciudades: () => [],
+  ciudades: () => []
 });
 
 // Opciones para tipo de bien
 const tiposBienOptions: SelectOption[] = [
   { label: "Vivienda", value: "vivienda" },
-  { label: "Vehículo", value: "vehiculo" },
+  { label: "Vehículo", value: "vehiculo" }
 ];
 
 // Convertir ciudades a formato SelectOption
 const ciudadesOptions = computed(() =>
-  props.ciudades.map((item) => ({
+  props.ciudades.map(item => ({
     label: item.detciu,
-    value: item.codciu,
-  })),
+    value: item.codciu
+  }))
 );
 </script>

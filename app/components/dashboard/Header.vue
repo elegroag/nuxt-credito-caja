@@ -5,7 +5,7 @@
       container: 'w-full max-w-none px-4 sm:px-6',
       left: 'flex-1',
       center: 'hidden',
-      right: 'flex items-center gap-3',
+      right: 'flex items-center gap-3'
     }"
   >
     <template #left>
@@ -15,8 +15,8 @@
           size="sm"
           icon="i-lucide-menu"
           type="button"
-          @click="sidebarOpen = !sidebarOpen"
           class="lg:hidden"
+          @click="sidebarOpen = !sidebarOpen"
         />
         <UButton
           variant="ghost"
@@ -27,8 +27,8 @@
               : 'i-lucide-panel-left-close'
           "
           type="button"
-          @click="sidebarCollapsed = !sidebarCollapsed"
           class="hidden lg:flex"
+          @click="sidebarCollapsed = !sidebarCollapsed"
         />
         <span
           class="text-sm font-medium text-muted-foreground hover:text-foreground cursor-pointer"
@@ -87,7 +87,7 @@
             <span class="font-medium">Mi Perfil</span>
           </NuxtLink>
 
-          <div class="h-px bg-border/60 mx-1 my-1"></div>
+          <div class="h-px bg-border/60 mx-1 my-1" />
 
           <button
             class="relative flex w-full cursor-pointer select-none items-center rounded-lg px-3 py-2 text-sm outline-none transition-colors hover:bg-accent hover:text-accent-foreground group"
@@ -116,6 +116,6 @@ const {
   userMenuOpen,
   sectionTitle,
   logout,
-  _abbr,
+  _abbr
 } = useDashboardLayout();
 </script>

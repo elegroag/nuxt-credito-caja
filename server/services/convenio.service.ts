@@ -18,11 +18,11 @@ const convenioService = () => {
     const trabajadorData = await api.postJson<any>(
       "company/informacion_trabajador",
       {
-        cedtra: user.numero_documento,
+        cedtra: user.numero_documento
       },
       {
-        auth: true,
-      },
+        auth: true
+      }
     );
 
     if (!trabajadorData.success || !trabajadorData.data) {
@@ -35,11 +35,11 @@ const convenioService = () => {
     const convenios = await prisma.empresas_convenio.findMany({
       where: {
         nit: nit,
-        estado: "Activo",
+        estado: "Activo"
       },
       orderBy: {
-        created_at: "desc",
-      },
+        created_at: "desc"
+      }
     });
 
     return convenios.map((convenio: any) => ({
@@ -50,15 +50,15 @@ const convenioService = () => {
       numero_empleados: String(convenio.numero_empleados),
       estado: convenio.estado,
       created_at: convenio.created_at?.toISOString() || null,
-      updated_at: convenio.updated_at?.toISOString() || null,
+      updated_at: convenio.updated_at?.toISOString() || null
     }));
   };
 
   const getConvenioByNit = async (nit: string) => {
     const convenio = await prisma.empresas_convenio.findFirst({
       where: {
-        nit: BigInt(nit),
-      },
+        nit: BigInt(nit)
+      }
     });
 
     if (!convenio) {
@@ -73,15 +73,15 @@ const convenioService = () => {
       numero_empleados: String(convenio.numero_empleados),
       estado: convenio.estado,
       created_at: convenio.created_at?.toISOString() || null,
-      updated_at: convenio.updated_at?.toISOString() || null,
+      updated_at: convenio.updated_at?.toISOString() || null
     };
   };
 
   const getAllConvenios = async () => {
     const convenios = await prisma.empresas_convenio.findMany({
       orderBy: {
-        created_at: "desc",
-      },
+        created_at: "desc"
+      }
     });
 
     return convenios.map((convenio: any) => ({
@@ -92,27 +92,27 @@ const convenioService = () => {
       numero_empleados: String(convenio.numero_empleados),
       estado: convenio.estado,
       created_at: convenio.created_at?.toISOString() || null,
-      updated_at: convenio.updated_at?.toISOString() || null,
+      updated_at: convenio.updated_at?.toISOString() || null
     }));
   };
 
   const crearConvenio = async (data: {
-    nit: string;
-    razon_social: string;
-    representante_documento?: string;
-    representante_nombre?: string;
-    telefono?: string;
-    correo?: string;
-    fecha_vencimiento?: string;
-    estado?: string;
-    direccion?: string;
-    ciudad?: string;
-    departamento?: string;
-    sector_economico?: string;
-    numero_empleados?: number;
-    tipo_empresa?: string;
-    descripcion?: string;
-    notas_internas?: string;
+    nit: string
+    razon_social: string
+    representante_documento?: string
+    representante_nombre?: string
+    telefono?: string
+    correo?: string
+    fecha_vencimiento?: string
+    estado?: string
+    direccion?: string
+    ciudad?: string
+    departamento?: string
+    sector_economico?: string
+    numero_empleados?: number
+    tipo_empresa?: string
+    descripcion?: string
+    notas_internas?: string
   }) => {
     const convenio = await prisma.empresas_convenio.create({
       data: {
@@ -134,19 +134,19 @@ const convenioService = () => {
         numero_empleados: data.numero_empleados,
         tipo_empresa: data.tipo_empresa,
         descripcion: data.descripcion,
-        notas_internas: data.notas_internas,
-      },
+        notas_internas: data.notas_internas
+      }
     });
 
     return convenio;
   };
 
   const getConveniosPaginados = async (params: {
-    page: number;
-    limit: number;
-    estado?: string;
-    nit?: string;
-    busqueda?: string;
+    page: number
+    limit: number
+    estado?: string
+    nit?: string
+    busqueda?: string
   }) => {
     const { page, limit, estado, nit, busqueda } = params;
     const offset = (page - 1) * limit;
@@ -167,8 +167,8 @@ const convenioService = () => {
         { razon_social: { contains: busqueda, mode: "insensitive" } },
         { representante_nombre: { contains: busqueda, mode: "insensitive" } },
         {
-          representante_documento: { contains: busqueda, mode: "insensitive" },
-        },
+          representante_documento: { contains: busqueda, mode: "insensitive" }
+        }
       ];
     }
 
@@ -178,17 +178,17 @@ const convenioService = () => {
         where,
         orderBy: { created_at: "desc" },
         take: limit,
-        skip: offset,
+        skip: offset
       }),
-      prisma.empresas_convenio.count({ where }),
+      prisma.empresas_convenio.count({ where })
     ]);
 
     // Calcular conteo de estados
     const conteoEstados = await prisma.empresas_convenio.groupBy({
       by: ["estado"],
       _count: {
-        id: true,
-      },
+        id: true
+      }
     });
 
     const conteoEstadosMap: Record<string, number> = {};
@@ -215,7 +215,7 @@ const convenioService = () => {
       numero_empleados: convenio.numero_empleados,
       tipo_empresa: convenio.tipo_empresa,
       created_at: convenio.created_at?.toISOString() || null,
-      updated_at: convenio.updated_at?.toISOString() || null,
+      updated_at: convenio.updated_at?.toISOString() || null
     }));
 
     return {
@@ -224,15 +224,15 @@ const convenioService = () => {
         total,
         page,
         limit,
-        totalPages: Math.ceil(total / limit),
+        totalPages: Math.ceil(total / limit)
       },
-      conteo_estados: conteoEstadosMap,
+      conteo_estados: conteoEstadosMap
     };
   };
 
   const obtenerConvenioPorId = async (id: number) => {
     const convenio = await prisma.empresas_convenio.findUnique({
-      where: { id: BigInt(id) },
+      where: { id: BigInt(id) }
     });
 
     if (!convenio) {
@@ -259,30 +259,30 @@ const convenioService = () => {
       descripcion: convenio.descripcion,
       notas_internas: convenio.notas_internas,
       created_at: convenio.created_at?.toISOString() || null,
-      updated_at: convenio.updated_at?.toISOString() || null,
+      updated_at: convenio.updated_at?.toISOString() || null
     };
   };
 
   const actualizarConvenio = async (
     id: number,
     data: {
-      nit?: string;
-      razon_social?: string;
-      representante_documento?: string;
-      representante_nombre?: string;
-      telefono?: string;
-      correo?: string;
-      fecha_vencimiento?: string;
-      estado?: string;
-      direccion?: string;
-      ciudad?: string;
-      departamento?: string;
-      sector_economico?: string;
-      numero_empleados?: number;
-      tipo_empresa?: string;
-      descripcion?: string;
-      notas_internas?: string;
-    },
+      nit?: string
+      razon_social?: string
+      representante_documento?: string
+      representante_nombre?: string
+      telefono?: string
+      correo?: string
+      fecha_vencimiento?: string
+      estado?: string
+      direccion?: string
+      ciudad?: string
+      departamento?: string
+      sector_economico?: string
+      numero_empleados?: number
+      tipo_empresa?: string
+      descripcion?: string
+      notas_internas?: string
+    }
   ) => {
     const updateData: any = {};
 
@@ -315,7 +315,7 @@ const convenioService = () => {
 
     const convenio = await prisma.empresas_convenio.update({
       where: { id: BigInt(id) },
-      data: updateData,
+      data: updateData
     });
 
     return convenio;
@@ -328,7 +328,7 @@ const convenioService = () => {
     crearConvenio,
     getConveniosPaginados,
     obtenerConvenioPorId,
-    actualizarConvenio,
+    actualizarConvenio
   };
 };
 

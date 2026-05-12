@@ -15,7 +15,7 @@ export const useSpecialThanksPage = () => {
     estadoPdf,
     verificarEstadoPDF,
     visualizarPDF,
-    descargarPDF,
+    descargarPDF
   } = usePDFGenerator();
 
   const mostrarAlerta = ref(false);
@@ -28,7 +28,7 @@ export const useSpecialThanksPage = () => {
       month: "long",
       day: "numeric",
       hour: "2-digit",
-      minute: "2-digit",
+      minute: "2-digit"
     });
   });
 
@@ -37,33 +37,33 @@ export const useSpecialThanksPage = () => {
     {
       id: "POSTULADO",
       nombre: "Postulado",
-      descripcion: "Solicitud recién creada y postulada",
+      descripcion: "Solicitud recién creada y postulada"
     },
     {
       id: "DOCUMENTOS_CARGADOS",
       nombre: "Documentos cargados",
-      descripcion: "Todos los documentos han sido cargados y validados",
+      descripcion: "Todos los documentos han sido cargados y validados"
     },
     {
       id: "ENVIADO_VALIDACION",
       nombre: "Enviado para validación",
-      descripcion: "Enviado para validación de asesores",
+      descripcion: "Enviado para validación de asesores"
     },
     {
       id: "PENDIENTE_FIRMADO",
       nombre: "Pendiente de firmado",
-      descripcion: "Solicitud en proceso de firmado",
+      descripcion: "Solicitud en proceso de firmado"
     },
     {
       id: "ENVIADO_PENDIENTE_APROBACION",
       nombre: "Enviado para aprobación",
-      descripcion: "Solicitud enviada y pendiente de aprobación",
+      descripcion: "Solicitud enviada y pendiente de aprobación"
     },
     {
       id: "APROBADO",
       nombre: "Aprobado",
-      descripcion: "Solicitud aprobada y lista para desembolso",
-    },
+      descripcion: "Solicitud aprobada y lista para desembolso"
+    }
   ]);
 
   const handleVisualizarPDF = async () => {
@@ -72,8 +72,8 @@ export const useSpecialThanksPage = () => {
     const disponible = await verificarEstadoPDF(solicitudId.value);
 
     if (!disponible) {
-      mensajeAlerta.value =
-        "El PDF aún no está disponible. Por favor espere un momento e intente nuevamente.";
+      mensajeAlerta.value
+        = "El PDF aún no está disponible. Por favor espere un momento e intente nuevamente.";
       mostrarAlerta.value = true;
       return;
     }
@@ -92,8 +92,8 @@ export const useSpecialThanksPage = () => {
     const disponible = await verificarEstadoPDF(solicitudId.value);
 
     if (!disponible) {
-      mensajeAlerta.value =
-        "El PDF aún no está disponible. Por favor espere un momento e intente nuevamente.";
+      mensajeAlerta.value
+        = "El PDF aún no está disponible. Por favor espere un momento e intente nuevamente.";
       mostrarAlerta.value = true;
       return;
     }
@@ -133,6 +133,6 @@ export const useSpecialThanksPage = () => {
     handleVisualizarPDF,
     handleDescargarPDF,
     irAlInicio,
-    verificarEstadoPDF,
+    verificarEstadoPDF
   };
 };

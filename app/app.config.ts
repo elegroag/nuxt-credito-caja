@@ -2,10 +2,10 @@ export default defineAppConfig({
   ui: {
     colors: {
       neutral: "zinc",
-      primary: "indigo",
+      primary: "indigo"
     },
     theme: {
-      dark: true,
-    },
-  },
+      dark: true
+    }
+  }
 });

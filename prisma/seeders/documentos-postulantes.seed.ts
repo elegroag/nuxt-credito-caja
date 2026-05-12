@@ -15,6 +15,6 @@ export const documentosPostulantes = [
     solicitud_id: "000002-202603-01",
     activo: true,
     created_at: "2026-03-18 02:02:04.0",
-    updated_at: "2026-03-18 02:02:04.0",
-  },
+    updated_at: "2026-03-18 02:02:04.0"
+  }
 ];

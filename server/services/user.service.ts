@@ -4,33 +4,33 @@ const userService = () => {
   const findByUsername = async (username: string) => {
     return await prisma.users.findUnique({
       where: {
-        username,
-      },
+        username
+      }
     });
   };
 
   const findById = async (id: number) => {
     return await prisma.users.findUnique({
       where: {
-        id,
-      },
+        id
+      }
     });
   };
 
   const updateLastLogin = async (userId: number) => {
     return await prisma.users.update({
       where: {
-        id: userId,
+        id: userId
       },
       data: {
-        last_login: new Date().toISOString(),
-      },
+        last_login: new Date().toISOString()
+      }
     });
   };
 
   const createUserTrabajador = async (data: any) => {
     const user = await prisma.users.create({
-      data: data as any,
+      data: data as any
     });
     return user;
   };
@@ -39,7 +39,7 @@ const userService = () => {
     findByUsername,
     updateLastLogin,
     createUserTrabajador,
-    findById,
+    findById
   };
 };
 

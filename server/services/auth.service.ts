@@ -6,7 +6,7 @@ import type {
   UserSession,
   LoginCredentials,
   RegisterPayload,
-  RecoveryPayload,
+  RecoveryPayload
 } from "~~/shared/types/users-session";
 import jwtManager from "~~/shared/utils/jwt";
 
@@ -16,7 +16,7 @@ const authService = () => {
   const jwt = jwtManager();
 
   const permissionsData = (roles: string[]) => {
-    let permissions: string[] = [];
+    const permissions: string[] = [];
 
     // Handle null or empty roles
     if (roles.length === 0) {
@@ -35,7 +35,7 @@ const authService = () => {
         "applications.delete",
         "applications.view_all",
         "roles.manage",
-        "system.admin",
+        "system.admin"
       ],
       adviser: [
         "applications.create",
@@ -50,20 +50,20 @@ const authService = () => {
         "convenios.view",
         "firmas.manage",
         "firmas.view",
-        "system.admin",
+        "system.admin"
       ],
       user_empresa: [
         "applications.create",
         "applications.edit",
         "applications.delete",
-        "applications.view_own",
+        "applications.view_own"
       ],
       user_trabajador: [
         "applications.create",
         "applications.edit",
         "applications.delete",
-        "applications.view_own",
-      ],
+        "applications.view_own"
+      ]
     };
 
     const allPermissions: string[] = [];
@@ -71,7 +71,7 @@ const authService = () => {
     for (const role of roles) {
       if (rolePermissions[role as keyof typeof rolePermissions]) {
         allPermissions.push(
-          ...rolePermissions[role as keyof typeof rolePermissions],
+          ...rolePermissions[role as keyof typeof rolePermissions]
         );
       }
     }
@@ -82,13 +82,13 @@ const authService = () => {
     return await jwt.signJwt({
       sub: user.id,
       email: user.email,
-      roles: user.roles,
+      roles: user.roles
     });
   };
 
   const validateCredentials = async (
-    credentials: LoginCredentials,
-  ): Promise<{ user: any; isValid: boolean }> => {
+    credentials: LoginCredentials
+  ): Promise<{ user: any, isValid: boolean }> => {
     const user = await userSrv.findByUsername(credentials.username);
 
     if (!user) {
@@ -97,7 +97,7 @@ const authService = () => {
 
     const isPasswordValid = bcrypt.compareSync(
       credentials.password,
-      user.password_hash,
+      user.password_hash
     );
 
     return { user, isValid: isPasswordValid };
@@ -110,7 +110,7 @@ const authService = () => {
   const createUserSession = (
     user: any,
     trabajador: any | null,
-    adviser: any | null,
+    adviser: any | null
   ): UserSession => {
     const session = {
       id: user.id.toString(),
@@ -119,7 +119,7 @@ const authService = () => {
       email: user.email || "",
       roles: user.roles as string[],
       trabajador: trabajador || null,
-      adviser: adviser || null,
+      adviser: adviser || null
     };
     return session;
   };
@@ -130,34 +130,34 @@ const authService = () => {
     if (!isValid) {
       throw createError({
         statusCode: 401,
-        message: "Bad credentials (password)",
+        message: "Bad credentials (password)"
       });
     }
 
     if (!user) {
       throw createError({
         status: 401,
-        message: "Bad credentials (user not found)",
+        message: "Bad credentials (user not found)"
       });
     }
 
     let trabajadorSesion = null;
     let trabajadorData: any = null;
 
-    //valida en user.roles si hay rol de user_trabajador
+    // valida en user.roles si hay rol de user_trabajador
     if (user.roles.includes("user_trabajador")) {
-      //usamos la api_sisuweb
+      // usamos la api_sisuweb
       const responseApi = await api.postJson<any>(
         "company/informacion_trabajador",
         {
-          cedtra: user.numero_documento,
+          cedtra: user.numero_documento
         },
         {
-          auth: true,
-        },
+          auth: true
+        }
       );
       if (responseApi.success) {
-        //procesar dataApi.data
+        // procesar dataApi.data
         trabajadorData = responseApi.data || null;
 
         if (trabajadorData) {
@@ -166,7 +166,7 @@ const authService = () => {
             estado: trabajadorData.estado,
             sucursal: trabajadorData.codsuc,
             phone: trabajadorData.telefono,
-            email: trabajadorData.email,
+            email: trabajadorData.email
           };
         }
       }
@@ -176,7 +176,7 @@ const authService = () => {
 
     await setUserSession(event, {
       user: userSession,
-      loggedInAt: new Date(),
+      loggedInAt: new Date()
     });
 
     await userSrv.updateLastLogin(user.id);
@@ -188,19 +188,19 @@ const authService = () => {
       user: userSession,
       trabajador: trabajadorData,
       access_token: token,
-      token_type: "bearer",
+      token_type: "bearer"
     };
   };
 
   const verify = async (event: H3Event) => {
-    //se debe validar el token que llega en el header Authorization
+    // se debe validar el token que llega en el header Authorization
     const authHeader = getHeader(event, "Authorization");
     const token = jwt.extractBearerToken(authHeader);
 
     if (!token) {
       throw createError({
         statusCode: 401,
-        message: "No token provided",
+        message: "No token provided"
       });
     }
 
@@ -212,7 +212,7 @@ const authService = () => {
       throw createError({
         statusCode: 401,
         statusMessage: "Token inválido",
-        message: "La sesión no es válida",
+        message: "La sesión no es válida"
       });
     }
 
@@ -222,22 +222,22 @@ const authService = () => {
       throw createError({
         statusCode: 401,
         statusMessage: "Usuario no encontrado",
-        message: "La sesión no es válida",
+        message: "La sesión no es válida"
       });
     }
 
-    //buscamos los datos del trabajador
+    // buscamos los datos del trabajador
     let trabajadorData: any = null;
     const roles = (user.roles as string[]) || [];
     if (roles.includes("user_trabajador")) {
       const responseApi = await api.postJson<any>(
         "company/informacion_trabajador",
         {
-          cedtra: user.numero_documento,
+          cedtra: user.numero_documento
         },
         {
-          auth: true,
-        },
+          auth: true
+        }
       );
       if (responseApi.success) {
         trabajadorData = responseApi.data || null;
@@ -262,8 +262,8 @@ const authService = () => {
         nombres: user.nombres,
         apellidos: user.apellidos,
         permissions: permissionsData(user.roles as string[]),
-        trabajador: trabajadorData,
-      },
+        trabajador: trabajadorData
+      }
     };
   };
 
@@ -273,53 +273,53 @@ const authService = () => {
     if (!isValid) {
       throw createError({
         statusCode: 401,
-        message: "Bad credentials (password)",
+        message: "Bad credentials (password)"
       });
     }
 
     if (!user) {
       throw createError({
         status: 401,
-        message: "Bad credentials (user not found)",
+        message: "Bad credentials (user not found)"
       });
     }
 
     let adviserSesion = null;
     let adviserData: any = null;
 
-    //valida en user.roles si hay rol de adviser
+    // valida en user.roles si hay rol de adviser
     if (user.roles.includes("adviser")) {
       throw createError({
         status: 400,
-        message: "Bad request (adviser user not supported)",
+        message: "Bad request (adviser user not supported)"
       });
     }
 
     let trabajadorSesion = null;
     let trabajadorData: any = null;
 
-    //usamos la api_sisuweb
+    // usamos la api_sisuweb
     const responseApi = await api.getJson<any>(
       "usuarios/trae_usuario/" + user.username,
       {
-        auth: true,
-      },
+        auth: true
+      }
     );
 
     if (!responseApi.success) {
       throw createError({
         status: 500,
-        message: "Error al obtener datos del asesor",
+        message: "Error al obtener datos del asesor"
       });
     }
 
-    //procesar dataApi.data
+    // procesar dataApi.data
     adviserData = responseApi.data || null;
 
     if (!adviserData) {
       throw createError({
         status: 500,
-        message: "Error al obtener datos del asesor",
+        message: "Error al obtener datos del asesor"
       });
     }
 
@@ -328,7 +328,7 @@ const authService = () => {
     if (!estadoAdviser || estadoAdviser !== "A") {
       throw createError({
         status: 400,
-        message: "Bad request (estado del asesor no activo)",
+        message: "Bad request (estado del asesor no activo)"
       });
     }
 
@@ -337,23 +337,23 @@ const authService = () => {
       phone: adviserData.telefono,
       email: adviserData.email,
       codigo_funcionario: adviserData.tipfun,
-      tipo_funcionario: adviserData.tipfun_detalle,
+      tipo_funcionario: adviserData.tipfun_detalle
     };
 
-    //valida en user.roles si hay rol de user_trabajador
+    // valida en user.roles si hay rol de user_trabajador
     if (user.roles.includes("user_trabajador")) {
-      //usamos la api_sisuweb
+      // usamos la api_sisuweb
       const responseApi = await api.postJson<any>(
         "company/informacion_trabajador",
         {
-          cedtra: user.numero_documento,
+          cedtra: user.numero_documento
         },
         {
-          auth: true,
-        },
+          auth: true
+        }
       );
       if (responseApi.success) {
-        //procesar dataApi.data
+        // procesar dataApi.data
         trabajadorData = responseApi.data || null;
 
         if (trabajadorData) {
@@ -362,7 +362,7 @@ const authService = () => {
             estado: trabajadorData.estado,
             sucursal: trabajadorData.codsuc,
             phone: trabajadorData.telefono,
-            email: trabajadorData.email,
+            email: trabajadorData.email
           };
         }
       }
@@ -371,28 +371,28 @@ const authService = () => {
     const userSession = createUserSession(
       user,
       trabajadorSesion,
-      adviserSesion,
+      adviserSesion
     );
 
     await setUserSession(event, {
       user: userSession,
-      loggedInAt: new Date(),
+      loggedInAt: new Date()
     });
 
     await userSrv.updateLastLogin(user.id);
 
-    //consultar puntos del asesor
+    // consultar puntos del asesor
     const dataPuntos = await api.getJson<any>(
       "creditos/puntos-asesor/" + user.username,
       {
-        auth: true,
-      },
+        auth: true
+      }
     );
 
     if (!dataPuntos.success) {
       throw createError({
         status: 500,
-        message: "Error al obtener puntos del asesor",
+        message: "Error al obtener puntos del asesor"
       });
     }
 
@@ -407,23 +407,23 @@ const authService = () => {
       trabajador: trabajadorData,
       puntos_asesorias: puntosAsesor,
       access_token: token,
-      token_type: "bearer",
+      token_type: "bearer"
     };
   };
 
   const recovery = async (event: H3Event, payload: RecoveryPayload) => {
     return {
-      message: "Recovery successful",
+      message: "Recovery successful"
     };
   };
 
   const register = async (event: H3Event, payload: RegisterPayload) => {
-    //valda si el nombre de usuario ya está en uso
+    // valda si el nombre de usuario ya está en uso
     const usernameExists = await userSrv.findByUsername(payload.username);
     if (usernameExists) {
       throw createError({
         status: 409,
-        message: "Username already in use",
+        message: "Username already in use"
       });
     }
 
@@ -443,7 +443,7 @@ const authService = () => {
       last_login: new Date().toISOString(),
       email_verified_at: new Date().toISOString(),
       remember_token: null,
-      password_hash: bcrypt.hashSync(payload.password, 10),
+      password_hash: bcrypt.hashSync(payload.password, 10)
     };
 
     const user = await userSrv.createUserTrabajador(userData);
@@ -470,11 +470,11 @@ const authService = () => {
       {
         body: body,
         subject: "Gracias por registrarte en Comfaca Credito",
-        to: user.email,
+        to: user.email
       },
       {
-        auth: true,
-      },
+        auth: true
+      }
     );
 
     const token = await createToken(user);
@@ -484,7 +484,7 @@ const authService = () => {
       user,
       pin,
       access_token: token,
-      token_type: "bearer",
+      token_type: "bearer"
     };
   };
 
@@ -495,7 +495,7 @@ const authService = () => {
     verify,
     adviser,
     recovery,
-    register,
+    register
   };
 };
 

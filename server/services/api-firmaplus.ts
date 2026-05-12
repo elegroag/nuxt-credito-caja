@@ -6,7 +6,7 @@ const apiFirmaPlus = () => {
   const env = config.apiFIRMA.env;
   const baseUrl = {
     pro: config.apiFIRMA.url_pro,
-    dev: config.apiFIRMA.url_dev,
+    dev: config.apiFIRMA.url_dev
   };
   const type_auth = config.apiFIRMA.type_auth;
   const basic_user = config.apiFIRMA.basic_user;
@@ -17,9 +17,9 @@ const apiFirmaPlus = () => {
 
   const authHeader = (accessToken: string) => {
     return {
-      Authorization: `${type_auth} ${accessToken}`,
+      "Authorization": `${type_auth} ${accessToken}`,
       "Content-Type": "application/json",
-      Accept: "application/json",
+      "Accept": "application/json"
     };
   };
 
@@ -29,11 +29,11 @@ const apiFirmaPlus = () => {
         if (!basic_user || !basic_password) {
           throw createError({
             statusCode: 401,
-            message: "Basic user or password not configured",
+            message: "Basic user or password not configured"
           });
         }
         return Buffer.from(`${basic_user}:${basic_password}`).toString(
-          "base64",
+          "base64"
         );
       }
 
@@ -42,8 +42,8 @@ const apiFirmaPlus = () => {
         method: "POST",
         body: {
           client_id: client_id,
-          password: password,
-        },
+          password: password
+        }
       });
 
       if (dataToken.success) {
@@ -59,7 +59,7 @@ const apiFirmaPlus = () => {
 
       return {
         error:
-          e?.data?.error || e?.message || "Error conectando con SISUWEB API",
+          e?.data?.error || e?.message || "Error conectando con SISUWEB API"
       };
     }
   };
@@ -67,12 +67,12 @@ const apiFirmaPlus = () => {
   const getJson = async <T>(
     path: string,
     opts?: {
-      auth?: boolean;
-      headers?: Record<string, string>;
-    },
+      auth?: boolean
+      headers?: Record<string, string>
+    }
   ) => {
     const headers: Record<string, string> = {
-      ...(opts?.headers || {}),
+      ...(opts?.headers || {})
     };
     const token = await getToken();
 
@@ -80,7 +80,7 @@ const apiFirmaPlus = () => {
       throw createError({
         statusCode: 401,
         message: "Bad token no valid",
-        data: token,
+        data: token
       });
     }
 
@@ -91,7 +91,7 @@ const apiFirmaPlus = () => {
     const url = env === "pro" ? baseUrl.pro : baseUrl.dev;
     const response = await ofetch<T>(`${url}/${path}`, {
       method: "GET",
-      headers,
+      headers
     });
     return response;
   };
@@ -100,12 +100,12 @@ const apiFirmaPlus = () => {
     path: string,
     body: any,
     opts?: {
-      auth?: boolean;
-      headers?: Record<string, string>;
-    },
+      auth?: boolean
+      headers?: Record<string, string>
+    }
   ) => {
     const headers: Record<string, string> = {
-      ...(opts?.headers || {}),
+      ...(opts?.headers || {})
     };
     const token = await getToken();
 
@@ -113,7 +113,7 @@ const apiFirmaPlus = () => {
       throw createError({
         statusCode: 401,
         message: "Bad token no valid",
-        data: token,
+        data: token
       });
     }
 
@@ -125,7 +125,7 @@ const apiFirmaPlus = () => {
     const response = await ofetch<T>(`${url}/${path}`, {
       method: "POST",
       headers,
-      body,
+      body
     });
 
     return response;
@@ -135,12 +135,12 @@ const apiFirmaPlus = () => {
     path: string,
     body: any,
     opts?: {
-      auth?: boolean;
-      headers?: Record<string, string>;
-    },
+      auth?: boolean
+      headers?: Record<string, string>
+    }
   ) => {
     const headers: Record<string, string> = {
-      ...(opts?.headers || {}),
+      ...(opts?.headers || {})
     };
     const token = await getToken();
 
@@ -148,7 +148,7 @@ const apiFirmaPlus = () => {
       throw createError({
         statusCode: 401,
         message: "Bad token no valid",
-        data: token,
+        data: token
       });
     }
 
@@ -160,7 +160,7 @@ const apiFirmaPlus = () => {
     const response = await ofetch<T>(`${url}/${path}`, {
       method: "PUT",
       headers,
-      body,
+      body
     });
 
     return response;
@@ -169,12 +169,12 @@ const apiFirmaPlus = () => {
   const deleteJson = async <T>(
     path: string,
     opts?: {
-      auth?: boolean;
-      headers?: Record<string, string>;
-    },
+      auth?: boolean
+      headers?: Record<string, string>
+    }
   ) => {
     const headers: Record<string, string> = {
-      ...(opts?.headers || {}),
+      ...(opts?.headers || {})
     };
     const token = await getToken();
 
@@ -182,7 +182,7 @@ const apiFirmaPlus = () => {
       throw createError({
         statusCode: 401,
         message: "Bad token no valid",
-        data: token,
+        data: token
       });
     }
 
@@ -193,7 +193,7 @@ const apiFirmaPlus = () => {
     const url = env === "pro" ? baseUrl.pro : baseUrl.dev;
     const response = await ofetch<T>(`${url}/${path}`, {
       method: "DELETE",
-      headers,
+      headers
     });
 
     return response;
@@ -205,7 +205,7 @@ const apiFirmaPlus = () => {
       { method: "POST", endpoint: "generarsolicitud" },
       { method: "POST", endpoint: "certificar" },
       { method: "GET", endpoint: "consultarsolicitud/{id}" },
-      { method: "PUT", endpoint: "cancelarsolicitud" },
+      { method: "PUT", endpoint: "cancelarsolicitud" }
     ];
   };
 
@@ -215,7 +215,7 @@ const apiFirmaPlus = () => {
     postJson,
     putJson,
     deleteJson,
-    getEndpoints,
+    getEndpoints
   };
 };
 

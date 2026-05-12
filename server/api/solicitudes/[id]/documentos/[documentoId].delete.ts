@@ -13,7 +13,7 @@ export default defineEventHandler(async (event: H3Event) => {
       setResponseStatus(event, 401);
       return CustomResponse.error(
         "No hay sesión activa",
-        "Error de autenticación",
+        "Error de autenticación"
       );
     }
 
@@ -21,7 +21,7 @@ export default defineEventHandler(async (event: H3Event) => {
       setResponseStatus(event, 400);
       return CustomResponse.error(
         "ID de solicitud no proporcionado",
-        "Error de validación",
+        "Error de validación"
       );
     }
 
@@ -29,19 +29,19 @@ export default defineEventHandler(async (event: H3Event) => {
       setResponseStatus(event, 400);
       return CustomResponse.error(
         "ID de documento no proporcionado",
-        "Error de validación",
+        "Error de validación"
       );
     }
 
     const solicitud = await prisma.solicitudes_credito.findUnique({
-      where: { numero_solicitud: solicitudId },
+      where: { numero_solicitud: solicitudId }
     });
 
     if (!solicitud) {
       setResponseStatus(event, 404);
       return CustomResponse.error(
         "Solicitud no encontrada",
-        "Recurso no encontrado",
+        "Recurso no encontrado"
       );
     }
 
@@ -49,27 +49,27 @@ export default defineEventHandler(async (event: H3Event) => {
       setResponseStatus(event, 403);
       return CustomResponse.error(
         "No tienes permiso para eliminar documentos de esta solicitud",
-        "Acceso denegado",
+        "Acceso denegado"
       );
     }
 
     const documento = await prisma.documentos_postulantes.findFirst({
       where: {
         id: BigInt(documentoId),
-        solicitud_id: solicitudId,
-      },
+        solicitud_id: solicitudId
+      }
     });
 
     if (!documento) {
       setResponseStatus(event, 404);
       return CustomResponse.error(
         "Documento no encontrado",
-        "Recurso no encontrado",
+        "Recurso no encontrado"
       );
     }
 
     await prisma.documentos_postulantes.delete({
-      where: { id: BigInt(documentoId) },
+      where: { id: BigInt(documentoId) }
     });
 
     return CustomResponse.ok(null, "Documento eliminado exitosamente");
@@ -80,7 +80,7 @@ export default defineEventHandler(async (event: H3Event) => {
 
     return CustomResponse.error(
       error?.data?.error || error?.message || "Error al eliminar documento",
-      "Error al eliminar documento.",
+      "Error al eliminar documento."
     );
   }
 });

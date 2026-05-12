@@ -6,106 +6,106 @@ import type { ComputedRef, Ref } from "vue";
 
 export interface FiltrosSolicitudes {
   // Filtros de fecha
-  fecha_desde?: string;
-  fecha_hasta?: string;
+  fecha_desde?: string
+  fecha_hasta?: string
   rango_fechas?: {
-    inicio: string;
-    fin: string;
-  };
+    inicio: string
+    fin: string
+  }
 
   // Filtros de usuario
-  numero_documento?: string;
-  nombre_usuario?: string;
-  owner_username?: string;
+  numero_documento?: string
+  nombre_usuario?: string
+  owner_username?: string
 
   // Filtros de estado
-  estados?: string[];
+  estados?: string[]
 
   // Filtros de solicitud
-  numero_solicitud?: string;
-  monto_minimo?: number;
-  monto_maximo?: number;
+  numero_solicitud?: string
+  monto_minimo?: number
+  monto_maximo?: number
 
   // Paginación
-  skip?: number;
-  limit?: number;
+  skip?: number
+  limit?: number
 
   // Ordenamiento
-  ordenar_por?: string;
-  orden_direccion?: "asc" | "desc";
+  ordenar_por?: string
+  orden_direccion?: "asc" | "desc"
 }
 
 export interface SolicitudAdmin {
-  id: string;
-  created_at: string;
-  updated_at: string;
-  estado: string;
-  valor_solicitud?: number;
-  plazo_meses?: number;
-  numero_solicitud?: string;
-  tipcre?: string;
-  tipo_credito?: string;
-  detalle_modalidad?: string;
-  owner_username: string;
+  id: string
+  created_at: string
+  updated_at: string
+  estado: string
+  valor_solicitud?: number
+  plazo_meses?: number
+  numero_solicitud?: string
+  tipcre?: string
+  tipo_credito?: string
+  detalle_modalidad?: string
+  owner_username: string
   payload?: {
-    informacion_laboral?: any;
-    ingresos_descuentos?: any;
-    informacion_economica?: any;
-    linea_credito?: any;
-  };
+    informacion_laboral?: any
+    ingresos_descuentos?: any
+    informacion_economica?: any
+    linea_credito?: any
+  }
   timeline: Array<{
-    estado: string;
-    fecha: string;
-    detalle?: string;
-    descripcion?: string;
-  }>;
+    estado: string
+    fecha: string
+    detalle?: string
+    descripcion?: string
+  }>
   documentos?: Array<{
-    id: string;
-    documento_requerido_id: string;
-    nombre_original: string;
-    saved_filename: string;
-    tipo_mime: string;
-    tamano_bytes: number;
-    created_at: string;
-  }>;
+    id: string
+    documento_requerido_id: string
+    nombre_original: string
+    saved_filename: string
+    tipo_mime: string
+    tamano_bytes: number
+    created_at: string
+  }>
   solicitante?: {
-    email: string;
-    nombres: string;
-    apellidos: string;
-    numero_documento: string;
-    telefono_movil: string;
-    tipo_documento: string;
-  };
+    email: string
+    nombres: string
+    apellidos: string
+    numero_documento: string
+    telefono_movil: string
+    tipo_documento: string
+  }
 }
 
 export interface SolicitudesResponse {
   data: {
-    collection: SolicitudAdmin[];
+    collection: SolicitudAdmin[]
     pagination: {
-      page: number;
-      page_size: number;
-      total: number;
-      total_pages: number;
-      has_next: boolean;
-      has_prev: boolean;
-    };
-  };
-  message: string;
-  success: boolean;
-  timestamp: string;
+      page: number
+      page_size: number
+      total: number
+      total_pages: number
+      has_next: boolean
+      has_prev: boolean
+    }
+  }
+  message: string
+  success: boolean
+  timestamp: string
 }
 
 export interface EstadosCount {
-  [estado: string]: number;
+  [estado: string]: number
 }
 
 export interface OpcionesFiltro {
-  estados: string[];
+  estados: string[]
   usuarios: Array<{
-    username: string;
-    nombre_completo: string;
-    numero_documento: string;
-  }>;
+    username: string
+    nombre_completo: string
+    numero_documento: string
+  }>
 }
 
 // Opciones de ordenamiento
@@ -115,7 +115,7 @@ export const OPCIONES_ORDENAMIENTO = [
   { value: "monto_solicitado", label: "Monto solicitado" },
   { value: "numero_solicitud", label: "Número de solicitud" },
   { value: "owner_username", label: "Usuario" },
-  { value: "estado", label: "Estado" },
+  { value: "estado", label: "Estado" }
 ] as const;
 
 // Estados disponibles
@@ -127,15 +127,15 @@ export const ESTADOS_DISPONIBLES = [
   "Rechazado",
   "Enviado (pendiente de aprobación)",
   "Enviado",
-  "Desiste",
+  "Desiste"
 ] as const;
 
 export interface UseSolicitudesBuscar {
-  loading: Readonly<Ref<boolean>>;
-  error: Readonly<Ref<string | null>>;
-  solicitudes: Readonly<ComputedRef<SolicitudAdmin[]>>;
-  totalItems: Readonly<Ref<number>>;
-  tieneFiltrosActivos: ComputedRef<boolean>;
-  aplicarFiltros: (nuevosFiltros: Partial<FiltrosSolicitudes>) => void;
-  limpiarFiltros: () => void;
+  loading: Readonly<Ref<boolean>>
+  error: Readonly<Ref<string | null>>
+  solicitudes: Readonly<ComputedRef<SolicitudAdmin[]>>
+  totalItems: Readonly<Ref<number>>
+  tieneFiltrosActivos: ComputedRef<boolean>
+  aplicarFiltros: (nuevosFiltros: Partial<FiltrosSolicitudes>) => void
+  limpiarFiltros: () => void
 }

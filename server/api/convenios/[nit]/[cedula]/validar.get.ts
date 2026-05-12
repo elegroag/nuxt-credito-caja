@@ -19,7 +19,7 @@ export default defineEventHandler(async (event: H3Event) => {
     }
 
     const empresa = await prisma.empresas_convenio.findUnique({
-      where: { nit: BigInt(nit) },
+      where: { nit: BigInt(nit) }
     });
 
     if (!empresa) {
@@ -32,7 +32,7 @@ export default defineEventHandler(async (event: H3Event) => {
       return CustomResponse.error(
         "El convenio no está activo",
         "Convenio inactivo",
-        "valid: false, empresa: {razon_social, estado, fecha_vencimiento}",
+        "valid: false, empresa: {razon_social, estado, fecha_vencimiento}"
       );
     }
 
@@ -42,7 +42,7 @@ export default defineEventHandler(async (event: H3Event) => {
       return CustomResponse.error(
         "El convenio ha vencido",
         "Convenio vencido",
-        "valid: false, empresa: {razon_social, estado, fecha_vencimiento}",
+        "valid: false, empresa: {razon_social, estado, fecha_vencimiento}"
       );
     }
 
@@ -61,10 +61,10 @@ export default defineEventHandler(async (event: H3Event) => {
           correo: empresa.correo,
           direccion: empresa.direccion,
           ciudad: empresa.ciudad,
-          departamento: empresa.departamento,
-        },
+          departamento: empresa.departamento
+        }
       },
-      "Convenio válido",
+      "Convenio válido"
     );
   } catch (error: any) {
     console.error("Error al validar convenio:", error);
@@ -73,7 +73,7 @@ export default defineEventHandler(async (event: H3Event) => {
 
     return CustomResponse.error(
       error?.data?.error || error?.message || "Error al validar convenio",
-      "Error al validar convenio.",
+      "Error al validar convenio."
     );
   }
 });

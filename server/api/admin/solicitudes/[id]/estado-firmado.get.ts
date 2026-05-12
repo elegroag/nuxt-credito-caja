@@ -15,8 +15,8 @@ export default defineEventHandler(async (event: H3Event) => {
     const solicitud = await prisma.solicitudes_credito.findUnique({
       where: { numero_solicitud: id },
       include: {
-        firmantes_solicitud: true,
-      },
+        firmantes_solicitud: true
+      }
     });
 
     if (!solicitud) {
@@ -26,7 +26,7 @@ export default defineEventHandler(async (event: H3Event) => {
 
     const totalFirmantes = solicitud.firmantes_solicitud.length;
     const firmantesCompletados = solicitud.firmantes_solicitud.filter(
-      (f) => f.tipo === "FIRMADO" || f.tipo === "COMPLETADO",
+      f => f.tipo === "FIRMADO" || f.tipo === "COMPLETADO"
     ).length;
     const firmantesPendientes = totalFirmantes - firmantesCompletados;
 
@@ -43,9 +43,9 @@ export default defineEventHandler(async (event: H3Event) => {
         transaccion_id: solicitud.numero_solicitud,
         estado: estadoFirmado,
         firmantes_completados: firmantesCompletados,
-        firmantes_pendientes: firmantesPendientes,
+        firmantes_pendientes: firmantesPendientes
       },
-      "Estado de firmado consultado",
+      "Estado de firmado consultado"
     );
   } catch (e: any) {
     const status = Number(e?.statusCode || e?.response?.status || 502);
@@ -53,7 +53,7 @@ export default defineEventHandler(async (event: H3Event) => {
 
     return CustomResponse.error(
       e?.data?.error || e?.message || "Error conectando con backend",
-      "Error al consultar estado de firmado.",
+      "Error al consultar estado de firmado."
     );
   }
 });

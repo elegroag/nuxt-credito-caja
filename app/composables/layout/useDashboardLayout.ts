@@ -12,7 +12,7 @@ import {
   Users,
   List,
   Building,
-  Bell,
+  Bell
 } from "lucide-vue-next";
 
 // Estado compartido (singleton)
@@ -29,12 +29,12 @@ export function useDashboardLayout() {
   const _abbr = (label: string): string => {
     const parts = label
       .split(" ")
-      .map((s) => s.trim())
+      .map(s => s.trim())
       .filter(Boolean);
 
     const abbr = parts
       .slice(0, 2)
-      .map((p) => p[0] || "")
+      .map(p => p[0] || "")
       .join("")
       .toUpperCase();
 
@@ -47,13 +47,13 @@ export function useDashboardLayout() {
       label: "Simulador",
       to: "/dash/simulador/lineas-credito",
       abbr: _abbr("Simulador"),
-      icon: Calculator,
+      icon: Calculator
     },
     {
       label: "Notificaciones",
       to: "/dash/notify",
       abbr: _abbr("Notificaciones"),
-      icon: Bell,
+      icon: Bell
     },
     {
       label: "Gestión firmas",
@@ -61,7 +61,7 @@ export function useDashboardLayout() {
       abbr: _abbr("Gestión firmas"),
       icon: Share2,
       requiredPermissions: ["firmas.view"],
-      category: "admin",
+      category: "admin"
     },
     {
       label: "Solicitudes",
@@ -69,7 +69,7 @@ export function useDashboardLayout() {
       abbr: _abbr("Solicitudes"),
       icon: List,
       requiredPermissions: ["solicitudes.view"],
-      category: "admin",
+      category: "admin"
     },
     {
       label: "Usuarios",
@@ -77,7 +77,7 @@ export function useDashboardLayout() {
       abbr: _abbr("Usuarios"),
       icon: Users,
       adminOnly: true,
-      category: "admin",
+      category: "admin"
     },
     {
       label: "Convenios",
@@ -86,30 +86,30 @@ export function useDashboardLayout() {
       icon: Building,
       requiredPermissions: ["convenios.view"],
       excludedRoles: ["user_trabajador"],
-      category: "admin",
+      category: "admin"
     },
     { label: "Perfil", to: "/dash/perfil", abbr: _abbr("Perfil"), icon: User },
     {
       label: "Oficinas",
       to: "/dash/oficinas",
       abbr: _abbr("Oficinas"),
-      icon: Building,
+      icon: Building
     },
     {
       label: "Terminos",
       to: "/dash/terminos",
       abbr: _abbr("Terminos y condiciones"),
-      icon: FilePlus,
-    },
+      icon: FilePlus
+    }
   ];
 
   const isActive = (to: string) => {
     if (to === "/dash")
       return (
-        route.path === "/dash" ||
-        route.path === "/" ||
-        route.path === "/index" ||
-        route.name === "index"
+        route.path === "/dash"
+        || route.path === "/"
+        || route.path === "/index"
+        || route.name === "index"
       );
     return route.path.startsWith(to);
   };
@@ -124,8 +124,8 @@ export function useDashboardLayout() {
 
       // Si el item requiere permisos específicos, verificarlos
       if (item.requiredPermissions && item.requiredPermissions.length > 0) {
-        const hasAllPermissions = item.requiredPermissions.every((permission) =>
-          hasPermission(permission),
+        const hasAllPermissions = item.requiredPermissions.every(permission =>
+          hasPermission(permission)
         );
         if (!hasAllPermissions) {
           return false;
@@ -134,8 +134,8 @@ export function useDashboardLayout() {
 
       // Si el item tiene roles excluidos, verificar que el usuario no tenga esos roles
       if (item.excludedRoles && item.excludedRoles.length > 0) {
-        const hasExcludedRole = item.excludedRoles.some((role) =>
-          userRoles.value.includes(role),
+        const hasExcludedRole = item.excludedRoles.some(role =>
+          userRoles.value.includes(role)
         );
         if (hasExcludedRole) {
           return false;
@@ -152,7 +152,7 @@ export function useDashboardLayout() {
     const items = filteredNavItems.value;
     const grouped: { [key: string]: NavItem[] } = {
       user: [],
-      admin: [],
+      admin: []
     };
 
     items.forEach((item) => {
@@ -167,7 +167,7 @@ export function useDashboardLayout() {
   });
 
   const sectionTitle = computed(() => {
-    const hit = filteredNavItems.value.find((x) => isActive(x.to));
+    const hit = filteredNavItems.value.find(x => isActive(x.to));
     return hit?.label || "Inicio";
   });
 
@@ -187,6 +187,6 @@ export function useDashboardLayout() {
     sectionTitle,
     isActive,
     logout,
-    _abbr,
+    _abbr
   };
 }

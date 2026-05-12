@@ -2,12 +2,13 @@
   <div class="w-full max-w-md mx-auto">
     <div class="bg-card rounded-3xl border border-border/50 p-8 sm:p-10">
       <!-- Form -->
-      <form @submit.prevent="handleLogin" class="space-y-5">
+      <form
+        class="space-y-5"
+        @submit.prevent="handleLogin"
+      >
         <!-- Username -->
         <div class="space-y-2">
-          <label class="text-sm font-medium text-foreground"
-            >Número de Usuario SISU</label
-          >
+          <label class="text-sm font-medium text-foreground">Número de Usuario SISU</label>
           <div class="relative">
             <UIcon
               name="i-lucide-hash"
@@ -20,7 +21,7 @@
               class="w-full pl-11 pr-4 py-3 bg-muted/50 rounded-xl border-0 text-foreground placeholder:text-muted-foreground focus:ring-2 focus:ring-primary/20 focus:bg-card transition-all"
               :class="{ 'ring-2 ring-red-500/20': errorMsg }"
               :disabled="loading"
-            />
+            >
           </div>
         </div>
 
@@ -39,7 +40,7 @@
               class="w-full pl-11 pr-4 py-3 bg-muted/50 rounded-xl border-0 text-foreground placeholder:text-muted-foreground focus:ring-2 focus:ring-primary/20 focus:bg-card transition-all"
               :class="{ 'ring-2 ring-red-500/20': errorMsg }"
               :disabled="loading"
-            />
+            >
           </div>
         </div>
 
@@ -48,7 +49,10 @@
           v-if="errorMsg"
           class="rounded-xl bg-red-50 border border-red-200 p-3 text-sm text-red-600 flex items-center gap-2"
         >
-          <UIcon name="i-lucide-circle-alert" class="w-4 h-4" />
+          <UIcon
+            name="i-lucide-circle-alert"
+            class="w-4 h-4"
+          />
           {{ errorMsg }}
         </div>
 
@@ -62,7 +66,11 @@
           :disabled="!isConnected"
         >
           <template #leading>
-            <UIcon v-if="!loading" name="i-lucide-log-in" class="w-4 h-4" />
+            <UIcon
+              v-if="!loading"
+              name="i-lucide-log-in"
+              class="w-4 h-4"
+            />
           </template>
           {{ loading ? "Iniciando..." : "Iniciar sesión" }}
         </UButton>
@@ -86,7 +94,7 @@
       :class="
         cn(
           'mt-4 px-4 py-2 text-xs rounded-full flex items-center justify-center gap-1.5',
-          connectionStatusClass,
+          connectionStatusClass
         )
       "
     >
@@ -124,7 +132,7 @@ import { cn } from "@/lib/utils";
 import SelectPuntoAsesoriaModal from "@/components/shared/SelectPuntoAsesoriaModal.vue";
 
 definePageMeta({
-  layout: "auth",
+  layout: "auth"
 });
 
 const {
@@ -138,7 +146,7 @@ const {
   showPuntosModal,
   puntosAsesoria,
   selectPuntoAsesoria,
-  cancelPuntoSelection,
+  cancelPuntoSelection
 } = useAdviser();
 
 const {
@@ -146,7 +154,7 @@ const {
   checkingConnection,
   connectionMessage,
   connectionStatusClass,
-  checkConnection,
+  checkConnection
 } = useHealthCheck();
 
 const handleLogin = async () => {

@@ -11,7 +11,7 @@ export const solicitudesCredito = [
         "/app/temp_output/solicitudes/000002-202603-01/solicitud_000002-202603-01_20260318_020203.pdf",
       api_filename: "solicitud_000002-202603-01_20260318_020203.pdf",
       generated_at: "2026-03-18T02:02:03.841182Z",
-      generated_by: "pdf_generation_service",
+      generated_by: "pdf_generation_service"
     },
     fecha_radicado: "2026-03-18",
     producto_tipo: "01",
@@ -22,6 +22,6 @@ export const solicitudesCredito = [
     cuota_mensual: 159898.0,
     created_at: "2026-03-18 01:30:33.0",
     updated_at: "2026-03-18 02:02:04.0",
-    rol_en_solicitud: "T",
-  },
+    rol_en_solicitud: "T"
+  }
 ];

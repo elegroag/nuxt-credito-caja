@@ -12,7 +12,11 @@
             crédito
           </p>
         </div>
-        <UButton variant="outline" @click="refrescarTodos" :disabled="loading">
+        <UButton
+          variant="outline"
+          :disabled="loading"
+          @click="refrescarTodos"
+        >
           <Icon
             :name="loading ? 'lucide:loader-2' : 'lucide:refresh-cw'"
             :class="loading ? 'h-4 w-4 animate-spin' : 'h-4 w-4'"
@@ -26,22 +30,23 @@
     <UCard class="mb-6">
       <div class="flex flex-wrap items-center gap-4">
         <div class="flex items-center gap-2">
-          <Icon name="lucide:filter" class="h-4 w-4 text-gray-500" />
-          <span class="text-sm font-medium text-gray-700"
-            >Filtrar por estado:</span
-          >
+          <Icon
+            name="lucide:filter"
+            class="h-4 w-4 text-gray-500"
+          />
+          <span class="text-sm font-medium text-gray-700">Filtrar por estado:</span>
         </div>
         <div class="flex flex-wrap gap-2">
           <button
             v-for="estado in estadosDisponibles"
             :key="estado.value"
-            @click="cambiarFiltroEstado(estado.value)"
             :class="[
               'px-3 py-1.5 text-sm font-medium rounded-md border transition-colors',
               estadoFiltro === estado.value
                 ? 'bg-blue-600 text-white border-blue-600'
-                : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50',
+                : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
             ]"
+            @click="cambiarFiltroEstado(estado.value)"
           >
             {{ estado.label }}
           </button>
@@ -58,7 +63,9 @@
         name="lucide:loader-2"
         class="h-12 w-12 animate-spin text-blue-600"
       />
-      <p class="text-gray-600">Cargando procesos de firma...</p>
+      <p class="text-gray-600">
+        Cargando procesos de firma...
+      </p>
     </div>
 
     <!-- Error State -->
@@ -67,8 +74,13 @@
       class="rounded-lg bg-red-50 border border-red-200 p-4"
     >
       <div class="flex items-center gap-2 text-red-800">
-        <Icon name="lucide:alert-circle" class="h-5 w-5" />
-        <p class="font-medium">{{ error }}</p>
+        <Icon
+          name="lucide:alert-circle"
+          class="h-5 w-5"
+        />
+        <p class="font-medium">
+          {{ error }}
+        </p>
       </div>
     </div>
 
@@ -77,14 +89,20 @@
       v-else-if="solicitudes.length === 0"
       class="flex flex-col items-center justify-center py-16 space-y-4"
     >
-      <Icon name="lucide:file-signature" class="h-16 w-16 text-gray-400" />
+      <Icon
+        name="lucide:file-signature"
+        class="h-16 w-16 text-gray-400"
+      />
       <p class="text-gray-600 text-lg">
         No hay procesos de firma con el filtro seleccionado
       </p>
     </div>
 
     <!-- Lista de Solicitudes -->
-    <div v-else class="space-y-4">
+    <div
+      v-else
+      class="space-y-4"
+    >
       <UCard
         v-for="solicitud in solicitudes"
         :key="solicitud.numero_solicitud"
@@ -105,13 +123,19 @@
             </div>
             <div class="space-y-1 text-sm">
               <div class="flex items-center gap-2 text-gray-600">
-                <Icon name="lucide:building" class="h-4 w-4" />
+                <Icon
+                  name="lucide:building"
+                  class="h-4 w-4"
+                />
                 <span>{{
                   convenioActivo?.razon_social || "Sin convenio"
                 }}</span>
               </div>
               <div class="flex items-center gap-2 text-gray-600">
-                <Icon name="lucide:calendar" class="h-4 w-4" />
+                <Icon
+                  name="lucide:calendar"
+                  class="h-4 w-4"
+                />
                 <span>Creada: {{ formatearFecha(solicitud.created_at) }}</span>
               </div>
             </div>
@@ -128,14 +152,12 @@
                     "
                     class="h-4 w-4"
                   />
-                  <span class="text-sm font-medium text-gray-700"
-                    >Estado de Firma:</span
-                  >
+                  <span class="text-sm font-medium text-gray-700">Estado de Firma:</span>
                 </div>
                 <span
                   :class="[
                     'inline-flex items-center px-3 py-1 rounded-full text-xs font-medium border',
-                    getEstadoColor(solicitud.proceso_firmado?.estado || ''),
+                    getEstadoColor(solicitud.proceso_firmado?.estado || '')
                   ]"
                 >
                   {{ solicitud.proceso_firmado?.estado || "DESCONOCIDO" }}
@@ -144,13 +166,17 @@
 
               <div class="grid grid-cols-2 gap-3 text-sm">
                 <div>
-                  <p class="text-gray-500">Firmantes completados</p>
+                  <p class="text-gray-500">
+                    Firmantes completados
+                  </p>
                   <p class="font-semibold text-green-600">
                     {{ solicitud.proceso_firmado?.firmantes_completados || 0 }}
                   </p>
                 </div>
                 <div>
-                  <p class="text-gray-500">Pendientes</p>
+                  <p class="text-gray-500">
+                    Pendientes
+                  </p>
                   <p class="font-semibold text-yellow-600">
                     {{ solicitud.proceso_firmado?.firmantes_pendientes || 0 }}
                   </p>
@@ -178,7 +204,10 @@
               class="w-full gap-2"
               @click="verDetalles(solicitud.numero_solicitud)"
             >
-              <Icon name="lucide:eye" class="h-4 w-4" />
+              <Icon
+                name="lucide:eye"
+                class="h-4 w-4"
+              />
               Ver Detalles
             </UButton>
             <UButton
@@ -187,7 +216,10 @@
               class="w-full gap-2"
               @click="handleConsultarEstado(solicitud.numero_solicitud)"
             >
-              <Icon name="lucide:refresh-cw" class="h-4 w-4" />
+              <Icon
+                name="lucide:refresh-cw"
+                class="h-4 w-4"
+              />
               Actualizar
             </UButton>
           </div>
@@ -207,10 +239,13 @@
         <UButton
           variant="outline"
           size="sm"
-          @click="paginaAnterior"
           :disabled="!hasPrevious || loading"
+          @click="paginaAnterior"
         >
-          <Icon name="lucide:chevron-left" class="h-4 w-4" />
+          <Icon
+            name="lucide:chevron-left"
+            class="h-4 w-4"
+          />
           Anterior
         </UButton>
         <span class="text-sm text-gray-700 px-3">
@@ -219,11 +254,14 @@
         <UButton
           variant="outline"
           size="sm"
-          @click="siguientePagina"
           :disabled="!hasNext || loading"
+          @click="siguientePagina"
         >
           Siguiente
-          <Icon name="lucide:chevron-right" class="h-4 w-4" />
+          <Icon
+            name="lucide:chevron-right"
+            class="h-4 w-4"
+          />
         </UButton>
       </div>
     </div>
@@ -237,7 +275,7 @@ import { useSeguimientoFirmas } from "~/composables/admin/useSeguimientoFirmas";
 
 definePageMeta({
   layout: "dashboard",
-  middleware: ["auth"],
+  middleware: ["auth"]
 });
 
 const {
@@ -262,7 +300,7 @@ const {
   getEstadoColor,
   getEstadoIcon,
   convenioActivo,
-  cargarConvenio,
+  cargarConvenio
 } = useSeguimientoFirmas();
 
 const handleConsultarEstado = async (solicitudId: string) => {

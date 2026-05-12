@@ -2,15 +2,24 @@
   <div class="mx-auto max-w-6xl px-4 py-6 sm:py-8 space-y-6">
     <!-- Header -->
     <div class="flex items-center gap-4 mb-6">
-      <UButton variant="outline" @click="goBack()">
-        <UIcon name="i-lucide-arrow-left" class="w-4 h-4 mr-2" />
+      <UButton
+        variant="outline"
+        @click="goBack()"
+      >
+        <UIcon
+          name="i-lucide-arrow-left"
+          class="w-4 h-4 mr-2"
+        />
         Volver
       </UButton>
       <div>
         <h1
           class="text-2xl font-semibold text-foreground flex items-center gap-2"
         >
-          <UIcon name="i-lucide-building-2" class="w-8 h-8 text-primary" />
+          <UIcon
+            name="i-lucide-building-2"
+            class="w-8 h-8 text-primary"
+          />
           Detalle del Convenio
         </h1>
         <p class="text-sm text-muted-foreground">
@@ -20,12 +29,17 @@
     </div>
 
     <!-- Loading State -->
-    <div v-if="loading" class="flex flex-col items-center justify-center py-16">
+    <div
+      v-if="loading"
+      class="flex flex-col items-center justify-center py-16"
+    >
       <UIcon
         name="i-lucide-loader-2"
         class="w-10 h-10 animate-spin text-primary mb-4"
       />
-      <p class="text-muted-foreground">Cargando información del convenio...</p>
+      <p class="text-muted-foreground">
+        Cargando información del convenio...
+      </p>
     </div>
 
     <!-- Error State -->
@@ -33,18 +47,34 @@
       v-else-if="error"
       class="flex flex-col items-center justify-center py-16"
     >
-      <UIcon name="i-lucide-x-circle" class="w-10 h-10 text-destructive mb-4" />
-      <p class="text-destructive mb-4">{{ error }}</p>
-      <UButton variant="outline" @click="cargarConvenio">Reintentar</UButton>
+      <UIcon
+        name="i-lucide-x-circle"
+        class="w-10 h-10 text-destructive mb-4"
+      />
+      <p class="text-destructive mb-4">
+        {{ error }}
+      </p>
+      <UButton
+        variant="outline"
+        @click="cargarConvenio"
+      >
+        Reintentar
+      </UButton>
     </div>
 
     <!-- Convenio Details -->
-    <div v-else-if="convenio" class="space-y-6">
+    <div
+      v-else-if="convenio"
+      class="space-y-6"
+    >
       <!-- Información Principal -->
       <UPageCard>
         <template #title>
           <span class="flex items-center gap-2">
-            <UIcon name="i-lucide-building-2" class="w-5 h-5 text-primary" />
+            <UIcon
+              name="i-lucide-building-2"
+              class="w-5 h-5 text-primary"
+            />
             Información Principal
           </span>
         </template>
@@ -85,25 +115,35 @@
             <!-- Acciones -->
             <div class="flex items-center gap-2">
               <NuxtLink :to="`/admin/convenios/edit/${convenio.id}`">
-                <UButton variant="outline" size="sm">
-                  <UIcon name="i-lucide-pencil" class="w-4 h-4 mr-2" />
+                <UButton
+                  variant="outline"
+                  size="sm"
+                >
+                  <UIcon
+                    name="i-lucide-pencil"
+                    class="w-4 h-4 mr-2"
+                  />
                   Editar
                 </UButton>
               </NuxtLink>
               <UButton
                 variant="outline"
                 size="sm"
-                @click="toggleEstado"
                 :color="
                   convenio.estado === 'Activo' ? 'destructive' : 'primary'
                 "
+                @click="toggleEstado"
               >
                 <UIcon
                   v-if="convenio.estado === 'Activo'"
                   name="i-lucide-x"
                   class="w-4 h-4 mr-2"
                 />
-                <UIcon v-else name="i-lucide-check" class="w-4 h-4 mr-2" />
+                <UIcon
+                  v-else
+                  name="i-lucide-check"
+                  class="w-4 h-4 mr-2"
+                />
                 {{ convenio.estado === "Activo" ? "Desactivar" : "Activar" }}
               </UButton>
             </div>
@@ -117,7 +157,10 @@
         <UPageCard>
           <template #title>
             <span class="flex items-center gap-2">
-              <UIcon name="i-lucide-user" class="w-5 h-5 text-primary" />
+              <UIcon
+                name="i-lucide-user"
+                class="w-5 h-5 text-primary"
+              />
               Información del Representante
             </span>
           </template>
@@ -128,7 +171,9 @@
                 class="w-5 h-5 text-muted-foreground"
               />
               <div>
-                <p class="text-sm text-muted-foreground">Documento</p>
+                <p class="text-sm text-muted-foreground">
+                  Documento
+                </p>
                 <p class="font-medium text-foreground">
                   {{ convenio.representante_documento }}
                 </p>
@@ -140,7 +185,9 @@
                 class="w-5 h-5 text-muted-foreground"
               />
               <div>
-                <p class="text-sm text-muted-foreground">Nombre Completo</p>
+                <p class="text-sm text-muted-foreground">
+                  Nombre Completo
+                </p>
                 <p class="font-medium text-foreground">
                   {{ convenio.representante_nombre }}
                 </p>
@@ -153,7 +200,10 @@
         <UPageCard>
           <template #title>
             <span class="flex items-center gap-2">
-              <UIcon name="i-lucide-phone" class="w-5 h-5 text-primary" />
+              <UIcon
+                name="i-lucide-phone"
+                class="w-5 h-5 text-primary"
+              />
               Información de Contacto
             </span>
           </template>
@@ -164,7 +214,9 @@
                 class="w-5 h-5 text-muted-foreground"
               />
               <div>
-                <p class="text-sm text-muted-foreground">Teléfono</p>
+                <p class="text-sm text-muted-foreground">
+                  Teléfono
+                </p>
                 <p class="font-medium text-foreground">
                   {{ convenio.telefono || "No registrado" }}
                 </p>
@@ -176,7 +228,9 @@
                 class="w-5 h-5 text-muted-foreground"
               />
               <div>
-                <p class="text-sm text-muted-foreground">Correo Electrónico</p>
+                <p class="text-sm text-muted-foreground">
+                  Correo Electrónico
+                </p>
                 <p class="font-medium text-foreground">
                   {{ convenio.correo || "No registrado" }}
                 </p>
@@ -189,7 +243,10 @@
         <UPageCard>
           <template #title>
             <span class="flex items-center gap-2">
-              <UIcon name="i-lucide-calendar" class="w-5 h-5 text-primary" />
+              <UIcon
+                name="i-lucide-calendar"
+                class="w-5 h-5 text-primary"
+              />
               Fechas del Convenio
             </span>
           </template>
@@ -200,7 +257,9 @@
                 class="w-5 h-5 text-muted-foreground"
               />
               <div>
-                <p class="text-sm text-muted-foreground">Fecha de Creación</p>
+                <p class="text-sm text-muted-foreground">
+                  Fecha de Creación
+                </p>
                 <p class="font-medium text-foreground">
                   {{ formatDate(convenio.fecha_convenio) }}
                 </p>
@@ -230,7 +289,9 @@
                 class="w-5 h-5 text-muted-foreground"
               />
               <div>
-                <p class="text-sm text-muted-foreground">Estado Actual</p>
+                <p class="text-sm text-muted-foreground">
+                  Estado Actual
+                </p>
                 <UBadge :variant="getEstadoVariant(convenio.estado)">
                   {{ getEstadoLabel(convenio.estado) }}
                 </UBadge>
@@ -243,7 +304,10 @@
         <UPageCard>
           <template #title>
             <span class="flex items-center gap-2">
-              <UIcon name="i-lucide-cog" class="w-5 h-5 text-primary" />
+              <UIcon
+                name="i-lucide-cog"
+                class="w-5 h-5 text-primary"
+              />
               Información del Sistema
             </span>
           </template>
@@ -254,7 +318,9 @@
                 class="w-5 h-5 text-muted-foreground"
               />
               <div>
-                <p class="text-sm text-muted-foreground">ID Interno</p>
+                <p class="text-sm text-muted-foreground">
+                  ID Interno
+                </p>
                 <p class="font-medium text-foreground font-mono text-sm">
                   {{ convenio.id }}
                 </p>
@@ -281,7 +347,10 @@
         <UPageCard>
           <template #title>
             <span class="flex items-center gap-2">
-              <UIcon name="i-lucide-clock" class="w-5 h-5 text-primary" />
+              <UIcon
+                name="i-lucide-clock"
+                class="w-5 h-5 text-primary"
+              />
               Historial de Actividad
             </span>
           </template>
@@ -309,7 +378,7 @@ import { useApi } from "~/composables/useApi";
 
 definePageMeta({
   layout: "dashboard",
-  middleware: ["auth"],
+  middleware: ["auth"]
 });
 
 const router = useRouter();
@@ -328,8 +397,8 @@ const cargarConvenio = async () => {
     const response = await api.getJson<any>(
       `/api/admin/convenios/${route.params.id}`,
       {
-        auth: true,
-      },
+        auth: true
+      }
     );
 
     console.log("Respuesta del convenio:", response);
@@ -352,17 +421,17 @@ const cargarConvenio = async () => {
 const toggleEstado = async () => {
   if (!convenio.value) return;
 
-  const nuevoEstado =
-    convenio.value.estado === "Activo" ? "Inactivo" : "Activo";
+  const nuevoEstado
+    = convenio.value.estado === "Activo" ? "Inactivo" : "Activo";
 
   try {
     const api = useApi();
     await api.putJson(
       `/api/admin/convenios/${convenio.value.id}/estado`,
       {
-        estado: nuevoEstado,
+        estado: nuevoEstado
       },
-      { auth: true },
+      { auth: true }
     );
 
     // Actualizar estado localmente
@@ -377,20 +446,20 @@ const toggleEstado = async () => {
 const getEstadoLabel = (estado: string) => {
   const labels: Record<string, string> = {
     Activo: "Activo",
-    Inactivo: "Inactivo",
+    Inactivo: "Inactivo"
   };
   return labels[estado] || estado;
 };
 
 const getEstadoVariant = (
-  estado: string,
+  estado: string
 ): "solid" | "outline" | "soft" | "subtle" => {
   const variants: Record<
     string,
     "solid" | "outline" | "soft" | "subtle"
   > = {
     Activo: "soft",
-    Inactivo: "outline",
+    Inactivo: "outline"
   };
   return variants[estado] || "soft";
 };
@@ -400,7 +469,7 @@ const formatDate = (dateString: string): string => {
   return new Date(dateString).toLocaleDateString("es-CO", {
     day: "2-digit",
     month: "2-digit",
-    year: "numeric",
+    year: "numeric"
   });
 };
 
