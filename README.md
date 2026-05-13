@@ -166,6 +166,62 @@ API_FLASKPDF_PASSWORD=""
 | `pnpm db:migrate`  | Ejecutar migraciones pendientes       |
 | `pnpm db:push`     | Sincronizar esquema con base de datos |
 | `pnpm db:seed`     | Ejecutar seeders de datos             |
+| `pnpm test`        | Ejecutar pruebas (modo watch)          |
+| `pnpm test:unit`   | Pruebas unitarias                     |
+| `pnpm test:integration` | Pruebas de integración             |
+| `pnpm test:e2e`    | Pruebas E2E con Playwright             |
+
+### Testing
+
+El proyecto cuenta con una suite de testing integrada usando **Vitest** + **MSW** (Mock Service Worker) para pruebas de integración y **Playwright** para pruebas E2E.
+
+#### Estructura de Tests
+
+```
+tests/
+├── integration/
+│   └── api/
+│       ├── auth/
+│       │   ├── auth-login.spec.ts
+│       │   └── auth-register.spec.ts
+│       ├── admin/convenios/
+│       │   ├── convenios.index.get.spec.ts
+│       │   ├── convenios.id.get.spec.ts
+│       │   ├── convenios.create.post.spec.ts
+│       │   └── convenios.id.put.spec.ts
+│       └── solicitudes/
+│           ├── generar-pdf.spec.ts
+│           └── guardar-solicitud.spec.ts
+├── unit/           # Pruebas unitarias
+└── e2e/            # Pruebas de extremo a extremo
+```
+
+#### Pruebas de Integración API
+
+| Endpoint | Tests | Descripción |
+|----------|-------|-------------|
+| `POST /api/solicitudes/:id/generar-pdf` | 8 | Generación de PDF con mock de Flask PDF |
+| `POST /api/solicitudes/guardar-solicitud` | 15 | Creación de solicitudes con validación Zod |
+| `POST /api/auth/register` | 14 | Registro de usuarios con mock de email |
+| `GET /api/admin/convenios/:id` | 6 | Consulta de convenios con autenticación |
+
+#### Ejecutar Tests
+
+```bash
+# Todos los tests
+pnpm test
+
+# Solo integración (runs en puerto 4000)
+pnpm vitest run tests/integration/
+
+# Tests específicos de solicitudes
+pnpm vitest run tests/integration/api/solicitudes/
+
+# Cobertura de código
+pnpm test:coverage
+```
+
+> **Nota:** Las pruebas de integración usan MSW para mockear APIs externas (Flask PDF, servicios de email) y requieren que el servidor Nuxt esté corriendo en puerto 4000.
 
 ### Estructura del Proyecto
 
@@ -188,8 +244,22 @@ nuxt-creditos/
 │   └── assets/             # Recursos estáticos (CSS, imágenes)
 ├── server/                 # API y lógica del servidor
 │   ├── api/                # Endpoints de la API
+│   │   ├── auth/           # Rutas de autenticación
+│   │   ├── admin/          # Rutas administrativas
+│   │   └── solicitudes/    # Rutas de solicitudes de crédito
 │   ├── middleware/         # Middleware del servidor
+│   ├── services/           # Servicios de negocio
+│   │   ├── admin/          # Servicios administrativos
+│   │   └── storage/        # Servicios de almacenamiento
 │   └── utils/              # Utilidades del servidor
+├── tests/                  # Suite de testing
+│   ├── setup/              # Configuración de entorno
+│   │   ├── global.ts       # Setup global de Vitest
+│   │   ├── integration.ts  # Setup para integración
+│   │   └── msw.ts          # Configuración de MSW
+│   ├── integration/        # Pruebas de integración
+│   │   └── api/
+│   └── unit/               # Pruebas unitarias
 ├── shared/                 # Código compartido
 │   └── types/              # Definiciones de tipos TypeScript
 ├── prisma/                 # Esquema y migraciones de Prisma

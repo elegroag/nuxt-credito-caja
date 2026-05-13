@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import type { TableColumn } from "@nuxt/ui";
-import type { SolicitudAdmin } from "#shared/types/admin-solicitudes";
 import { ESTADOS_DISPONIBLES } from "#shared/types/admin-solicitudes";
 import { formatCurrency, formatDate } from "#shared/utils/formatters";
 import { useAdminSolicitudes } from "~/composables/admin/useAdminSolicitudes";
@@ -48,7 +47,7 @@ const opcionesLimite = [
   { label: "100 / pág", value: 100 }
 ];
 
-const opcionesEstadoModal: { label: string, value: string }[] = ESTADOS_DISPONIBLES.map(e => ({
+const opcionesEstadoModal: { label: string; value: string }[] = ESTADOS_DISPONIBLES.map((e) => ({
   label: e,
   value: e
 }));
@@ -62,8 +61,7 @@ const columns: TableColumn<SolicitudAdmin>[] = [
   {
     accessorKey: "created_at",
     header: "Fecha Creación",
-    cell: ({ row }) =>
-      formatDate(row.original.created_at || new Date().toISOString())
+    cell: ({ row }) => formatDate(row.original.created_at || new Date().toISOString())
   },
   {
     id: "acciones",
@@ -76,22 +74,13 @@ const columns: TableColumn<SolicitudAdmin>[] = [
 <template>
   <div class="mx-auto max-w-7xl px-4 py-6 sm:py-8 space-y-6">
     <!-- Header -->
-    <div
-      class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"
-    >
+    <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
       <div>
-        <h1
-          class="text-xl font-semibold text-foreground flex items-center gap-2"
-        >
-          <UIcon
-            name="i-lucide-file-text"
-            class="w-5 h-5 text-primary"
-          />
+        <h1 class="text-xl font-semibold text-foreground flex items-center gap-2">
+          <UIcon name="i-lucide-file-text" class="w-5 h-5 text-primary" />
           Administración de Solicitudes
         </h1>
-        <p class="mt-1 text-sm text-muted-foreground">
-          Gestión de solicitudes de crédito
-        </p>
+        <p class="mt-1 text-sm text-muted-foreground">Gestión de solicitudes de crédito</p>
       </div>
       <div class="flex items-center gap-2">
         <UButton
@@ -120,28 +109,14 @@ const columns: TableColumn<SolicitudAdmin>[] = [
     <UPageCard :ui="{ container: 'sm:p-4' }">
       <div class="flex items-center justify-between mb-4">
         <p class="text-sm font-medium text-foreground flex items-center gap-2">
-          <UIcon
-            name="i-lucide-bar-chart-2"
-            class="w-4 h-4 text-primary"
-          />
+          <UIcon name="i-lucide-bar-chart-2" class="w-4 h-4 text-primary" />
           Resumen por Estados
         </p>
-        <UBadge
-          color="neutral"
-          variant="subtle"
-        >
-          Total: {{ getTotalSolicitudes }}
-        </UBadge>
+        <UBadge color="neutral" variant="subtle"> Total: {{ getTotalSolicitudes }} </UBadge>
       </div>
 
-      <div
-        v-if="loadingEstados"
-        class="flex items-center gap-2 text-muted-foreground text-sm py-4"
-      >
-        <UIcon
-          name="i-lucide-loader-circle"
-          class="w-4 h-4 animate-spin"
-        />
+      <div v-if="loadingEstados" class="flex items-center gap-2 text-muted-foreground text-sm py-4">
+        <UIcon name="i-lucide-loader-circle" class="w-4 h-4 animate-spin" />
         Cargando estados…
       </div>
 
@@ -163,9 +138,7 @@ const columns: TableColumn<SolicitudAdmin>[] = [
           <p class="text-xs text-muted-foreground mt-0.5 truncate">
             {{ estado }}
           </p>
-          <p class="text-xs text-primary font-medium">
-            {{ getEstadoPercentage(count) }}%
-          </p>
+          <p class="text-xs text-primary font-medium">{{ getEstadoPercentage(count) }}%</p>
         </button>
       </div>
 
@@ -173,31 +146,18 @@ const columns: TableColumn<SolicitudAdmin>[] = [
         v-else
         class="flex flex-col items-center justify-center py-8 gap-2 text-muted-foreground"
       >
-        <UIcon
-          name="i-lucide-bar-chart-2"
-          class="w-8 h-8 opacity-30"
-        />
-        <p class="text-sm">
-          No hay datos de estados disponibles
-        </p>
+        <UIcon name="i-lucide-bar-chart-2" class="w-8 h-8 opacity-30" />
+        <p class="text-sm">No hay datos de estados disponibles</p>
       </div>
     </UPageCard>
 
     <!-- Tabla -->
     <UPageCard :ui="{ container: 'p-0 sm:p-0' }">
-      <div
-        class="flex items-center justify-between px-4 pt-4 pb-3 border-b border-border"
-      >
+      <div class="flex items-center justify-between px-4 pt-4 pb-3 border-b border-border">
         <p class="text-sm font-medium text-foreground">
           Solicitudes
-          <UBadge
-            color="neutral"
-            variant="subtle"
-            class="ml-2"
-          >
-            {{
-              totalItems
-            }}
+          <UBadge color="neutral" variant="subtle" class="ml-2">
+            {{ totalItems }}
           </UBadge>
         </p>
         <div class="flex items-center gap-2">
@@ -229,33 +189,15 @@ const columns: TableColumn<SolicitudAdmin>[] = [
         v-if="loading"
         class="flex flex-col items-center justify-center py-16 gap-3 text-muted-foreground"
       >
-        <UIcon
-          name="i-lucide-loader-circle"
-          class="w-8 h-8 animate-spin text-primary"
-        />
-        <p class="text-sm">
-          Cargando solicitudes…
-        </p>
+        <UIcon name="i-lucide-loader-circle" class="w-8 h-8 animate-spin text-primary" />
+        <p class="text-sm">Cargando solicitudes…</p>
       </div>
 
       <!-- Error -->
-      <div
-        v-else-if="error"
-        class="p-6"
-      >
-        <UAlert
-          color="destructive"
-          variant="subtle"
-          icon="i-lucide-triangle-alert"
-          :title="error"
-        >
+      <div v-else-if="error" class="p-6">
+        <UAlert color="destructive" variant="subtle" icon="i-lucide-triangle-alert" :title="error">
           <template #footer>
-            <UButton
-              size="sm"
-              variant="outline"
-              color="neutral"
-              @click="recargarDatos"
-            >
+            <UButton size="sm" variant="outline" color="neutral" @click="recargarDatos">
               Reintentar
             </UButton>
           </template>
@@ -267,22 +209,12 @@ const columns: TableColumn<SolicitudAdmin>[] = [
         v-else-if="solicitudes.length === 0"
         class="flex flex-col items-center justify-center py-16 gap-2 text-muted-foreground"
       >
-        <UIcon
-          name="i-lucide-inbox"
-          class="w-10 h-10 opacity-30"
-        />
-        <p class="text-sm">
-          No se encontraron solicitudes
-        </p>
+        <UIcon name="i-lucide-inbox" class="w-10 h-10 opacity-30" />
+        <p class="text-sm">No se encontraron solicitudes</p>
       </div>
 
       <!-- UTable -->
-      <UTable
-        v-else
-        :data="solicitudes"
-        :columns="columns"
-        class="w-full"
-      >
+      <UTable v-else :data="solicitudes" :columns="columns" class="w-full">
         <template #solicitante-cell="{ row }">
           <div>
             <p class="text-sm font-medium text-foreground">
@@ -290,10 +222,7 @@ const columns: TableColumn<SolicitudAdmin>[] = [
               {{ row.original.solicitante?.apellidos || "N/A" }}
             </p>
             <p class="text-xs text-muted-foreground flex items-center gap-1">
-              <UIcon
-                name="i-lucide-mail"
-                class="w-3 h-3"
-              />
+              <UIcon name="i-lucide-mail" class="w-3 h-3" />
               {{ row.original.solicitante?.email || "N/A" }}
             </p>
           </div>
@@ -301,20 +230,13 @@ const columns: TableColumn<SolicitudAdmin>[] = [
 
         <template #documento-cell="{ row }">
           <div class="flex items-center gap-1.5 text-sm">
-            <UIcon
-              name="i-lucide-id-card"
-              class="w-4 h-4 text-muted-foreground shrink-0"
-            />
+            <UIcon name="i-lucide-id-card" class="w-4 h-4 text-muted-foreground shrink-0" />
             {{ row.original.solicitante?.numero_documento || "N/A" }}
           </div>
         </template>
 
         <template #estado-cell="{ row }">
-          <UBadge
-            color="primary"
-            variant="subtle"
-            class="capitalize"
-          >
+          <UBadge color="primary" variant="subtle" class="capitalize">
             {{ row.original.estado || "Desconocido" }}
           </UBadge>
         </template>
@@ -357,12 +279,8 @@ const columns: TableColumn<SolicitudAdmin>[] = [
       </UTable>
 
       <!-- Paginación -->
-      <div
-        class="flex items-center justify-between px-4 py-3 border-t border-border"
-      >
-        <p class="text-xs text-muted-foreground">
-          Página {{ paginaActual }} de {{ totalPaginas }}
-        </p>
+      <div class="flex items-center justify-between px-4 py-3 border-t border-border">
+        <p class="text-xs text-muted-foreground">Página {{ paginaActual }} de {{ totalPaginas }}</p>
         <UPagination
           :page="paginaActual"
           :items-per-page="filtrosActivos.limit || 20"
@@ -373,10 +291,7 @@ const columns: TableColumn<SolicitudAdmin>[] = [
     </UPageCard>
 
     <!-- Modal cambio de estado -->
-    <UModal
-      v-model:open="showEstadoModal"
-      title="Cambiar Estado de Solicitud"
-    >
+    <UModal v-model:open="showEstadoModal" title="Cambiar Estado de Solicitud">
       <template #body>
         <div class="space-y-4">
           <UFormField label="Número de Solicitud">
@@ -407,13 +322,7 @@ const columns: TableColumn<SolicitudAdmin>[] = [
       </template>
       <template #footer>
         <div class="flex justify-end gap-3 w-full">
-          <UButton
-            variant="outline"
-            color="neutral"
-            @click="cerrarEstadoModal"
-          >
-            Cancelar
-          </UButton>
+          <UButton variant="outline" color="neutral" @click="cerrarEstadoModal"> Cancelar </UButton>
           <UButton
             color="primary"
             icon="i-lucide-check"

@@ -1,9 +1,6 @@
 <template>
   <!-- Lista de Firmantes Actuales -->
-  <div
-    v-if="firmantes.length > 0"
-    class="mb-6"
-  >
+  <div v-if="firmantes.length > 0" class="mb-6">
     <h3 class="text-sm font-medium text-foreground mb-3">
       Firmantes Registrados ({{ firmantes.length }})
     </h3>
@@ -17,57 +14,31 @@
           <div
             class="mt-0.5 h-9 w-9 rounded-full bg-primary/10 flex items-center justify-center border border-primary/20 shrink-0"
           >
-            <UIcon
-              name="i-lucide-user"
-              class="w-4 h-4 text-primary"
-            />
+            <UIcon name="i-lucide-user" class="w-4 h-4 text-primary" />
           </div>
           <div class="min-w-0 flex-1">
-            <div
-              class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2"
-            >
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
               <p class="font-semibold text-foreground truncate">
                 {{ firmante.nombre_completo }}
               </p>
-              <UBadge
-                v-if="firmante.rol"
-                color="secondary"
-                variant="subtle"
-                size="xs"
-              >
+              <UBadge v-if="firmante.rol" color="secondary" variant="subtle" size="xs">
                 {{ firmante.rol }}
               </UBadge>
             </div>
             <div class="mt-2 space-y-1 text-sm text-muted-foreground">
               <div class="flex items-center gap-2">
-                <UIcon
-                  name="i-lucide-check-circle"
-                  class="w-4 h-4"
-                />
+                <UIcon name="i-lucide-check-circle" class="w-4 h-4" />
                 <span class="truncate">
-                  {{
-                    getTipoDocumentoLabel(
-                      firmante.tipo_documento || getDefaultTipoDocumento()
-                    )
-                  }}:
+                  {{ getTipoDocumentoLabel(firmante.tipo_documento || getDefaultTipoDocumento()) }}:
                   {{ firmante.numero_documento }}
                 </span>
               </div>
               <div class="flex items-center gap-2">
-                <UIcon
-                  name="i-lucide-mail"
-                  class="w-4 h-4"
-                />
+                <UIcon name="i-lucide-mail" class="w-4 h-4" />
                 <span class="truncate">{{ firmante.email }}</span>
               </div>
-              <div
-                v-if="firmante.telefono"
-                class="flex items-center gap-2"
-              >
-                <UIcon
-                  name="i-lucide-phone"
-                  class="w-4 h-4"
-                />
+              <div v-if="firmante.telefono" class="flex items-center gap-2">
+                <UIcon name="i-lucide-phone" class="w-4 h-4" />
                 <span class="truncate">{{ firmante.telefono }}</span>
               </div>
             </div>
@@ -80,35 +51,20 @@
           title="Eliminar firmante"
           @click="eliminarFirmante(index)"
         >
-          <UIcon
-            name="i-lucide-trash-2"
-            class="w-4 h-4"
-          />
+          <UIcon name="i-lucide-trash-2" class="w-4 h-4" />
         </UButton>
       </div>
     </div>
   </div>
 
-  <div
-    v-else
-    class="mb-6"
-  >
-    <UAlert
-      color="primary"
-      variant="subtle"
-    >
+  <div v-else class="mb-6">
+    <UAlert color="primary" variant="subtle">
       <template #icon>
-        <UIcon
-          name="i-lucide-alert-triangle"
-          class="w-4 h-4"
-        />
+        <UIcon name="i-lucide-alert-triangle" class="w-4 h-4" />
       </template>
-      <template #title>
-        No hay firmantes registrados
-      </template>
+      <template #title> No hay firmantes registrados </template>
       <template #description>
-        Agregue al menos un firmante para poder iniciar el proceso de firma
-        digital.
+        Agregue al menos un firmante para poder iniciar el proceso de firma digital.
       </template>
     </UAlert>
   </div>
@@ -116,17 +72,12 @@
   <!-- Formulario para Agregar Nuevo Firmante -->
   <div class="border-t pt-6">
     <h3 class="font-medium text-foreground mb-4 flex items-center gap-2">
-      <UIcon
-        name="i-lucide-user-plus"
-        class="w-4 h-4 text-primary"
-      />
+      <UIcon name="i-lucide-user-plus" class="w-4 h-4 text-primary" />
       Agregar Nuevo Firmante
     </h3>
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
       <div class="space-y-2">
-        <label class="text-sm font-medium text-foreground">
-          Nombre Completo *
-        </label>
+        <label class="text-sm font-medium text-foreground"> Nombre Completo * </label>
         <UInput
           v-model="nuevoFirmante.nombre_completo"
           placeholder="Nombre completo del firmante"
@@ -135,17 +86,11 @@
 
       <div class="space-y-2">
         <label class="text-sm font-medium text-foreground"> Email * </label>
-        <UInput
-          v-model="nuevoFirmante.email"
-          type="email"
-          placeholder="correo@ejemplo.com"
-        />
+        <UInput v-model="nuevoFirmante.email" type="email" placeholder="correo@ejemplo.com" />
       </div>
 
       <div class="space-y-2">
-        <label class="text-sm font-medium text-foreground">
-          Tipo de Documento
-        </label>
+        <label class="text-sm font-medium text-foreground"> Tipo de Documento </label>
         <USelectMenu
           v-model="nuevoFirmante.tipo_documento"
           :items="getTiposDocumentoOptions() as any[]"
@@ -157,13 +102,8 @@
       </div>
 
       <div class="space-y-2">
-        <label class="text-sm font-medium text-foreground">
-          Número de Documento *
-        </label>
-        <UInput
-          v-model="nuevoFirmante.numero_documento"
-          placeholder="Número de documento"
-        />
+        <label class="text-sm font-medium text-foreground"> Número de Documento * </label>
+        <UInput v-model="nuevoFirmante.numero_documento" placeholder="Número de documento" />
       </div>
 
       <div class="space-y-2">
@@ -175,7 +115,7 @@
               { label: 'Solicitante', value: 'Solicitante' },
               { label: 'Codeudor', value: 'Codeudor' },
               { label: 'Empleador', value: 'Empleador' },
-              { label: 'Firmante', value: 'Firmante' },
+              { label: 'Firmante', value: 'Firmante' }
             ]
           "
           placeholder="Seleccionar rol"
@@ -187,24 +127,12 @@
 
       <div class="space-y-2">
         <label class="text-sm font-medium text-foreground"> Teléfono </label>
-        <UInput
-          v-model="nuevoFirmante.telefono"
-          type="tel"
-          placeholder="Teléfono (opcional)"
-        />
+        <UInput v-model="nuevoFirmante.telefono" type="tel" placeholder="Teléfono (opcional)" />
       </div>
     </div>
 
-    <UButton
-      type="button"
-      variant="outline"
-      class="mt-4"
-      @click="handleAgregarFirmante"
-    >
-      <UIcon
-        name="i-lucide-user-plus"
-        class="w-4 h-4 mr-2"
-      />
+    <UButton type="button" variant="outline" class="mt-4" @click="handleAgregarFirmante">
+      <UIcon name="i-lucide-user-plus" class="w-4 h-4 mr-2" />
       Agregar Firmante
     </UButton>
   </div>
@@ -219,21 +147,12 @@
       class="w-full md:w-auto"
       @click="handleIniciarFirmado"
     >
-      <UIcon
-        v-if="loadingFirmado"
-        name="i-lucide-loader-2"
-        class="w-4 h-4 mr-2 animate-spin"
-      />
-      <UIcon
-        v-else
-        name="i-lucide-send"
-        class="w-4 h-4 mr-2"
-      />
+      <UIcon v-if="loadingFirmado" name="i-lucide-loader-2" class="w-4 h-4 mr-2 animate-spin" />
+      <UIcon v-else name="i-lucide-send" class="w-4 h-4 mr-2" />
       {{ loadingFirmado ? "Enviando..." : "Enviar para Firma Digital" }}
     </UButton>
     <p class="text-sm text-muted-foreground mt-2">
-      Se enviará el documento a todos los firmantes registrados para su firma
-      digital
+      Se enviará el documento a todos los firmantes registrados para su firma digital
     </p>
   </div>
 </template>
@@ -249,14 +168,14 @@ import { useApi } from "~/composables/useApi";
 import { useSession } from "~/composables/useSession";
 
 interface Props {
-  solicitudId: string
-  firmantes: Firmante[]
+  solicitudId: string;
+  firmantes: Firmante[];
 }
 
 interface Emits {
-  (e: "agregar-firmante"): void
-  (e: "eliminar-firmante", index: number): void
-  (e: "iniciar-firmado"): void
+  (e: "agregar-firmante"): void;
+  (e: "eliminar-firmante", index: number): void;
+  (e: "iniciar-firmado"): void;
 }
 
 const props = defineProps<Props>();
@@ -304,9 +223,9 @@ const eliminarFirmante = (index: number) => {
 // Gestión de firmantes
 const agregarFirmante = () => {
   if (
-    !nuevoFirmante.value.nombre_completo
-    || !nuevoFirmante.value.email
-    || !nuevoFirmante.value.numero_documento
+    !nuevoFirmante.value.nombre_completo ||
+    !nuevoFirmante.value.email ||
+    !nuevoFirmante.value.numero_documento
   ) {
     return {
       success: false,
@@ -343,27 +262,22 @@ const iniciarProcesoDeFirmado = async () => {
     await ready;
 
     const response = await postJson<{
-      success: boolean
-      message: string
-      data?: unknown
+      success: boolean;
+      message: string;
+      data?: unknown;
     }>(`/api/solicitudes/${solicitudId}/iniciar-firmado`, {}, { auth: true });
 
     if (response.success) {
       return {
         success: true,
-        message:
-          response.message
-          || "Documento enviado para firma digital exitosamente"
+        message: response.message || "Documento enviado para firma digital exitosamente"
       };
     } else {
-      throw new Error(
-        response.message || "Error al iniciar proceso de firmado"
-      );
+      throw new Error(response.message || "Error al iniciar proceso de firmado");
     }
   } catch (e: unknown) {
     console.error("Error al iniciar proceso de firmado:", e);
-    const message
-      = e instanceof Error ? e.message : "Error al iniciar el proceso de firmado";
+    const message = e instanceof Error ? e.message : "Error al iniciar el proceso de firmado";
     return {
       success: false,
       message
@@ -383,9 +297,7 @@ const handleIniciarFirmado = async () => {
   const resultado = await iniciarProcesoDeFirmado();
 
   if (resultado.success) {
-    alert(
-      resultado.message || "Documento enviado para firma digital exitosamente"
-    );
+    alert(resultado.message || "Documento enviado para firma digital exitosamente");
   } else {
     alert(resultado.message || "Error al iniciar el proceso de firmado");
   }

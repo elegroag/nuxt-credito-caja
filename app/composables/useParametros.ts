@@ -17,10 +17,9 @@ export const useParametros = () => {
       loading.value = true;
       error.value = null;
 
-      const response = await getJson<ParametrosResponse>(
-        "/api/lineas_credito/parametros",
-        { auth: true }
-      );
+      const response = await getJson<ParametrosResponse>("/api/lineas_credito/parametros", {
+        auth: true
+      });
 
       if (response.success) {
         parametrosCache.value = response.data;
@@ -36,14 +35,6 @@ export const useParametros = () => {
       loading.value = false;
     }
   };
-
-  const getAuxiliaresContables = computed(() => {
-    return parametrosCache.value?.auxiliares_contables || [];
-  });
-
-  const getCentrosCostos = computed(() => {
-    return parametrosCache.value?.centros_de_costos || [];
-  });
 
   const getDatosGeneralesCredito = computed(() => {
     return parametrosCache.value?.datos_generales_del_creditos[0] || null;
@@ -81,22 +72,6 @@ export const useParametros = () => {
     return parametrosCache.value?.periodos_de_pago || [];
   });
 
-  const getPeriodosPagoDesembolsos = computed(() => {
-    return parametrosCache.value?.periodos_de_pago_desembolsos || [];
-  });
-
-  const getEmpresasSeguros = computed(() => {
-    return parametrosCache.value?.empresa_de_seguros || [];
-  });
-
-  const getMarcasRecibosCaja = computed(() => {
-    return parametrosCache.value?.marcas_de_recibos_de_caja || [];
-  });
-
-  const getTiposDistribucion = computed(() => {
-    return parametrosCache.value?.tipos_de_distribucion || [];
-  });
-
   const getFondosCreditoSocial = computed(() => {
     return parametrosCache.value?.fondos_de_credito_social || [];
   });
@@ -109,109 +84,54 @@ export const useParametros = () => {
     return parametrosCache.value?.tipos_de_terceros || [];
   });
 
-  const getDatosPeriodos = computed(() => {
-    return parametrosCache.value?.datos_de_periodos || [];
-  });
-
-  const getOficinasAfiliacionUsuario = computed(() => {
-    return parametrosCache.value?.oficinas_de_afiliacion_por_usuario || [];
-  });
-
-  // Función para obtener auxiliar por código
-  const getAuxiliarPorCodigo = (codigo: string) => {
-    return getAuxiliaresContables.value.find(aux => aux.auxiliar === codigo);
-  };
-
   // Función para obtener tipo de crédito por tipcre
   const getTipoCreditoPorTipcre = (tipcre: string) => {
-    return getTiposCreditoVigencia.value.find(cred => cred.tipcre === tipcre);
+    return getTiposCreditoVigencia.value.find((cred) => cred.tipcre === tipcre);
   };
 
   // Función para obtener oficina por código
   const getOficinaPorCodigo = (codigo: string) => {
-    return getOficinasCredito.value.find(
-      oficina => oficina.ofiafi === codigo
-    );
+    return getOficinasCredito.value.find((oficina) => oficina.ofiafi === codigo);
   };
 
   // Función para obtener forma de pago por código
   const getFormaPagoPorCodigo = (codigo: string) => {
-    return getFormasPago.value.find(forma => forma.forpag === codigo);
+    return getFormasPago.value.find((forma) => forma.forpag === codigo);
   };
 
   // Función para obtener garantía por código
   const getGarantiaPorCodigo = (codigo: string) => {
-    return getGarantiasPago.value.find(
-      garantia => garantia.codgar === codigo
-    );
+    return getGarantiasPago.value.find((garantia) => garantia.codgar === codigo);
   };
 
   // Función para obtener tipo de inversión por código
   const getTipoInversionPorCodigo = (codigo: string) => {
-    return getTiposInversion.value.find(tipo => tipo.tipinv === codigo);
+    return getTiposInversion.value.find((tipo) => tipo.tipinv === codigo);
   };
 
   // Función para obtener tipo de documento por código
   const getTipoDocumentoPorCodigo = (codigo: string) => {
-    return getTiposDocumentosRequeridos.value.find(
-      doc => doc.tipdoc === codigo
-    );
+    return getTiposDocumentosRequeridos.value.find((doc) => doc.tipdoc === codigo);
   };
 
   // Función para obtener motivo de rechazo por código
   const getMotivoRechazoPorCodigo = (codigo: string) => {
-    return getMotivosRechazo.value.find(motivo => motivo.modrec === codigo);
-  };
-
-  // Función para obtener periodo actual (no cerrado)
-  const getPeriodoActual = () => {
-    return getDatosPeriodos.value.find(periodo => periodo.cierre === "N");
-  };
-
-  // Función para obtener centro de costo por código
-  const getCentroCostoPorCodigo = (codigo: string) => {
-    return getCentrosCostos.value.find(centro => centro.codcen === codigo);
-  };
-
-  // Función para obtener empresa de seguros por NIT
-  const getEmpresaSeguroPorNit = (nit: string) => {
-    return getEmpresasSeguros.value.find(empresa => empresa.nit === nit);
-  };
-
-  // Función para obtener marca de recibo por marca
-  const getMarcaReciboPorMarca = (marca: string) => {
-    return getMarcasRecibosCaja.value.find(recibo => recibo.marca === marca);
-  };
-
-  // Función para obtener tipo de distribución por código
-  const getTipoDistribucionPorCodigo = (codigo: string) => {
-    return getTiposDistribucion.value.find(dist => dist.coddis === codigo);
+    return getMotivosRechazo.value.find((motivo) => motivo.modrec === codigo);
   };
 
   // Función para obtener fondo de crédito social por código
   const getFondoCreditoSocialPorCodigo = (codigo: string) => {
-    return getFondosCreditoSocial.value.find(
-      fondo => fondo.codcre === codigo
-    );
+    return getFondosCreditoSocial.value.find((fondo) => fondo.codcre === codigo);
   };
 
   // Función para obtener forma de pago tesorería por código
   const getFormaPagoTesoreriaPorCodigo = (codigo: string) => {
-    return getFormasPagoTesoreria.value.find(
-      forma => forma.forpag === codigo
-    );
+    return getFormasPagoTesoreria.value.find((forma) => forma.forpag === codigo);
   };
 
   // Función para obtener tipo de tercero por código
   const getTipoTerceroPorCodigo = (codigo: string) => {
-    return getTiposTerceros.value.find(tipo => tipo.tipter === codigo);
-  };
-
-  // Función para obtener oficina de afiliación por usuario
-  const getOficinasAfiliacionPorUsuario = (usuarioId: number) => {
-    return getOficinasAfiliacionUsuario.value.filter(
-      oficina => oficina.usuario === usuarioId
-    );
+    return getTiposTerceros.value.find((tipo) => tipo.tipter === codigo);
   };
 
   // Limpiar cache
@@ -231,8 +151,6 @@ export const useParametros = () => {
     limpiarCache,
 
     // Computed properties
-    getAuxiliaresContables,
-    getCentrosCostos,
     getDatosGeneralesCredito,
     getFormasPago,
     getGarantiasPago,
@@ -242,18 +160,11 @@ export const useParametros = () => {
     getMotivosRechazo,
     getOficinasCredito,
     getPeriodosPago,
-    getPeriodosPagoDesembolsos,
-    getEmpresasSeguros,
-    getMarcasRecibosCaja,
-    getTiposDistribucion,
     getFondosCreditoSocial,
     getFormasPagoTesoreria,
     getTiposTerceros,
-    getDatosPeriodos,
-    getOficinasAfiliacionUsuario,
 
     // Funciones de búsqueda
-    getAuxiliarPorCodigo,
     getTipoCreditoPorTipcre,
     getOficinaPorCodigo,
     getFormaPagoPorCodigo,
@@ -261,14 +172,8 @@ export const useParametros = () => {
     getTipoInversionPorCodigo,
     getTipoDocumentoPorCodigo,
     getMotivoRechazoPorCodigo,
-    getPeriodoActual,
-    getCentroCostoPorCodigo,
-    getEmpresaSeguroPorNit,
-    getMarcaReciboPorMarca,
-    getTipoDistribucionPorCodigo,
     getFondoCreditoSocialPorCodigo,
     getFormaPagoTesoreriaPorCodigo,
-    getTipoTerceroPorCodigo,
-    getOficinasAfiliacionPorUsuario
+    getTipoTerceroPorCodigo
   };
 };

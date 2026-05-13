@@ -59,7 +59,8 @@ const createInitialSolicitudCreditoForm = (): SolicitudCreditoPayload => ({
     antiguedad_meses: 0,
     tipo_contrato: "",
     sector_economico: "",
-    codigo_categoria: ""
+    codigo_categoria: "",
+    nombres_apellidos: ""
   },
   conyuge: undefined,
   informacion_laboral: {
@@ -118,10 +119,7 @@ export const useSolicitudCreditoForm = () => {
     "solicitudCreditoForm",
     cloneInitialSolicitudCreditoForm
   );
-  const hydrated = useState<boolean>(
-    "solicitudCreditoFormHydrated",
-    () => false
-  );
+  const hydrated = useState<boolean>("solicitudCreditoFormHydrated", () => false);
   const persistenceInitialized = useState<boolean>(
     "solicitudCreditoFormPersistenceInitialized",
     () => false
@@ -143,10 +141,7 @@ export const useSolicitudCreditoForm = () => {
       const parsed = JSON.parse(stored) as SolicitudCreditoPayload;
       form.value = parsed;
     } catch (error) {
-      console.error(
-        "Error cargando formulario de solicitud desde storage:",
-        error
-      );
+      console.error("Error cargando formulario de solicitud desde storage:", error);
       localStorage.removeItem(STORAGE_KEY);
     }
   };
@@ -160,10 +155,7 @@ export const useSolicitudCreditoForm = () => {
         try {
           localStorage.setItem(STORAGE_KEY, JSON.stringify(value));
         } catch (error) {
-          console.error(
-            "Error guardando formulario de solicitud en storage:",
-            error
-          );
+          console.error("Error guardando formulario de solicitud en storage:", error);
         }
       },
       { deep: true }
@@ -216,24 +208,21 @@ export const useSolicitudCreditoForm = () => {
   const autocalcularIngresos = () => {
     const ing = form.value.ingresos_descuentos;
 
-    ing.total_ingresos
-      = Number(ing.salario_basico_mensual || 0)
-        + Number(ing.subsidio_transporte || 0)
-        + Number(ing.horas_extras || 0)
-        + Number(ing.comisiones || 0)
-        + Number(ing.otros_ingresos || 0);
+    ing.total_ingresos =
+      Number(ing.salario_basico_mensual || 0) +
+      Number(ing.subsidio_transporte || 0) +
+      Number(ing.horas_extras || 0) +
+      Number(ing.comisiones || 0) +
+      Number(ing.otros_ingresos || 0);
 
-    ing.total_descuentos
-      = Number(ing.salud_pension || 0)
-        + Number(ing.libranzas_comfaca || 0)
-        + Number(ing.otras_libranzas || 0)
-        + Number(ing.judiciales || 0)
-        + Number(ing.otras_deducciones || 0);
+    ing.total_descuentos =
+      Number(ing.salud_pension || 0) +
+      Number(ing.libranzas_comfaca || 0) +
+      Number(ing.otras_libranzas || 0) +
+      Number(ing.judiciales || 0) +
+      Number(ing.otras_deducciones || 0);
 
-    ing.total_neto_recibido = Math.max(
-      ing.total_ingresos - ing.total_descuentos,
-      0
-    );
+    ing.total_neto_recibido = Math.max(ing.total_ingresos - ing.total_descuentos, 0);
   };
 
   const addPropiedad = () => {

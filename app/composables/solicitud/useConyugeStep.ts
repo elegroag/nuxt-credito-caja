@@ -14,22 +14,15 @@ export const useConyugeStep = (props: ConyugeProps) => {
 
   // Función para buscar datos del cónyuge usando el composable
   const buscarDatosConyuge = async (cedulaTrabajador: string) => {
-    console.log(
-      "[ConyugeStep] Buscando datos del cónyuge para trabajador:",
-      cedulaTrabajador
-    );
+    console.log("[ConyugeStep] Buscando datos del cónyuge para trabajador:", cedulaTrabajador);
     console.log("[ConyugeStep] Estado de form.conyuge:", props.form.conyuge);
 
     // Verificar que el objeto conyuge exista
     if (!props.form.conyuge) {
-      console.warn(
-        "[ConyugeStep] form.conyuge no está disponible, esperando..."
-      );
+      console.warn("[ConyugeStep] form.conyuge no está disponible, esperando...");
       await nextTick();
       if (!props.form.conyuge) {
-        console.error(
-          "[ConyugeStep] form.conyuge sigue sin estar disponible después de nextTick"
-        );
+        console.error("[ConyugeStep] form.conyuge sigue sin estar disponible después de nextTick");
         loadingLocal.value = false;
         return;
       }
@@ -44,9 +37,7 @@ export const useConyugeStep = (props: ConyugeProps) => {
 
         // Validar que conyugeData exista
         if (!conyugeData) {
-          console.warn(
-            "[ConyugeStep] No se encontraron datos válidos del cónyuge"
-          );
+          console.warn("[ConyugeStep] No se encontraron datos válidos del cónyuge");
           return;
         }
 
@@ -62,18 +53,22 @@ export const useConyugeStep = (props: ConyugeProps) => {
 
           // Cargar datos de la empresa si tiene
           if ((conyugeData.salario || 0) > 0) {
-            props.form.informacion_laboral.empresa = {
-              nombre: "Empresa del cónyuge", // Valor por defecto ya que no viene en la API
-              direccion: conyugeData.direccion || "",
-              telefono: conyugeData.telefono || "",
-              email: conyugeData.email || ""
-            };
+            if (props.form.informacion_laboral) {
+              props.form.informacion_laboral = {
+                empresa_razon_social: "",
+                empresa_nit: "",
+                empresa_telefono: "",
+                empresa_direccion: "",
+                empresa_ciudad: "",
+                cargo: "",
+                fecha_ingreso: "",
+                tipo_contrato: ""
+              };
+            }
           }
         }
       } else {
-        console.log(
-          "[ConyugeStep] No se encontraron cónyuges para este trabajador"
-        );
+        console.log("[ConyugeStep] No se encontraron cónyuges para este trabajador");
       }
     } catch (error) {
       console.error("[ConyugeStep] Error buscando datos del cónyuge:", error);
@@ -88,14 +83,10 @@ export const useConyugeStep = (props: ConyugeProps) => {
     props.toggleConyuge(checked);
 
     // Si se está activando el cónyuge y tenemos la cédula del trabajador, buscar datos
-    const cedulaTrabajador
-      = session.value?.user?.trabajador?.cedula
-        || session.value?.user?.trabajador?.cedtra;
+    const cedulaTrabajador =
+      session.value?.user?.trabajador?.cedula || session.value?.user?.trabajador?.cedtra;
     console.log("[ConyugeStep] Cédula del trabajador:", cedulaTrabajador);
-    console.log(
-      "[ConyugeStep] Datos del trabajador en sesión:",
-      session.value?.user?.trabajador
-    );
+    console.log("[ConyugeStep] Datos del trabajador en sesión:", session.value?.user?.trabajador);
 
     if (checked && cedulaTrabajador) {
       loadingLocal.value = true; // Activar loading solo cuando vamos a buscar
@@ -119,7 +110,7 @@ export const useConyugeStep = (props: ConyugeProps) => {
         email: ""
       };
     } else {
-      props.form.conyuge!.empresa = null;
+      props.form.informacion_laboral!.empresa_nit = undefined;
     }
   };
 

@@ -1,10 +1,5 @@
 import { ref, computed, reactive } from "vue";
 import { useApi } from "~/composables/useApi";
-import type {
-  EmpresaConvenio,
-  PaginationInfo,
-  ConveniosResponse
-} from "~~/shared/types/convenios";
 
 export function useAdminConvenios() {
   // Estado reactivo
@@ -30,9 +25,7 @@ export function useAdminConvenios() {
 
   // Computed properties
   const paginaActual = computed(() => paginacion.page);
-  const totalPaginas = computed(() =>
-    Math.ceil(totalEmpresas.value / paginacion.limit)
-  );
+  const totalPaginas = computed(() => Math.ceil(totalEmpresas.value / paginacion.limit));
 
   const paginasVisibles = computed(() => {
     const total = totalPaginas.value;
@@ -41,11 +34,7 @@ export function useAdminConvenios() {
     const range = [];
     const rangeWithDots = [];
 
-    for (
-      let i = Math.max(2, actual - delta);
-      i <= Math.min(total - 1, actual + delta);
-      i++
-    ) {
+    for (let i = Math.max(2, actual - delta); i <= Math.min(total - 1, actual + delta); i++) {
       range.push(i);
     }
 
@@ -84,12 +73,9 @@ export function useAdminConvenios() {
       if (filtros.busqueda) params.append("busqueda", filtros.busqueda);
 
       const api = useApi();
-      const response = await api.getJson<any>(
-        `/api/admin/convenios?${params.toString()}`,
-        {
-          auth: true
-        }
-      );
+      const response = await api.getJson<any>(`/api/admin/convenios?${params.toString()}`, {
+        auth: true
+      });
 
       console.log("Respuesta de la API:", response);
 
@@ -104,8 +90,7 @@ export function useAdminConvenios() {
         if (data.pagination) {
           paginacion.page = data.pagination.page;
           paginacion.limit = data.pagination.limit;
-          paginacion.offset
-            = (data.pagination.page - 1) * data.pagination.limit;
+          paginacion.offset = (data.pagination.page - 1) * data.pagination.limit;
         }
       } else {
         console.warn("Estructura de respuesta inesperada:", response);
@@ -186,17 +171,15 @@ export function useAdminConvenios() {
       );
 
       // Actualizar estado localmente
-      const index = empresas.value.findIndex(e => e.id === empresa.id);
+      const index = empresas.value.findIndex((e) => e.id === empresa.id);
       const empresaIndex = empresas.value[index];
       if (index !== -1 && empresaIndex) {
         empresaIndex.estado = nuevoEstado;
 
         // Actualizar conteos
         const estadoAnterior = empresa.estado || "unknown";
-        conteoEstados.value[estadoAnterior]
-          = (conteoEstados.value[estadoAnterior] || 0) - 1;
-        conteoEstados.value[nuevoEstado]
-          = (conteoEstados.value[nuevoEstado] || 0) + 1;
+        conteoEstados.value[estadoAnterior] = (conteoEstados.value[estadoAnterior] || 0) - 1;
+        conteoEstados.value[nuevoEstado] = (conteoEstados.value[nuevoEstado] || 0) + 1;
       }
     } catch (err: any) {
       console.error("Error al cambiar estado de la empresa:", err);
@@ -212,14 +195,13 @@ export function useAdminConvenios() {
       });
 
       // Eliminar del listado local
-      const index = empresas.value.findIndex(e => e.id === empresa.id);
+      const index = empresas.value.findIndex((e) => e.id === empresa.id);
       if (index !== -1) {
         empresas.value.splice(index, 1);
         totalEmpresas.value--;
 
         // Actualizar conteos
-        conteoEstados.value[empresa.estado]
-          = (conteoEstados.value[empresa.estado] || 0) - 1;
+        conteoEstados.value[empresa.estado] = (conteoEstados.value[empresa.estado] || 0) - 1;
       }
     } catch (err: any) {
       console.error("Error al eliminar empresa:", err);
@@ -247,13 +229,8 @@ export function useAdminConvenios() {
     return labels[estado] || estado;
   };
 
-  const getEstadoVariant = (
-    estado: string
-  ): "solid" | "outline" | "soft" | "subtle" => {
-    const variants: Record<
-      string,
-      "solid" | "outline" | "soft" | "subtle"
-    > = {
+  const getEstadoVariant = (estado: string): "solid" | "outline" | "soft" | "subtle" => {
+    const variants: Record<string, "solid" | "outline" | "soft" | "subtle"> = {
       Activo: "solid",
       Inactivo: "outline"
     };

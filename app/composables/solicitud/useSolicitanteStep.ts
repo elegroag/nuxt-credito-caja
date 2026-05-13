@@ -1,6 +1,6 @@
 import { computed } from "vue";
 
-export const useSolicitanteStep = (props: SolocitanteProps) => {
+export const useSolicitanteStep = (props: SolicitanteProps) => {
   // Opciones para tipo persona
   const tiposPersonaOptions = computed(() => [
     { label: "Natural", value: "natural" },
@@ -9,49 +9,49 @@ export const useSolicitanteStep = (props: SolocitanteProps) => {
 
   // Convertir datos a formato SelectOption
   const tiposDocumentoOptions = computed(() =>
-    (props.tiposDocumento || []).map(item => ({
+    (props.tiposDocumento || []).map((item) => ({
       label: item.detdoc,
       value: item.coddoc
     }))
   );
 
   const ocupacionesOptions = computed(() =>
-    (props.ocupaciones || []).map(item => ({
+    (props.ocupaciones || []).map((item) => ({
       label: item.detalle,
       value: item.codocu
     }))
   );
 
   const sexosOptions = computed(() =>
-    (props.sexos || []).map(item => ({
+    (props.sexos || []).map((item) => ({
       label: item.detsex,
       value: item.codsex
     }))
   );
 
   const nivelesEducativosOptions = computed(() =>
-    (props.nivelesEducativos || []).map(item => ({
+    (props.nivelesEducativos || []).map((item) => ({
       label: item.detalle,
       value: item.nivedu
     }))
   );
 
   const tiposViviendaOptions = computed(() =>
-    (props.tiposVivienda || []).map(item => ({
+    (props.tiposVivienda || []).map((item) => ({
       label: item.detalle,
       value: item.vivienda
     }))
   );
 
   const estadoCivilesOptions = computed(() =>
-    (props.estadoCiviles || []).map(item => ({
+    (props.estadoCiviles || []).map((item) => ({
       label: item.detest,
       value: item.estciv
     }))
   );
 
   const ciudadesOptions = computed(() =>
-    (props.ciudades || []).map(item => ({
+    (props.ciudades || []).map((item) => ({
       label: item.detciu,
       value: item.codciu,
       description: `Código: ${item.codciu}`

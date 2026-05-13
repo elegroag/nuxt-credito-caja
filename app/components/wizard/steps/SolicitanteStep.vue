@@ -41,10 +41,7 @@
     </FormField>
 
     <FormField label="Fecha nacimiento">
-      <UInput
-        v-model="form.solicitante.fecha_nacimiento"
-        type="date"
-      />
+      <UInput v-model="form.solicitante.fecha_nacimiento" type="date" />
     </FormField>
 
     <FormField label="Género">
@@ -86,10 +83,7 @@
     </FormField>
 
     <FormField label="Email">
-      <UInput
-        v-model="form.solicitante.email"
-        type="email"
-      />
+      <UInput v-model="form.solicitante.email" type="email" />
     </FormField>
 
     <FormField label="Teléfono (opcional)">
@@ -153,26 +147,15 @@
     </FormField>
 
     <FormField label="Personas a cargo">
-      <UInput
-        v-model.number="form.solicitante.personas_a_cargo"
-        type="number"
-        min="0"
-      />
+      <UInput v-model.number="form.solicitante.personas_a_cargo" type="number" min="0" />
     </FormField>
 
     <FormField label="Cargo">
-      <UInput
-        :model-value="cargoDisplay"
-        :readonly="true"
-      />
+      <UInput :model-value="cargoDisplay" :readonly="true" />
     </FormField>
 
     <FormField label="Salario (opcional)">
-      <UInput
-        v-model.number="form.solicitante.salario"
-        type="number"
-        min="0"
-      />
+      <UInput v-model.number="form.solicitante.salario" type="number" min="0" />
     </FormField>
 
     <FormField label="Código categoría">
@@ -180,11 +163,7 @@
     </FormField>
 
     <FormField label="Antigüedad (meses, opcional)">
-      <UInput
-        v-model.number="form.solicitante.antiguedad_meses"
-        type="number"
-        min="0"
-      />
+      <UInput v-model.number="form.solicitante.antiguedad_meses" type="number" min="0" />
     </FormField>
 
     <FormField label="Tipo contrato (opcional)">
@@ -207,10 +186,9 @@ import FormField from "~/components/shared/FormField.vue";
 import CustomSelect from "~/components/shared/CustomSelect.vue";
 import { useSolicitanteStep } from "~/composables/solicitud/useSolicitanteStep";
 import { useParametrosDetalles } from "~/composables/useParametrosDetalles";
-import type { SolocitanteProps } from "~~/shared/types/solicitud-credito";
 import { computed, onMounted } from "vue";
 
-const props = withDefaults(defineProps<SolocitanteProps>(), {
+const props = withDefaults(defineProps<SolicitanteProps>(), {
   ciudades: () => [],
   tiposDocumento: () => [],
   sexos: () => [],

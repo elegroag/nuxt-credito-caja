@@ -2,7 +2,6 @@
 import { onMounted } from "vue";
 import type { TableColumn } from "@nuxt/ui";
 import { useAdminUsers } from "~/composables/admin/useAdminUsers";
-import type { Usuario } from "~~/shared/types/admin-usuarios";
 
 definePageMeta({
   layout: "dashboard",
@@ -76,22 +75,13 @@ const columns: TableColumn<Usuario>[] = [
 <template>
   <div class="mx-auto max-w-7xl px-4 py-6 sm:py-8 space-y-6">
     <!-- Header -->
-    <div
-      class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"
-    >
+    <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
       <div>
-        <h1
-          class="text-xl font-semibold text-foreground flex items-center gap-2"
-        >
-          <UIcon
-            name="i-lucide-users"
-            class="w-5 h-5 text-primary"
-          />
+        <h1 class="text-xl font-semibold text-foreground flex items-center gap-2">
+          <UIcon name="i-lucide-users" class="w-5 h-5 text-primary" />
           Administración de Usuarios
         </h1>
-        <p class="mt-1 text-sm text-muted-foreground">
-          Gestión de usuarios del sistema
-        </p>
+        <p class="mt-1 text-sm text-muted-foreground">Gestión de usuarios del sistema</p>
       </div>
       <div class="flex items-center gap-2">
         <UButton
@@ -104,11 +94,7 @@ const columns: TableColumn<Usuario>[] = [
         >
           Recargar
         </UButton>
-        <UButton
-          color="primary"
-          icon="i-lucide-plus"
-          to="/admin/users/create"
-        >
+        <UButton color="primary" icon="i-lucide-plus" to="/admin/users/create">
           Nuevo Usuario
         </UButton>
       </div>
@@ -116,69 +102,41 @@ const columns: TableColumn<Usuario>[] = [
 
     <!-- Stats -->
     <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
-      <div
-        class="rounded-xl border border-border bg-card p-4 flex items-center justify-between"
-      >
+      <div class="rounded-xl border border-border bg-card p-4 flex items-center justify-between">
         <div>
-          <p class="text-xs text-muted-foreground uppercase tracking-wide">
-            Total
-          </p>
+          <p class="text-xs text-muted-foreground uppercase tracking-wide">Total</p>
           <p class="text-2xl font-bold text-foreground">
             {{ totalUsuarios }}
           </p>
         </div>
-        <UIcon
-          name="i-lucide-users"
-          class="w-7 h-7 text-primary opacity-60"
-        />
+        <UIcon name="i-lucide-users" class="w-7 h-7 text-primary opacity-60" />
       </div>
-      <div
-        class="rounded-xl border border-border bg-card p-4 flex items-center justify-between"
-      >
+      <div class="rounded-xl border border-border bg-card p-4 flex items-center justify-between">
         <div>
-          <p class="text-xs text-muted-foreground uppercase tracking-wide">
-            Admins
-          </p>
+          <p class="text-xs text-muted-foreground uppercase tracking-wide">Admins</p>
           <p class="text-2xl font-bold text-foreground">
             {{ conteoRoles.admin || 0 }}
           </p>
         </div>
-        <UIcon
-          name="i-lucide-shield-check"
-          class="w-7 h-7 text-primary opacity-60"
-        />
+        <UIcon name="i-lucide-shield-check" class="w-7 h-7 text-primary opacity-60" />
       </div>
-      <div
-        class="rounded-xl border border-border bg-card p-4 flex items-center justify-between"
-      >
+      <div class="rounded-xl border border-border bg-card p-4 flex items-center justify-between">
         <div>
-          <p class="text-xs text-muted-foreground uppercase tracking-wide">
-            Activos
-          </p>
+          <p class="text-xs text-muted-foreground uppercase tracking-wide">Activos</p>
           <p class="text-2xl font-bold text-foreground">
             {{ conteoEstados.active || 0 }}
           </p>
         </div>
-        <UIcon
-          name="i-lucide-circle-check"
-          class="w-7 h-7 text-green-500 opacity-70"
-        />
+        <UIcon name="i-lucide-circle-check" class="w-7 h-7 text-green-500 opacity-70" />
       </div>
-      <div
-        class="rounded-xl border border-border bg-card p-4 flex items-center justify-between"
-      >
+      <div class="rounded-xl border border-border bg-card p-4 flex items-center justify-between">
         <div>
-          <p class="text-xs text-muted-foreground uppercase tracking-wide">
-            Inactivos
-          </p>
+          <p class="text-xs text-muted-foreground uppercase tracking-wide">Inactivos</p>
           <p class="text-2xl font-bold text-foreground">
             {{ conteoEstados.inactive || 0 }}
           </p>
         </div>
-        <UIcon
-          name="i-lucide-ban"
-          class="w-7 h-7 text-destructive opacity-70"
-        />
+        <UIcon name="i-lucide-ban" class="w-7 h-7 text-destructive opacity-70" />
       </div>
     </div>
 
@@ -219,19 +177,11 @@ const columns: TableColumn<Usuario>[] = [
 
     <!-- Tabla -->
     <UPageCard :ui="{ container: 'p-0 sm:p-0' }">
-      <div
-        class="flex items-center justify-between px-4 pt-4 pb-3 border-b border-border"
-      >
+      <div class="flex items-center justify-between px-4 pt-4 pb-3 border-b border-border">
         <p class="text-sm font-medium text-foreground">
           Usuarios
-          <UBadge
-            color="neutral"
-            variant="subtle"
-            class="ml-2"
-          >
-            {{
-              totalUsuarios
-            }}
+          <UBadge color="neutral" variant="subtle" class="ml-2">
+            {{ totalUsuarios }}
           </UBadge>
         </p>
         <USelect
@@ -250,33 +200,15 @@ const columns: TableColumn<Usuario>[] = [
         v-if="loading"
         class="flex flex-col items-center justify-center py-16 gap-3 text-muted-foreground"
       >
-        <UIcon
-          name="i-lucide-loader-circle"
-          class="w-8 h-8 animate-spin text-primary"
-        />
-        <p class="text-sm">
-          Cargando usuarios…
-        </p>
+        <UIcon name="i-lucide-loader-circle" class="w-8 h-8 animate-spin text-primary" />
+        <p class="text-sm">Cargando usuarios…</p>
       </div>
 
       <!-- Error -->
-      <div
-        v-else-if="error"
-        class="p-6"
-      >
-        <UAlert
-          color="destructive"
-          variant="subtle"
-          icon="i-lucide-triangle-alert"
-          :title="error"
-        >
+      <div v-else-if="error" class="p-6">
+        <UAlert color="destructive" variant="subtle" icon="i-lucide-triangle-alert" :title="error">
           <template #footer>
-            <UButton
-              size="sm"
-              variant="outline"
-              color="neutral"
-              @click="cargarUsuarios"
-            >
+            <UButton size="sm" variant="outline" color="neutral" @click="cargarUsuarios">
               Reintentar
             </UButton>
           </template>
@@ -285,17 +217,10 @@ const columns: TableColumn<Usuario>[] = [
 
       <!-- Tabla + paginación -->
       <template v-else>
-        <UTable
-          :data="usuarios"
-          :columns="columns"
-          class="w-full"
-        >
+        <UTable :data="usuarios" :columns="columns" class="w-full">
           <template #numero_documento-cell="{ row }">
             <div class="flex items-center gap-1.5 text-sm">
-              <UIcon
-                name="i-lucide-id-card"
-                class="w-4 h-4 text-muted-foreground shrink-0"
-              />
+              <UIcon name="i-lucide-id-card" class="w-4 h-4 text-muted-foreground shrink-0" />
               {{ row.original.numero_documento }}
             </div>
           </template>
@@ -307,31 +232,20 @@ const columns: TableColumn<Usuario>[] = [
           </template>
 
           <template #rol-cell="{ row }">
-            <UBadge
-              color="neutral"
-              variant="subtle"
-            >
+            <UBadge color="neutral" variant="subtle">
               {{ getRolLabel(row.original.rol) }}
             </UBadge>
           </template>
 
           <template #estado-cell="{ row }">
-            <UBadge
-              :color="estadoColorMap[row.original.estado] ?? 'neutral'"
-              variant="subtle"
-            >
+            <UBadge :color="estadoColorMap[row.original.estado] ?? 'neutral'" variant="subtle">
               {{ getEstadoLabel(row.original.estado) }}
             </UBadge>
           </template>
 
           <template #fecha_creacion-cell="{ row }">
-            <div
-              class="flex items-center gap-1.5 text-sm text-muted-foreground"
-            >
-              <UIcon
-                name="i-lucide-calendar"
-                class="w-4 h-4 shrink-0"
-              />
+            <div class="flex items-center gap-1.5 text-sm text-muted-foreground">
+              <UIcon name="i-lucide-calendar" class="w-4 h-4 shrink-0" />
               {{ formatDate(row.original.fecha_creacion) }}
             </div>
           </template>
@@ -353,23 +267,15 @@ const columns: TableColumn<Usuario>[] = [
               <UButton
                 variant="ghost"
                 size="sm"
-                :icon="
-                  row.original.estado === 'active'
-                    ? 'i-lucide-ban'
-                    : 'i-lucide-circle-check'
-                "
-                :color="
-                  row.original.estado === 'active' ? 'destructive' : 'primary'
-                "
+                :icon="row.original.estado === 'active' ? 'i-lucide-ban' : 'i-lucide-circle-check'"
+                :color="row.original.estado === 'active' ? 'destructive' : 'primary'"
                 @click="toggleEstadoUsuario(row.original)"
               />
             </div>
           </template>
         </UTable>
 
-        <div
-          class="flex items-center justify-between px-4 py-3 border-t border-border"
-        >
+        <div class="flex items-center justify-between px-4 py-3 border-t border-border">
           <p class="text-xs text-muted-foreground">
             Mostrando {{ paginacion.offset + 1 }}–{{
               Math.min(paginacion.offset + usuarios.length, totalUsuarios)

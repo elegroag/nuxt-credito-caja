@@ -32,8 +32,11 @@
       ]
     },
     "typeRoots": [
-      "./app/shared/types",
+      "./shared/types",
       "./node_modules/@types"
+    ],
+    "types": [
+      "./shared/types/*",
     ]
   }
 }

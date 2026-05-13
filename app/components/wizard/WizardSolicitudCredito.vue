@@ -13,10 +13,7 @@
     />
 
     <div class="p-4 sm:p-6">
-      <form
-        class="grid gap-4"
-        @submit.prevent
-      >
+      <form class="grid gap-4" @submit.prevent>
         <SolicitudStep
           v-if="currentStepKey === 'solicitud'"
           :form="form"
@@ -57,10 +54,7 @@
           :autocalcular-ingresos="autocalcularIngresos"
         />
 
-        <EconomicaStep
-          v-else-if="currentStepKey === 'economica'"
-          :form="form"
-        />
+        <EconomicaStep v-else-if="currentStepKey === 'economica'" :form="form" />
 
         <PropiedadesStep
           v-else-if="currentStepKey === 'propiedades'"
@@ -105,7 +99,6 @@
 </template>
 
 <script setup lang="ts">
-import type { WizardProps } from "~~/shared/types/solicitud-credito";
 import { useWizardSolicitud } from "~/composables/solicitud/useWizardSolicitud";
 import SuccessModal from "./SuccessModal.vue";
 import WizardHeader from "./WizardHeader.vue";

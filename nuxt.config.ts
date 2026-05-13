@@ -30,8 +30,7 @@ export default defineNuxtConfig({
         { name: "viewport", content: "width=device-width, initial-scale=1" },
         {
           name: "description",
-          content:
-            "Sistema de créditos en línea Caja de Compensación Familiar del Caquetá"
+          content: "Sistema de créditos en línea Caja de Compensación Familiar del Caquetá"
         }
       ]
     }
@@ -53,10 +52,7 @@ export default defineNuxtConfig({
       url_dev: env.DATABASE_URL_DEV || ""
     },
     storage: {
-      documentsPath: resolve(
-        __dirname,
-        env.STORAGE_DOCUMENTS_PATH || "storage/"
-      ),
+      documentsPath: resolve(__dirname, env.STORAGE_DOCUMENTS_PATH || "storage/"),
       logs: resolve(__dirname, env.STORAGE_LOGS_PATH || "storage/"),
       uploads: resolve(__dirname, env.STORAGE_UPLOADS_PATH || "storage/")
     },
@@ -87,17 +83,14 @@ export default defineNuxtConfig({
       url_pro: env.API_FLASKPDF_URL_PRO || "",
       url_dev: env.API_FLASKPDF_URL_DEV || ""
     },
-    backendBaseUrl:
-      env.NUXT_BACKEND_BASE_URL + ":" + env.NUXT_BACKEND_BASE_PORT,
+    backendBaseUrl: env.NUXT_BACKEND_BASE_URL + ":" + env.NUXT_BACKEND_BASE_PORT,
     jwtSecret: env.NUXT_JWT_SECRET || ""
   },
   alias: {
     "@": fileURLToPath(new URL("./app", import.meta.url)),
     "~": fileURLToPath(new URL("./app", import.meta.url)),
-    ".prisma/client/index-browser":
-      "./node_modules/.prisma/client/index-browser.js",
+    ".prisma/client/index-browser": "./node_modules/.prisma/client/index-browser.js",
     "@tests": fileURLToPath(new URL("./tests/", import.meta.url)),
-    "@tests/*": fileURLToPath(new URL("./tests/", import.meta.url)),
     "~~": fileURLToPath(new URL("./", import.meta.url))
   },
 
@@ -131,13 +124,11 @@ export default defineNuxtConfig({
   vite: {
     resolve: {
       alias: {
-        ".prisma/client/index-browser":
-          "./node_modules/.prisma/client/index-browser.js",
+        ".prisma/client/index-browser": "./node_modules/.prisma/client/index-browser.js",
         "@": fileURLToPath(new URL("./app", import.meta.url)),
         "~": fileURLToPath(new URL("./app", import.meta.url)),
         "~~": fileURLToPath(new URL("./", import.meta.url)),
-        "@tests": fileURLToPath(new URL("./tests/", import.meta.url)),
-        "@tests/**": fileURLToPath(new URL("./tests/", import.meta.url))
+        "@tests": fileURLToPath(new URL("./tests/", import.meta.url))
       }
     },
     optimizeDeps: {

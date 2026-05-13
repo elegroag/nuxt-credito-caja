@@ -3,7 +3,6 @@ import { useSimulador } from "./useSimulador";
 import { useSimuladorConConvenio } from "./useSimuladorConConvenio";
 import { useTrabajador } from "~/composables/useTrabajador";
 import { useSimuladorStorage } from "~/composables/useSimuladorStorage";
-import type { LineaCreditoSimulador } from "#shared/types/simulador";
 
 export const useSimuladorPage = () => {
   const { trabajador } = useTrabajador();
@@ -58,10 +57,7 @@ export const useSimuladorPage = () => {
 
   // Computed para manejar el v-model del input de tasa
   const tasaInput = computed({
-    get: () =>
-      tipoTasa.value === "anual"
-        ? tasaEfectivaAnual.value
-        : tasaMensualInput.value,
+    get: () => (tipoTasa.value === "anual" ? tasaEfectivaAnual.value : tasaMensualInput.value),
     set: (value) => {
       if (tipoTasa.value === "anual") {
         tasaEfectivaAnual.value = value;

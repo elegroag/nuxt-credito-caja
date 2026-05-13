@@ -1,17 +1,8 @@
 <template>
   <div class="grid gap-4">
     <div class="flex items-center justify-between mb-4">
-      <div
-        class="text-sm font-bold uppercase tracking-wider text-muted-foreground"
-      >
-        Deudas
-      </div>
-      <UButton
-        variant="outline"
-        size="sm"
-        type="button"
-        @click="addDeuda"
-      >
+      <div class="text-sm font-bold uppercase tracking-wider text-muted-foreground">Deudas</div>
+      <UButton variant="outline" size="sm" type="button" @click="addDeuda">
         <Plus class="mr-2 h-4 w-4" />
         Agregar
       </UButton>
@@ -21,21 +12,13 @@
       v-if="form.deudas.length === 0"
       class="rounded-lg bg-muted/50 p-8 text-center border-2 border-dashed border-border"
     >
-      <p class="text-sm text-muted-foreground italic">
-        No se han registrado deudas.
-      </p>
+      <p class="text-sm text-muted-foreground italic">No se han registrado deudas.</p>
     </div>
 
     <div class="grid gap-4">
-      <UCard
-        v-for="(d, idx) in form.deudas"
-        :key="idx"
-        class="border-border/50 bg-muted/20"
-      >
+      <UCard v-for="(d, idx) in form.deudas" :key="idx" class="border-border/50 bg-muted/20">
         <div class="flex flex-row items-center justify-between mb-3">
-          <p class="text-sm font-semibold">
-            Deuda #{{ Number(idx) + 1 }}
-          </p>
+          <p class="text-sm font-semibold">Deuda #{{ Number(idx) + 1 }}</p>
           <UButton
             variant="ghost"
             size="sm"
@@ -53,18 +36,10 @@
             <UInput v-model="d.concepto" />
           </FormField>
           <FormField label="Valor cuota">
-            <UInput
-              v-model.number="d.valor_cuota"
-              type="number"
-              min="0"
-            />
+            <UInput v-model.number="d.valor_cuota" type="number" min="0" />
           </FormField>
           <FormField label="Saldo obligación">
-            <UInput
-              v-model.number="d.saldo_obligacion"
-              type="number"
-              min="0"
-            />
+            <UInput v-model.number="d.saldo_obligacion" type="number" min="0" />
           </FormField>
         </div>
       </UCard>
@@ -75,8 +50,6 @@
 <script setup lang="ts">
 import { Plus, Trash2 } from "lucide-vue-next";
 import FormField from "~/components/shared/FormField.vue";
-
-import type { DeudasProps } from "~~/shared/types/solicitud-credito";
 
 defineProps<DeudasProps>();
 </script>
