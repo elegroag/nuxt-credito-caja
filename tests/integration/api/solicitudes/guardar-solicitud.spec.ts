@@ -243,14 +243,14 @@ describe("POST /api/solicitudes/guardar-solicitud — integración", () => {
 
       const data = await response.json();
       expect(data.success).toBe(true);
-      expect(data.data.success).toBe(true);
-      expect(data.data.data).toHaveProperty("numero_solicitud");
-      expect(data.data.data).toHaveProperty("solicitud");
-      expect(data.data.data.solicitud).toHaveProperty("numero_solicitud");
-      expect(data.data.data.solicitud).toHaveProperty("valor_solicitud");
-      expect(Number(data.data.data.solicitud.valor_solicitud)).toBe(5000000);
-      expect(data.data.data.solicitud).toHaveProperty("plazo_meses", 12);
-      expect(data.data.data.solicitud).toHaveProperty("estado");
+      expect(data.data.numero_solicitud).toBeTruthy();
+      expect(data.data).toHaveProperty("numero_solicitud");
+      expect(data.data).toHaveProperty("solicitud");
+      expect(data.data.solicitud).toHaveProperty("numero_solicitud");
+      expect(data.data.solicitud).toHaveProperty("valor_solicitud");
+      expect(Number(data.data.solicitud.valor_solicitud)).toBe(5000000);
+      expect(data.data.solicitud).toHaveProperty("plazo_meses", 12);
+      expect(data.data.solicitud).toHaveProperty("estado");
     });
 
     it("contiene campos requeridos en la respuesta de éxito", async () => {
@@ -282,14 +282,13 @@ describe("POST /api/solicitudes/guardar-solicitud — integración", () => {
       const data = await response.json();
       expect(data).toHaveProperty("success", true);
       expect(data).toHaveProperty("message");
-      expect(data.data).toHaveProperty("success", true);
-      expect(data.data.data).toHaveProperty("numero_solicitud");
-      expect(data.data.data.solicitud).toHaveProperty("numero_solicitud");
-      expect(data.data.data.solicitud).toHaveProperty("owner_username");
-      expect(data.data.data.solicitud).toHaveProperty("valor_solicitud");
-      expect(Number(data.data.data.solicitud.valor_solicitud)).toBe(3000000);
-      expect(data.data.data.solicitud).toHaveProperty("plazo_meses", 6);
-      expect(data.data.data.solicitud).toHaveProperty("estado");
+      expect(data.data).toHaveProperty("numero_solicitud");
+      expect(data.data.solicitud).toHaveProperty("numero_solicitud");
+      expect(data.data.solicitud).toHaveProperty("owner_username");
+      expect(data.data.solicitud).toHaveProperty("valor_solicitud");
+      expect(Number(data.data.solicitud.valor_solicitud)).toBe(3000000);
+      expect(data.data.solicitud).toHaveProperty("plazo_meses", 6);
+      expect(data.data.solicitud).toHaveProperty("estado");
     });
 
     it("genera número de solicitud automáticamente si no se provee", async () => {
@@ -313,7 +312,7 @@ describe("POST /api/solicitudes/guardar-solicitud — integración", () => {
       expect(response.status).toBe(200);
 
       const data = await response.json();
-      expect(data.data.data.numero_solicitud).toMatch(/^\d{6}-\d{4}-\d{2}$/);
+      expect(data.data.numero_solicitud).toMatch(/^\d{6}-\d{4}-\d{2}$/);
     });
 
     it("acepta solicitante con formato de ciudad como objeto {label, value}", async () => {
@@ -345,7 +344,7 @@ describe("POST /api/solicitudes/guardar-solicitud — integración", () => {
 
       const data = await response.json();
       expect(data.success).toBe(true);
-      expect(data.data.data.solicitud).toHaveProperty("numero_solicitud");
+      expect(data.data.solicitud).toHaveProperty("numero_solicitud");
     });
 
     it("el owner_username se toma de la sesión cuando no se provee", async () => {
@@ -369,7 +368,7 @@ describe("POST /api/solicitudes/guardar-solicitud — integración", () => {
       expect(response.status).toBe(200);
 
       const data = await response.json();
-      expect(data.data.data.solicitud.owner_username).toBe("admin");
+      expect(data.data.solicitud.owner_username).toBe("admin");
     });
   });
 
@@ -396,7 +395,7 @@ describe("POST /api/solicitudes/guardar-solicitud — integración", () => {
       expect(response.status).toBe(200);
 
       const data = await response.json();
-      expect(data.data.data.solicitud).toHaveProperty("numero_solicitud");
+      expect(data.data.solicitud).toHaveProperty("numero_solicitud");
     });
 
     it("acepta campos adicionales en payload", async () => {
@@ -425,7 +424,7 @@ describe("POST /api/solicitudes/guardar-solicitud — integración", () => {
       expect(response.status).toBe(200);
 
       const data = await response.json();
-      expect(data.data.data.payload).toHaveProperty("linea_credito");
+      expect(data.data.payload).toHaveProperty("linea_credito");
     });
   });
 });

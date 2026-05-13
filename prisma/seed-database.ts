@@ -17,6 +17,7 @@ import { solicitudTimeline } from "./seeders/solicitud-timeline.seed";
 import { solicitudesCredito } from "./seeders/solicitudes-credito.seed";
 import { tipoDocumentos } from "./seeders/tipo-documentos.seed";
 import { firmantesSolicitud } from "./seeders/firmantes-solicitud.seed";
+import { configurations } from "./seeders/configurations.seed";
 import bcrypt from "bcryptjs";
 
 async function main() {
@@ -40,6 +41,28 @@ async function main() {
   await seedDocumentosPostulantes();
   // await seedPdfsGenerados();
   await seedFirmantesSolicitud();
+  await seedConfigurations();
+}
+
+async function seedConfigurations() {
+  console.log("Seeding configurations...");
+
+  const countConfig = await prisma.configurations.count();
+  if (countConfig == 0) {
+    const configData = configurations.map((config) => {
+      return {
+        ...config,
+        created_at: new Date(config.created_at).toISOString(),
+        updated_at: new Date(config.updated_at).toISOString()
+      };
+    });
+    await prisma.configurations.createMany({
+      data: configData as any
+    });
+    console.log("✅ Configurations seeded");
+  } else {
+    console.log("⏭️  Configurations already seeded");
+  }
 }
 
 async function seedEstadosSolicitud() {
