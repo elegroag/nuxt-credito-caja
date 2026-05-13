@@ -1,4 +1,14 @@
+import type { In } from "vue-router/dist/index-D_VEAp3P.js";
 import type { CiudadOption } from "./componentes";
+import type {
+  CodigoTipoDocumento,
+  EstadoCivil,
+  NivelEducativoParam,
+  Ocupacion,
+  SexoParam,
+  TipoViviendaParam
+} from "./parametros";
+import type { InformacionLaboral } from "./payload";
 
 export interface SolicitanteBasic {
   email: string;
@@ -50,12 +60,15 @@ export interface SolicitanteBackend extends Solicitante {
 }
 
 export interface SolicitanteProps {
-  form: any;
-  ciudades?: CiudadOption[];
-  tiposDocumento?: any[];
-  sexos?: any[];
-  nivelesEducativos?: any[];
-  tiposVivienda?: any[];
-  ocupaciones?: any[];
-  estadoCiviles?: any[];
+  form: {
+    solicitante: Solicitante;
+    informacion_laboral: InformacionLaboral;
+  };
+  ciudades?: readonly CiudadOption[];
+  tiposDocumento?: readonly CodigoTipoDocumento[];
+  sexos?: readonly SexoParam[];
+  nivelesEducativos?: readonly NivelEducativoParam[];
+  tiposVivienda?: readonly TipoViviendaParam[];
+  ocupaciones?: readonly Ocupacion[];
+  estadoCiviles?: readonly EstadoCivil[];
 }

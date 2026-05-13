@@ -1,3 +1,6 @@
+import type { TipoIdentificacion, TipoVivienda } from "./enums";
+import type { EstadoSolicitudData } from "./inicio";
+
 export type AuxiliarContable = {
   auxiliar: string;
   auxold: string | null;
@@ -183,3 +186,24 @@ export type Ciudades = {
   numpob: number;
   clarur: string;
 };
+
+// Interfaces para los parámetros según la estructura real de la API
+export interface ParametroBase {
+  id: string;
+  nombre: string;
+  descripcion?: string;
+}
+
+export interface Cargo {
+  codocu: string;
+  detalle: string;
+}
+
+export interface ParametrosDetalles {
+  tipos_identificacion: readonly CodigoTipoDocumento[];
+  ciudades: readonly Ciudades[];
+  cargos: readonly Cargo[];
+  tipos_vivienda: readonly TipoViviendaParam[];
+  tipos_contrato: readonly TipoContrato[];
+  estados_solicitud: readonly EstadoSolicitudData[];
+}

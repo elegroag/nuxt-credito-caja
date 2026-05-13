@@ -1,50 +1,6 @@
 import { ref, computed } from "vue";
 import { useApi } from "~/composables/useApi";
 
-// Interfaces para los parámetros según la estructura real de la API
-interface ParametroBase {
-  id: string
-  nombre: string
-  descripcion?: string
-}
-
-interface TipoIdentificacion {
-  coddoc: string
-  detdoc: string
-  coddoc_circular?: string
-  codrua?: string
-}
-
-interface Ciudad {
-  codigo_dane: string
-  nombre: string
-  departamento?: string
-}
-
-interface Cargo {
-  codocu: string
-  detalle: string
-}
-
-interface TipoVivienda {
-  vivienda: string
-  detalle: string
-}
-
-interface TipoContrato {
-  tipcon: string
-  detalle: string
-}
-
-interface ParametrosDetalles {
-  tipos_identificacion: TipoIdentificacion[]
-  ciudades: Ciudad[]
-  cargos: Cargo[]
-  tipos_vivienda: TipoVivienda[]
-  tipos_contrato: TipoContrato[]
-  estados_solicitud: EstadoSolicitudData[]
-}
-
 export function useParametrosDetalles() {
   const { getJson } = useApi();
 
@@ -68,12 +24,9 @@ export function useParametrosDetalles() {
         getJson<ParametrosResponse>("/api/lineas_credito/parametros", {
           auth: true
         }),
-        getJson<{ data: EstadoSolicitudData[] }>(
-          "/api/solicitudes/estados-solicitud",
-          {
-            auth: true
-          }
-        )
+        getJson<{ data: EstadoSolicitudData[] }>("/api/solicitudes/estados-solicitud", {
+          auth: true
+        })
       ]);
 
       // Extraer datos de la respuesta existente
@@ -81,18 +34,17 @@ export function useParametrosDetalles() {
 
       // Mapear a la estructura esperada usando los nombres reales de la API
       parametrosCache.value = {
-        tipos_identificacion: datosParametros.codigos_tipo_documento || [],
-        ciudades: [], // No hay ciudades en la respuesta actual
-        cargos: datosParametros.ocupaciones || [],
-        tipos_vivienda: datosParametros.tipo_vivienda || [],
-        tipos_contrato: datosParametros.tipo_contrato || [],
+        tipos_identificacion: [...(datosParametros.codigos_tipo_documento || [])],
+        ciudades: [],
+        cargos: [...(datosParametros.ocupaciones || [])],
+        tipos_vivienda: [...(datosParametros.tipo_vivienda || [])],
+        tipos_contrato: [...(datosParametros.tipo_contrato || [])],
         estados_solicitud: estadosRes.data || []
       };
 
       return parametrosCache.value;
     } catch (e: any) {
-      const errorMessage
-        = e?.message || "Error cargando parámetros de detalles";
+      const errorMessage = e?.message || "Error cargando parámetros de detalles";
       error.value = errorMessage;
       console.error("Error en useParametrosDetalles:", errorMessage, e);
       throw e;
@@ -104,35 +56,33 @@ export function useParametrosDetalles() {
   // Funciones de búsqueda optimizadas
   const getTipoIdentificacion = computed(() => {
     const tipos = parametrosCache.value?.tipos_identificacion || [];
-    return new Map(tipos.map(tipo => [tipo.coddoc, tipo.detdoc]));
+    return new Map(tipos.map((tipo) => [tipo.coddoc, tipo.detdoc]));
   });
 
   const getCiudadDescripcion = computed(() => {
     const ciudades = parametrosCache.value?.ciudades || [];
-    return new Map(
-      ciudades.map(ciudad => [ciudad.codigo_dane, ciudad.nombre])
-    );
+    return new Map(ciudades.map((ciudad) => [ciudad.codciu, ciudad.detciu]));
   });
 
   const getCargoDescripcion = computed(() => {
     const cargos = parametrosCache.value?.cargos || [];
-    return new Map(cargos.map(cargo => [cargo.codocu, cargo.detalle]));
+    return new Map(cargos.map((cargo) => [cargo.codocu, cargo.detalle]));
   });
 
   const getTipoVivienda = computed(() => {
     const tipos = parametrosCache.value?.tipos_vivienda || [];
-    return new Map(tipos.map(tipo => [tipo.vivienda, tipo.detalle]));
+    return new Map(tipos.map((tipo) => [tipo.vivienda, tipo.detalle]));
   });
 
   const getTipoContrato = computed(() => {
     const tipos = parametrosCache.value?.tipos_contrato || [];
-    return new Map(tipos.map(tipo => [tipo.tipcon, tipo.detalle]));
+    return new Map(tipos.map((tipo) => [tipo.tipcon, tipo.detalle]));
   });
 
   // Funciones para estados
   const getEstadoData = computed(() => {
     const estados = parametrosCache.value?.estados_solicitud || [];
-    return new Map(estados.map(estado => [estado.id, estado]));
+    return new Map(estados.map((estado) => [estado.id, estado]));
   });
 
   const getEstadoColor = (estadoId: string): string => {
@@ -164,17 +114,15 @@ export function useParametrosDetalles() {
   const flujoAprobacion = computed(() => {
     const estados = parametrosCache.value?.estados_solicitud || [];
     return estados
-      .filter(estado => estado.activo)
+      .filter((estado) => estado.activo)
       .sort((a, b) => a.orden - b.orden)
-      .map(estado => estado.id);
+      .map((estado) => estado.id);
   });
 
   const estadoProgressPercent = (estadoId: string): number => {
     const estados = flujoAprobacion.value;
     const index = estados.indexOf(estadoId);
-    return index >= 0 && estados.length > 0
-      ? ((index + 1) / estados.length) * 100
-      : 0;
+    return index >= 0 && estados.length > 0 ? ((index + 1) / estados.length) * 100 : 0;
   };
 
   // Funciones helper para búsquedas directas

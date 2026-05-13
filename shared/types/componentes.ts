@@ -14,7 +14,7 @@ export interface SolicitudProps {
     solicitud: Solicitud;
     solicitante: SolicitanteBasic;
   };
-  tiposInversion?: TipoInversion[];
+  tiposInversion?: readonly TipoInversion[];
 }
 
 export interface RevisionProps {
@@ -32,16 +32,16 @@ export interface PropiedadesProps {
   form: any;
   addPropiedad: () => void;
   removePropiedad: (index: number) => void;
-  ciudades?: Ciudades[];
+  ciudades?: readonly Ciudades[];
 }
 
 export interface LaboralProps {
   form: {
     informacion_laboral?: InformacionLaboral;
   };
-  ciudades?: Ciudades[];
-  tiposContrato?: TipoContrato[];
-  ocupaciones?: Ocupacion[];
+  ciudades?: readonly Ciudades[];
+  tiposContrato?: readonly TipoContrato[];
+  ocupaciones?: readonly Ocupacion[];
 }
 
 export interface IngresosProps {
