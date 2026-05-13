@@ -12,9 +12,7 @@ const normalizeValue = (value: any): string | undefined => {
 
 const postulacionSolicitudService = () => {
   // Guardar número de solicitud
-  const guardarNumeroSolicitud = async (
-    params: GuardarNumeroSolicitudParams
-  ) => {
+  const guardarNumeroSolicitud = async (params: GuardarNumeroSolicitudParams) => {
     const { linea_credito = "03", vigencia } = params;
 
     // Obtener el último número de secuencia para la vigencia y línea de crédito
@@ -46,9 +44,7 @@ const postulacionSolicitudService = () => {
   };
 
   // Guardar solicitud de crédito
-  const guardarSolicitudCredito = async (
-    params: GuardarSolicitudCreditoParams
-  ) => {
+  const guardarSolicitudCredito = async (params: GuardarSolicitudCreditoParams) => {
     const solicitud = await prisma.solicitudes_credito.create({
       data: params
     });
@@ -137,13 +133,11 @@ const postulacionSolicitudService = () => {
           numeroSolicitudRadicado = numeroSolicitud.radicado;
         } else {
           // Si no existe, usar el enviado y guardarlo en tabla numero_solicitudes
-          const lineaCredito
-            = linea_credito?.tipcre || solicitud?.tipcre || "03";
+          const lineaCredito = linea_credito?.tipcre || solicitud?.tipcre || "03";
           const vigencia = new Date().getFullYear();
           // Extraer secuencia del formato "000006-202604-01"
           const partes = solicitudIdEnviado.split("-");
-          const secuencia
-            = partes.length >= 1 ? parseInt(partes[0], 10) || 1 : 1;
+          const secuencia = partes.length >= 1 ? parseInt(partes[0], 10) || 1 : 1;
 
           await prisma.numero_solicitudes.create({
             data: {
@@ -198,9 +192,9 @@ const postulacionSolicitudService = () => {
         await guardarSolicitante({
           solicitud_id: numeroSolicitudRadicado,
           tipo_persona: normalizeValue(solicitante.tipo_persona) as
-          | "natural"
-          | "juridica"
-          | undefined,
+            | "natural"
+            | "juridica"
+            | undefined,
           tipo_documento: solicitante.tipo_documento,
           numero_documento: solicitante.numero_documento,
           nombres: solicitante.nombres,
@@ -248,13 +242,9 @@ const postulacionSolicitudService = () => {
       });
 
       return {
-        success: true,
-        data: {
-          numero_solicitud: numeroSolicitudRadicado,
-          solicitud: solicitudCredito,
-          payload
-        },
-        message: "Solicitud guardada exitosamente"
+        numero_solicitud: numeroSolicitudRadicado,
+        solicitud: solicitudCredito,
+        payload
       };
     } catch (error: any) {
       throw new Error(`Error al guardar la solicitud: ${error.message}`);

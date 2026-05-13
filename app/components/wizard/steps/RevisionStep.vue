@@ -215,6 +215,7 @@ import { FileCode, AlertCircle, ClipboardList, PenTool } from "lucide-vue-next";
 import { useRevisionStep } from "~/composables/solicitud/useRevisionStep";
 
 import { formatValue, formatRevisionKey, formatRevisionIndex } from "~~/shared/utils/formatters";
+import type { RevisionProps } from "~~/shared/types/componentes";
 
 const props = defineProps<RevisionProps>();
 

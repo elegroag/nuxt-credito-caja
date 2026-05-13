@@ -85,7 +85,7 @@
 <script setup lang="ts">
 import FormField from "~/components/shared/FormField.vue";
 import { useConyugeStep } from "~/composables/solicitud/useConyugeStep";
-
+import type { ConyugeProps } from "~~/shared/types/componentes";
 const props = defineProps<ConyugeProps>();
 
 const {

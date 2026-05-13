@@ -23,15 +23,13 @@ export function useInicio() {
 
   const _estadoIndex = (estado: string) => {
     const s = normalizeEstado(estado);
-    return flujoAprobacion.value.findIndex(
-      (e: EstadoSolicitudInicio) => normalizeEstado(e) === s
-    );
+    return flujoAprobacion.value.findIndex((e: EstadoSolicitudInicio) => normalizeEstado(e) === s);
   };
 
   // Funciones para obtener información de estados
   const getEstadoData = (idEstado: string): EstadoSolicitudData | undefined => {
     return estadosData.value.find(
-      estado => estado.id === idEstado // Cambiado de nombre a id
+      (estado) => estado.id === idEstado // Cambiado de nombre a id
     );
   };
 
@@ -60,17 +58,14 @@ export function useInicio() {
     const s = normalizeEstado(estado);
     if (s === "aprobado" || s === "activo" || s === "desembolsado")
       return "bg-emerald-50 text-emerald-800";
-    if (s === "en validacion" || s === "postulado")
-      return "bg-amber-50 text-amber-800";
+    if (s === "en validacion" || s === "postulado") return "bg-amber-50 text-amber-800";
     if (s === "finalizado") return "bg-zinc-100 text-zinc-800";
     if (s === "desiste") return "bg-red-50 text-red-800";
     return "bg-zinc-100 text-zinc-800";
   };
 
   // Computed properties
-  const ultimaSolicitud = computed(() =>
-    solicitudes.value.length ? solicitudes.value[0] : null
-  );
+  const ultimaSolicitud = computed(() => (solicitudes.value.length ? solicitudes.value[0] : null));
 
   const estadoIndexUltima = computed(() => {
     const s = ultimaSolicitud.value;
@@ -92,16 +87,15 @@ export function useInicio() {
       if (Array.isArray(data)) {
         // Ordenar por campo 'orden' y extraer los IDs (no los nombres)
         const estadosOrdenados = data
-          .filter(estado => estado.activo)
+          .filter((estado) => estado.activo)
           .sort((a, b) => a.orden - b.orden)
-          .map(estado => estado.id); // Cambiado de nombre a id
+          .map((estado) => estado.id); // Cambiado de nombre a id
 
         estadosData.value = data;
         flujoAprobacion.value = estadosOrdenados;
       }
     } catch (e: any) {
-      estadosError.value
-        = e?.message || "No fue posible cargar los estados de solicitud";
+      estadosError.value = e?.message || "No fue posible cargar los estados de solicitud";
       // Mantener los valores por defecto si falla la carga
     } finally {
       loadingEstados.value = false;
@@ -115,11 +109,13 @@ export function useInicio() {
     solicitudesError.value = "";
     try {
       type MisSolicitudesResponse = {
-        success: boolean
-        data: SolicitudResumen[]
-        total: string
-        limit: string
-        offset: string
+        success: boolean;
+        data: {
+          solicitudes: SolicitudResumen[];
+          total: string;
+          limit: string;
+          offset: string;
+        };
       };
 
       const limit = 20;
@@ -129,14 +125,12 @@ export function useInicio() {
         { auth: true }
       );
 
-      const items = response.data;
+      const items = response.data.solicitudes;
       solicitudes.value = Array.isArray(items) ? items : [];
     } catch (e: unknown) {
       solicitudes.value = [];
-      solicitudesError.value
-        = e instanceof Error
-          ? e.message
-          : "No fue posible cargar las solicitudes";
+      solicitudesError.value =
+        e instanceof Error ? e.message : "No fue posible cargar las solicitudes";
     } finally {
       loadingSolicitudes.value = false;
     }

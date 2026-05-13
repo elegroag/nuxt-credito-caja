@@ -115,6 +115,8 @@ import {
   SolicitudStep
 } from "./steps";
 
+import type { WizardProps } from "~~/shared/types/wizard";
+
 const props = defineProps<WizardProps>();
 
 const {

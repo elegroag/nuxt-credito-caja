@@ -20,14 +20,10 @@ export default defineEventHandler(async (event: H3Event) => {
     const limit = Number(query.limit) || 20;
     const offset = Number(query.offset) || 0;
 
-    const result = await solicitudSrv.getSolicitudesByUser(
-      session.user.username,
-      limit,
-      offset
-    );
+    const result = await solicitudSrv.getSolicitudesByUser(session.user.username, limit, offset);
 
     return CustomResponse.success(
-      { data: result.data, total: result.total, limit: result.limit, offset: result.offset },
+      { solicitudes: result.data, total: result.total, limit: result.limit, offset: result.offset },
       "Solicitudes obtenidas exitosamente"
     );
   } catch (e: any) {

@@ -70,16 +70,10 @@ export const useRevisionStep = (props: RevisionProps) => {
         codigo_ser: lineaCredito.codser || "",
         numero_cuotas: lineaCredito.numcuo || "",
         estado: lineaCredito.estado || "",
-        monto_simulado: parsed.monto
-          ? `$${parsed.monto.toLocaleString("es-CO")}`
-          : "",
+        monto_simulado: parsed.monto ? `$${parsed.monto.toLocaleString("es-CO")}` : "",
         plazo_meses: parsed.plazoMeses || "",
-        tasa_anual: parsed.tasaInteresAnual
-          ? `${parsed.tasaInteresAnual}%`
-          : "",
-        cuota_mensual: parsed.cuotaMensual
-          ? `$${parsed.cuotaMensual.toLocaleString("es-CO")}`
-          : ""
+        tasa_anual: parsed.tasaInteresAnual ? `${parsed.tasaInteresAnual}%` : "",
+        cuota_mensual: parsed.cuotaMensual ? `$${parsed.cuotaMensual.toLocaleString("es-CO")}` : ""
       };
     } catch (error) {
       console.error("Error obteniendo datos del simulador:", error);

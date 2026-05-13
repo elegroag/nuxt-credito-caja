@@ -187,6 +187,7 @@ import CustomSelect from "~/components/shared/CustomSelect.vue";
 import { useSolicitanteStep } from "~/composables/solicitud/useSolicitanteStep";
 import { useParametrosDetalles } from "~/composables/useParametrosDetalles";
 import { computed, onMounted } from "vue";
+import type { SolicitanteProps } from "~~/shared/types/solicitante";
 
 const props = withDefaults(defineProps<SolicitanteProps>(), {
   ciudades: () => [],

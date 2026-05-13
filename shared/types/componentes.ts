@@ -37,7 +37,7 @@ export interface PropiedadesProps {
 
 export interface LaboralProps {
   form: {
-    informacion_laboral?: InformacionLaboral;
+    informacion_laboral: InformacionLaboral;
   };
   ciudades?: readonly Ciudades[];
   tiposContrato?: readonly TipoContrato[];

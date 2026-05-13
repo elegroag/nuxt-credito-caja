@@ -3,6 +3,9 @@ import { useRoute, useRouter } from "vue-router";
 import { useSolicitudCreditoForm } from "~/composables/solicitud/useSolicitudCreditoForm";
 import { useSimuladorStorage } from "~/composables/useSimuladorStorage";
 import { useSession } from "~/composables/useSession";
+import type { WizardStep, WizardProps } from "~~/shared/types/wizard";
+
+export type { WizardStep, WizardProps };
 
 const WIZARD_STEP_STORAGE_KEY = "comfaca_credito_solicitud_current_step";
 

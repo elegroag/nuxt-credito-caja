@@ -50,6 +50,7 @@
 <script setup lang="ts">
 import { Plus, Trash2 } from "lucide-vue-next";
 import FormField from "~/components/shared/FormField.vue";
+import type { DeudasProps } from "~~/shared/types/componentes";
 
 defineProps<DeudasProps>();
 </script>

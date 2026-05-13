@@ -65,6 +65,7 @@
 <script setup lang="ts">
 import FormField from "~/components/shared/FormField.vue";
 import CustomSelect from "~/components/shared/CustomSelect.vue";
+import type { SolicitudProps } from "~~/shared/types/componentes";
 
 const props = defineProps<SolicitudProps>();
 

@@ -91,6 +91,8 @@ import FormField from "~/components/shared/FormField.vue";
 
 import { useSolicitudCreditoForm } from "~/composables/solicitud/useSolicitudCreditoForm";
 
+import type { IngresosProps } from "~~/shared/types/componentes";
+
 const props = defineProps<IngresosProps>();
 const { autocalcularIngresos } = useSolicitudCreditoForm();
 

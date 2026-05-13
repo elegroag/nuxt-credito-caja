@@ -7,17 +7,9 @@ import { z } from "zod";
 // Schema de validación para la solicitud
 const solicitudSchema = z.object({
   owner_username: z.string().optional(),
-  valor_solicitud: z
-    .number()
-    .nonnegative("El valor de la solicitud debe ser no negativo"),
-  plazo_meses: z
-    .number()
-    .int()
-    .nonnegative("El plazo debe ser un número no negativo"),
-  tasa_interes: z
-    .number()
-    .nonnegative("La tasa de interés no puede ser negativa")
-    .optional(),
+  valor_solicitud: z.number().nonnegative("El valor de la solicitud debe ser no negativo"),
+  plazo_meses: z.number().int().nonnegative("El plazo debe ser un número no negativo"),
+  tasa_interes: z.number().nonnegative("La tasa de interés no puede ser negativa").optional(),
   estado: z.string().optional(),
   producto_tipo: z.string().optional(),
   ha_tenido_credito: z.boolean().optional(),
@@ -97,10 +89,7 @@ export default defineEventHandler(async (event: H3Event) => {
 
     if (!session?.user?.username) {
       setResponseStatus(event, 401);
-      return CustomResponse.error(
-        "No hay sesión activa",
-        "Error de autenticación"
-      );
+      return CustomResponse.error("No hay sesión activa", "Error de autenticación");
     }
 
     const payload = await readValidatedBody(event, bodySchema.parse);
@@ -114,7 +103,7 @@ export default defineEventHandler(async (event: H3Event) => {
 
     const resultado = await service.guardarSolicitudCompleta(payload);
 
-    return CustomResponse.success(resultado);
+    return CustomResponse.success(resultado, "Solicitud guardada exitosamente.");
   } catch (e: any) {
     const status = Number(e?.statusCode || e?.response?.status || 502);
     setResponseStatus(event, Number.isFinite(status) ? status : 502);
