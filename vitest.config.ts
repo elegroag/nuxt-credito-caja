@@ -12,7 +12,7 @@ export default defineVitestConfig({
       "@tests": new URL("./tests/", import.meta.url).pathname
     },
     exclude: ["**/node_modules/**", "**/.nuxt/**", "**/dist/**", "tests/e2e/**"],
-    include: ["tests/integration/**/*.spec.ts"],
+    include: ["tests/**/*.spec.ts"],
     testTimeout: 60_000,
     hookTimeout: 60_000,
     coverage: {

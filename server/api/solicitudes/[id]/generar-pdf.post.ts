@@ -4,8 +4,9 @@ import prisma from "~~/lib/prisma";
 import apiFlaskPdf from "~~/server/services/api-flaskpdf";
 import { documentoStorage } from "~~/server/services/storage/documento-storage.service";
 import { CustomResponse } from "~~/server/utils/customResponse";
+import { loggerService } from "~~/server/utils/logger.service";
 
-// Helper para serializar datos antes de enviar a Flask PDF
+const Log = loggerService();
 const serializeForPdf = (obj: any): any => {
   if (obj === null || obj === undefined) return obj;
   if (obj instanceof Date) return obj.toISOString();
@@ -24,16 +25,20 @@ const serializeForPdf = (obj: any): any => {
 };
 
 export default defineEventHandler(async (event: H3Event) => {
-  try {
-    const solicitudId = getRouterParam(event, "id");
+  let solicitudId: string = "";
 
-    if (!solicitudId) {
+  try {
+    const rawSolicitudId = getRouterParam(event, "id");
+
+    if (!rawSolicitudId) {
       setResponseStatus(event, 400);
       return CustomResponse.error(
         "ID de solicitud no proporcionado",
         "Error de validación"
       );
     }
+
+    solicitudId = rawSolicitudId;
 
     const solicitud = await prisma.solicitudes_credito.findUnique({
       where: { numero_solicitud: solicitudId },
@@ -277,13 +282,72 @@ export default defineEventHandler(async (event: H3Event) => {
       }
     };
 
-    console.log("Generando PDF para solicitud:", solicitudId);
+    await Log.info("=== INICIO GENERAR PDF ===", {
+      solicitudId,
+      fechaSolicitud: new Date().toISOString()
+    });
+
+    await Log.debug("Payload construido para Flask PDF", {
+      solicitudId,
+      payloadKeys: Object.keys(payload),
+      solicitud: {
+        numero_solicitud: payload.solicitud.numero_solicitud,
+        valor_solicitud: payload.solicitud.valor_solicitud,
+        producto_tipo: payload.solicitud.producto_tipo
+      },
+      solicitante: {
+        tipo_documento: payload.solicitante.tipo_documento,
+        numero_documento: payload.solicitante.numero_documento,
+        nombre_completo: payload.solicitante.nombre_completo
+      },
+      laboral: {
+        cargo: payload.laboral.cargo,
+        empresa_nit: payload.laboral.empresa_nit,
+        empresa_razon_social: payload.laboral.empresa_razon_social
+      },
+      firmantesCount: payload.firmantes.length,
+      deudasCount: payload.deudas.length,
+      propiedadesCount: payload.propiedades.length
+    });
+
+    await Log.info("Enviando solicitud a servicio externo Flask PDF", {
+      solicitudId,
+      serviceUrl: "flask-pdf-api/generate"
+    });
+
+    await Log.info("Payload enviado a Flask PDF", {
+      solicitudId,
+      payload: serializeForPdf(payload)
+    });
 
     const response = await flaskPdf.generatePdf<any>(payload);
 
-    console.log("Respuesta de Flask PDF:", response);
+    await Log.info("=== RESPUESTA RECIBIDA DE FLASK PDF ===", {
+      solicitudId,
+      success: response.success,
+      hasData: !!response.data,
+      message: response.message,
+      dataKeys: response.data ? Object.keys(response.data as object) : []
+    });
+
+    if (response.data) {
+      const pdfData = response.data as any;
+      await Log.debug("Datos del PDF recibido", {
+        solicitudId,
+        hasPath: !!pdfData.api_path || !!pdfData.path,
+        hasFilename: !!pdfData.api_filename || !!pdfData.filename,
+        hasContent: !!pdfData.api_content || !!pdfData.content,
+        contentLength: (pdfData.api_content || pdfData.content || "").length
+      });
+    }
 
     if (!response.success) {
+      await Log.error("Flask PDF retornó error", {
+        solicitudId,
+        success: response.success,
+        message: response.message,
+        errors: response.errors
+      });
       setResponseStatus(event, 500);
       return CustomResponse.error(
         response.message || "Error al generar el PDF",
@@ -307,9 +371,16 @@ export default defineEventHandler(async (event: H3Event) => {
           pdfContent,
           pdfFilename
         );
-        console.log("PDF guardado en storage:", storagePath);
+        await Log.info("PDF guardado en storage exitosamente", {
+          solicitudId,
+          storagePath,
+          filename: pdfFilename
+        });
       } catch (storageError) {
-        console.error("Error al guardar PDF en storage:", storageError);
+        await Log.error("Error al guardar PDF en storage", storageError as Error, {
+          solicitudId,
+          filename: pdfFilename
+        });
       }
     }
 
@@ -345,7 +416,11 @@ export default defineEventHandler(async (event: H3Event) => {
       "PDF generado exitosamente"
     );
   } catch (error: any) {
-    console.error("Error al generar PDF:", error);
+    const sid = typeof solicitudId === "string" ? solicitudId : "unknown";
+    await Log.error("Error al generar PDF", error, {
+      solicitudId: sid,
+      stack: error?.stack
+    });
     const status = Number(error?.statusCode || error?.response?.status || 502);
     setResponseStatus(event, Number.isFinite(status) ? status : 502);
 
