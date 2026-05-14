@@ -1,4 +1,4 @@
-import { useConfigurations } from "~/composables/useConfigurations";
+import { useConfigurations } from "~/composables/admin/useConfigurations";
 
 export default defineNuxtPlugin(async () => {
   const { loadConfigurations } = useConfigurations();

@@ -1,27 +1,5 @@
 import prisma from "~~/lib/prisma";
-
-interface SerializedConfiguration {
-  clave: string;
-  valor: string;
-  descripcion: string | null;
-  tipo: string;
-  categoria: string;
-  editable: boolean;
-  required: boolean;
-}
-
-interface PrismaConfig {
-  id: bigint;
-  clave: string;
-  valor: string;
-  descripcion: string | null;
-  tipo: string;
-  categoria: string;
-  editable: boolean;
-  required: boolean;
-  created_at: Date | null;
-  updated_at: Date | null;
-}
+import { PrismaConfig, SerializedConfiguration } from "~~/shared/types/configuration";
 
 const configurationsService = () => {
   const serializeConfig = (config: PrismaConfig): SerializedConfiguration => ({
@@ -44,10 +22,13 @@ const configurationsService = () => {
 
   const getConfigurationsMap = async (): Promise<Record<string, string>> => {
     const configs = await getAllConfigurations();
-    return configs.reduce((acc, config) => {
-      acc[config.clave] = config.valor;
-      return acc;
-    }, {} as Record<string, string>);
+    return configs.reduce(
+      (acc, config) => {
+        acc[config.clave] = config.valor;
+        return acc;
+      },
+      {} as Record<string, string>
+    );
   };
 
   const getConfigurationByKey = async (key: string): Promise<string | null> => {
@@ -57,10 +38,7 @@ const configurationsService = () => {
     return config?.valor ?? null;
   };
 
-  const setConfiguration = async (
-    key: string,
-    value: string
-  ): Promise<SerializedConfiguration> => {
+  const setConfiguration = async (key: string, value: string): Promise<SerializedConfiguration> => {
     const config = await prisma.configurations.update({
       where: { clave: key },
       data: {

@@ -6,17 +6,29 @@
           <UIcon name="i-lucide-settings" class="w-5 h-5 text-primary" />
           Configuraciones del Sistema
         </h1>
-        <p class="mt-1 text-sm text-muted-foreground">Administrar configuraciones de crédito, solicitudes y sistema</p>
+        <p class="mt-1 text-sm text-muted-foreground">
+          Administrar configuraciones de crédito, solicitudes y sistema
+        </p>
       </div>
       <UButton icon="i-lucide-arrow-uturn-left" label="Volver" variant="ghost" to="/dash" />
     </div>
 
-    <div v-if="isLoading" class="flex flex-col items-center justify-center py-16 gap-3 text-muted-foreground">
+    <div
+      v-if="isLoading"
+      class="flex flex-col items-center justify-center py-16 gap-3 text-muted-foreground"
+    >
       <UIcon name="i-lucide-loader-circle" class="w-8 h-8 animate-spin text-primary" />
       <p class="text-sm">Cargando configuraciones…</p>
     </div>
 
-    <UAlert v-else-if="error" color="destructive" variant="subtle" icon="i-lucide-triangle-alert" :title="error" class="mb-6" />
+    <UAlert
+      v-else-if="error"
+      color="destructive"
+      variant="subtle"
+      icon="i-lucide-triangle-alert"
+      :title="error"
+      class="mb-6"
+    />
 
     <div v-else class="space-y-6">
       <UPageCard>
@@ -65,7 +77,12 @@
     <UModal v-model:open="isModalOpen" title="Actualizar Configuración">
       <template #body>
         <div class="space-y-4">
-          <UAlert color="neutral" variant="subtle" icon="i-lucide-info" :title="selectedConfig?.clave">
+          <UAlert
+            color="neutral"
+            variant="subtle"
+            icon="i-lucide-info"
+            :title="selectedConfig?.clave"
+          >
             <template #description>
               {{ selectedConfig?.descripcion }}
             </template>
@@ -81,7 +98,12 @@
       </template>
       <template #footer>
         <div class="flex justify-end gap-3 w-full">
-          <UButton variant="outline" color="neutral" :disabled="isSaving" @click="isModalOpen = false">
+          <UButton
+            variant="outline"
+            color="neutral"
+            :disabled="isSaving"
+            @click="isModalOpen = false"
+          >
             Cancelar
           </UButton>
           <UButton color="primary" icon="i-lucide-save" :loading="isSaving" @click="saveConfig">
@@ -94,6 +116,8 @@
 </template>
 
 <script setup lang="ts">
+import { useConfigurations } from "~/composables/admin/useConfigurations";
+
 definePageMeta({
   layout: "dashboard",
   middleware: ["auth"]

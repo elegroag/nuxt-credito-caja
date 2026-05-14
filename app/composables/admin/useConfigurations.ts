@@ -1,19 +1,10 @@
 import { storage } from "~/composables/useStorage";
 import { useApi } from "~/composables/useApi";
+import type { AppConfiguration, ConfigurationResponse } from "~~/shared/types/configuration";
 
 const CONFIGURATIONS_KEY = "app_configurations";
 const CONFIGURATIONS_TIMESTAMP_KEY = "app_configurations_timestamp";
 const CONFIGURATIONS_TTL_MS = 5 * 60 * 1000;
-
-export interface AppConfiguration {
-  clave: string;
-  valor: string;
-  descripcion: string | null;
-  tipo: string;
-  categoria: string;
-  editable: boolean;
-  required: boolean;
-}
 
 export function useConfigurations() {
   const api = useApi();
@@ -21,32 +12,26 @@ export function useConfigurations() {
   const isLoaded = ref(false);
 
   const loadConfigurationsFromAPI = async (): Promise<AppConfiguration[]> => {
-    const response = await api.getJson<AppConfiguration[]>("/api/configurations", {
+    const response = await api.getJson<ConfigurationResponse>("/api/configurations", {
       auth: true
     });
-    return response;
+    return response.data;
   };
 
-  const saveConfigurationsToStorage = async (
-    configs: AppConfiguration[]
-  ): Promise<void> => {
+  const saveConfigurationsToStorage = async (configs: AppConfiguration[]): Promise<void> => {
     await storage.setItem(CONFIGURATIONS_KEY, JSON.stringify(configs));
-    await storage.setItem(
-      CONFIGURATIONS_TIMESTAMP_KEY,
-      Date.now().toString()
-    );
+    await storage.setItem(CONFIGURATIONS_TIMESTAMP_KEY, Date.now().toString());
   };
 
-  const loadConfigurationsFromStorage =
-    async (): Promise<AppConfiguration[] | null> => {
-      const cached = await storage.getItem(CONFIGURATIONS_KEY);
-      if (!cached) return null;
-      try {
-        return JSON.parse(cached) as AppConfiguration[];
-      } catch {
-        return null;
-      }
-    };
+  const loadConfigurationsFromStorage = async (): Promise<AppConfiguration[] | null> => {
+    const cached = await storage.getItem(CONFIGURATIONS_KEY);
+    if (!cached) return null;
+    try {
+      return JSON.parse(cached) as AppConfiguration[];
+    } catch {
+      return null;
+    }
+  };
 
   const isCacheValid = async (): Promise<boolean> => {
     const timestamp = await storage.getItem(CONFIGURATIONS_TIMESTAMP_KEY);
@@ -83,10 +68,7 @@ export function useConfigurations() {
     await loadConfigurations(true);
   };
 
-  const updateConfiguration = async (
-    clave: string,
-    valor: string
-  ): Promise<AppConfiguration> => {
+  const updateConfiguration = async (clave: string, valor: string): Promise<AppConfiguration> => {
     const response = await api.putJson<AppConfiguration>(
       `/api/configurations/${clave}`,
       { valor },
@@ -95,28 +77,19 @@ export function useConfigurations() {
     return response;
   };
 
-  const getConfigurationValue = (
-    key: string,
-    defaultValue: string = ""
-  ): string => {
+  const getConfigurationValue = (key: string, defaultValue: string = ""): string => {
     const config = configurations.value.find((c) => c.clave === key);
     return config?.valor ?? defaultValue;
   };
 
-  const getConfigurationAsNumber = (
-    key: string,
-    defaultValue: number = 0
-  ): number => {
+  const getConfigurationAsNumber = (key: string, defaultValue: number = 0): number => {
     const config = configurations.value.find((c) => c.clave === key);
     if (!config) return defaultValue;
     const parsed = parseFloat(config.valor);
     return isNaN(parsed) ? defaultValue : parsed;
   };
 
-  const getConfigurationAsBoolean = (
-    key: string,
-    defaultValue: boolean = false
-  ): boolean => {
+  const getConfigurationAsBoolean = (key: string, defaultValue: boolean = false): boolean => {
     const config = configurations.value.find((c) => c.clave === key);
     if (!config) return defaultValue;
     return config.valor === "true" || config.valor === "1";
