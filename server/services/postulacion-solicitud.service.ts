@@ -26,15 +26,15 @@ const postulacionSolicitudService = () => {
       }
     });
 
-    const nuevaSecuencia = (ultimoNumero?.numeric_secuencia || 0) + 1;
+    const numeric_secuencia = (ultimoNumero?.numeric_secuencia || 0) + 1;
 
     // Generar el radicado con formato: secuencia-vigencia-linea_credito (ej: 000007-2026-01)
-    const radicado = `${String(nuevaSecuencia).padStart(6, "0")}-${vigencia}-${linea_credito}`;
+    const radicado = `${String(numeric_secuencia).padStart(6, "0")}-${vigencia}-${linea_credito}`;
 
     const numeroSolicitud = await prisma.numero_solicitudes.create({
       data: {
         radicado,
-        numeric_secuencia: nuevaSecuencia,
+        numeric_secuencia,
         linea_credito,
         vigencia
       }
