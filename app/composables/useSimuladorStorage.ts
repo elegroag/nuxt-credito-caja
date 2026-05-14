@@ -2,6 +2,9 @@ import { ref, watch, readonly, onMounted } from "vue";
 
 const STORAGE_KEY = "comfaca_simulador_data";
 
+const SOLICITUD_STEP_KEY = "comfaca_credito_solicitud_current_step";
+const SOLICITUD_FORM_KEY = "comfaca_credito_solicitud_form";
+
 // Estado reactivo para los datos del simulador
 const simuladorData = ref<SimuladorStorageData | null>(null);
 
@@ -69,6 +72,16 @@ const clearSimuladorData = (): void => {
     simuladorData.value = null;
   } catch (error) {
     console.error("Error limpiando datos del simulador:", error);
+  }
+};
+
+// Limpiar datos de solicitud (wizard y formulario)
+const clearSolicitudData = (): void => {
+  try {
+    localStorage.removeItem(SOLICITUD_STEP_KEY);
+    localStorage.removeItem(SOLICITUD_FORM_KEY);
+  } catch (error) {
+    console.error("Error limpiando datos de solicitud:", error);
   }
 };
 
@@ -140,6 +153,7 @@ export const useSimuladorStorage = () => {
     saveSimuladorData,
     saveSimuladorDataSilent,
     clearSimuladorData,
+    clearSolicitudData,
     updateSimuladorData,
 
     // Utilidades

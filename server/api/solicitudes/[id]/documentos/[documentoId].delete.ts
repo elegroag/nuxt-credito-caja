@@ -69,7 +69,7 @@ export default defineEventHandler(async (event: H3Event) => {
     }
 
     await prisma.documentos_postulantes.delete({
-      where: { id: BigInt(documentoId) }
+      where: { id: documento.id }
     });
 
     return CustomResponse.ok(null, "Documento eliminado exitosamente");

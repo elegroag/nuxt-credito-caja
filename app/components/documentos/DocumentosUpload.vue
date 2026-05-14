@@ -102,7 +102,7 @@
             color="neutral"
             icon="i-lucide-download"
             title="Descargar documento"
-            @click="$emit('download', modelValue.documento_uuid)"
+            @click="$emit('download', modelValue.id)"
           />
           <UButton
             variant="ghost"
@@ -110,7 +110,7 @@
             color="destructive"
             icon="i-lucide-trash"
             title="Eliminar documento"
-            @click="$emit('delete', modelValue.documento_uuid)"
+            @click="$emit('delete', modelValue.id)"
           />
         </div>
       </div>

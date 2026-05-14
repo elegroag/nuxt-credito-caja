@@ -1,28 +1,16 @@
 <template>
   <div class="mx-auto max-w-5xl p-4 sm:p-8">
     <div class="mb-8">
-      <h1 class="text-3xl font-bold text-foreground mb-2">
-        Simulador de crédito
-      </h1>
-      <p class="text-muted-foreground">
-        Estima la cuota mensual, intereses y capacidad de pago.
-      </p>
+      <h1 class="text-3xl font-bold text-foreground mb-2">Simulador de crédito</h1>
+      <p class="text-muted-foreground">Estima la cuota mensual, intereses y capacidad de pago.</p>
 
-      <UButton
-        variant="soft"
-        class="mt-3"
-        size="lg"
-        @click="navigateToLineas"
-      >
+      <UButton variant="soft" class="mt-3" size="lg" @click="navigateToLineas">
         Ver líneas de crédito
       </UButton>
     </div>
 
     <!-- Alerta de convenio -->
-    <div
-      v-if="mensajeBeneficios"
-      class="mb-6"
-    >
+    <div v-if="mensajeBeneficios" class="mb-6">
       <ConvenioAlert
         :titulo="mensajeBeneficios.titulo"
         :descripcion="`Su empresa ${mensajeBeneficios.empresa} tiene convenio con COMFACA. Beneficios: ${mensajeBeneficios.items.join(', ')}`"
@@ -32,10 +20,7 @@
     </div>
 
     <!-- Alerta de error de convenio -->
-    <div
-      v-else-if="convenioVerificado && !isElegible && getMensajeError"
-      class="mb-6"
-    >
+    <div v-else-if="convenioVerificado && !isElegible && getMensajeError" class="mb-6">
       <ConvenioAlert
         :titulo="getMensajeError.titulo"
         :descripcion="getMensajeError.descripcion"
@@ -52,32 +37,14 @@
       >
         <div class="space-y-6">
           <div class="space-y-2">
-            <label
-              for="monto"
-              class="text-sm font-medium"
-            >Monto (COP)</label>
-            <UInput
-              id="monto"
-              v-model.number="monto"
-              type="number"
-              step="10000"
-              min="0"
-            />
+            <label for="monto" class="text-sm font-medium">Monto (COP)</label>
+            <UInput id="monto" v-model.number="monto" type="number" step="10000" min="0" />
           </div>
 
           <div class="grid gap-4 sm:grid-cols-2">
             <div class="space-y-2">
-              <label
-                for="plazo"
-                class="text-sm font-medium"
-              >Plazo (meses)</label>
-              <UInput
-                id="plazo"
-                v-model.number="plazoMeses"
-                type="number"
-                step="1"
-                min="1"
-              />
+              <label for="plazo" class="text-sm font-medium">Plazo (meses)</label>
+              <UInput id="plazo" v-model.number="plazoMeses" type="number" step="1" min="1" />
             </div>
 
             <div class="space-y-2">
@@ -93,31 +60,17 @@
           </div>
 
           <div class="space-y-2">
-            <label
-              for="tasa"
-              class="text-sm font-medium"
-            >
-              {{
-                tipoTasa === "anual"
-                  ? "Tasa efectiva anual (EA %)"
-                  : "Tasa mensual (%)"
-              }}
+            <label for="tasa" class="text-sm font-medium">
+              {{ tipoTasa === "anual" ? "Tasa efectiva anual (EA %)" : "Tasa mensual (%)" }}
             </label>
-            <UInput
-              id="tasa"
-              v-model.number="tasaInput"
-              type="number"
-              step="0.1"
-              min="0"
-            />
+            <UInput id="tasa" v-model.number="tasaInput" type="number" step="0.1" min="0" />
           </div>
 
           <div class="grid gap-4 sm:grid-cols-2">
             <div class="space-y-2">
-              <label
-                for="ingresos"
-                class="text-sm font-medium"
-              >Ingresos mensuales <br><small>Salario bruto.</small></label>
+              <label for="ingresos" class="text-sm font-medium">
+                Ingresos mensuales <br /><small>Salario bruto.</small>
+              </label>
               <UInput
                 id="ingresos"
                 v-model.number="ingresosMensuales"
@@ -131,11 +84,9 @@
             </div>
 
             <div class="space-y-2">
-              <label
-                for="descuentos"
-                class="text-sm font-medium"
-              >Descuentos mensuales
-                <small>Obligaciones adquiridas.</small></label>
+              <label for="descuentos" class="text-sm font-medium">
+                Descuentos mensuales <small>Obligaciones adquiridas.</small>
+              </label>
               <UInput
                 id="descuentos"
                 v-model.number="descuentosMensuales"
@@ -147,10 +98,9 @@
           </div>
 
           <div class="space-y-2">
-            <label
-              for="maxEndeudamiento"
-              class="text-sm font-medium"
-            >Máximo endeudamiento por ley (50%)</label>
+            <label for="maxEndeudamiento" class="text-sm font-medium"
+              >Máximo endeudamiento por ley (50%)</label
+            >
             <UInput
               id="maxEndeudamiento"
               v-model.number="maxEndeudamientoPct"
@@ -159,8 +109,7 @@
               max="100"
             />
             <p class="text-xs text-muted-foreground">
-              Porcentaje de la capacidad disponible que se permite destinar a la
-              cuota.
+              Porcentaje de la capacidad disponible que se permite destinar a la cuota.
             </p>
           </div>
         </div>
@@ -169,12 +118,8 @@
       <!-- Resultados -->
       <div class="space-y-6">
         <div class="grid gap-4 sm:grid-cols-2">
-          <UCard
-            class="border-primary/30 bg-linear-to-br from-primary/5 to-primary/10"
-          >
-            <p
-              class="text-xs font-medium uppercase tracking-wider text-muted-foreground"
-            >
+          <UCard class="border-primary/30 bg-linear-to-br from-primary/5 to-primary/10">
+            <p class="text-xs font-medium uppercase tracking-wider text-muted-foreground">
               Cuota estimada
             </p>
             <p class="text-3xl font-bold text-primary">
@@ -185,75 +130,49 @@
             </p>
           </UCard>
 
-          <UCard
-            class="border-secondary/30 bg-linear-to-br from-secondary/5 to-secondary/10"
-          >
-            <p
-              class="text-xs font-medium uppercase tracking-wider text-muted-foreground"
-            >
+          <UCard class="border-secondary/30 bg-linear-to-br from-secondary/5 to-secondary/10">
+            <p class="text-xs font-medium uppercase tracking-wider text-muted-foreground">
               Capacidad disponible <small>(Descuento en Nomina)</small>
             </p>
             <p class="text-3xl font-bold text-secondary">
               {{ fmt(capacidadDisponible) }}
             </p>
-            <p class="text-xs text-muted-foreground">
-              Máximo cuota: {{ fmt(maxCuotaPermitida) }}
-            </p>
+            <p class="text-xs text-muted-foreground">Máximo cuota: {{ fmt(maxCuotaPermitida) }}</p>
           </UCard>
         </div>
 
         <UCard class="border-primary/20">
-          <p
-            class="text-xs font-medium uppercase tracking-wider text-muted-foreground"
-          >
+          <p class="text-xs font-medium uppercase tracking-wider text-muted-foreground">
             Total a pagar
           </p>
           <p class="text-2xl font-bold">
             {{ fmt(totalPagar) }}
           </p>
-          <p class="text-sm text-muted-foreground">
-            Intereses estimados: {{ fmt(intereses) }}
-          </p>
+          <p class="text-sm text-muted-foreground">Intereses estimados: {{ fmt(intereses) }}</p>
         </UCard>
 
         <UCard
           :class="`border-2 ${apto ? 'border-secondary/50 bg-secondary/5' : 'border-destructive/50 bg-destructive/5'}`"
         >
           <div class="flex items-start gap-3">
-            <CheckCircle2
-              v-if="apto"
-              class="h-5 w-5 text-secondary mt-0.5"
-            />
-            <AlertCircle
-              v-else
-              class="h-5 w-5 text-destructive mt-0.5"
-            />
+            <CheckCircle2 v-if="apto" class="h-5 w-5 text-secondary mt-0.5" />
+            <AlertCircle v-else class="h-5 w-5 text-destructive mt-0.5" />
             <div>
-              <p class="text-base font-semibold mb-1">
-                Evaluación rápida
-              </p>
+              <p class="text-base font-semibold mb-1">Evaluación rápida</p>
               <p :class="apto ? 'text-secondary' : 'text-destructive'">
                 {{
-                  apto
-                    ? "La cuota está dentro del límite"
-                    : "La cuota excede tu capacidad de pago"
+                  apto ? "La cuota está dentro del límite" : "La cuota excede tu capacidad de pago"
                 }}
               </p>
               <p class="text-sm text-muted-foreground mt-2">
-                {{
-                  apto
-                    ? `Margen: ${fmt(margen)}`
-                    : `Exceso: ${fmt(Math.abs(margen))}`
-                }}
+                {{ apto ? `Margen: ${fmt(margen)}` : `Exceso: ${fmt(Math.abs(margen))}` }}
               </p>
             </div>
           </div>
         </UCard>
 
         <UCard class="border-accent/30 bg-red-50">
-          <p class="text-base font-semibold mb-3">
-            Resumen
-          </p>
+          <p class="text-base font-semibold mb-3">Resumen</p>
           <div class="space-y-2 text-sm">
             <div class="flex justify-between">
               <span class="text-muted-foreground">Monto</span>
@@ -277,9 +196,7 @@
             </div>
             <div class="flex justify-between">
               <span class="text-muted-foreground">Ingresos (Netos 92%)</span>
-              <span class="font-semibold text-primary">{{
-                fmt(ingresosSan)
-              }}</span>
+              <span class="font-semibold text-primary">{{ fmt(ingresosSan) }}</span>
             </div>
             <div class="flex justify-between">
               <span class="text-muted-foreground">Descuentos</span>
@@ -287,33 +204,16 @@
             </div>
             <div class="flex justify-between">
               <span class="text-muted-foreground">Máximo endeudamiento</span>
-              <span class="font-semibold">{{
-                fmtPct(maxEndeudamientoPct)
-              }}</span>
+              <span class="font-semibold">{{ fmtPct(maxEndeudamientoPct) }}</span>
             </div>
           </div>
         </UCard>
 
         <div class="flex gap-3">
-          <NuxtLink
-            to="/solicitud"
-            class="flex-1"
-          >
-            <UButton
-              variant="soft"
-              class="w-full"
-              size="lg"
-            >
-              Continuar con solicitud
-            </UButton>
-          </NuxtLink>
-          <UButton
-            variant="outline"
-            size="lg"
-            @click="reset"
-          >
-            Restablecer
+          <UButton variant="soft" class="flex-1" size="lg" @click="handleContinuarSolicitud">
+            Continuar con solicitud
           </UButton>
+          <UButton variant="outline" size="lg" @click="reset"> Restablecer </UButton>
         </div>
       </div>
     </div>
@@ -361,6 +261,12 @@ const {
 
   // Computed y funciones específicas
   tasaInput,
-  navigateToLineas
+  navigateToLineas,
+  clearSolicitudData
 } = useSimuladorPage();
+
+const handleContinuarSolicitud = () => {
+  clearSolicitudData();
+  navigateTo("/solicitud");
+};
 </script>

@@ -6,7 +6,7 @@ import { useSimuladorStorage } from "~/composables/useSimuladorStorage";
 
 export const useSimuladorPage = () => {
   const { trabajador } = useTrabajador();
-  const { saveSimuladorDataSilent } = useSimuladorStorage();
+  const { saveSimuladorDataSilent, clearSolicitudData } = useSimuladorStorage();
 
   // Composable de convenio
   const {
@@ -52,6 +52,7 @@ export const useSimuladorPage = () => {
   } = useSimulador();
 
   const navigateToLineas = () => {
+    clearSolicitudData();
     navigateTo("/dash/simulador/lineas-credito");
   };
 
@@ -176,6 +177,7 @@ export const useSimuladorPage = () => {
 
     // Computed y funciones específicas de la página
     tasaInput,
-    navigateToLineas
+    navigateToLineas,
+    clearSolicitudData
   };
 };

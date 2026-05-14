@@ -3,6 +3,23 @@ import { fetch } from "ofetch";
 
 const BASE_URL = "http://localhost:4000";
 
+async function fetchWithRetry(
+  url: string,
+  options: any,
+  retries = 3,
+  delay = 500
+): Promise<Response> {
+  for (let i = 0; i < retries; i++) {
+    const response = await fetch(url, options);
+    if (response.status === 502 && i < retries - 1) {
+      await new Promise((r) => setTimeout(r, delay * (i + 1)));
+      continue;
+    }
+    return response;
+  }
+  return fetch(url, options);
+}
+
 let sessionCookie: string;
 
 async function doLogin() {
@@ -196,8 +213,8 @@ describe("POST /api/solicitudes/guardar-solicitud — integración", () => {
 
   describe("creación exitosa de solicitud", () => {
     it("retorna 200 y estructura de respuesta exitosa con datos de solicitud", async () => {
-      const unique = Date.now();
-      const response = await fetch(
+      const unique = `T${Date.now()}${Math.random().toString(36).slice(2, 8)}`;
+      const response = await fetchWithRetry(
         `${BASE_URL}/api/solicitudes/guardar-solicitud`,
         {
           method: "POST",
@@ -254,8 +271,8 @@ describe("POST /api/solicitudes/guardar-solicitud — integración", () => {
     });
 
     it("contiene campos requeridos en la respuesta de éxito", async () => {
-      const unique = Date.now() + 1;
-      const response = await fetch(
+      const unique = `T${Date.now()}${Math.random().toString(36).slice(2, 8)}A`;
+      const response = await fetchWithRetry(
         `${BASE_URL}/api/solicitudes/guardar-solicitud`,
         {
           method: "POST",
@@ -292,7 +309,7 @@ describe("POST /api/solicitudes/guardar-solicitud — integración", () => {
     });
 
     it("genera número de solicitud automáticamente si no se provee", async () => {
-      const response = await fetch(
+      const response = await fetchWithRetry(
         `${BASE_URL}/api/solicitudes/guardar-solicitud`,
         {
           method: "POST",
@@ -316,8 +333,8 @@ describe("POST /api/solicitudes/guardar-solicitud — integración", () => {
     });
 
     it("acepta solicitante con formato de ciudad como objeto {label, value}", async () => {
-      const unique = Date.now() + 3;
-      const response = await fetch(
+      const unique = `T${Date.now()}${Math.random().toString(36).slice(2, 8)}B`;
+      const response = await fetchWithRetry(
         `${BASE_URL}/api/solicitudes/guardar-solicitud`,
         {
           method: "POST",
@@ -348,7 +365,7 @@ describe("POST /api/solicitudes/guardar-solicitud — integración", () => {
     });
 
     it("el owner_username se toma de la sesión cuando no se provee", async () => {
-      const response = await fetch(
+      const response = await fetchWithRetry(
         `${BASE_URL}/api/solicitudes/guardar-solicitud`,
         {
           method: "POST",
@@ -374,7 +391,7 @@ describe("POST /api/solicitudes/guardar-solicitud — integración", () => {
 
   describe("campos opcionales", () => {
     it("acepta solicitud sin solicitante", async () => {
-      const response = await fetch(
+      const response = await fetchWithRetry(
         `${BASE_URL}/api/solicitudes/guardar-solicitud`,
         {
           method: "POST",

@@ -10,7 +10,7 @@ export const useSimuladorConLineaPage = () => {
   const route = useRoute();
   const { getJson } = useApi();
   const { trabajador, salario } = useTrabajador();
-  const { saveSimuladorDataSilent } = useSimuladorStorage();
+  const { saveSimuladorDataSilent, clearSolicitudData } = useSimuladorStorage();
 
   // Composable de convenio
   const {
@@ -81,6 +81,7 @@ export const useSimuladorConLineaPage = () => {
   } = useSimuladorWithLinea(lineaSeleccionada);
 
   const navigateToLineas = () => {
+    clearSolicitudData();
     navigateTo("/dash/simulador/lineas-credito");
   };
 
@@ -384,6 +385,7 @@ export const useSimuladorConLineaPage = () => {
     navigateToLineas,
     cargarLineaCredito,
     saveDataManual,
-    validarMontoMaximo
+    validarMontoMaximo,
+    clearSolicitudData
   };
 };

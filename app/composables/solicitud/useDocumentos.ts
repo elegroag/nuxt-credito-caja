@@ -126,12 +126,12 @@ export const useDocumentos = (solicitudId: string) => {
     }
   };
 
-  const eliminarDocumento = async (documentoCargadoId: string) => {
+  const eliminarDocumento = async (documentoId: string) => {
     cargando.value = true;
     error.value = null;
 
     try {
-      await $fetch(urlFor(`/api/solicitudes/${solicitudId}/documentos/${documentoCargadoId}`), {
+      await $fetch(urlFor(`/api/solicitudes/${solicitudId}/documentos/${documentoId}`), {
         method: "DELETE",
         headers: {
           ...(authHeader.value as any)

@@ -596,12 +596,14 @@ const {
   navigateToLineas,
   cargarLineaCredito,
   saveDataManual,
-  validarMontoMaximo
+  validarMontoMaximo,
+  clearSolicitudData
 } = useSimuladorConLineaPage();
 
 // Función para guardar datos y navegar a solicitud
 const handleContinuarSolicitud = () => {
   saveDataManual();
+  clearSolicitudData();
   navigateTo("/dash/solicitud");
 };
 </script>

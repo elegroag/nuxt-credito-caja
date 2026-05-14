@@ -11,9 +11,9 @@ export const useDocumentosSolicitud = () => {
   const { ready, authHeader } = useSession();
 
   const solicitudId = route.params.id as string;
-  const buildDownloadUrl = (documentoUuid: string) =>
+  const buildDownloadUrl = (documentoId: string) =>
     urlFor(
-      `/api/solicitudes/${solicitudId}/documentos/${documentoUuid}/descargar`
+      `/api/solicitudes/${solicitudId}/documentos/${documentoId}/descargar`
     );
   const extractDownloadError = (payload: unknown, status: number) => {
     if (!payload || typeof payload !== "object") {
@@ -209,10 +209,10 @@ export const useDocumentosSolicitud = () => {
     }
   };
 
-  const handleDownload = async (documentoUuid: string) => {
+  const handleDownload = async (documentoId: string) => {
     try {
       const headers = authHeader.value as Record<string, string>;
-      const url = buildDownloadUrl(documentoUuid);
+      const url = buildDownloadUrl(documentoId);
 
       const response = await fetch(url, {
         method: "GET",

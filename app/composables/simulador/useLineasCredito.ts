@@ -1,5 +1,6 @@
 export const useLineasCredito = () => {
   const { getJson } = useApi();
+  const { clearSolicitudData } = useSimuladorStorage();
 
   const loading = ref(true);
   const error = ref<string | null>(null);
@@ -126,7 +127,7 @@ export const useLineasCredito = () => {
   };
 
   const simularLinea = (linea: LineaCreditoSimuladorType) => {
-    // Navegar al simulador con la línea preseleccionada
+    clearSolicitudData();
     navigateTo(`/dash/simulador/${linea.tipcre}`);
   };
 

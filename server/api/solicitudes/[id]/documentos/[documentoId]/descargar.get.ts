@@ -5,14 +5,15 @@ import {
   setResponseStatus,
   sendStream
 } from "h3";
-import { createReadStream } from "fs";
+import { createReadStream, existsSync } from "fs";
+import { join } from "path";
 import prisma from "~~/lib/prisma";
 import { CustomResponse } from "~~/server/utils/customResponse";
 
 export default defineEventHandler(async (event: H3Event) => {
   try {
     const solicitudId = getRouterParam(event, "id");
-    const documentoUuid = getRouterParam(event, "uuid");
+    const documentoId = getRouterParam(event, "documentoId");
     const session = await getUserSession(event).catch(() => null);
 
     if (!session?.user?.username) {
@@ -31,10 +32,10 @@ export default defineEventHandler(async (event: H3Event) => {
       );
     }
 
-    if (!documentoUuid) {
+    if (!documentoId) {
       setResponseStatus(event, 400);
       return CustomResponse.error(
-        "UUID de documento no proporcionado",
+        "ID de documento no proporcionado",
         "Error de validación"
       );
     }
@@ -61,8 +62,8 @@ export default defineEventHandler(async (event: H3Event) => {
 
     const documento = await prisma.documentos_postulantes.findFirst({
       where: {
+        id: BigInt(documentoId),
         solicitud_id: solicitudId,
-        api_filename: documentoUuid,
         activo: true
       }
     });
@@ -83,7 +84,15 @@ export default defineEventHandler(async (event: H3Event) => {
       );
     }
 
-    const filePath = documento.ruta_archivo;
+    const filePath = join(process.cwd(), documento.ruta_archivo);
+
+    if (!existsSync(filePath)) {
+      setResponseStatus(event, 404);
+      return CustomResponse.error(
+        "El archivo no existe en el servidor",
+        "Archivo no encontrado"
+      );
+    }
 
     setResponseHeaders(event, {
       "Content-Type": documento.tipo_mime || "application/octet-stream",
