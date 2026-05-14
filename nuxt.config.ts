@@ -46,6 +46,9 @@ export default defineNuxtConfig({
   },
 
   runtimeConfig: {
+    public: {
+      environment: env.NODE_ENV || "development"
+    },
     database: {
       env: env.DATABASE_ENV || "dev",
       url_pro: env.DATABASE_URL_PRO || "",

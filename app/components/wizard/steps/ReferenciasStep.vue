@@ -1,6 +1,5 @@
 <template>
   <div class="grid gap-8">
-    <!-- Referencias Familiares -->
     <div class="space-y-4">
       <div class="flex items-center justify-between">
         <div class="flex items-center gap-2">
@@ -51,13 +50,13 @@
             </UButton>
           </div>
           <div class="grid gap-4 sm:grid-cols-2">
-            <FormField label="Nombre y apellidos">
+            <FormField label="Nombre y apellidos" :error="errors?.[`referencias.familiares.${idx}.nombre_apellidos`]">
               <UInput
                 v-model="r.nombre_apellidos"
                 placeholder="Nombre completo"
               />
             </FormField>
-            <FormField label="Celular">
+            <FormField label="Celular" :error="errors?.[`referencias.familiares.${idx}.celular`]">
               <UInput
                 v-model="r.celular"
                 placeholder="Número de celular"
@@ -68,7 +67,6 @@
       </div>
     </div>
 
-    <!-- Referencias Personales -->
     <div class="space-y-4">
       <div class="flex items-center justify-between">
         <div class="flex items-center gap-2">
@@ -119,13 +117,13 @@
             </UButton>
           </div>
           <div class="grid gap-4 sm:grid-cols-2">
-            <FormField label="Nombre y apellidos">
+            <FormField label="Nombre y apellidos" :error="errors?.[`referencias.personales.${idx}.nombre_apellidos`]">
               <UInput
                 v-model="r.nombre_apellidos"
                 placeholder="Nombre completo"
               />
             </FormField>
-            <FormField label="Celular">
+            <FormField label="Celular" :error="errors?.[`referencias.personales.${idx}.celular`]">
               <UInput
                 v-model="r.celular"
                 placeholder="Número de celular"
@@ -143,10 +141,13 @@ import { Plus, Trash2 } from "lucide-vue-next";
 import FormField from "~/components/shared/FormField.vue";
 
 interface Props {
-  form: any
-  addReferencia: (type: "familiares" | "personales") => void
-  removeReferencia: (type: "familiares" | "personales", index: number) => void
+  form: any;
+  addReferencia: (type: "familiares" | "personales") => void;
+  removeReferencia: (type: "familiares" | "personales", index: number) => void;
+  errors?: Record<string, string>;
 }
 
-defineProps<Props>();
+withDefaults(defineProps<Props>(), {
+  errors: () => ({})
+});
 </script>

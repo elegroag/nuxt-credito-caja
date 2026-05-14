@@ -40,23 +40,32 @@
       </div>
     </UPageCard>
 
-    <div v-if="loading && solicitudes.length === 0" class="flex flex-col items-center justify-center py-16 gap-3 text-muted-foreground">
+    <div
+      v-if="loading && solicitudes.length === 0"
+      class="flex flex-col items-center justify-center py-16 gap-3 text-muted-foreground"
+    >
       <UIcon name="i-lucide-loader-circle" class="w-8 h-8 animate-spin text-primary" />
       <p class="text-sm">Cargando procesos de firma…</p>
     </div>
 
-    <UAlert v-else-if="error" color="destructive" variant="subtle" icon="i-lucide-triangle-alert" :title="error" />
+    <UAlert
+      v-else-if="error"
+      color="destructive"
+      variant="subtle"
+      icon="i-lucide-triangle-alert"
+      :title="error"
+    />
 
-    <div v-else-if="solicitudes.length === 0" class="flex flex-col items-center justify-center py-16 gap-3 text-muted-foreground">
+    <div
+      v-else-if="solicitudes.length === 0"
+      class="flex flex-col items-center justify-center py-16 gap-3 text-muted-foreground"
+    >
       <UIcon name="i-lucide-file-signature" class="w-10 h-10 opacity-30" />
       <p class="text-sm">No hay procesos de firma con el filtro seleccionado</p>
     </div>
 
     <div v-else class="space-y-4">
-      <UPageCard
-        v-for="solicitud in solicitudes"
-        :key="solicitud.numero_solicitud"
-      >
+      <UPageCard v-for="solicitud in solicitudes" :key="solicitud.numero_solicitud">
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-4">
           <div class="lg:col-span-5">
             <div class="flex items-start justify-between mb-2">
@@ -64,9 +73,7 @@
                 <h3 class="text-lg font-semibold text-foreground">
                   {{ solicitud.solicitante?.nombres_apellidos || "Sin nombre" }}
                 </h3>
-                <p class="text-sm text-muted-foreground">
-                  ID: {{ solicitud.numero_solicitud }}
-                </p>
+                <p class="text-sm text-muted-foreground">ID: {{ solicitud.numero_solicitud }}</p>
               </div>
             </div>
             <div class="space-y-1 text-sm">
@@ -85,11 +92,14 @@
             <div class="space-y-3">
               <div>
                 <div class="flex items-center gap-2 mb-2">
-                  <UIcon :name="getEstadoIcon(solicitud.proceso_firmado?.estado || '')" class="w-4 h-4" />
+                  <UIcon
+                    :name="getEstadoIcon(solicitud.proceso_firmado?.estado || '')"
+                    class="w-4 h-4"
+                  />
                   <span class="text-sm font-medium text-foreground">Estado de Firma:</span>
                 </div>
                 <UBadge
-                  :color="getEstadoBadgeColor(solicitud.proceso_firmado?.estado || '')"
+                  :color="getEstadoBadgeColor(solicitud.proceso_firmado?.estado || 'primary')"
                   variant="subtle"
                   :icon="getEstadoIcon(solicitud.proceso_firmado?.estado || '')"
                 >

@@ -60,10 +60,7 @@ export interface SolicitanteBackend extends Solicitante {
 }
 
 export interface SolicitanteProps {
-  form: {
-    solicitante: Solicitante;
-    informacion_laboral: InformacionLaboral;
-  };
+  form: any;
   ciudades?: readonly CiudadOption[];
   tiposDocumento?: readonly CodigoTipoDocumento[];
   sexos?: readonly SexoParam[];
@@ -71,4 +68,5 @@ export interface SolicitanteProps {
   tiposVivienda?: readonly TipoViviendaParam[];
   ocupaciones?: readonly Ocupacion[];
   estadoCiviles?: readonly EstadoCivil[];
+  errors?: Record<string, string>;
 }

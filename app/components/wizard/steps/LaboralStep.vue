@@ -1,9 +1,9 @@
 <template>
   <div class="grid gap-4 sm:grid-cols-2">
-    <FormField label="Razón social">
+    <FormField label="Razón social" :error="errors && errors['informacion_laboral.empresa_razon_social']">
       <UInput v-model="form.informacion_laboral.empresa_razon_social" />
     </FormField>
-    <FormField label="NIT">
+    <FormField label="NIT" :error="errors && errors['informacion_laboral.empresa_nit']">
       <UInput v-model="form.informacion_laboral.empresa_nit" />
     </FormField>
     <FormField label="Teléfono">
@@ -21,7 +21,7 @@
         searchable
       />
     </FormField>
-    <FormField label="Cargo">
+    <FormField label="Cargo" :error="errors && errors['informacion_laboral.cargo']">
       <CustomSelect
         v-model="form.informacion_laboral.cargo"
         :options="cargosOptions"
@@ -30,7 +30,7 @@
         searchable
       />
     </FormField>
-    <FormField label="Fecha ingreso">
+    <FormField label="Fecha ingreso" :error="errors && errors['informacion_laboral.fecha_ingreso']">
       <UInput v-model="form.informacion_laboral.fecha_ingreso" type="date" />
     </FormField>
     <FormField label="Tipo contrato">
@@ -61,20 +61,38 @@
 <script setup lang="ts">
 import FormField from "~/components/shared/FormField.vue";
 import CustomSelect from "~/components/shared/CustomSelect.vue";
-import { useLaboralStep } from "~/composables/solicitud/useLaboralStep";
 import type { LaboralProps } from "~~/shared/types/componentes";
 
 const props = withDefaults(defineProps<LaboralProps>(), {
   ciudades: () => [],
   tiposContrato: () => [],
-  ocupaciones: () => []
+  ocupaciones: () => [],
+  errors: () => ({})
 });
 
-const {
-  // Opciones para los selects
-  tiempoUnidadOptions,
-  cargosOptions,
-  ciudadesOptions,
-  tiposContratoOptions
-} = useLaboralStep(props);
+const tiempoUnidadOptions = [
+  { label: "Meses", value: "meses" },
+  { label: "Años", value: "anios" }
+];
+
+const ciudadesOptions = computed(() =>
+  (props.ciudades || []).map((item) => ({
+    label: item.detciu,
+    value: item.codciu
+  }))
+);
+
+const tiposContratoOptions = computed(() =>
+  (props.tiposContrato || []).map((item) => ({
+    label: item.detalle,
+    value: item.tipcon
+  }))
+);
+
+const cargosOptions = computed(() =>
+  (props.ocupaciones || []).map((item) => ({
+    label: item.detalle,
+    value: item.codocu
+  }))
+);
 </script>

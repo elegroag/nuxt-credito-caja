@@ -39,7 +39,10 @@ import FormField from "~/components/shared/FormField.vue";
 
 interface Props {
   form: any;
+  errors?: Record<string, string>;
 }
 
-defineProps<Props>();
+withDefaults(defineProps<Props>(), {
+  errors: () => ({})
+});
 </script>

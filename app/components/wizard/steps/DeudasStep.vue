@@ -9,14 +9,14 @@
     </div>
 
     <div
-      v-if="form.deudas.length === 0"
+      v-if="(form as any).deudas.length === 0"
       class="rounded-lg bg-muted/50 p-8 text-center border-2 border-dashed border-border"
     >
       <p class="text-sm text-muted-foreground italic">No se han registrado deudas.</p>
     </div>
 
     <div class="grid gap-4">
-      <UCard v-for="(d, idx) in form.deudas" :key="idx" class="border-border/50 bg-muted/20">
+      <UCard v-for="(d, idx) in (form as any).deudas" :key="idx" class="border-border/50 bg-muted/20">
         <div class="flex flex-row items-center justify-between mb-3">
           <p class="text-sm font-semibold">Deuda #{{ Number(idx) + 1 }}</p>
           <UButton
@@ -29,10 +29,10 @@
           </UButton>
         </div>
         <div class="grid gap-4 sm:grid-cols-2">
-          <FormField label="Acreedor">
+          <FormField label="Acreedor" :error="errors && errors[`deudas.${idx}.acreedor_nombre`]">
             <UInput v-model="d.acreedor_nombre" />
           </FormField>
-          <FormField label="Concepto">
+          <FormField label="Concepto" :error="errors && errors[`deudas.${idx}.concepto`]">
             <UInput v-model="d.concepto" />
           </FormField>
           <FormField label="Valor cuota">
@@ -50,7 +50,11 @@
 <script setup lang="ts">
 import { Plus, Trash2 } from "lucide-vue-next";
 import FormField from "~/components/shared/FormField.vue";
-import type { DeudasProps } from "~~/shared/types/componentes";
 
-defineProps<DeudasProps>();
+defineProps<{
+  form: any;
+  addDeuda: () => void;
+  removeDeuda: (index: number) => void;
+  errors?: Record<string, string>;
+}>();
 </script>

@@ -177,8 +177,8 @@
       </div>
     </UCard>
 
-    <!-- Payload JSON colapsable -->
-    <UCard class="border-border/50 bg-muted/10 shadow-none">
+    <!-- Payload JSON colapsable - Solo en desarrollo -->
+    <UCard v-if="isDevelopment" class="border-border/50 bg-muted/10 shadow-none">
       <div class="flex items-center justify-between mb-3">
         <p
           class="text-xs font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-2"
@@ -210,6 +210,7 @@
 </template>
 
 <script setup lang="ts">
+import { computed } from "vue";
 import { FileCode, AlertCircle, ClipboardList, PenTool } from "lucide-vue-next";
 
 import { useRevisionStep } from "~/composables/solicitud/useRevisionStep";
@@ -218,6 +219,10 @@ import { formatValue, formatRevisionKey, formatRevisionIndex } from "~~/shared/u
 import type { RevisionProps } from "~~/shared/types/componentes";
 
 const props = defineProps<RevisionProps>();
+
+const config = useRuntimeConfig();
+
+const isDevelopment = computed(() => config.public.environment === "development");
 
 const {
   // Estado

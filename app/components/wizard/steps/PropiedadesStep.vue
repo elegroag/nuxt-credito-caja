@@ -11,14 +11,14 @@
     </div>
 
     <div
-      v-if="form.propiedades.length === 0"
+      v-if="(form as any).propiedades.length === 0"
       class="rounded-lg bg-muted/50 p-8 text-center border-2 border-dashed border-border"
     >
       <p class="text-sm text-muted-foreground italic">No se han registrado propiedades.</p>
     </div>
 
     <div class="grid gap-4">
-      <UCard v-for="(p, idx) in form.propiedades" :key="idx" class="border-border/50 bg-muted/20">
+      <UCard v-for="(p, idx) in (form as any).propiedades" :key="idx" class="border-border/50 bg-muted/20">
         <div class="flex flex-row items-center justify-between mb-3">
           <p class="text-sm font-semibold">Propiedad #{{ (idx as number) + 1 }}</p>
           <UButton
@@ -31,7 +31,7 @@
           </UButton>
         </div>
         <div class="grid gap-4 sm:grid-cols-2">
-          <FormField label="Tipo bien">
+          <FormField label="Tipo bien" :error="errors && errors[`propiedades.${idx}.tipo_bien`]">
             <CustomSelect
               v-model="p.tipo_bien"
               :options="tiposBienOptions"
@@ -47,7 +47,7 @@
               searchable
             />
           </FormField>
-          <FormField label="Descripción" class="sm:col-span-2">
+          <FormField label="Descripción" :error="errors && errors[`propiedades.${idx}.descripcion`]" class="sm:col-span-2">
             <UInput v-model="p.descripcion" />
           </FormField>
 
@@ -73,21 +73,22 @@ import { computed } from "#imports";
 import FormField from "~/components/shared/FormField.vue";
 
 import CustomSelect from "~/components/shared/CustomSelect.vue";
-import type { PropiedadesProps } from "~~/shared/types/componentes";
 
-const props = withDefaults(defineProps<PropiedadesProps>(), {
-  ciudades: () => []
-});
+const props = defineProps<{
+  form: any;
+  addPropiedad: () => void;
+  removePropiedad: (index: number) => void;
+  ciudades?: readonly { codciu: string; detciu: string }[];
+  errors?: Record<string, string>;
+}>();
 
-// Opciones para tipo de bien
-const tiposBienOptions: SelectOption[] = [
+const tiposBienOptions = [
   { label: "Vivienda", value: "vivienda" },
   { label: "Vehículo", value: "vehiculo" }
 ];
 
-// Convertir ciudades a formato SelectOption
 const ciudadesOptions = computed(() =>
-  props.ciudades.map((item) => ({
+  (props.ciudades || []).map((item) => ({
     label: item.detciu,
     value: item.codciu
   }))

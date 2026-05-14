@@ -1,5 +1,5 @@
 import prisma from "~~/lib/prisma";
-import { PrismaConfig, SerializedConfiguration } from "~~/shared/types/configuration";
+import type { PrismaConfig, SerializedConfiguration } from "~~/shared/types/configuration";
 
 const configurationsService = () => {
   const serializeConfig = (config: PrismaConfig): SerializedConfiguration => ({

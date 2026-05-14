@@ -1,47 +1,45 @@
 <template>
   <div class="grid gap-4">
     <div class="grid gap-4 sm:grid-cols-2">
-      <!-- Fecha radicado -->
       <FormField label="Fecha radicado" class="sm:col-span-2">
-        <UInput v-model="form.solicitud.fecha_radicado" type="date" disabled />
+        <UInput v-model="(form as any).solicitud.fecha_radicado" type="date" disabled />
       </FormField>
 
-      <!-- Campos de solicitud -->
       <FormField label="Número solicitud">
-        <UInput v-model="form.solicitud.numero_solicitud" disabled />
+        <UInput v-model="(form as any).solicitud.numero_solicitud" disabled />
       </FormField>
-      <FormField label="Número comprobante">
-        <UInput v-model="form.solicitud.numero_comprobante" />
+      <FormField label="Número comprobante" :error="errors && errors['solicitud.numero_comprobante']">
+        <UInput v-model="(form as any).solicitud.numero_comprobante" />
       </FormField>
       <FormField label="Valor solicitud">
-        <UInput v-model.number="form.solicitud.valor_solicitud" type="number" min="0" disabled />
+        <UInput v-model.number="(form as any).solicitud.valor_solicitud" type="number" min="0" disabled />
       </FormField>
       <FormField label="Categoría">
-        <UInput v-model="form.solicitante.codigo_categoria" disabled />
+        <UInput v-model="(form as any).solicitante.codigo_categoria" disabled />
       </FormField>
-      <FormField label="Rol en solicitud">
+      <FormField label="Rol en solicitud" :error="errors && errors['solicitud.rol_en_solicitud']">
         <CustomSelect
-          v-model="form.solicitud.rol_en_solicitud"
+          v-model="(form as any).solicitud.rol_en_solicitud"
           :options="rolesOptions"
           placeholder="Seleccionar rol"
         />
       </FormField>
       <FormField label="Valor mensual">
-        <UInput v-model.number="form.solicitud.cuota_mensual" type="number" min="0" disabled />
+        <UInput v-model.number="(form as any).solicitud.cuota_mensual" type="number" min="0" disabled />
       </FormField>
       <FormField label="Plazo (meses)">
-        <UInput v-model.number="form.solicitud.plazo_meses" type="number" min="1" disabled />
+        <UInput v-model.number="(form as any).solicitud.plazo_meses" type="number" min="1" disabled />
       </FormField>
-      <FormField label="Producto">
+      <FormField label="Producto" :error="errors && errors['solicitud.producto_tipo']">
         <CustomSelect
-          v-model="form.solicitud.producto_tipo"
+          v-model="(form as any).solicitud.producto_tipo"
           :options="productosOptions"
           placeholder="Seleccionar producto"
         />
       </FormField>
       <FormField label="Linea de crédito">
         <UInput
-          v-model="form.solicitud.detalle_modalidad"
+          v-model="(form as any).solicitud.detalle_modalidad"
           disabled
           placeholder="Seleccionar linea"
         />
@@ -51,7 +49,7 @@
     <div class="grid gap-4 sm:grid-cols-2 mt-4">
       <FormField label="¿Ha tenido crédito con Comfaca?">
         <URadioGroup
-          v-model="form.solicitud.ha_tenido_credito"
+          v-model="(form as any).solicitud.ha_tenido_credito"
           :items="[
             { label: 'Sí', value: true },
             { label: 'No', value: false }
@@ -65,32 +63,33 @@
 <script setup lang="ts">
 import FormField from "~/components/shared/FormField.vue";
 import CustomSelect from "~/components/shared/CustomSelect.vue";
-import type { SolicitudProps } from "~~/shared/types/componentes";
 
-const props = defineProps<SolicitudProps>();
+const props = defineProps<{
+  form: any;
+  tiposInversion?: readonly { tipinv: string; detalle: string }[];
+  fechaRadicado?: string;
+  errors?: Record<string, string>;
+}>();
 
-// Opciones para roles en solicitud
-const rolesOptions: SelectOption[] = [
+const rolesOptions = [
   { label: "Trabajador", value: "T" },
   { label: "Solicitante", value: "S" },
   { label: "Codeudor", value: "C" },
   { label: "Empleador", value: "E" }
 ];
 
-// Opciones para productos basadas en tiposInversion
-const productosOptions = computed<SelectOption[]>(() => {
+const productosOptions = computed(() => {
   return (props.tiposInversion || []).map((tipo) => ({
     label: tipo.detalle,
     value: tipo.tipinv
   }));
 });
 
-// Watcher para transformar producto_tipo si es un objeto
 watch(
-  () => props.form.solicitud.producto_tipo,
+  () => props.form?.solicitud?.producto_tipo,
   (newValue) => {
     if (typeof newValue === "object" && newValue !== null && "value" in newValue) {
-      props.form.solicitud.producto_tipo = "";
+      (props.form as any).solicitud.producto_tipo = "";
     }
   },
   { immediate: true, deep: true }

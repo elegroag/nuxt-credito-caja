@@ -60,6 +60,7 @@ export function useWizardSolicitud(props?: WizardProps) {
     "solicitudWizardBootstrapped",
     () => false
   );
+  const currentStepIndex = useState<number>("solicitudWizardStepIndex", () => 0);
 
   const {
     form,
@@ -77,27 +78,14 @@ export function useWizardSolicitud(props?: WizardProps) {
   } = useSolicitudCreditoForm();
 
   const currentStepKey = computed(() => {
-    // Usar initialStep si se proporciona, sino usar route.params.step
-    if (props?.initialStep && isWizardStepKey(props.initialStep)) {
-      return props.initialStep;
-    }
-
-    const rawStep
-      = typeof route.params.step === "string"
-        ? route.params.step
-        : DEFAULT_WIZARD_STEP_KEY;
-    return isWizardStepKey(rawStep) ? rawStep : DEFAULT_WIZARD_STEP_KEY;
+    const stepKey = WIZARD_STEPS[currentStepIndex.value]?.key ?? DEFAULT_WIZARD_STEP_KEY;
+    return stepKey;
   });
 
-  const step = computed(() => {
-    const index = WIZARD_STEPS.findIndex(
-      wizardStep => wizardStep.key === currentStepKey.value
-    );
-    return index >= 0 ? index : 0;
-  });
+  const step = computed(() => currentStepIndex.value);
 
   const currentStep = computed(
-    () => WIZARD_STEPS[step.value] ?? WIZARD_STEPS[0]
+    () => WIZARD_STEPS[currentStepIndex.value] ?? WIZARD_STEPS[0]
   );
 
   const prettyPayload = computed(() => JSON.stringify(form.value, null, 2));
@@ -112,40 +100,29 @@ export function useWizardSolicitud(props?: WizardProps) {
     localStorage.setItem(WIZARD_STEP_STORAGE_KEY, stepKey);
   };
 
-  const goToStep = async (stepKey: string) => {
-    if (!isWizardStepKey(stepKey) || stepKey === currentStepKey.value) {
-      return;
+  const goToStep = (stepKey: string) => {
+    const index = WIZARD_STEPS.findIndex(s => s.key === stepKey);
+    if (index >= 0) {
+      currentStepIndex.value = index;
     }
-
-    await router.push(`/solicitud/${stepKey}`);
   };
 
-  const goToStepByIndex = async (index: number) => {
-    const targetStep = WIZARD_STEPS[index];
-    if (!targetStep) {
-      return;
+  const goToStepByIndex = (index: number) => {
+    if (index >= 0 && index < WIZARD_STEPS.length) {
+      currentStepIndex.value = index;
     }
-
-    await goToStep(targetStep.key);
   };
 
-  const next = async () => {
-    const nextStep
-      = WIZARD_STEPS[Math.min(step.value + 1, WIZARD_STEPS.length - 1)];
-    if (!nextStep) {
-      return;
+  const next = () => {
+    if (currentStepIndex.value < WIZARD_STEPS.length - 1) {
+      currentStepIndex.value++;
     }
-
-    await goToStep(nextStep.key);
   };
 
-  const prev = async () => {
-    const previousStep = WIZARD_STEPS[Math.max(step.value - 1, 0)];
-    if (!previousStep) {
-      return;
+  const prev = () => {
+    if (currentStepIndex.value > 0) {
+      currentStepIndex.value--;
     }
-
-    await goToStep(previousStep.key);
   };
 
   const consultarNumeroSolicitudDisponible = async () => {

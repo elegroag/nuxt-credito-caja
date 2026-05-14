@@ -6,29 +6,27 @@
         :options="tiposPersonaOptions"
         placeholder="Seleccionar tipo"
         clearable
-        required
       />
     </FormField>
 
-    <FormField label="Tipo documento">
+    <FormField label="Tipo documento" :error="errors && errors['solicitante.tipo_documento']">
       <CustomSelect
         v-model="form.solicitante.tipo_documento"
         :options="tiposDocumentoOptions"
         placeholder="Seleccionar tipo"
         clearable
-        required
       />
     </FormField>
 
-    <FormField label="Número documento">
+    <FormField label="Número documento" :error="errors && errors['solicitante.numero_documento']">
       <UInput v-model="form.solicitante.numero_documento" />
     </FormField>
 
-    <FormField label="Nombres">
+    <FormField label="Nombres" :error="errors && errors['solicitante.nombres']">
       <UInput v-model="form.solicitante.nombres" />
     </FormField>
 
-    <FormField label="Apellidos">
+    <FormField label="Apellidos" :error="errors && errors['solicitante.apellidos']">
       <UInput v-model="form.solicitante.apellidos" />
     </FormField>
 
@@ -90,11 +88,11 @@
       <UInput v-model="form.solicitante.telefono" />
     </FormField>
 
-    <FormField label="Celular">
+    <FormField label="Celular" :error="errors && errors['solicitante.celular']">
       <UInput v-model="form.solicitante.celular" />
     </FormField>
 
-    <FormField label="Dirección">
+    <FormField label="Dirección" :error="errors && errors['solicitante.direccion']">
       <UInput v-model="form.solicitante.direccion" />
     </FormField>
 
@@ -196,11 +194,11 @@ const props = withDefaults(defineProps<SolicitanteProps>(), {
   nivelesEducativos: () => [],
   tiposVivienda: () => [],
   ocupaciones: () => [],
-  estadoCiviles: () => []
+  estadoCiviles: () => [],
+  errors: () => ({})
 });
 
 const {
-  // Opciones para los selects
   tiposPersonaOptions,
   tiposDocumentoOptions,
   ocupacionesOptions,
@@ -212,25 +210,18 @@ const {
   paisesOptions,
   booleanOptions,
   tiposContratoOptions,
-
-  // Event handlers
   handleCiudadChange
 } = useSolicitanteStep(props);
 
-// Cargar parámetros para obtener nombres de cargos
 const { cargarParametros, buscarCargo } = useParametrosDetalles();
 
-// Computed para mostrar el nombre del cargo
 const cargoDisplay = computed(() => {
-  const cargoCode = props.form.solicitante.cargo;
+  const cargoCode = props.form?.solicitante?.cargo;
   if (!cargoCode) return "";
   return buscarCargo(cargoCode);
 });
 
-// Cargar parámetros al montar
 onMounted(() => {
-  cargarParametros().catch(() => {
-    // Si falla, simplemente mostrar el código
-  });
+  cargarParametros().catch(() => {});
 });
 </script>

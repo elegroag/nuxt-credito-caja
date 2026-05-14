@@ -221,13 +221,13 @@ export function useSeguimientoFirmas() {
     return iconos[estado] || "i-lucide-help-circle";
   };
 
-  // Obtener color de badge UBadge por estado
-  const getEstadoBadgeColor = (estado: string): "primary" | "success" | "warning" | "error" | "neutral" => {
-    const colores: Record<string, "primary" | "success" | "warning" | "error" | "neutral"> = {
-      PENDIENTE_FIRMADO: "warning",
-      FIRMADO: "success",
-      RECHAZADO: "error",
-      EXPIRADO: "neutral"
+  // Obtener color de badge UBadge por estado (Nuxt UI v4 colors)
+  const getEstadoBadgeColor = (estado: string): "primary" | "neutral" | "accent" | "destructive" | "muted" | undefined => {
+    const colores: Record<string, "primary" | "neutral" | "accent" | "destructive" | "muted"> = {
+      PENDIENTE_FIRMADO: "accent",
+      FIRMADO: "primary",
+      RECHAZADO: "destructive",
+      EXPIRADO: "muted"
     };
     return colores[estado] || "neutral";
   };

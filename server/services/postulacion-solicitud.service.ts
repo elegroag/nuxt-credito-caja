@@ -172,7 +172,8 @@ const postulacionSolicitudService = () => {
         tipo_credito: solicitud?.tipcre || linea_credito?.tipcre,
         moneda: solicitud?.moneda || "COP",
         cuota_mensual: solicitud?.cuota_mensual,
-        rol_en_solicitud: solicitud?.rol_en_solicitud || "T"
+        rol_en_solicitud: solicitud?.rol_en_solicitud || "T",
+        fecha_radicado: new Date()
       });
 
       // 3. Guardar payload

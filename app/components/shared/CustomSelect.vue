@@ -17,6 +17,8 @@
       :placeholder="placeholder"
       :disabled="disabled"
       :searchable="searchable"
+      value-key="value"
+      label-key="label"
       by="value"
       class="w-full"
     />

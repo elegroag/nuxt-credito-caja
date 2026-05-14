@@ -4,12 +4,6 @@
       :current-step="step"
       :total-steps="steps.length"
       :title="currentStep?.title || ''"
-      :steps="steps"
-      :primary-button-text="'Enviar'"
-      @prev="prev"
-      @next="next"
-      @step-change="goToStepByIndex"
-      @primary-action="guardarSolicitud(form)"
     />
 
     <div class="p-4 sm:p-6">
@@ -19,6 +13,7 @@
           :form="form"
           :tipos-inversion="props.parametros?.tipos_de_inversion || []"
           :fecha-radicado="fechaRadicado"
+          :errors="stepErrors"
         />
 
         <SolicitanteStep
@@ -31,6 +26,7 @@
           :tipos-vivienda="props.parametros?.tipo_vivienda || []"
           :ocupaciones="props.parametros?.ocupaciones || []"
           :estado-civiles="props.parametros?.estado_civiles || []"
+          :errors="stepErrors"
         />
 
         <ConyugeStep
@@ -38,6 +34,7 @@
           :form="form"
           :toggle-conyuge="toggleConyuge"
           :toggle-empresa-conyuge="toggleEmpresaConyuge"
+          :errors="stepErrors"
         />
 
         <LaboralStep
@@ -46,15 +43,21 @@
           :ciudades="props.parametros?.ciudades || []"
           :tipos-contrato="props.parametros?.tipo_contrato || []"
           :ocupaciones="props.parametros?.ocupaciones || []"
+          :errors="stepErrors"
         />
 
         <IngresosStep
           v-else-if="currentStepKey === 'ingresos'"
           :form="form"
           :autocalcular-ingresos="autocalcularIngresos"
+          :errors="stepErrors"
         />
 
-        <EconomicaStep v-else-if="currentStepKey === 'economica'" :form="form" />
+        <EconomicaStep
+          v-else-if="currentStepKey === 'economica'"
+          :form="form"
+          :errors="stepErrors"
+        />
 
         <PropiedadesStep
           v-else-if="currentStepKey === 'propiedades'"
@@ -62,6 +65,7 @@
           :add-propiedad="addPropiedad"
           :remove-propiedad="removePropiedad"
           :ciudades="props.parametros?.ciudades || []"
+          :errors="stepErrors"
         />
 
         <DeudasStep
@@ -69,6 +73,7 @@
           :form="form"
           :add-deuda="addDeuda"
           :remove-deuda="removeDeuda"
+          :errors="stepErrors"
         />
 
         <ReferenciasStep
@@ -76,6 +81,7 @@
           :form="form"
           :add-referencia="addReferencia"
           :remove-referencia="removeReferencia"
+          :errors="stepErrors"
         />
 
         <RevisionStep
@@ -83,9 +89,19 @@
           :pretty-payload="prettyPayload"
           :xml-text="responseFormData"
           :error-msg="errorMsg"
-          :mensaje-progreso="mensajeProgreso"
         />
       </form>
+
+      <StepContainer
+        :current-step="step"
+        :total-steps="steps.length"
+        :is-last-step="step === steps.length - 1"
+        :loading="loadingFormData"
+        class="mt-6"
+        @prev="prev"
+        @next="handleNext"
+        @submit="guardarSolicitud(form)"
+      />
     </div>
   </UCard>
 
@@ -99,9 +115,12 @@
 </template>
 
 <script setup lang="ts">
+import { computed } from "vue";
 import { useWizardSolicitud } from "~/composables/solicitud/useWizardSolicitud";
+import { useSolicitudValidation } from "~/composables/solicitud/useSolicitudValidation";
 import SuccessModal from "./SuccessModal.vue";
 import WizardHeader from "./WizardHeader.vue";
+import StepContainer from "./StepContainer.vue";
 import {
   ConyugeStep,
   DeudasStep,
@@ -134,19 +153,30 @@ const {
   guardarSolicitud,
   goToDocumentos,
   goToHome,
-  goToStepByIndex,
-  mensajeProgreso,
+  loadingFormData,
   next,
-  prettyPayload,
   prev,
-  removeDeuda,
-  removePropiedad,
-  removeReferencia,
+  prettyPayload,
   responseFormData,
   step,
   steps,
   successModalOpen,
   toggleConyuge,
-  toggleEmpresaConyuge
+  toggleEmpresaConyuge,
+  removeDeuda,
+  removePropiedad,
+  removeReferencia
 } = useWizardSolicitud(props);
+
+const { validateStep } = useSolicitudValidation();
+
+const stepErrors = computed(() => {
+  const result = validateStep(currentStepKey.value, form.value);
+  return result.errors;
+});
+
+const handleNext = () => {
+  validateStep(currentStepKey.value, form.value);
+  next();
+};
 </script>

@@ -15,96 +15,18 @@
       </div>
 
       <div class="flex items-center gap-2">
-        <UButton
-          variant="outline"
-          size="sm"
-          :disabled="currentStep === 0"
-          type="button"
-          @click="$emit('prev')"
-        >
-          <ChevronLeft class="mr-2 h-4 w-4" />
-          {{ prevText }}
-        </UButton>
-
-        <UButton
-          v-if="currentStep < totalSteps - 1"
-          size="sm"
-          type="button"
-          @click="$emit('next')"
-        >
-          {{ nextText }}
-          <ChevronRight class="ml-2 h-4 w-4" />
-        </UButton>
-
-        <template v-else>
-          <UButton
-            size="sm"
-            :disabled="primaryButtonDisabled"
-            type="button"
-            @click="$emit('primary-action')"
-          >
-            <Send class="mr-2 h-4 w-4" />
-            {{ primaryButtonText }}
-          </UButton>
-        </template>
+        <slot name="actions" />
       </div>
-    </div>
-
-    <div class="mt-6 flex flex-wrap gap-2">
-      <button
-        v-for="(step, index) in steps"
-        :key="step.key"
-        class="rounded-full px-3 py-1 text-[10px] font-bold uppercase tracking-wider transition-all"
-        :class="
-          index === currentStep
-            ? 'bg-primary text-primary-foreground shadow-sm'
-            : 'bg-muted text-muted-foreground hover:bg-accent hover:text-accent-foreground'
-        "
-        type="button"
-        @click="$emit('step-change', index)"
-      >
-        {{ step.short }}
-      </button>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ChevronLeft, ChevronRight, FileCode, Send } from "lucide-vue-next";
-
-// Definición de interfaces
-interface Step {
-  key: string
-  title: string
-  short: string
-}
-
 interface Props {
-  currentStep: number
-  totalSteps: number
-  title: string
-  steps: Step[]
-  prevText?: string
-  nextText?: string
-  primaryButtonText?: string
-  primaryButtonDisabled?: boolean
+  currentStep: number;
+  totalSteps: number;
+  title: string;
 }
 
-// Props con valores por defecto
-const props = withDefaults(defineProps<Props>(), {
-  prevText: "Atrás",
-  nextText: "Siguiente",
-  primaryButtonText: "Enviar",
-  primaryButtonDisabled: false
-});
-
-// Emits
-interface Emits {
-  (e: "prev"): void
-  (e: "next"): void
-  (e: "step-change", index: number): void
-  (e: "primary-action"): void
-}
-
-defineEmits<Emits>();
+defineProps<Props>();
 </script>
