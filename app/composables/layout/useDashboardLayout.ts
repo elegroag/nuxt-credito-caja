@@ -12,7 +12,8 @@ import {
   Users,
   List,
   Building,
-  Bell
+  Bell,
+  Settings
 } from "lucide-vue-next";
 
 // Estado compartido (singleton)
@@ -86,6 +87,14 @@ export function useDashboardLayout() {
       icon: Building,
       requiredPermissions: ["convenios.view"],
       excludedRoles: ["user_trabajador"],
+      category: "admin"
+    },
+    {
+      label: "Configuraciones",
+      to: "/admin/configuraciones",
+      abbr: _abbr("Configuraciones"),
+      icon: Settings,
+      adminOnly: true,
       category: "admin"
     },
     { label: "Perfil", to: "/dash/perfil", abbr: _abbr("Perfil"), icon: User },

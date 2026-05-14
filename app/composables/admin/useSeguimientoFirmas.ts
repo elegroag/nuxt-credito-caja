@@ -213,12 +213,23 @@ export function useSeguimientoFirmas() {
   // Obtener icono por estado
   const getEstadoIcon = (estado: string): string => {
     const iconos: Record<string, string> = {
-      PENDIENTE_FIRMADO: "lucide:clock",
-      FIRMADO: "lucide:check-circle",
-      RECHAZADO: "lucide:x-circle",
-      EXPIRADO: "lucide:alert-circle"
+      PENDIENTE_FIRMADO: "i-lucide-clock",
+      FIRMADO: "i-lucide-check-circle",
+      RECHAZADO: "i-lucide-x-circle",
+      EXPIRADO: "i-lucide-alert-circle"
     };
-    return iconos[estado] || "lucide:help-circle";
+    return iconos[estado] || "i-lucide-help-circle";
+  };
+
+  // Obtener color de badge UBadge por estado
+  const getEstadoBadgeColor = (estado: string): "primary" | "success" | "warning" | "error" | "neutral" => {
+    const colores: Record<string, "primary" | "success" | "warning" | "error" | "neutral"> = {
+      PENDIENTE_FIRMADO: "warning",
+      FIRMADO: "success",
+      RECHAZADO: "error",
+      EXPIRADO: "neutral"
+    };
+    return colores[estado] || "neutral";
   };
 
   const cargarConvenio = async () => {
@@ -271,6 +282,7 @@ export function useSeguimientoFirmas() {
     verDetalles,
     formatearFecha,
     getEstadoColor,
-    getEstadoIcon
+    getEstadoIcon,
+    getEstadoBadgeColor
   };
 }
