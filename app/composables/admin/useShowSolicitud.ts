@@ -138,7 +138,7 @@ export function useShowSolicitud() {
   const descargarDocumento = async (documento: any) => {
     try {
       const path = urlFor(
-        `/api/solicitudes/${solicitudId}/documentos/${documento.documento_uuid}/descargar`
+        `/api/solicitudes/${solicitudId}/documentos/${documento.id}/descargar`
       );
       const headers: Record<string, string> = {
         ...(authHeader.value as Record<string, string>)

@@ -75,5 +75,38 @@ export const configurations = [
     required: true,
     created_at: "2026-02-25 02:06:11.0",
     updated_at: "2026-02-25 02:06:11.0"
+  },
+  {
+    clave: "notificacion_firma",
+    valor: "true",
+    descripcion: "Habilitar notificaciones de firma digital",
+    tipo: "boolean",
+    categoria: "notificaciones",
+    editable: true,
+    required: false,
+    created_at: "2026-02-25 02:06:11.0",
+    updated_at: "2026-02-25 02:06:11.0"
+  },
+  {
+    clave: "notificacion_estado",
+    valor: "true",
+    descripcion: "Habilitar notificaciones de cambio de estado de solicitud",
+    tipo: "boolean",
+    categoria: "notificaciones",
+    editable: true,
+    required: false,
+    created_at: "2026-02-25 02:06:11.0",
+    updated_at: "2026-02-25 02:06:11.0"
+  },
+  {
+    clave: "notificacion_plazo",
+    valor: "true",
+    descripcion: "Habilitar recordatorios de plazo para obligaciones",
+    tipo: "boolean",
+    categoria: "notificaciones",
+    editable: true,
+    required: false,
+    created_at: "2026-02-25 02:06:11.0",
+    updated_at: "2026-02-25 02:06:11.0"
   }
 ];

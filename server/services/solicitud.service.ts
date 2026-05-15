@@ -107,6 +107,7 @@ const solicitudService = () => {
         solicitud_documentos: {
           select: {
             id: true,
+            documento_uuid: true,
             documento_requerido_id: true,
             nombre_original: true,
             saved_filename: true,

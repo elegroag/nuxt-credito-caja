@@ -40,3 +40,5 @@ public/img
 AGENTS.md
 payload-api-flask-pdf.json
 /.kilo
+/.hermes
+/.github

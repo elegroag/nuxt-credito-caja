@@ -1,11 +1,21 @@
 import { defineEventHandler } from "h3";
+import configurationsService from "~~/server/services/configurations.service";
 
-// frontend/server/api/auth/perfil.get.ts
 export default defineEventHandler(async (event) => {
+  let isOnline = true;
+
+  try {
+    const statusOnline = await configurationsService().getConfigurationByKey("status_online");
+    isOnline = statusOnline !== "false";
+  } catch (error) {
+    console.warn("[health] No se pudo obtener status_online de configuraciones:", error);
+  }
+
   return {
-    status: "ok",
+    status: isOnline ? "ok" : "maintenance",
     timestamp: new Date().toISOString(),
     app: "Sistema de Creditos Comfaca",
+    isOnline,
     version: "1.0.0"
   };
 });

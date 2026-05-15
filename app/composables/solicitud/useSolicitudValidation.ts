@@ -1,11 +1,17 @@
 import type { SolicitudCreditoPayload } from "~~/shared/types/payload";
+import { useConfigurations } from "~/composables/admin/useConfigurations";
 
 export interface ValidationResult {
   valid: boolean;
   errors: Record<string, string>;
 }
 
-type ValidatorFn = (form: SolicitudCreditoPayload) => ValidationResult;
+type ValidatorFn = (form: SolicitudCreditoPayload, configs: {
+  limiteCuotas: number;
+  minimaReferencias: number;
+  minimoSalario: number;
+  minimoEndeudamiento: number;
+}) => ValidationResult;
 
 const isEmpty = (value: unknown): boolean => {
   if (value === null || value === undefined) return true;
@@ -16,7 +22,11 @@ const isEmpty = (value: unknown): boolean => {
 
 const isEmptyArray = (arr: unknown[]): boolean => !Array.isArray(arr) || arr.length === 0;
 
-const validateSolicitud: ValidatorFn = (form) => {
+/**
+ * Valida el paso de solicitud (producto, rol, comprobante).
+ * También valida plazo contra limite_cuotas.
+ */
+const validateSolicitud: ValidatorFn = (form, configs) => {
   const errors: Record<string, string> = {};
 
   if (!form.solicitud.numero_comprobante?.trim()) {
@@ -31,40 +41,52 @@ const validateSolicitud: ValidatorFn = (form) => {
     errors["solicitud.producto_tipo"] = "El producto es requerido";
   }
 
+  // Validar plazo contra configuración
+  const plazo = Number(form.solicitud.plazo_meses);
+  if (plazo && plazo > configs.limiteCuotas) {
+    errors["solicitud.plazo_meses"] = `El plazo máximo permitido es de ${configs.limiteCuotas} meses`;
+  }
+
   return { valid: true, errors };
 };
 
-const validateSolicitante: ValidatorFn = (form) => {
+/**
+ * Valida el paso de datos del solicitante.
+ */
+const validateSolicitante: ValidatorFn = (_form, _configs) => {
   const errors: Record<string, string> = {};
 
-  if (!form.solicitante.tipo_documento) {
+  if (!_form.solicitante.tipo_documento) {
     errors["solicitante.tipo_documento"] = "El tipo de documento es requerido";
   }
 
-  if (!form.solicitante.numero_documento?.trim()) {
+  if (!_form.solicitante.numero_documento?.trim()) {
     errors["solicitante.numero_documento"] = "El número de documento es requerido";
   }
 
-  if (!form.solicitante.nombres?.trim()) {
+  if (!_form.solicitante.nombres?.trim()) {
     errors["solicitante.nombres"] = "Los nombres son requeridos";
   }
 
-  if (!form.solicitante.apellidos?.trim()) {
+  if (!_form.solicitante.apellidos?.trim()) {
     errors["solicitante.apellidos"] = "Los apellidos son requeridos";
   }
 
-  if (!form.solicitante.celular?.trim()) {
+  if (!_form.solicitante.celular?.trim()) {
     errors["solicitante.celular"] = "El celular es requerido";
   }
 
-  if (!form.solicitante.direccion?.trim()) {
+  if (!_form.solicitante.direccion?.trim()) {
     errors["solicitante.direccion"] = "La dirección es requerida";
   }
 
   return { valid: true, errors };
 };
 
-const validateConyuge: ValidatorFn = (form) => {
+/**
+ * Valida el paso de datos del cónyuge.
+ */
+const validateConyuge: ValidatorFn = (form, _configs) => {
   const errors: Record<string, string> = {};
 
   if (form.conyuge) {
@@ -79,7 +101,10 @@ const validateConyuge: ValidatorFn = (form) => {
   return { valid: true, errors };
 };
 
-const validateLaboral: ValidatorFn = (form) => {
+/**
+ * Valida el paso de información laboral.
+ */
+const validateLaboral: ValidatorFn = (form, _configs) => {
   const errors: Record<string, string> = {};
 
   if (!form.informacion_laboral.empresa_razon_social?.trim()) {
@@ -101,21 +126,50 @@ const validateLaboral: ValidatorFn = (form) => {
   return { valid: true, errors };
 };
 
-const validateIngresos: ValidatorFn = (form) => {
+/**
+ * Valida el paso de ingresos.
+ * Verifica salario básico vs minimo_salario y endeudamiento mínimo.
+ */
+const validateIngresos: ValidatorFn = (form, configs) => {
   const errors: Record<string, string> = {};
 
-  if (!form.ingresos_descuentos.salario_basico_mensual || form.ingresos_descuentos.salario_basico_mensual <= 0) {
+  const salario = Number(form.ingresos_descuentos.salario_basico_mensual);
+  if (!salario || salario <= 0) {
     errors["ingresos_descuentos.salario_basico_mensual"] = "El salario básico mensual es requerido";
+    return { valid: true, errors };
+  }
+
+  // Validar salario mínimo
+  if (salario < configs.minimoSalario) {
+    errors["ingresos_descuentos.salario_basico_mensual"] =
+      `El salario mínimo requerido es de $${configs.minimoSalario.toLocaleString("es-CO")} COP`;
+  }
+
+  // Validar porcentaje mínimo de endeudamiento
+  // La cuota mensual viene del objeto solicitud, no de ingresos_descuentos
+  const cuota = Number(form.solicitud?.cuota_mensual) || 0;
+  if (cuota > 0 && salario > 0) {
+    const porcentaje = (cuota / salario) * 100;
+    if (porcentaje < configs.minimoEndeudamiento) {
+      errors["solicitud.cuota_mensual"] =
+        `El porcentaje de endeudamiento mínimo permitido es ${configs.minimoEndeudamiento}%. Tu cuota representa ${porcentaje.toFixed(1)}%`;
+    }
   }
 
   return { valid: true, errors };
 };
 
-const validateEconomica: ValidatorFn = (_form) => {
+/**
+ * Valida el paso de información económica (sin validaciones complejas).
+ */
+const validateEconomica: ValidatorFn = (_form, _configs) => {
   return { valid: true, errors: {} };
 };
 
-const validatePropiedades: ValidatorFn = (form) => {
+/**
+ * Valida el paso de propiedades.
+ */
+const validatePropiedades: ValidatorFn = (form, _configs) => {
   const errors: Record<string, string> = {};
 
   form.propiedades.forEach((propiedad, index) => {
@@ -130,7 +184,10 @@ const validatePropiedades: ValidatorFn = (form) => {
   return { valid: true, errors };
 };
 
-const validateDeudas: ValidatorFn = (form) => {
+/**
+ * Valida el paso de deudas.
+ */
+const validateDeudas: ValidatorFn = (form, _configs) => {
   const errors: Record<string, string> = {};
 
   form.deudas.forEach((deuda, index) => {
@@ -145,9 +202,14 @@ const validateDeudas: ValidatorFn = (form) => {
   return { valid: true, errors };
 };
 
-const validateReferencias: ValidatorFn = (form) => {
+/**
+ * Valida el paso de referencias.
+ * Verifica cantidad mínima de referencias contra minimo_referencias.
+ */
+const validateReferencias: ValidatorFn = (form, configs) => {
   const errors: Record<string, string> = {};
 
+  // Validar referencias familiares
   if (isEmptyArray(form.referencias.familiares)) {
     errors["referencias.familiares"] = "Al menos una referencia familiar es requerida";
   } else {
@@ -161,6 +223,7 @@ const validateReferencias: ValidatorFn = (form) => {
     });
   }
 
+  // Validar referencias personales
   if (isEmptyArray(form.referencias.personales)) {
     errors["referencias.personales"] = "Al menos una referencia personal es requerida";
   } else {
@@ -174,10 +237,23 @@ const validateReferencias: ValidatorFn = (form) => {
     });
   }
 
+  // Validar cantidad mínima de referencias totales
+  const totalReferencias =
+    (form.referencias.familiares?.length || 0) +
+    (form.referencias.personales?.length || 0);
+
+  if (totalReferencias < configs.minimaReferencias) {
+    errors["referencias.total"] =
+      `Debes agregar al menos ${configs.minimaReferencias} referencias en total (actualmente tienes ${totalReferencias})`;
+  }
+
   return { valid: true, errors };
 };
 
-const validateRevision: ValidatorFn = (_form) => {
+/**
+ * Valida el paso de revisión (sin validaciones).
+ */
+const validateRevision: ValidatorFn = (_form, _configs) => {
   return { valid: true, errors: {} };
 };
 
@@ -195,6 +271,22 @@ export const stepValidators: Record<string, ValidatorFn> = {
 };
 
 export function useSolicitudValidation() {
+  const { getConfigurationAsNumber } = useConfigurations();
+
+  /**
+   * Obtiene los valores de configuración para validaciones.
+   * Se_called cada vez para que refleje cambios en la config sin recargar página.
+   */
+  const getValidationConfigs = () => ({
+    limiteCuotas: getConfigurationAsNumber("limite_cuotas", 60),
+    minimaReferencias: getConfigurationAsNumber("minima_referencias", 2),
+    minimoSalario: getConfigurationAsNumber("minimo_salario", 1300000),
+    minimoEndeudamiento: getConfigurationAsNumber("minimo_endeudamiento", 30)
+  });
+
+  /**
+   * Valida un paso específico del wizard.
+   */
   const validateStep = (
     stepKey: string,
     form: SolicitudCreditoPayload
@@ -203,11 +295,28 @@ export function useSolicitudValidation() {
     if (!validator) {
       return { valid: true, errors: {} };
     }
-    return validator(form);
+    return validator(form, getValidationConfigs());
+  };
+
+  /**
+   * Valida todos los pasos y retorna errores combinados.
+   * Útil para el resumen en el paso de revisión.
+   */
+  const validateAllSteps = (form: SolicitudCreditoPayload): Record<string, ValidationResult> => {
+    const results: Record<string, ValidationResult> = {};
+    const configs = getValidationConfigs();
+
+    Object.entries(stepValidators).forEach(([key, validator]) => {
+      results[key] = validator(form, configs);
+    });
+
+    return results;
   };
 
   return {
     validateStep,
-    stepValidators
+    validateAllSteps,
+    stepValidators,
+    getValidationConfigs
   };
 }

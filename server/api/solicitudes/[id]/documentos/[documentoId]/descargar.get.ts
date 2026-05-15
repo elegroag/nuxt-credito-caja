@@ -52,7 +52,12 @@ export default defineEventHandler(async (event: H3Event) => {
       );
     }
 
-    if (solicitud.owner_username !== session.user.username) {
+    // Admin con cualquier rol puede descargar sin restriction de ownership
+    const userRoles = (session.user as any)?.roles as string[] | undefined;
+    const isAdmin = userRoles?.includes("administrator");
+    const isOwner = solicitud.owner_username === session.user.username;
+
+    if (!isAdmin && !isOwner) {
       setResponseStatus(event, 403);
       return CustomResponse.error(
         "No tienes permiso para descargar documentos de esta solicitud",
@@ -60,7 +65,7 @@ export default defineEventHandler(async (event: H3Event) => {
       );
     }
 
-    const documento = await prisma.documentos_postulantes.findFirst({
+    const documento = await prisma.solicitud_documentos.findFirst({
       where: {
         id: BigInt(documentoId),
         solicitud_id: solicitudId,
