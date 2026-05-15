@@ -367,7 +367,7 @@ import { onMounted } from "vue";
 import EstadisticasCard from "@/components/admin/firmas/EstadisticasCard.vue";
 import CambiosRecientesPanel from "@/components/admin/firmas/CambiosRecientesPanel.vue";
 import { useMonitoreoFirmasRealTime } from "~/composables/admin/useMonitoreoFirmasRealTime";
-import { a } from "vue-router/dist/index-D_VEAp3P.js";
+
 
 definePageMeta({
   layout: "dashboard",

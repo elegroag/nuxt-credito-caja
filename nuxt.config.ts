@@ -113,14 +113,15 @@ export default defineNuxtConfig({
   compatibilityDate: "2025-01-15",
 
   nitro: {
+    preset: "node-server",
     experimental: {
       asyncContext: true
     },
     prerender: {
       routes: ["/"],
       ignore: ["/dashboard", "/dashboard/**"],
-      // Habilitar el crawling para descubrir enlaces automáticamente
-      crawlLinks: true
+      crawlLinks: true,
+      failOnError: false
     }
   },
 
