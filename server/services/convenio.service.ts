@@ -49,8 +49,8 @@ const convenioService = () => {
       tipo_empresa: convenio.tipo_empresa,
       numero_empleados: String(convenio.numero_empleados),
       estado: convenio.estado,
-      created_at: convenio.created_at?.toISOString() || null,
-      updated_at: convenio.updated_at?.toISOString() || null
+      fecha_convenio: convenio.fecha_convenio?.toLocaleDateString("es-CO") || null,
+      fecha_vencimiento: convenio.fecha_vencimiento?.toISOString() || null
     }));
   };
 
@@ -97,22 +97,22 @@ const convenioService = () => {
   };
 
   const crearConvenio = async (data: {
-    nit: string
-    razon_social: string
-    representante_documento?: string
-    representante_nombre?: string
-    telefono?: string
-    correo?: string
-    fecha_vencimiento?: string
-    estado?: string
-    direccion?: string
-    ciudad?: string
-    departamento?: string
-    sector_economico?: string
-    numero_empleados?: number
-    tipo_empresa?: string
-    descripcion?: string
-    notas_internas?: string
+    nit: string;
+    razon_social: string;
+    representante_documento?: string;
+    representante_nombre?: string;
+    telefono?: string;
+    correo?: string;
+    fecha_vencimiento?: string;
+    estado?: string;
+    direccion?: string;
+    ciudad?: string;
+    departamento?: string;
+    sector_economico?: string;
+    numero_empleados?: number;
+    tipo_empresa?: string;
+    descripcion?: string;
+    notas_internas?: string;
   }) => {
     const convenio = await prisma.empresas_convenio.create({
       data: {
@@ -122,9 +122,7 @@ const convenioService = () => {
         representante_nombre: data.representante_nombre,
         telefono: data.telefono,
         correo: data.correo,
-        fecha_vencimiento: data.fecha_vencimiento
-          ? new Date(data.fecha_vencimiento)
-          : null,
+        fecha_vencimiento: data.fecha_vencimiento ? new Date(data.fecha_vencimiento) : null,
         fecha_convenio: new Date(),
         estado: (data.estado as any) || "Activo",
         direccion: data.direccion,
@@ -142,11 +140,11 @@ const convenioService = () => {
   };
 
   const getConveniosPaginados = async (params: {
-    page: number
-    limit: number
-    estado?: string
-    nit?: string
-    busqueda?: string
+    page: number;
+    limit: number;
+    estado?: string;
+    nit?: string;
+    busqueda?: string;
   }) => {
     const { page, limit, estado, nit, busqueda } = params;
     const offset = (page - 1) * limit;
@@ -266,29 +264,28 @@ const convenioService = () => {
   const actualizarConvenio = async (
     id: number,
     data: {
-      nit?: string
-      razon_social?: string
-      representante_documento?: string
-      representante_nombre?: string
-      telefono?: string
-      correo?: string
-      fecha_vencimiento?: string
-      estado?: string
-      direccion?: string
-      ciudad?: string
-      departamento?: string
-      sector_economico?: string
-      numero_empleados?: number
-      tipo_empresa?: string
-      descripcion?: string
-      notas_internas?: string
+      nit?: string;
+      razon_social?: string;
+      representante_documento?: string;
+      representante_nombre?: string;
+      telefono?: string;
+      correo?: string;
+      fecha_vencimiento?: string;
+      estado?: string;
+      direccion?: string;
+      ciudad?: string;
+      departamento?: string;
+      sector_economico?: string;
+      numero_empleados?: number;
+      tipo_empresa?: string;
+      descripcion?: string;
+      notas_internas?: string;
     }
   ) => {
     const updateData: any = {};
 
     if (data.nit !== undefined) updateData.nit = BigInt(data.nit);
-    if (data.razon_social !== undefined)
-      updateData.razon_social = data.razon_social;
+    if (data.razon_social !== undefined) updateData.razon_social = data.razon_social;
     if (data.representante_documento !== undefined)
       updateData.representante_documento = data.representante_documento;
     if (data.representante_nombre !== undefined)
@@ -300,18 +297,12 @@ const convenioService = () => {
     if (data.estado !== undefined) updateData.estado = data.estado;
     if (data.direccion !== undefined) updateData.direccion = data.direccion;
     if (data.ciudad !== undefined) updateData.ciudad = data.ciudad;
-    if (data.departamento !== undefined)
-      updateData.departamento = data.departamento;
-    if (data.sector_economico !== undefined)
-      updateData.sector_economico = data.sector_economico;
-    if (data.numero_empleados !== undefined)
-      updateData.numero_empleados = data.numero_empleados;
-    if (data.tipo_empresa !== undefined)
-      updateData.tipo_empresa = data.tipo_empresa;
-    if (data.descripcion !== undefined)
-      updateData.descripcion = data.descripcion;
-    if (data.notas_internas !== undefined)
-      updateData.notas_internas = data.notas_internas;
+    if (data.departamento !== undefined) updateData.departamento = data.departamento;
+    if (data.sector_economico !== undefined) updateData.sector_economico = data.sector_economico;
+    if (data.numero_empleados !== undefined) updateData.numero_empleados = data.numero_empleados;
+    if (data.tipo_empresa !== undefined) updateData.tipo_empresa = data.tipo_empresa;
+    if (data.descripcion !== undefined) updateData.descripcion = data.descripcion;
+    if (data.notas_internas !== undefined) updateData.notas_internas = data.notas_internas;
 
     const convenio = await prisma.empresas_convenio.update({
       where: { id: BigInt(id) },

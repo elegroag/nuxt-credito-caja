@@ -24,13 +24,28 @@
         value-class="font-semibold text-gray-900 dark:text-white"
       />
       <InfoField
-        label="Fecha de Creación"
-        :value="fechaCreacion"
+        label="Fecha de Radicado"
+        :value="fechaRadicado"
       />
       <InfoField
         label="Línea de Crédito"
         :value="lineaCredito"
         value-class="text-gray-700 dark:text-gray-300"
+      />
+      <InfoField
+        label="TEA"
+        :value="tasaInteres"
+        value-class="font-semibold text-blue-600 dark:text-blue-400"
+      />
+      <InfoField
+        label="Tipo de Tasa"
+        :value="tipoTasa"
+        value-class="text-gray-700 dark:text-gray-300"
+      />
+      <InfoField
+        label="Cuota Estimada"
+        :value="cuotaEstimada"
+        value-class="font-bold text-emerald-600 dark:text-emerald-400"
       />
     </div>
   </SectionCard>
@@ -45,8 +60,11 @@ interface Props {
   numeroSolicitud: string
   montoSolicitado: string
   plazoMeses: number
-  fechaCreacion: string
+  fechaRadicado: string
   lineaCredito: string
+  tasaInteres: string
+  tipoTasa: string
+  cuotaEstimada: string
 }
 
 const props = defineProps<Props>();

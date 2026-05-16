@@ -66,8 +66,11 @@
           :numero-solicitud="numeroSolicitudDisplay"
           :monto-solicitado="fmtMoney(solicitud?.valor_solicitud || 0)"
           :plazo-meses="solicitud.plazo_meses || 0"
-          :fecha-creacion="fmtDate(solicitud.created_at)"
+          :fecha-radicado="fmtDate(solicitud?.fecha_radicado)"
           :linea-credito="solicitud?.detalle_modalidad || '-'"
+          :tasa-interes="fmtPct(solicitud?.tasa_interes)"
+          :tipo-tasa="'TEA (Tasa Efectiva Anual)'"
+          :cuota-estimada="fmtMoney(solicitud?.cuota_mensual)"
         />
 
         <!-- Acciones -->
@@ -161,6 +164,7 @@ const {
   // Funciones de utilidad
   fmtMoney,
   fmtDate,
+  fmtPct,
 
   // Funciones principales
   cargarSolicitud,

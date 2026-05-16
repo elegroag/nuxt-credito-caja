@@ -112,6 +112,13 @@ export const useSolicitudDetailsPage = () => {
     });
   };
 
+  const fmtPct = (value: number | string | undefined) => {
+    if (value === undefined || value === null) return "-";
+    const num = typeof value === "string" ? parseFloat(value) : value;
+    if (isNaN(num)) return "-";
+    return `${num.toFixed(2).replace(".", ",")}%`;
+  };
+
   const cargarSolicitud = async () => {
     loading.value = true;
     error.value = null;
@@ -241,6 +248,7 @@ export const useSolicitudDetailsPage = () => {
     // Funciones de utilidad
     fmtMoney,
     fmtDate,
+    fmtPct,
 
     // Funciones principales
     cargarSolicitud,
