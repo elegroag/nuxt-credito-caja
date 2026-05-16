@@ -9,7 +9,7 @@
         <UInput v-model="(form as any).solicitud.numero_solicitud" disabled />
       </FormField>
       <FormField label="Número comprobante" :error="errors && errors['solicitud.numero_comprobante']">
-        <UInput v-model="(form as any).solicitud.numero_comprobante" />
+        <UInput v-model="(form as any).solicitud.numero_comprobante" disabled />
       </FormField>
       <FormField label="Valor solicitud">
         <UInput v-model.number="(form as any).solicitud.valor_solicitud" type="number" min="0" disabled />
@@ -35,6 +35,7 @@
           v-model="(form as any).solicitud.producto_tipo"
           :options="productosOptions"
           placeholder="Seleccionar producto"
+          disabled
         />
       </FormField>
       <FormField label="Linea de crédito">

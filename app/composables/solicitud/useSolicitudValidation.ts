@@ -23,22 +23,14 @@ const isEmpty = (value: unknown): boolean => {
 const isEmptyArray = (arr: unknown[]): boolean => !Array.isArray(arr) || arr.length === 0;
 
 /**
- * Valida el paso de solicitud (producto, rol, comprobante).
- * También valida plazo contra limite_cuotas.
+ * Valida el paso de solicitud (rol, plazo).
+ * numero_comprobante y producto_tipo se setean desde backend.
  */
 const validateSolicitud: ValidatorFn = (form, configs) => {
   const errors: Record<string, string> = {};
 
-  if (!form.solicitud.numero_comprobante?.trim()) {
-    errors["solicitud.numero_comprobante"] = "El número de comprobante es requerido";
-  }
-
   if (!form.solicitud.rol_en_solicitud) {
     errors["solicitud.rol_en_solicitud"] = "El rol en solicitud es requerido";
-  }
-
-  if (!form.solicitud.producto_tipo) {
-    errors["solicitud.producto_tipo"] = "El producto es requerido";
   }
 
   // Validar plazo contra configuración
