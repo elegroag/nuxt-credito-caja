@@ -19,7 +19,7 @@
     </FormField>
 
     <FormField label="Número documento" :error="errors && errors['solicitante.numero_documento']">
-      <UInput v-model="form.solicitante.numero_documento" />
+      <UInput v-model="form.solicitante.numero_documento" disabled />
     </FormField>
 
     <FormField label="Nombres" :error="errors && errors['solicitante.nombres']">
@@ -31,11 +31,11 @@
     </FormField>
 
     <FormField label="Razón social (opcional)">
-      <UInput v-model="form.informacion_laboral.empresa_razon_social" />
+      <UInput v-model="form.informacion_laboral.empresa_razon_social" disabled />
     </FormField>
 
     <FormField label="NIT (opcional)">
-      <UInput v-model="form.informacion_laboral.empresa_nit" />
+      <UInput v-model="form.informacion_laboral.empresa_nit" disabled />
     </FormField>
 
     <FormField label="Fecha nacimiento">
@@ -153,11 +153,11 @@
     </FormField>
 
     <FormField label="Salario (opcional)">
-      <UInput v-model.number="form.solicitante.salario" type="number" min="0" />
+      <UInput v-model.number="form.solicitante.salario" type="number" min="0" disabled />
     </FormField>
 
     <FormField label="Código categoría">
-      <UInput v-model="form.solicitante.codigo_categoria" />
+      <UInput v-model="form.solicitante.codigo_categoria" disabled />
     </FormField>
 
     <FormField label="Antigüedad (meses, opcional)">
