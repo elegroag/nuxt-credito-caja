@@ -15,6 +15,7 @@
         :options="tiposDocumentoOptions"
         placeholder="Seleccionar tipo"
         clearable
+        disabled
       />
     </FormField>
 
