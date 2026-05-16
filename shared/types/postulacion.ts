@@ -11,6 +11,7 @@ export interface GuardarSolicitudCreditoParams {
   tasa_interes: number;
   estado: string;
   producto_tipo?: string;
+  numero_comprobante?: string;
   ha_tenido_credito?: boolean;
   detalle_modalidad?: string;
   tipo_credito?: string;

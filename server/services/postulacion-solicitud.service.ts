@@ -159,6 +159,7 @@ const postulacionSolicitudService = () => {
       }
 
       // 3. Guardar solicitud de crédito
+      const productoTipoBackend = linea_credito?.tipcre || solicitud?.producto_tipo || null;
       const solicitudCredito = await guardarSolicitudCredito({
         numero_solicitud: numeroSolicitudRadicado,
         owner_username: solicitud?.owner_username || "",
@@ -166,7 +167,7 @@ const postulacionSolicitudService = () => {
         plazo_meses: solicitud?.plazo_meses || 0,
         tasa_interes: solicitud?.tasa_interes || 0,
         estado: solicitud?.estado || estadoInicial.id,
-        producto_tipo: solicitud?.producto_tipo,
+        producto_tipo: productoTipoBackend,
         ha_tenido_credito: solicitud?.ha_tenido_credito,
         detalle_modalidad: solicitud?.detalle_modalidad,
         tipo_credito: solicitud?.tipcre || linea_credito?.tipcre,
@@ -176,7 +177,20 @@ const postulacionSolicitudService = () => {
         fecha_radicado: new Date()
       });
 
-      // 3. Guardar payload
+      // 4. Obtener numeric_secuencia para numero_comprobante
+      const numeroSolicitudRecord = await prisma.numero_solicitudes.findUnique({
+        where: { radicado: numeroSolicitudRadicado }
+      });
+
+      if (numeroSolicitudRecord) {
+        const numeroComprobante = String(numeroSolicitudRecord.numeric_secuencia).padStart(6, "0");
+        await prisma.solicitudes_credito.update({
+          where: { numero_solicitud: numeroSolicitudRadicado },
+          data: { numero_comprobante: numeroComprobante }
+        });
+      }
+
+      // 5. Guardar payload
       await guardarPayload({
         solicitud_id: numeroSolicitudRadicado,
         informacion_laboral,
