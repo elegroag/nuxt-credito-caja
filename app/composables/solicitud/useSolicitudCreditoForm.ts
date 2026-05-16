@@ -60,6 +60,7 @@ const createInitialSolicitudCreditoForm = (): SolicitudCreditoPayload => ({
     tipo_contrato: "",
     sector_economico: "",
     codigo_categoria: "",
+    tipo_vivienda: "",
     nombres_apellidos: ""
   },
   conyuge: undefined,

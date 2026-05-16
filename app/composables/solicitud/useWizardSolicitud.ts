@@ -328,6 +328,10 @@ export function useWizardSolicitud(props?: WizardProps) {
         = trabajador.antiguedad_meses
           || form.value.solicitante.antiguedad_meses
           || 0;
+      form.value.solicitante.tipo_vivienda
+        = trabajador.tipo_vivienda
+          || form.value.solicitante.tipo_vivienda
+          || "";
 
       // Datos de la empresa
       const nit = trabajador.nit || trabajador.empresa_cedrep;
