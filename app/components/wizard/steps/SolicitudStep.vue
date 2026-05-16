@@ -8,9 +8,6 @@
       <FormField label="Número solicitud">
         <UInput v-model="(form as any).solicitud.numero_solicitud" disabled />
       </FormField>
-      <FormField label="Número comprobante" :error="errors && errors['solicitud.numero_comprobante']">
-        <UInput v-model="(form as any).solicitud.numero_comprobante" disabled />
-      </FormField>
       <FormField label="Valor solicitud">
         <UInput v-model.number="(form as any).solicitud.valor_solicitud" type="number" min="0" disabled />
       </FormField>
@@ -29,14 +26,6 @@
       </FormField>
       <FormField label="Plazo (meses)">
         <UInput v-model.number="(form as any).solicitud.plazo_meses" type="number" min="1" disabled />
-      </FormField>
-      <FormField label="Producto" :error="errors && errors['solicitud.producto_tipo']">
-        <CustomSelect
-          v-model="(form as any).solicitud.producto_tipo"
-          :options="productosOptions"
-          placeholder="Seleccionar producto"
-          disabled
-        />
       </FormField>
       <FormField label="Linea de crédito">
         <UInput
@@ -67,7 +56,6 @@ import CustomSelect from "~/components/shared/CustomSelect.vue";
 
 const props = defineProps<{
   form: any;
-  tiposInversion?: readonly { tipinv: string; detalle: string }[];
   fechaRadicado?: string;
   errors?: Record<string, string>;
 }>();
@@ -78,21 +66,4 @@ const rolesOptions = [
   { label: "Codeudor", value: "C" },
   { label: "Empleador", value: "E" }
 ];
-
-const productosOptions = computed(() => {
-  return (props.tiposInversion || []).map((tipo) => ({
-    label: tipo.detalle,
-    value: tipo.tipinv
-  }));
-});
-
-watch(
-  () => props.form?.solicitud?.producto_tipo,
-  (newValue) => {
-    if (typeof newValue === "object" && newValue !== null && "value" in newValue) {
-      (props.form as any).solicitud.producto_tipo = "";
-    }
-  },
-  { immediate: true, deep: true }
-);
 </script>
