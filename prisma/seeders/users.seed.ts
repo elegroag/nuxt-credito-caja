@@ -1,7 +1,7 @@
 export const users = [
   {
     id: 1,
-    username: "elegro",
+    username: "edwin.legro",
     email: "soportesistemas.comfaca@gmail.com",
     full_name: "Edwin Andres Legro Agudelo",
     phone: "3157145942",

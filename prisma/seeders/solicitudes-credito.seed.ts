@@ -1,10 +1,10 @@
 export const solicitudesCredito = [
   {
     numero_solicitud: "000002-202603-01",
-    owner_username: "elegro",
+    owner_username: "edwin.legro",
     valor_solicitud: 7000000.0,
     plazo_meses: 60,
-    tasa_interes: 14.0,
+    tasa_interes: 14,
     estado: "ENVIADO_VALIDACION",
     pdf_generado: {
       api_path:
@@ -22,6 +22,7 @@ export const solicitudesCredito = [
     cuota_mensual: 159898.0,
     created_at: "2026-03-18 01:30:33.0",
     updated_at: "2026-03-18 02:02:04.0",
-    rol_en_solicitud: "T"
+    rol_en_solicitud: "T",
+    numero_comprobante: "000002"
   }
 ];

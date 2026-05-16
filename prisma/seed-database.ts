@@ -32,6 +32,8 @@ async function main() {
   await seedSessions();
   await seedPersonalAccessTokens();
   // await seedNotifications();
+  await resetUsersAndSolicitudes();
+  await seedUsers();
   await seedNumeroSolicitudes();
   await seedSolicitudesCredito();
   await seedSolicitudSolicitante();
@@ -42,6 +44,18 @@ async function main() {
   // await seedPdfsGenerados();
   await seedFirmantesSolicitud();
   await seedConfigurations();
+}
+
+async function resetSolicitudesTables() {
+  console.log("Limpiando tablas de solicitudes...");
+  await prisma.solicitud_documentos.deleteMany({});
+  await prisma.firmantes_solicitud.deleteMany({});
+  await prisma.solicitud_timeline.deleteMany({});
+  await prisma.solicitud_payload.deleteMany({});
+  await prisma.solicitud_solicitante.deleteMany({});
+  await prisma.solicitudes_credito.deleteMany({});
+  await prisma.numero_solicitudes.deleteMany({});
+  console.log("✅ Tablas de solicitudes limpiadas");
 }
 
 async function seedConfigurations() {
@@ -104,6 +118,19 @@ async function seedUsers() {
   } else {
     console.log("⏭️  Users already seeded");
   }
+}
+
+async function resetUsersAndSolicitudes() {
+  console.log("Limpiando users y solicitudes...");
+  await prisma.solicitud_documentos.deleteMany({});
+  await prisma.firmantes_solicitud.deleteMany({});
+  await prisma.solicitud_timeline.deleteMany({});
+  await prisma.solicitud_payload.deleteMany({});
+  await prisma.solicitud_solicitante.deleteMany({});
+  await prisma.solicitudes_credito.deleteMany({});
+  await prisma.numero_solicitudes.deleteMany({});
+  await prisma.users.deleteMany({});
+  console.log("✅ Users y solicitudes limpiados");
 }
 
 async function seedRoles() {

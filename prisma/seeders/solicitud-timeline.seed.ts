@@ -5,7 +5,7 @@ export const solicitudTimeline = [
     estado: "POSTULADO",
     fecha: "2026-03-18 01:30:34.0",
     detalle: "Solicitud 000002-202603-01 creada exitosamente en el sistema",
-    usuario_username: "elegro",
+    usuario_username: "edwin.legro",
     automatico: true,
     created_at: "2026-03-18 01:30:34.0",
     updated_at: "2026-03-18 01:30:34.0"

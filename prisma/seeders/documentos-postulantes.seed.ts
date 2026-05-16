@@ -1,7 +1,7 @@
 export const documentosPostulantes = [
   {
     id: 22,
-    username: "elegro",
+    username: "edwin.legro",
     tipo_documento: "pdf",
     nombre_original: "solicitud_000002-202603-01_20260318_020203.pdf",
     saved_filename: "solicitud_000002-202603-01_20260318_020203.pdf",
