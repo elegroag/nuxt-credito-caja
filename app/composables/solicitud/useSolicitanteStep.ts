@@ -80,9 +80,8 @@ export const useSolicitanteStep = (props: SolicitanteProps) => {
 
   // Opciones para tipo de contrato
   const tiposContratoOptions = computed(() => [
-    { label: "Fijo", value: "fijo" },
-    { label: "Término Indefinido", value: "termino_indefinido" },
-    { label: "Tiempo Parcial", value: "tiempo_parcial" }
+    { label: "Fijo", value: "F" },
+    { label: "Término Indefinido", value: "I" }
   ]);
 
   // Event handlers

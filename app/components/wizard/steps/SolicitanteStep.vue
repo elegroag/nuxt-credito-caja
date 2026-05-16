@@ -167,10 +167,11 @@
 
     <FormField label="Tipo contrato (opcional)">
       <CustomSelect
-        v-model="form.solicitante.tipo_contrato"
+        v-model="form.informacion_laboral.tipo_contrato"
         :options="tiposContratoOptions"
         placeholder="Seleccionar tipo"
         clearable
+        disabled
       />
     </FormField>
 

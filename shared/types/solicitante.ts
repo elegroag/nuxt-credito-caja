@@ -8,7 +8,7 @@ import type {
   SexoParam,
   TipoViviendaParam
 } from "./parametros";
-import type { InformacionLaboral } from "./payload";
+import type { InformacionLaboral, SolicitudCreditoPayload } from "./payload";
 
 export interface SolicitanteBasic {
   email: string;
@@ -60,7 +60,7 @@ export interface SolicitanteBackend extends Solicitante {
 }
 
 export interface SolicitanteProps {
-  form: any;
+  form: SolicitudCreditoPayload;
   ciudades?: readonly CiudadOption[];
   tiposDocumento?: readonly CodigoTipoDocumento[];
   sexos?: readonly SexoParam[];

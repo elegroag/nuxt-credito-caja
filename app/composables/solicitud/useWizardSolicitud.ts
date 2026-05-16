@@ -25,7 +25,7 @@ export const WIZARD_STEPS: WizardStep[] = [
 export const DEFAULT_WIZARD_STEP_KEY = WIZARD_STEPS[0]?.key ?? "solicitud";
 
 export const isWizardStepKey = (value: string): boolean => {
-  return WIZARD_STEPS.some(step => step.key === value);
+  return WIZARD_STEPS.some((step) => step.key === value);
 };
 
 export const getStoredWizardStepKey = (): string => {
@@ -34,9 +34,7 @@ export const getStoredWizardStepKey = (): string => {
   }
 
   const storedStep = localStorage.getItem(WIZARD_STEP_STORAGE_KEY);
-  return storedStep && isWizardStepKey(storedStep)
-    ? storedStep
-    : DEFAULT_WIZARD_STEP_KEY;
+  return storedStep && isWizardStepKey(storedStep) ? storedStep : DEFAULT_WIZARD_STEP_KEY;
 };
 
 export function useWizardSolicitud(props?: WizardProps) {
@@ -56,10 +54,7 @@ export function useWizardSolicitud(props?: WizardProps) {
   const successModalOpen = ref(false);
   const pdfGenerado = ref(false);
   const mensajeProgreso = ref("");
-  const wizardBootstrapped = useState<boolean>(
-    "solicitudWizardBootstrapped",
-    () => false
-  );
+  const wizardBootstrapped = useState<boolean>("solicitudWizardBootstrapped", () => false);
   const currentStepIndex = useState<number>("solicitudWizardStepIndex", () => 0);
 
   const {
@@ -84,9 +79,7 @@ export function useWizardSolicitud(props?: WizardProps) {
 
   const step = computed(() => currentStepIndex.value);
 
-  const currentStep = computed(
-    () => WIZARD_STEPS[currentStepIndex.value] ?? WIZARD_STEPS[0]
-  );
+  const currentStep = computed(() => WIZARD_STEPS[currentStepIndex.value] ?? WIZARD_STEPS[0]);
 
   const prettyPayload = computed(() => JSON.stringify(form.value, null, 2));
 
@@ -101,7 +94,7 @@ export function useWizardSolicitud(props?: WizardProps) {
   };
 
   const goToStep = (stepKey: string) => {
-    const index = WIZARD_STEPS.findIndex(s => s.key === stepKey);
+    const index = WIZARD_STEPS.findIndex((s) => s.key === stepKey);
     if (index >= 0) {
       currentStepIndex.value = index;
     }
@@ -130,9 +123,7 @@ export function useWizardSolicitud(props?: WizardProps) {
       const datosSimulador = getDatosParaSolicitud();
 
       if (!datosSimulador?.lineaCredito?.tipcre) {
-        console.warn(
-          "No hay línea de crédito disponible para consultar número"
-        );
+        console.warn("No hay línea de crédito disponible para consultar número");
         return;
       }
 
@@ -187,9 +178,7 @@ export function useWizardSolicitud(props?: WizardProps) {
       const datosSimulador = getDatosParaSolicitud();
       if (datosSimulador) {
         form.value.solicitud.valor_solicitud = datosSimulador.valorSolicitud;
-        form.value.solicitud.cuota_mensual = Math.round(
-          datosSimulador.cuotaMensual
-        );
+        form.value.solicitud.cuota_mensual = Math.round(datosSimulador.cuotaMensual);
         form.value.solicitud.plazo_meses = datosSimulador.plazoMeses;
 
         if (datosSimulador.lineaCredito) {
@@ -211,8 +200,7 @@ export function useWizardSolicitud(props?: WizardProps) {
 
           form.value.solicitud.tipcre = datosSimulador.lineaCredito.tipcre;
           form.value.solicitud.modxml4 = datosSimulador.lineaCredito.modxml4;
-          form.value.solicitud.detalle_modalidad
-            = datosSimulador.lineaCredito.detalle;
+          form.value.solicitud.detalle_modalidad = datosSimulador.lineaCredito.detalle;
         }
       }
     }
@@ -221,17 +209,12 @@ export function useWizardSolicitud(props?: WizardProps) {
     let trabajador: any = null;
     if (import.meta.client) {
       try {
-        const trabajadorStorage = localStorage.getItem(
-          "comfaca_credito_trabaajdor"
-        );
+        const trabajadorStorage = localStorage.getItem("comfaca_credito_trabaajdor");
         if (trabajadorStorage) {
           trabajador = JSON.parse(trabajadorStorage);
         }
       } catch (error) {
-        console.error(
-          "Error leyendo datos del trabajador del localStorage:",
-          error
-        );
+        console.error("Error leyendo datos del trabajador del localStorage:", error);
       }
     }
 
@@ -242,15 +225,13 @@ export function useWizardSolicitud(props?: WizardProps) {
 
     if (trabajador) {
       form.value.solicitante.tipo_persona = "natural";
-      form.value.solicitante.tipo_documento
-        = trabajador.coddoc
-          || trabajador.tipo_documento
-          || form.value.solicitante.tipo_documento;
-      form.value.solicitante.numero_documento
-        = trabajador.cedtra
-          || trabajador.cedula
-          || trabajador.numero_documento
-          || form.value.solicitante.numero_documento;
+      form.value.solicitante.tipo_documento =
+        trabajador.coddoc || trabajador.tipo_documento || form.value.solicitante.tipo_documento;
+      form.value.solicitante.numero_documento =
+        trabajador.cedtra ||
+        trabajador.cedula ||
+        trabajador.numero_documento ||
+        form.value.solicitante.numero_documento;
       form.value.solicitante.nombres = [
         trabajador.prinom || trabajador.primer_nombre,
         trabajador.segnom || trabajador.segundo_nombre
@@ -265,124 +246,86 @@ export function useWizardSolicitud(props?: WizardProps) {
         .filter(Boolean)
         .join(" ")
         .trim();
-      form.value.solicitante.fecha_nacimiento
-        = trabajador.fecnac
-          || trabajador.fecha_nacimiento
-          || form.value.solicitante.fecha_nacimiento;
-      form.value.solicitante.genero
-        = trabajador.sexo || trabajador.genero || form.value.solicitante.genero;
-      form.value.solicitante.estado_civil
-        = trabajador.estciv
-          || trabajador.estado_civil
-          || form.value.solicitante.estado_civil;
-      form.value.solicitante.nivel_educativo
-        = trabajador.nivedu
-          || trabajador.nivel_educativo
-          || form.value.solicitante.nivel_educativo;
-      form.value.solicitante.profesion
-        = trabajador.cargo
-          || trabajador.profesion
-          || form.value.solicitante.profesion;
-      form.value.solicitante.email
-        = trabajador.email || form.value.solicitante.email;
-      form.value.solicitante.telefono
-        = trabajador.telefono || form.value.solicitante.telefono;
-      form.value.solicitante.celular
-        = trabajador.telefono
-          || trabajador.celular
-          || form.value.solicitante.celular;
-      form.value.solicitante.direccion
-        = trabajador.direccion || form.value.solicitante.direccion;
-      form.value.solicitante.barrio
-        = trabajador.barrio
-          || trabajador.direccion
-          || form.value.solicitante.barrio;
-      form.value.solicitante.ciudad
-        = trabajador.codciu
-          || trabajador.ciudad_codigo
-          || trabajador.ciudad
-          || form.value.solicitante.ciudad;
-      form.value.solicitante.departamento
-        = trabajador.departamento
-          || form.value.solicitante.departamento
-          || "Caquetá";
-      form.value.solicitante.cargo
-        = trabajador.cargo || form.value.solicitante.cargo;
-      form.value.solicitante.salario
-        = trabajador.salario || form.value.solicitante.salario;
-      form.value.solicitante.codigo_categoria
-        = trabajador.codcat
-          || trabajador.codigo_categoria
-          || form.value.solicitante.codigo_categoria;
-      form.value.solicitud.categoria
-        = trabajador.codcat
-          || trabajador.codigo_categoria
-          || form.value.solicitud.categoria;
-      form.value.solicitante.pais_residencia
-        = trabajador.pais_residencia || "CO";
-      form.value.solicitante.personas_a_cargo
-        = trabajador.personas_a_cargo
-          || form.value.solicitante.personas_a_cargo
-          || 0;
-      form.value.solicitante.antiguedad_meses
-        = trabajador.antiguedad_meses
-          || form.value.solicitante.antiguedad_meses
-          || 0;
-      form.value.solicitante.tipo_vivienda
-        = trabajador.tipo_vivienda
-          || form.value.solicitante.tipo_vivienda
-          || "";
+      form.value.solicitante.fecha_nacimiento =
+        trabajador.fecnac || trabajador.fecha_nacimiento || form.value.solicitante.fecha_nacimiento;
+      form.value.solicitante.genero =
+        trabajador.sexo || trabajador.genero || form.value.solicitante.genero;
+      form.value.solicitante.estado_civil =
+        trabajador.estciv || trabajador.estado_civil || form.value.solicitante.estado_civil;
+      form.value.solicitante.nivel_educativo =
+        trabajador.nivedu || trabajador.nivel_educativo || form.value.solicitante.nivel_educativo;
+      form.value.solicitante.profesion =
+        trabajador.cargo || trabajador.profesion || form.value.solicitante.profesion;
+      form.value.solicitante.email = trabajador.email || form.value.solicitante.email;
+      form.value.solicitante.telefono = trabajador.telefono || form.value.solicitante.telefono;
+      form.value.solicitante.celular =
+        trabajador.telefono || trabajador.celular || form.value.solicitante.celular;
+      form.value.solicitante.direccion = trabajador.direccion || form.value.solicitante.direccion;
+      form.value.solicitante.barrio =
+        trabajador.barrio || trabajador.direccion || form.value.solicitante.barrio;
+      form.value.solicitante.ciudad =
+        trabajador.codciu ||
+        trabajador.ciudad_codigo ||
+        trabajador.ciudad ||
+        form.value.solicitante.ciudad;
+      form.value.solicitante.departamento =
+        trabajador.departamento || form.value.solicitante.departamento || "Caquetá";
+      form.value.solicitante.cargo = trabajador.cargo || form.value.solicitante.cargo;
+      form.value.solicitante.salario = trabajador.salario || form.value.solicitante.salario;
+      form.value.solicitante.codigo_categoria =
+        trabajador.codcat || trabajador.codigo_categoria || form.value.solicitante.codigo_categoria;
+      form.value.solicitud.categoria =
+        trabajador.codcat || trabajador.codigo_categoria || form.value.solicitud.categoria;
+      form.value.solicitante.pais_residencia = trabajador.pais_residencia || "CO";
+      form.value.solicitante.personas_a_cargo =
+        trabajador.personas_a_cargo || form.value.solicitante.personas_a_cargo || 0;
+      form.value.solicitante.antiguedad_meses =
+        trabajador.antiguedad_meses || form.value.solicitante.antiguedad_meses || 0;
+      form.value.solicitante.tipo_vivienda =
+        trabajador.vivienda || form.value.solicitante.tipo_vivienda || "";
 
       // Datos de la empresa
       const nit = trabajador.nit || trabajador.empresa_cedrep;
       const razonSocial = trabajador.razsoc || trabajador.empresa_razsoc;
-      const empresaDireccion
-        = trabajador.empresa_direccion || trabajador.dirlab;
-      const empresaTelefono
-        = trabajador.empresa_telefono || trabajador.telefono;
+      const empresaDireccion = trabajador.empresa_direccion || trabajador.dirlab;
+      const empresaTelefono = trabajador.empresa_telefono || trabajador.telefono;
       const empresaCiudad = trabajador.empresa_codciu || trabajador.codciu;
       const representanteLegal = trabajador.repleg || trabajador.empresa_repleg;
       const representanteCedula = trabajador.empresa_cedrep;
 
       if (nit) {
         form.value.solicitante.nit = nit || form.value.solicitante.nit;
-        form.value.solicitante.razon_social
-          = razonSocial || form.value.solicitante.razon_social;
-        form.value.informacion_laboral.empresa_razon_social
-          = razonSocial || form.value.informacion_laboral.empresa_razon_social;
-        form.value.informacion_laboral.empresa_nit
-          = nit || form.value.informacion_laboral.empresa_nit;
-        form.value.informacion_laboral.empresa_telefono
-          = empresaTelefono || form.value.informacion_laboral.empresa_telefono;
-        form.value.informacion_laboral.empresa_direccion
-          = empresaDireccion || form.value.informacion_laboral.empresa_direccion;
-        form.value.informacion_laboral.empresa_ciudad
-          = empresaCiudad || form.value.informacion_laboral.empresa_ciudad;
-        form.value.informacion_laboral.cargo
-          = trabajador.cargo || form.value.informacion_laboral.cargo;
-        form.value.informacion_laboral.fecha_ingreso
-          = trabajador.fecafi
-            || trabajador.fecha_afiliacion
-            || trabajador.fecha_ingreso
-            || form.value.informacion_laboral.fecha_ingreso;
-        form.value.informacion_laboral.tiempo_servicio
-          = trabajador.tiempo_servicio
-            || form.value.informacion_laboral.tiempo_servicio
-            || 1;
-        form.value.informacion_laboral.tiempo_servicio_unidad
-          = trabajador.tiempo_servicio_unidad
-            || form.value.informacion_laboral.tiempo_servicio_unidad
-            || "anios";
-        form.value.informacion_laboral.tipo_contrato
-          = trabajador.tipcon || form.value.informacion_laboral.tipo_contrato;
+        form.value.solicitante.razon_social = razonSocial || form.value.solicitante.razon_social;
+        form.value.informacion_laboral.empresa_razon_social =
+          razonSocial || form.value.informacion_laboral.empresa_razon_social;
+        form.value.informacion_laboral.empresa_nit =
+          nit || form.value.informacion_laboral.empresa_nit;
+        form.value.informacion_laboral.empresa_telefono =
+          empresaTelefono || form.value.informacion_laboral.empresa_telefono;
+        form.value.informacion_laboral.empresa_direccion =
+          empresaDireccion || form.value.informacion_laboral.empresa_direccion;
+        form.value.informacion_laboral.empresa_ciudad =
+          empresaCiudad || form.value.informacion_laboral.empresa_ciudad;
+        form.value.informacion_laboral.cargo =
+          trabajador.cargo || form.value.informacion_laboral.cargo;
+        form.value.informacion_laboral.fecha_ingreso =
+          trabajador.fecafi ||
+          trabajador.fecha_afiliacion ||
+          trabajador.fecha_ingreso ||
+          form.value.informacion_laboral.fecha_ingreso;
+        form.value.informacion_laboral.tiempo_servicio =
+          trabajador.tiempo_servicio || form.value.informacion_laboral.tiempo_servicio || 1;
+        form.value.informacion_laboral.tiempo_servicio_unidad =
+          trabajador.tiempo_servicio_unidad ||
+          form.value.informacion_laboral.tiempo_servicio_unidad ||
+          "anios";
+        form.value.informacion_laboral.tipo_contrato =
+          trabajador.tipcon || form.value.informacion_laboral.tipo_contrato;
       }
 
       if (trabajador.salario) {
-        form.value.ingresos_descuentos.salario_basico_mensual
-          = trabajador.salario;
-        form.value.ingresos_descuentos.salud_pension = Math.round(
-          trabajador.salario * 0.08
-        );
+        form.value.ingresos_descuentos.salario_basico_mensual = trabajador.salario;
+        form.value.ingresos_descuentos.salud_pension = Math.round(trabajador.salario * 0.08);
       }
     }
 
@@ -424,9 +367,7 @@ export function useWizardSolicitud(props?: WizardProps) {
     await router.push(`/dash/solicitud/documentos/${id}`);
   };
 
-  const guardarSolicitud = async (
-    payloadForm: SolicitudCreditoPayload
-  ): Promise<boolean> => {
+  const guardarSolicitud = async (payloadForm: SolicitudCreditoPayload): Promise<boolean> => {
     pdfGenerado.value = false;
     mensajeProgreso.value = "Generando solicitud...";
     loadingFormData.value = true;
@@ -474,13 +415,13 @@ export function useWizardSolicitud(props?: WizardProps) {
       responseFormData.value = "";
 
       if (
-        typeof error === "object"
-        && error !== null
-        && "data" in error
-        && typeof error.data === "object"
-        && error.data !== null
-        && "error" in error.data
-        && typeof error.data.error === "string"
+        typeof error === "object" &&
+        error !== null &&
+        "data" in error &&
+        typeof error.data === "object" &&
+        error.data !== null &&
+        "error" in error.data &&
+        typeof error.data.error === "string"
       ) {
         errorMsg.value = error.data.error;
       } else if (error instanceof Error) {
