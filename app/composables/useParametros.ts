@@ -72,6 +72,10 @@ export const useParametros = () => {
     return parametrosCache.value?.periodos_de_pago || [];
   });
 
+  const getSectoresEconomicos = computed(() => {
+    return parametrosCache.value?.sectores_economicos || [];
+  });
+
   const getFondosCreditoSocial = computed(() => {
     return parametrosCache.value?.fondos_de_credito_social || [];
   });
@@ -154,6 +158,7 @@ export const useParametros = () => {
     getDatosGeneralesCredito,
     getFormasPago,
     getGarantiasPago,
+    getSectoresEconomicos,
     getTiposCreditoVigencia,
     getTiposInversion,
     getTiposDocumentosRequeridos,

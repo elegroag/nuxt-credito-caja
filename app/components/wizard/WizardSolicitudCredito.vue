@@ -26,6 +26,7 @@
           :tipos-vivienda="props.parametros?.tipo_vivienda || []"
           :ocupaciones="props.parametros?.ocupaciones || []"
           :estado-civiles="props.parametros?.estado_civiles || []"
+          :sectores-economicos="props.parametros?.sectores_economicos || []"
           :errors="stepErrors"
         />
 

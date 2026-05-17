@@ -21,6 +21,7 @@ import type {
   Paises,
   PeriodoPago,
   SexoParam,
+  SectorEconomico,
   TipoContrato,
   TipoDocumentoRequerido,
   TipoTercero,
@@ -41,6 +42,7 @@ export interface ParametrosData {
   ocupaciones: readonly Ocupacion[];
   oficinas_de_credito: readonly OficinaCredito[];
   periodos_de_pago: readonly PeriodoPago[];
+  sectores_economicos: readonly SectorEconomico[];
   sexos: readonly SexoParam[];
   tipo_contrato: readonly TipoContrato[];
   tipo_vivienda: readonly TipoViviendaParam[];

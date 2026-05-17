@@ -283,6 +283,9 @@ export function useWizardSolicitud(props?: WizardProps) {
         trabajador.antiguedad_meses || form.value.solicitante.antiguedad_meses || 0;
       form.value.solicitante.tipo_vivienda =
         trabajador.vivienda || form.value.solicitante.tipo_vivienda || "";
+      form.value.solicitante.vive_con_nucleo_familiar =
+        trabajador.estciv == 2 || trabajador.estciv == 4 || false;
+      form.value.solicitante.sector_economico = trabajador.agro == "S" ? "1" : "3";
 
       // Datos de la empresa
       const nit = trabajador.nit || trabajador.empresa_cedrep;
@@ -313,8 +316,7 @@ export function useWizardSolicitud(props?: WizardProps) {
           trabajador.fecha_afiliacion ||
           trabajador.fecha_ingreso ||
           form.value.informacion_laboral.fecha_ingreso;
-        form.value.informacion_laboral.tiempo_servicio =
-          trabajador.tiempo_servicio || form.value.informacion_laboral.tiempo_servicio || 1;
+        form.value.informacion_laboral.tiempo_servicio = trabajador.antiguedad_meses || 1;
         form.value.informacion_laboral.tiempo_servicio_unidad =
           trabajador.tiempo_servicio_unidad ||
           form.value.informacion_laboral.tiempo_servicio_unidad ||

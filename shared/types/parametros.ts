@@ -207,3 +207,8 @@ export interface ParametrosDetalles {
   tipos_contrato: readonly TipoContrato[];
   estados_solicitud: readonly EstadoSolicitudData[];
 }
+
+export type SectorEconomico = {
+  sector: string;
+  detalle: string;
+};

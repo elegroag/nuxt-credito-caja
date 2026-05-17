@@ -50,6 +50,13 @@ export const useSolicitanteStep = (props: SolicitanteProps) => {
     }))
   );
 
+  const sectoresEconomicosOptions = computed(() =>
+    (props.sectoresEconomicos || []).map((item) => ({
+      label: item.detalle,
+      value: item.sector
+    }))
+  );
+
   const ciudadesOptions = computed(() =>
     (props.ciudades || []).map((item) => ({
       label: item.detciu,
@@ -99,6 +106,7 @@ export const useSolicitanteStep = (props: SolicitanteProps) => {
     nivelesEducativosOptions,
     tiposViviendaOptions,
     estadoCivilesOptions,
+    sectoresEconomicosOptions,
     ciudadesOptions,
     paisesOptions,
     booleanOptions,

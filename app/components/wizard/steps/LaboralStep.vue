@@ -1,6 +1,9 @@
 <template>
   <div class="grid gap-4 sm:grid-cols-2">
-    <FormField label="Razón social" :error="errors && errors['informacion_laboral.empresa_razon_social']">
+    <FormField
+      label="Razón social"
+      :error="errors && errors['informacion_laboral.empresa_razon_social']"
+    >
       <UInput v-model="form.informacion_laboral.empresa_razon_social" />
     </FormField>
     <FormField label="NIT" :error="errors && errors['informacion_laboral.empresa_nit']">

@@ -176,7 +176,13 @@
     </FormField>
 
     <FormField label="Sector económico (opcional)">
-      <UInput v-model="form.solicitante.sector_economico" />
+      <CustomSelect
+        v-model="form.solicitante.sector_economico"
+        :options="sectoresEconomicosOptions"
+        placeholder="Seleccionar sector"
+        clearable
+        searchable
+      />
     </FormField>
   </div>
 </template>
@@ -197,6 +203,7 @@ const props = withDefaults(defineProps<SolicitanteProps>(), {
   tiposVivienda: () => [],
   ocupaciones: () => [],
   estadoCiviles: () => [],
+  sectoresEconomicos: () => [],
   errors: () => ({})
 });
 
@@ -208,6 +215,7 @@ const {
   nivelesEducativosOptions,
   tiposViviendaOptions,
   estadoCivilesOptions,
+  sectoresEconomicosOptions,
   ciudadesOptions,
   paisesOptions,
   booleanOptions,
