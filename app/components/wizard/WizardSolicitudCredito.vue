@@ -98,6 +98,7 @@
         :total-steps="steps.length"
         :is-last-step="step === steps.length - 1"
         :loading="loadingFormData"
+        :form="form"
         class="mt-6"
         @prev="prev"
         @next="handleNext"

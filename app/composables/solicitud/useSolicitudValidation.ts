@@ -8,7 +8,8 @@ export interface ValidationResult {
 
 type ValidatorFn = (form: SolicitudCreditoPayload, configs: {
   limiteCuotas: number;
-  minimaReferencias: number;
+  minimaFamiliares: number;
+  minimaPersonales: number;
   minimoSalario: number;
   minimoEndeudamiento: number;
 }) => ValidationResult;
@@ -196,47 +197,48 @@ const validateDeudas: ValidatorFn = (form, _configs) => {
 
 /**
  * Valida el paso de referencias.
- * Verifica cantidad mínima de referencias contra minimo_referencias.
+ * Verifica cantidad mínima de referencias por tipo desde app_configurations.
  */
 const validateReferencias: ValidatorFn = (form, configs) => {
   const errors: Record<string, string> = {};
 
-  // Validar referencias familiares
-  if (isEmptyArray(form.referencias.familiares)) {
-    errors["referencias.familiares"] = "Al menos una referencia familiar es requerida";
+  // Validar referencias familiares (solo si minimaFamiliares > 0)
+  if (configs.minimaFamiliares > 0 && isEmptyArray(form.referencias.familiares)) {
+    errors["referencias.familiares"] = `Al menos ${configs.minimaFamiliares} referencia familiar es requerida`;
   } else {
     form.referencias.familiares.forEach((ref, index) => {
-      if (!ref.nombre_apellidos?.trim()) {
+      if (!String(ref.nombre_apellidos || '').trim()) {
         errors[`referencias.familiares.${index}.nombre_apellidos`] = `El nombre es requerido (familiar ${index + 1})`;
       }
-      if (!ref.celular?.trim()) {
+      if (!String(ref.celular || '').trim()) {
         errors[`referencias.familiares.${index}.celular`] = `El celular es requerido (familiar ${index + 1})`;
       }
     });
   }
 
-  // Validar referencias personales
-  if (isEmptyArray(form.referencias.personales)) {
-    errors["referencias.personales"] = "Al menos una referencia personal es requerida";
+  // Validar referencias personales (solo si minimaPersonales > 0)
+  if (configs.minimaPersonales > 0 && isEmptyArray(form.referencias.personales)) {
+    errors["referencias.personales"] = `Al menos ${configs.minimaPersonales} referencia personal es requerida`;
   } else {
     form.referencias.personales.forEach((ref, index) => {
-      if (!ref.nombre_apellidos?.trim()) {
+      if (!String(ref.nombre_apellidos || '').trim()) {
         errors[`referencias.personales.${index}.nombre_apellidos`] = `El nombre es requerido (personal ${index + 1})`;
       }
-      if (!ref.celular?.trim()) {
+      if (!String(ref.celular || '').trim()) {
         errors[`referencias.personales.${index}.celular`] = `El celular es requerido (personal ${index + 1})`;
       }
     });
   }
 
-  // Validar cantidad mínima de referencias totales
-  const totalReferencias =
-    (form.referencias.familiares?.length || 0) +
-    (form.referencias.personales?.length || 0);
+  // Validar cantidad mínima por tipo (solo si la config es > 0)
+  if (configs.minimaFamiliares > 0 && (form.referencias.familiares?.length || 0) < configs.minimaFamiliares) {
+    errors["referencias.familiares.cantidad"] =
+      `Debes agregar al menos ${configs.minimaFamiliares} referencia familiar (actualmente tienes ${form.referencias.familiares?.length || 0})`;
+  }
 
-  if (totalReferencias < configs.minimaReferencias) {
-    errors["referencias.total"] =
-      `Debes agregar al menos ${configs.minimaReferencias} referencias en total (actualmente tienes ${totalReferencias})`;
+  if (configs.minimaPersonales > 0 && (form.referencias.personales?.length || 0) < configs.minimaPersonales) {
+    errors["referencias.personales.cantidad"] =
+      `Debes agregar al menos ${configs.minimaPersonales} referencia personal (actualmente tienes ${form.referencias.personales?.length || 0})`;
   }
 
   return { valid: true, errors };
@@ -271,7 +273,8 @@ export function useSolicitudValidation() {
    */
   const getValidationConfigs = () => ({
     limiteCuotas: getConfigurationAsNumber("limite_cuotas", 60),
-    minimaReferencias: getConfigurationAsNumber("minima_referencias", 2),
+    minimaFamiliares: getConfigurationAsNumber("referencias_familiares", 1),
+    minimaPersonales: getConfigurationAsNumber("referencias_personales", 1),
     minimoSalario: getConfigurationAsNumber("minimo_salario", 1300000),
     minimoEndeudamiento: getConfigurationAsNumber("minimo_endeudamiento", 30)
   });

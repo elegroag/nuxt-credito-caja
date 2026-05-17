@@ -154,7 +154,17 @@
     </FormField>
 
     <FormField label="Salario (opcional)">
-      <UInput v-model.number="form.solicitante.salario" type="number" min="0" disabled />
+      <UInputNumber
+        v-model="form.solicitante.salario"
+        disabled
+        :format-options="{
+          style: 'currency',
+          currency: 'COP',
+          currencyDisplay: 'symbol',
+          minimumFractionDigits: 0,
+          maximumFractionDigits: 0
+        }"
+      />
     </FormField>
 
     <FormField label="Código categoría">

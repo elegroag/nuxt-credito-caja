@@ -4,10 +4,10 @@
       label="Razón social"
       :error="errors && errors['informacion_laboral.empresa_razon_social']"
     >
-      <UInput v-model="form.informacion_laboral.empresa_razon_social" />
+      <UInput v-model="form.informacion_laboral.empresa_razon_social" disabled />
     </FormField>
     <FormField label="NIT" :error="errors && errors['informacion_laboral.empresa_nit']">
-      <UInput v-model="form.informacion_laboral.empresa_nit" />
+      <UInput v-model="form.informacion_laboral.empresa_nit" disabled />
     </FormField>
     <FormField label="Teléfono">
       <UInput v-model="form.informacion_laboral.empresa_telefono" />
@@ -34,7 +34,7 @@
       />
     </FormField>
     <FormField label="Fecha ingreso" :error="errors && errors['informacion_laboral.fecha_ingreso']">
-      <UInput v-model="form.informacion_laboral.fecha_ingreso" type="date" />
+      <UInput v-model="form.informacion_laboral.fecha_ingreso" type="date" disabled />
     </FormField>
     <FormField label="Tipo contrato">
       <CustomSelect
@@ -43,13 +43,14 @@
         placeholder="Seleccionar tipo"
         clearable
         searchable
+        disabled
       />
     </FormField>
     <FormField label="Nombramiento / Pagador">
       <UInput v-model="form.informacion_laboral.nombramiento_o_pagador" />
     </FormField>
     <FormField label="Tiempo servicio">
-      <UInput v-model.number="form.informacion_laboral.tiempo_servicio" type="number" min="0" />
+      <UInput v-model.number="form.informacion_laboral.tiempo_servicio" type="number" min="0" disabled />
     </FormField>
     <FormField label="Unidad">
       <CustomSelect
@@ -70,7 +71,8 @@ const props = withDefaults(defineProps<LaboralProps>(), {
   ciudades: () => [],
   tiposContrato: () => [],
   ocupaciones: () => [],
-  errors: () => ({})
+  errors: () => ({}),
+  disabled: false
 });
 
 const tiempoUnidadOptions = [

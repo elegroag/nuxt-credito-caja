@@ -4,18 +4,11 @@
       <div class="flex items-center justify-between">
         <div class="flex items-center gap-2">
           <div class="h-8 w-1 bg-primary rounded-full" />
-          <h3
-            class="text-sm font-bold uppercase tracking-wider text-muted-foreground"
-          >
+          <h3 class="text-sm font-bold uppercase tracking-wider text-muted-foreground">
             Referencias familiares
           </h3>
         </div>
-        <UButton
-          variant="outline"
-          size="sm"
-          type="button"
-          @click="addReferencia('familiares')"
-        >
+        <UButton variant="outline" size="sm" type="button" @click="addReferencia('familiares')">
           <Plus class="mr-2 h-4 w-4" />
           Agregar
         </UButton>
@@ -37,9 +30,7 @@
           class="border-border/50 bg-muted/20 shadow-none"
         >
           <div class="flex flex-row items-center justify-between mb-3">
-            <p class="text-sm font-semibold">
-              Familiar #{{ Number(idx) + 1 }}
-            </p>
+            <p class="text-sm font-semibold">Familiar #{{ Number(idx) + 1 }}</p>
             <UButton
               variant="ghost"
               size="sm"
@@ -50,20 +41,27 @@
             </UButton>
           </div>
           <div class="grid gap-4 sm:grid-cols-2">
-            <FormField label="Nombre y apellidos" :error="errors?.[`referencias.familiares.${idx}.nombre_apellidos`]">
-              <UInput
-                v-model="r.nombre_apellidos"
-                placeholder="Nombre completo"
-              />
+            <FormField
+              label="Nombre y apellidos"
+              :error="errors?.[`referencias.familiares.${idx}.nombre_apellidos`]"
+            >
+              <UInput v-model="r.nombre_apellidos" placeholder="Nombre completo" />
             </FormField>
             <FormField label="Celular" :error="errors?.[`referencias.familiares.${idx}.celular`]">
-              <UInput
-                v-model="r.celular"
-                placeholder="Número de celular"
-              />
+              <UInput v-model="r.celular" placeholder="Número de celular" type="number" />
             </FormField>
           </div>
         </UCard>
+      </div>
+
+      <div
+        v-if="minimaFamiliares > 0 && !familiaresValido"
+        class="rounded-lg bg-destructive/10 border border-destructive/20 p-4 text-sm text-destructive"
+      >
+        <span class="font-semibold">Nota:</span> Necesitas al menos
+        {{ minimaFamiliares }} referencia{{ minimaFamiliares === 1 ? "" : "s" }} familiar{{
+          minimaFamiliares === 1 ? "" : "es"
+        }}.
       </div>
     </div>
 
@@ -71,18 +69,11 @@
       <div class="flex items-center justify-between">
         <div class="flex items-center gap-2">
           <div class="h-8 w-1 bg-secondary rounded-full" />
-          <h3
-            class="text-sm font-bold uppercase tracking-wider text-muted-foreground"
-          >
+          <h3 class="text-sm font-bold uppercase tracking-wider text-muted-foreground">
             Referencias personales
           </h3>
         </div>
-        <UButton
-          variant="outline"
-          size="sm"
-          type="button"
-          @click="addReferencia('personales')"
-        >
+        <UButton variant="outline" size="sm" type="button" @click="addReferencia('personales')">
           <Plus class="mr-2 h-4 w-4" />
           Agregar
         </UButton>
@@ -104,9 +95,7 @@
           class="border-border/50 bg-muted/20 shadow-none"
         >
           <div class="flex flex-row items-center justify-between mb-3">
-            <p class="text-sm font-semibold">
-              Personal #{{ Number(idx) + 1 }}
-            </p>
+            <p class="text-sm font-semibold">Personal #{{ Number(idx) + 1 }}</p>
             <UButton
               variant="ghost"
               size="sm"
@@ -117,20 +106,27 @@
             </UButton>
           </div>
           <div class="grid gap-4 sm:grid-cols-2">
-            <FormField label="Nombre y apellidos" :error="errors?.[`referencias.personales.${idx}.nombre_apellidos`]">
-              <UInput
-                v-model="r.nombre_apellidos"
-                placeholder="Nombre completo"
-              />
+            <FormField
+              label="Nombre y apellidos"
+              :error="errors?.[`referencias.personales.${idx}.nombre_apellidos`]"
+            >
+              <UInput v-model="r.nombre_apellidos" placeholder="Nombre completo" />
             </FormField>
             <FormField label="Celular" :error="errors?.[`referencias.personales.${idx}.celular`]">
-              <UInput
-                v-model="r.celular"
-                placeholder="Número de celular"
-              />
+              <UInput v-model="r.celular" placeholder="Número de celular" type="number" />
             </FormField>
           </div>
         </UCard>
+      </div>
+
+      <div
+        v-if="minimaPersonales > 0 && !personalesValido"
+        class="rounded-lg bg-destructive/10 border border-destructive/20 p-4 text-sm text-destructive"
+      >
+        <span class="font-semibold">Nota:</span> Necesitas al menos
+        {{ minimaPersonales }} referencia{{ minimaPersonales === 1 ? "" : "s" }} personal{{
+          minimaPersonales === 1 ? "" : "es"
+        }}.
       </div>
     </div>
   </div>
@@ -138,7 +134,9 @@
 
 <script setup lang="ts">
 import { Plus, Trash2 } from "lucide-vue-next";
+import { computed } from "vue";
 import FormField from "~/components/shared/FormField.vue";
+import { useConfigurations } from "~/composables/admin/useConfigurations";
 
 interface Props {
   form: any;
@@ -147,7 +145,23 @@ interface Props {
   errors?: Record<string, string>;
 }
 
-withDefaults(defineProps<Props>(), {
+const props = withDefaults(defineProps<Props>(), {
   errors: () => ({})
 });
+
+const { getConfigurationAsNumber } = useConfigurations();
+
+const minimaFamiliares = computed(() => getConfigurationAsNumber("referencias_familiares", 1));
+const minimaPersonales = computed(() => getConfigurationAsNumber("referencias_personales", 1));
+
+const familiaresValido = computed(() => {
+  if (minimaFamiliares.value === 0) return true;
+  return (props.form?.referencias?.familiares?.length || 0) >= minimaFamiliares.value;
+});
+const personalesValido = computed(() => {
+  if (minimaPersonales.value === 0) return true;
+  return (props.form?.referencias?.personales?.length || 0) >= minimaPersonales.value;
+});
+
+const cantidadValida = computed(() => familiaresValido.value && personalesValido.value);
 </script>

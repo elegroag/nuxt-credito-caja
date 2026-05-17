@@ -59,7 +59,16 @@
           </FormField>
 
           <FormField label="Valor comercial">
-            <UInput v-model.number="p.valor_comercial" type="number" min="0" />
+            <UInputNumber
+              v-model="p.valor_comercial"
+              :format-options="{
+                style: 'currency',
+                currency: 'COP',
+                currencyDisplay: 'symbol',
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0
+              }"
+            />
           </FormField>
         </div>
       </UCard>

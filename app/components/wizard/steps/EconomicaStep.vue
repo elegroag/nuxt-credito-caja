@@ -1,10 +1,28 @@
 <template>
   <div class="grid gap-4 sm:grid-cols-2">
     <FormField label="Arrendamientos">
-      <UInput v-model.number="form.informacion_economica.arrendamientos" type="number" min="0" />
+      <UInputNumber
+        v-model="form.informacion_economica.arrendamientos"
+        :format-options="{
+          style: 'currency',
+          currency: 'COP',
+          currencyDisplay: 'symbol',
+          minimumFractionDigits: 0,
+          maximumFractionDigits: 0
+        }"
+      />
     </FormField>
     <FormField label="Otros ingresos">
-      <UInput v-model.number="form.informacion_economica.otros" type="number" min="0" />
+      <UInputNumber
+        v-model="form.informacion_economica.otros"
+        :format-options="{
+          style: 'currency',
+          currency: 'COP',
+          currencyDisplay: 'symbol',
+          minimumFractionDigits: 0,
+          maximumFractionDigits: 0
+        }"
+      />
     </FormField>
     <FormField label="Descripción otros ingresos" class="sm:col-span-2">
       <textarea
@@ -15,7 +33,16 @@
     </FormField>
 
     <FormField label="Total gastos">
-      <UInput v-model.number="form.informacion_economica.total_gastos" type="number" min="0" />
+      <UInputNumber
+        v-model="form.informacion_economica.total_gastos"
+        :format-options="{
+          style: 'currency',
+          currency: 'COP',
+          currencyDisplay: 'symbol',
+          minimumFractionDigits: 0,
+          maximumFractionDigits: 0
+        }"
+      />
     </FormField>
     <FormField label="Descripción gastos" class="sm:col-span-2">
       <textarea
@@ -26,10 +53,28 @@
     </FormField>
 
     <FormField label="Total activos">
-      <UInput v-model.number="form.informacion_economica.total_activos" type="number" min="0" />
+      <UInputNumber
+        v-model="form.informacion_economica.total_activos"
+        :format-options="{
+          style: 'currency',
+          currency: 'COP',
+          currencyDisplay: 'symbol',
+          minimumFractionDigits: 0,
+          maximumFractionDigits: 0
+        }"
+      />
     </FormField>
     <FormField label="Total pasivos">
-      <UInput v-model.number="form.informacion_economica.total_pasivos" type="number" min="0" />
+      <UInputNumber
+        v-model="form.informacion_economica.total_pasivos"
+        :format-options="{
+          style: 'currency',
+          currency: 'COP',
+          currencyDisplay: 'symbol',
+          minimumFractionDigits: 0,
+          maximumFractionDigits: 0
+        }"
+      />
     </FormField>
   </div>
 </template>

@@ -1,71 +1,176 @@
 <template>
   <div class="grid gap-4 sm:grid-cols-2">
-    <FormField label="Salario básico mensual" :error="errors && errors['ingresos_descuentos.salario_basico_mensual']">
-      <UInput
-        v-model.number="(form as any).ingresos_descuentos.salario_basico_mensual"
-        type="number"
-        min="0"
+    <FormField
+      label="Salario básico mensual"
+      :error="errors && errors['ingresos_descuentos.salario_basico_mensual']"
+    >
+      <UInputNumber
+        v-model="(form as any).ingresos_descuentos.salario_basico_mensual"
+        disabled
+        :format-options="{
+          style: 'currency',
+          currency: 'COP',
+          currencyDisplay: 'symbol',
+          minimumFractionDigits: 0,
+          maximumFractionDigits: 0
+        }"
       />
     </FormField>
     <FormField label="Subsidio transporte">
-      <UInput v-model.number="(form as any).ingresos_descuentos.subsidio_transporte" type="number" min="0" />
+      <UInputNumber
+        v-model="(form as any).ingresos_descuentos.subsidio_transporte"
+        :format-options="{
+          style: 'currency',
+          currency: 'COP',
+          currencyDisplay: 'symbol',
+          minimumFractionDigits: 0,
+          maximumFractionDigits: 0
+        }"
+      />
     </FormField>
     <FormField label="Horas extras">
-      <UInput v-model.number="(form as any).ingresos_descuentos.horas_extras" type="number" min="0" />
+      <UInputNumber
+        v-model="(form as any).ingresos_descuentos.horas_extras"
+        :format-options="{
+          style: 'currency',
+          currency: 'COP',
+          currencyDisplay: 'symbol',
+          minimumFractionDigits: 0,
+          maximumFractionDigits: 0
+        }"
+      />
     </FormField>
     <FormField label="Comisiones">
-      <UInput v-model.number="(form as any).ingresos_descuentos.comisiones" type="number" min="0" />
+      <UInputNumber
+        v-model="(form as any).ingresos_descuentos.comisiones"
+        :format-options="{
+          style: 'currency',
+          currency: 'COP',
+          currencyDisplay: 'symbol',
+          minimumFractionDigits: 0,
+          maximumFractionDigits: 0
+        }"
+      />
     </FormField>
     <FormField label="Otros ingresos">
-      <UInput v-model.number="(form as any).ingresos_descuentos.otros_ingresos" type="number" min="0" />
+      <UInputNumber
+        v-model="(form as any).ingresos_descuentos.otros_ingresos"
+        :format-options="{
+          style: 'currency',
+          currency: 'COP',
+          currencyDisplay: 'symbol',
+          minimumFractionDigits: 0,
+          maximumFractionDigits: 0
+        }"
+      />
     </FormField>
     <FormField label="Total ingresos">
-      <UInput
+      <UInputNumber
         :model-value="(form as any).ingresos_descuentos.total_ingresos"
-        type="number"
-        min="0"
         disabled
+        :format-options="{
+          style: 'currency',
+          currency: 'COP',
+          currencyDisplay: 'symbol',
+          minimumFractionDigits: 0,
+          maximumFractionDigits: 0
+        }"
       />
     </FormField>
 
     <div class="col-span-full mt-4 flex items-center gap-2">
       <div class="h-px flex-1 bg-border" />
-      <span class="text-xs font-bold uppercase tracking-wider text-muted-foreground"
-        >Descuentos</span
-      >
+      <span class="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+        Descuentos
+      </span>
       <div class="h-px flex-1 bg-border" />
     </div>
 
     <FormField label="Salud y pensión">
-      <UInput v-model.number="(form as any).ingresos_descuentos.salud_pension" type="number" min="0" />
+      <UInputNumber
+        v-model="(form as any).ingresos_descuentos.salud_pension"
+        :format-options="{
+          style: 'currency',
+          currency: 'COP',
+          currencyDisplay: 'symbol',
+          minimumFractionDigits: 0,
+          maximumFractionDigits: 0
+        }"
+      />
     </FormField>
     <FormField label="Libranzas Comfaca">
-      <UInput v-model.number="(form as any).ingresos_descuentos.libranzas_comfaca" type="number" min="0" />
+      <UInputNumber
+        v-model="(form as any).ingresos_descuentos.libranzas_comfaca"
+        :format-options="{
+          style: 'currency',
+          currency: 'COP',
+          currencyDisplay: 'symbol',
+          minimumFractionDigits: 0,
+          maximumFractionDigits: 0
+        }"
+      />
     </FormField>
     <FormField label="Otras libranzas">
-      <UInput v-model.number="(form as any).ingresos_descuentos.otras_libranzas" type="number" min="0" />
+      <UInputNumber
+        v-model="(form as any).ingresos_descuentos.otras_libranzas"
+        :format-options="{
+          style: 'currency',
+          currency: 'COP',
+          currencyDisplay: 'symbol',
+          minimumFractionDigits: 0,
+          maximumFractionDigits: 0
+        }"
+      />
     </FormField>
     <FormField label="Judiciales">
-      <UInput v-model.number="(form as any).ingresos_descuentos.judiciales" type="number" min="0" />
+      <UInputNumber
+        v-model="(form as any).ingresos_descuentos.judiciales"
+        :format-options="{
+          style: 'currency',
+          currency: 'COP',
+          currencyDisplay: 'symbol',
+          minimumFractionDigits: 0,
+          maximumFractionDigits: 0
+        }"
+      />
     </FormField>
     <FormField label="Otras deducciones">
-      <UInput v-model.number="(form as any).ingresos_descuentos.otras_deducciones" type="number" min="0" />
+      <UInputNumber
+        v-model="(form as any).ingresos_descuentos.otras_deducciones"
+        :format-options="{
+          style: 'currency',
+          currency: 'COP',
+          currencyDisplay: 'symbol',
+          minimumFractionDigits: 0,
+          maximumFractionDigits: 0
+        }"
+      />
     </FormField>
     <FormField label="Total descuentos">
-      <UInput
+      <UInputNumber
         :model-value="(form as any).ingresos_descuentos.total_descuentos"
-        type="number"
-        min="0"
         disabled
+        :format-options="{
+          style: 'currency',
+          currency: 'COP',
+          currencyDisplay: 'symbol',
+          minimumFractionDigits: 0,
+          maximumFractionDigits: 0
+        }"
       />
     </FormField>
 
     <FormField label="Total neto recibido">
-      <UInput
+      <UInputNumber
         :model-value="(form as any).ingresos_descuentos.total_neto_recibido"
-        type="number"
-        min="0"
         disabled
+        :format-options="{
+          style: 'currency',
+          currency: 'COP',
+          currencyDisplay: 'symbol',
+          minimumFractionDigits: 0,
+          maximumFractionDigits: 0
+        }"
       />
     </FormField>
 

@@ -43,6 +43,7 @@ export interface LaboralProps {
   tiposContrato?: readonly TipoContrato[];
   ocupaciones?: readonly Ocupacion[];
   errors?: Record<string, string>;
+  disabled?: boolean;
 }
 
 export interface IngresosProps {

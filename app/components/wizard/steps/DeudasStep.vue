@@ -36,10 +36,28 @@
             <UInput v-model="d.concepto" />
           </FormField>
           <FormField label="Valor cuota">
-            <UInput v-model.number="d.valor_cuota" type="number" min="0" />
+            <UInputNumber
+              v-model="d.valor_cuota"
+              :format-options="{
+                style: 'currency',
+                currency: 'COP',
+                currencyDisplay: 'symbol',
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0
+              }"
+            />
           </FormField>
           <FormField label="Saldo obligación">
-            <UInput v-model.number="d.saldo_obligacion" type="number" min="0" />
+            <UInputNumber
+              v-model="d.saldo_obligacion"
+              :format-options="{
+                style: 'currency',
+                currency: 'COP',
+                currencyDisplay: 'symbol',
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0
+              }"
+            />
           </FormField>
         </div>
       </UCard>

@@ -9,7 +9,17 @@
         <UInput v-model="(form as any).solicitud.numero_solicitud" disabled />
       </FormField>
       <FormField label="Valor solicitud">
-        <UInput v-model.number="(form as any).solicitud.valor_solicitud" type="number" min="0" disabled />
+        <UInputNumber
+          v-model="(form as any).solicitud.valor_solicitud"
+          disabled
+          :format-options="{
+            style: 'currency',
+            currency: 'COP',
+            currencyDisplay: 'symbol',
+            minimumFractionDigits: 0,
+            maximumFractionDigits: 0
+          }"
+        />
       </FormField>
       <FormField label="Categoría">
         <UInput v-model="(form as any).solicitante.codigo_categoria" disabled />
@@ -22,10 +32,25 @@
         />
       </FormField>
       <FormField label="Valor mensual">
-        <UInput v-model.number="(form as any).solicitud.cuota_mensual" type="number" min="0" disabled />
+        <UInputNumber
+          v-model="(form as any).solicitud.cuota_mensual"
+          disabled
+          :format-options="{
+            style: 'currency',
+            currency: 'COP',
+            currencyDisplay: 'symbol',
+            minimumFractionDigits: 0,
+            maximumFractionDigits: 0
+          }"
+        />
       </FormField>
       <FormField label="Plazo (meses)">
-        <UInput v-model.number="(form as any).solicitud.plazo_meses" type="number" min="1" disabled />
+        <UInput
+          v-model.number="(form as any).solicitud.plazo_meses"
+          type="number"
+          min="1"
+          disabled
+        />
       </FormField>
       <FormField label="Linea de crédito">
         <UInput

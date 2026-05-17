@@ -3,6 +3,7 @@ import { useRoute, useRouter } from "vue-router";
 import { useSolicitudCreditoForm } from "~/composables/solicitud/useSolicitudCreditoForm";
 import { useSimuladorStorage } from "~/composables/useSimuladorStorage";
 import { useSession } from "~/composables/useSession";
+import { useConfigurations } from "~/composables/admin/useConfigurations";
 import type { WizardStep, WizardProps } from "~~/shared/types/wizard";
 
 export type { WizardStep, WizardProps };
@@ -44,6 +45,7 @@ export function useWizardSolicitud(props?: WizardProps) {
   const simuladorStorage = useSimuladorStorage();
   const { hasSimuladorData, getDatosParaSolicitud } = useSimuladorStorage();
   const { session } = useSession();
+  const { loadConfigurations, getConfigurationAsNumber } = useConfigurations();
 
   const loadingFormData = ref(false);
   const responseFormData = ref("");
@@ -167,12 +169,14 @@ export function useWizardSolicitud(props?: WizardProps) {
     intervalId.value = null;
   };
 
-  const loadDataWizard = () => {
+  const loadDataWizard = async () => {
     if (wizardBootstrapped.value) {
       return;
     }
 
     wizardBootstrapped.value = true;
+
+    await loadConfigurations();
 
     if (hasSimuladorData()) {
       const datosSimulador = getDatosParaSolicitud();
@@ -328,6 +332,11 @@ export function useWizardSolicitud(props?: WizardProps) {
       if (trabajador.salario) {
         form.value.ingresos_descuentos.salario_basico_mensual = trabajador.salario;
         form.value.ingresos_descuentos.salud_pension = Math.round(trabajador.salario * 0.08);
+      }
+
+      const auxilioTransporte = getConfigurationAsNumber("auxilio_transporte", 0);
+      if (auxilioTransporte > 0) {
+        form.value.ingresos_descuentos.subsidio_transporte = auxilioTransporte;
       }
     }
 

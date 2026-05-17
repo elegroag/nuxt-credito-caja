@@ -108,5 +108,49 @@ export const configurations = [
     required: false,
     created_at: "2026-02-25 02:06:11.0",
     updated_at: "2026-02-25 02:06:11.0"
+  },
+  {
+    clave: "salario_minimo",
+    valor: "1750905",
+    descripcion: "Valor del salario minimo actual",
+    tipo: "number",
+    categoria: "solicitudes",
+    editable: true,
+    required: true,
+    created_at: "2026-02-25 02:06:11.0",
+    updated_at: "2026-02-25 02:06:11.0"
+  },
+  {
+    clave: "auxilio_transporte",
+    valor: "249095",
+    descripcion: "Valor del auxilio de transporte",
+    tipo: "number",
+    categoria: "solicitudes",
+    editable: true,
+    required: true,
+    created_at: "2026-02-25 02:06:11.0",
+    updated_at: "2026-02-25 02:06:11.0"
+  },
+  {
+    clave: "referencias_familiares",
+    valor: "1",
+    descripcion: "Se especifica la cantidad de referencias familiares minimas",
+    tipo: "number",
+    categoria: "solicitudes",
+    editable: true,
+    required: true,
+    created_at: "2026-02-25 02:06:11.0",
+    updated_at: "2026-02-25 02:06:11.0"
+  },
+  {
+    clave: "referencias_personales",
+    valor: "1",
+    descripcion: "Se especifica la cantidad de referencias personales minimas",
+    tipo: "number",
+    categoria: "solicitudes",
+    editable: true,
+    required: true,
+    created_at: "2026-02-25 02:06:11.0",
+    updated_at: "2026-02-25 02:06:11.0"
   }
 ];
