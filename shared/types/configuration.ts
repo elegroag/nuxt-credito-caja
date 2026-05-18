@@ -9,7 +9,7 @@ export interface Configuration {
 }
 
 export interface ConfigurationProp extends Configuration {
-  form: any;
+  form: Record<string, unknown>;
   descripcion: string | null;
 }
 

@@ -20,8 +20,8 @@ const {
   debounceSearch,
   cargarEmpresas,
   recargarDatos,
-  paginaAnterior,
-  paginaSiguiente,
+  paginaAnterior: _paginaAnterior,
+  paginaSiguiente: _paginaSiguiente,
   irAPagina,
   toggleEstadoEmpresa,
   eliminarEmpresa,
@@ -36,7 +36,16 @@ onMounted(() => cargarEmpresas());
 const mostrarModalImportar = ref(false);
 const archivoImportar = ref<File | null>(null);
 const importando = ref(false);
-const resultadoImportacion = ref<Record<string, any> | null>(null);
+const resultadoImportacion = ref<{
+  message?: string;
+  data?: {
+    total_filas?: number;
+    procesadas?: number;
+    creadas?: number;
+    actualizadas?: number;
+    errores?: Array<{ fila?: number; error?: string }>;
+  };
+} | null>(null);
 
 const abrirModalImportar = () => {
   archivoImportar.value = null;
@@ -70,7 +79,7 @@ const importarExcel = async () => {
       method: "POST",
       body: formData
     });
-    resultadoImportacion.value = response as Record<string, any>;
+    resultadoImportacion.value = response as Record<string, unknown>;
     await recargarDatos();
     setTimeout(cerrarModalImportar, 2000);
   } catch (err: unknown) {
@@ -510,26 +519,26 @@ const opcionesEstado = [
             variant="subtle"
             icon="i-lucide-circle-check"
             title="Importación completada"
-            :description="resultadoImportacion.message"
+            :description="resultadoImportacion?.message"
           />
           <ul class="text-sm text-muted-foreground space-y-1 pl-1">
             <li>
               Total filas:
-              <strong>{{ resultadoImportacion.data.total_filas }}</strong>
+              <strong>{{ resultadoImportacion?.data?.total_filas }}</strong>
             </li>
             <li>
               Procesadas:
-              <strong>{{ resultadoImportacion.data.procesadas }}</strong>
+              <strong>{{ resultadoImportacion?.data?.procesadas }}</strong>
             </li>
             <li>
-              Creadas: <strong>{{ resultadoImportacion.data.creadas }}</strong>
+              Creadas: <strong>{{ resultadoImportacion?.data?.creadas }}</strong>
             </li>
             <li>
               Actualizadas:
-              <strong>{{ resultadoImportacion.data.actualizadas }}</strong>
+              <strong>{{ resultadoImportacion?.data?.actualizadas }}</strong>
             </li>
           </ul>
-          <div v-if="resultadoImportacion.data.errores.length > 0">
+          <div v-if="resultadoImportacion?.data?.errores && resultadoImportacion.data.errores.length > 0">
             <UAlert
               color="destructive"
               variant="subtle"

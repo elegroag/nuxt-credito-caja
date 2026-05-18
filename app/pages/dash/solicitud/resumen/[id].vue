@@ -379,7 +379,7 @@
 import { onMounted } from "vue";
 import { useRoute } from "vue-router";
 import { useResumenSolicitud } from "~/composables/solicitud/useResumenSolicitud";
-import { formatCurrencyIntl, formatDate } from "~~/shared/utils/formatters";
+import { formatCurrencyIntl } from "~~/shared/utils/formatters";
 
 const route = useRoute();
 

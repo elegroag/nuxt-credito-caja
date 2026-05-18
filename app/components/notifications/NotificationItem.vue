@@ -75,18 +75,20 @@
 import { useRouter } from "vue-router";
 import { useNotifications } from "~/composables/useNotifications";
 
-interface Notification {
-  id: string
-  type: string
-  data: {
+interface NotificationData {
     titulo: string
     mensaje: string
     url?: string
-    [key: string]: any
+    [key: string]: unknown
   }
-  read_at: string | null
-  created_at: string
-}
+
+interface Notification {
+    id: string
+    type: string
+    data: NotificationData
+    read_at: string | null
+    created_at: string
+  }
 
 interface Props {
   notification: Notification

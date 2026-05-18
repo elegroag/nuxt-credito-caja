@@ -3,6 +3,7 @@ import { useRouter } from "vue-router";
 import { useApi } from "~/composables/useApi";
 import { useSession } from "~/composables/useSession";
 import { getDefaultTipoDocumento } from "~/lib/tipos_documento";
+import type { CreateUserForm } from "~~/shared/types/admin-usuarios";
 
 export function useCreateUser() {
   const router = useRouter();
@@ -119,7 +120,7 @@ export function useCreateUser() {
       const response = await postJson<{
         success: boolean
         message: string
-        data?: any
+        data?: unknown
       }>("/api/admin/users/create", payload, { auth: true });
 
       if (response.success) {
@@ -129,16 +130,17 @@ export function useCreateUser() {
         // Mostrar error genérico
         errors.value.general = response.message || "Error al crear el usuario";
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Error al crear usuario:", error);
 
       // Manejar errores específicos del backend
-      if (error.message?.includes("username")) {
+      const message = error instanceof Error ? error.message : String(error);
+      if (message.includes("username")) {
         errors.value.username = "El nombre de usuario ya existe";
-      } else if (error.message?.includes("email")) {
+      } else if (message.includes("email")) {
         errors.value.email = "El email ya está registrado";
       } else {
-        errors.value.general = error.message || "Error al crear el usuario";
+        errors.value.general = message || "Error al crear el usuario";
       }
     } finally {
       loading.value = false;

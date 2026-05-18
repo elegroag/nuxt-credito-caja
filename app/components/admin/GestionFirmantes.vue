@@ -110,14 +110,7 @@
         <label class="text-sm font-medium text-foreground"> Rol </label>
         <USelectMenu
           v-model="nuevoFirmante.rol"
-          :items="
-            <any>[
-              { label: 'Solicitante', value: 'Solicitante' },
-              { label: 'Codeudor', value: 'Codeudor' },
-              { label: 'Empleador', value: 'Empleador' },
-              { label: 'Firmante', value: 'Firmante' }
-            ]
-          "
+          :items="(rolOptions as any)"
           placeholder="Seleccionar rol"
           by="value"
           option-attribute="label"
@@ -172,17 +165,25 @@ interface Props {
   firmantes: Firmante[];
 }
 
-interface Emits {
-  (e: "agregar-firmante"): void;
-  (e: "eliminar-firmante", index: number): void;
-  (e: "iniciar-firmado"): void;
-}
+const _emit = defineEmits<{
+  "agregar-firmante": [];
+  "eliminar-firmante": [index: number];
+  "iniciar-firmado": [];
+}>();
 
 const props = defineProps<Props>();
 const solicitudId = props.solicitudId;
 
 const { postJson } = useApi();
 const { ready } = useSession();
+
+// Opciones para el selector de rol
+const rolOptions: { label: string; value: string }[] = [
+  { label: "Solicitante", value: "Solicitante" },
+  { label: "Codeudor", value: "Codeudor" },
+  { label: "Empleador", value: "Empleador" },
+  { label: "Firmante", value: "Firmante" }
+];
 
 // Convertir props.firmantes a una referencia reactiva local
 const firmantes = ref<Firmante[]>([...props.firmantes]);

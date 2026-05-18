@@ -375,6 +375,8 @@
 import { ref, onMounted } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import { useApi } from "~/composables/useApi";
+import type { EmpresaConvenio } from "~~/shared/types/convenios";
+import type { SuccessResponse } from "~~/shared/types/response";
 
 definePageMeta({
   layout: "dashboard",
@@ -385,7 +387,7 @@ const router = useRouter();
 const route = useRoute();
 const loading = ref(false);
 const error = ref<string | null>(null);
-const convenio = ref<any>(null);
+const convenio = ref<EmpresaConvenio | null>(null);
 
 // Cargar datos del convenio
 const cargarConvenio = async () => {
@@ -394,7 +396,7 @@ const cargarConvenio = async () => {
 
   try {
     const api = useApi();
-    const response = await api.getJson<any>(
+    const response = await api.getJson<SuccessResponse<EmpresaConvenio>>(
       `/api/admin/convenios/${route.params.id}`,
       {
         auth: true
@@ -409,9 +411,9 @@ const cargarConvenio = async () => {
     } else {
       throw new Error("Estructura de respuesta inválida");
     }
-  } catch (err: any) {
+  } catch (err: unknown) {
     console.error("Error al cargar convenio:", err);
-    error.value = err.message || "Error al cargar la información del convenio";
+    error.value = (err as Error).message || "Error al cargar la información del convenio";
   } finally {
     loading.value = false;
   }
@@ -436,9 +438,9 @@ const toggleEstado = async () => {
 
     // Actualizar estado localmente
     convenio.value.estado = nuevoEstado;
-  } catch (err: any) {
+  } catch (err: unknown) {
     console.error("Error al cambiar estado:", err);
-    error.value = err.message || "Error al cambiar el estado del convenio";
+    error.value = (err as Error).message || "Error al cambiar el estado del convenio";
   }
 };
 

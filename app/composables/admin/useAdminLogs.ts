@@ -94,9 +94,10 @@ export function useAdminLogs() {
         logs.value = [];
         totalLogs.value = 0;
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error("Error al cargar logs:", err);
-      error.value = err.data?.message || err.message || "Error al cargar los logs";
+      const message = err instanceof Error ? err.message : String(err);
+      error.value = message || "Error al cargar los logs";
       logs.value = [];
       totalLogs.value = 0;
     } finally {
@@ -123,8 +124,10 @@ export function useAdminLogs() {
       }
       error.value = response.message || "No se pudieron vaciar los logs";
       return false;
-    } catch (err: any) {
-      error.value = err.data?.message || err.message || "Error al vaciar los logs";
+    } catch (err: unknown) {
+      console.error("Error al vaciar los logs:", err);
+      const message = err instanceof Error ? err.message : String(err);
+      error.value = message || "Error al vaciar los logs";
       return false;
     }
   };

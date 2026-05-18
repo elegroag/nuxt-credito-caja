@@ -1,6 +1,6 @@
 import { onMounted, watch, reactive, computed, ref } from "vue";
 import { useRoute } from "vue-router";
-import { useSimuladorWithLinea } from "./useSimuladorWithLinea";
+import { useSimuladorWithLinea, type LineaCreditoData, type LineaCreditoApiResponse } from "./useSimuladorWithLinea";
 import { useTrabajador } from "~/composables/useTrabajador";
 import { useSimuladorStorage } from "~/composables/useSimuladorStorage";
 import { useSimuladorConConvenio } from "./useSimuladorConConvenio";
@@ -9,7 +9,7 @@ import { useApi } from "~/composables/useApi";
 export const useSimuladorConLineaPage = () => {
   const route = useRoute();
   const { getJson } = useApi();
-  const { trabajador, salario } = useTrabajador();
+  const { trabajador } = useTrabajador();
   const { saveSimuladorDataSilent, clearSolicitudData } = useSimuladorStorage();
 
   // Composable de convenio
@@ -25,10 +25,10 @@ export const useSimuladorConLineaPage = () => {
   const tipcre = computed(() => route.params.tipcre as string);
   const loading = ref(true);
   const error = ref<string | null>(null);
-  const lineaSeleccionada = ref<any>(null);
+  const lineaSeleccionada = ref<LineaCreditoData | null>(null);
 
   // Cache para líneas de crédito
-  const lineasCache = ref<Map<string, any>>(new Map());
+  const lineasCache = ref<Map<string, LineaCreditoData>>(new Map());
 
   // Objeto reactive para el input de monto con validación
   const montoInput = reactive<{
@@ -87,7 +87,7 @@ export const useSimuladorConLineaPage = () => {
 
   // Validar que el monto no exceda el valor máximo y la cantidad de dígitos
   const validarMontoMaximo = () => {
-    if (lineaSeleccionada.value.valmax) {
+    if (lineaSeleccionada.value?.valmax) {
       const valmax = Number(lineaSeleccionada.value.valmax);
       const montoActual = Number(monto.value);
 
@@ -165,26 +165,26 @@ export const useSimuladorConLineaPage = () => {
 
       // Verificar cache primero
       if (lineasCache.value.has(tipcre.value)) {
-        lineaSeleccionada.value = lineasCache.value.get(tipcre.value);
+        lineaSeleccionada.value = lineasCache.value.get(tipcre.value) ?? null;
         console.log("Usando cache para línea:", tipcre.value);
       } else {
         // Consultar API si no está en cache
         const response = await getJson<{
           success: boolean
           message: string
-          data: any[]
+          data: LineaCreditoApiResponse[]
         }>("/api/lineas_credito/tipo-creditos", { auth: true });
 
         if (response.success) {
           // Guardar todas las líneas en cache
           response.data.forEach((linea) => {
-            lineasCache.value.set(linea.tipcre, linea);
+            lineasCache.value.set(linea.tipcre, linea as LineaCreditoData);
           });
 
           // Obtener la línea específica
           lineaSeleccionada.value = response.data.find(
-            linea => linea.tipcre === tipcre.value
-          );
+            (linea): linea is LineaCreditoApiResponse => linea.tipcre === tipcre.value
+          ) ?? null;
 
           if (!lineaSeleccionada.value) {
             error.value = "Línea de crédito no encontrada";
@@ -212,14 +212,14 @@ export const useSimuladorConLineaPage = () => {
           trabajador.value.codigo_categoria
         ).toLowerCase();
         const categoriaLinea = lineaSeleccionada.value.categorias.find(
-          (cat: any) =>
+          (cat: Record<string, unknown>) =>
             cat
             && cat.codcat
             && String(cat.codcat).toLowerCase() === categoriaTrabajador
         );
 
-        if (categoriaLinea && categoriaLinea.facfin) {
-          tasaEfectivaAnual.value = parseFloat(categoriaLinea.facfin);
+        if (categoriaLinea && (categoriaLinea as Record<string, unknown>).facfin) {
+          tasaEfectivaAnual.value = parseFloat(String((categoriaLinea as Record<string, unknown>).facfin));
         }
       }
 
@@ -268,7 +268,7 @@ export const useSimuladorConLineaPage = () => {
   const saveDataManual = () => {
     if (lineaSeleccionada.value && monto.value > 0) {
       saveSimuladorDataSilent({
-        lineaCredito: lineaSeleccionada.value,
+        lineaCredito: lineaSeleccionada.value as LineaCreditoSimulador,
         monto: monto.value,
         montoCredito: monto.value,
         plazoMeses: plazoMeses.value,
@@ -306,9 +306,14 @@ export const useSimuladorConLineaPage = () => {
   watch(
     () => trabajador.value,
     async (newTrabajador) => {
-      const t = newTrabajador as any;
-      const nit = t?.nit || t?.empresa?.nit;
-      const cedula = t?.cedtra || t?.cedula;
+      const t = newTrabajador as {
+        nit?: string
+        empresa?: { nit?: string }
+        cedtra?: string
+        cedula?: string
+      };
+      const nit = String(t?.nit || t?.empresa?.nit || "");
+      const cedula = String(t?.cedtra || t?.cedula || "");
 
       console.log("Watch trabajador:", {
         nit,

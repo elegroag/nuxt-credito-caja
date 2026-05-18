@@ -1,6 +1,19 @@
 import { useRuntimeConfig } from "#imports";
 import { ofetch } from "ofetch";
 
+interface TokenResponse {
+  success?: boolean
+  token?: string
+  error?: string
+}
+
+interface FetchError {
+  statusCode?: number
+  data?: TokenResponse | { error: string }
+  message?: string
+  response?: { status?: number }
+}
+
 const apiFirmaPlus = () => {
   const config = useRuntimeConfig();
   const env = config.apiFIRMA.env;
@@ -46,20 +59,23 @@ const apiFirmaPlus = () => {
         }
       });
 
-      if (dataToken.success) {
+      if (dataToken.success && dataToken.token) {
         return dataToken.token;
       }
-
-      return dataToken;
-    } catch (e: any) {
-      const status = Number(e?.statusCode || e?.response?.status || 502);
-      if (e?.data && typeof e.data === "object") {
-        return e.data;
+      return { error: dataToken.error || "Error al obtener token" };
+    } catch (e: unknown) {
+      const err = e as FetchError;
+      const _status = Number(err?.statusCode || err?.response?.status || 502);
+      if (err?.data && typeof err.data === "object") {
+        if ('error' in err.data && typeof err.data.error === 'string') {
+          return { error: err.data.error };
+        }
+        return { error: "Error desconhecido" };
       }
 
       return {
         error:
-          e?.data?.error || e?.message || "Error conectando con SISUWEB API"
+          err?.data?.error || err?.message || "Error conectando con SISUWEB API"
       };
     }
   };
@@ -98,7 +114,7 @@ const apiFirmaPlus = () => {
 
   const postJson = async <T>(
     path: string,
-    body: any,
+    body: Record<string, unknown>,
     opts?: {
       auth?: boolean
       headers?: Record<string, string>
@@ -133,7 +149,7 @@ const apiFirmaPlus = () => {
 
   const putJson = async <T>(
     path: string,
-    body: any,
+    body: Record<string, unknown>,
     opts?: {
       auth?: boolean
       headers?: Record<string, string>

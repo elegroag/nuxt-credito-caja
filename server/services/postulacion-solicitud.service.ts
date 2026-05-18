@@ -1,14 +1,85 @@
 import prisma from "~~/lib/prisma";
+import type { InformacionLaboral, IngresosDescuentos, InformacionEconomica, Propiedad, Deuda, Referencia } from "~~/shared/types/payload";
+import type { LineaCreditoSimulador } from "~~/shared/types/simulador";
 
 // Helper para normalizar valores que pueden ser string u objeto {label, value}
-const normalizeValue = (value: any): string | undefined => {
+const normalizeValue = (value: unknown): string | undefined => {
   if (value === null || value === undefined) return undefined;
   if (typeof value === "string") return value;
-  if (typeof value === "object" && value.value !== undefined) {
-    return String(value.value);
+  if (typeof value === "object" && 'value' in value) {
+    return String((value as { value: unknown }).value);
   }
   return String(value);
 };
+
+// Types for the payload structure
+interface PayloadSolicitud {
+  numero_solicitud?: string;
+  owner_username?: string;
+  valor_solicitud?: number;
+  plazo_meses?: number;
+  tasa_interes?: number;
+  estado?: string;
+  producto_tipo?: string;
+  ha_tenido_credito?: boolean;
+  detalle_modalidad?: string;
+  tipcre?: string;
+  moneda?: string;
+  cuota_mensual?: number;
+  rol_en_solicitud?: string;
+}
+
+interface PayloadSolicitante {
+  tipo_persona?: unknown;
+  tipo_documento?: string;
+  numero_documento?: string;
+  nombres?: string;
+  apellidos?: string;
+  razon_social?: string;
+  nit?: string;
+  fecha_nacimiento?: string | Date;
+  pais_nacimiento?: string;
+  fecha_expedicion?: string | Date;
+  genero?: string;
+  estado_civil?: string;
+  nivel_educativo?: string;
+  profesion?: string;
+  email?: string;
+  telefono_fijo?: string;
+  celular?: string;
+  telefono_movil?: string;
+  direccion?: string;
+  barrio?: string;
+  ciudad?: unknown;
+  pais_residencia?: string;
+  tipo_vivienda?: string;
+  vive_con_nucleo_familiar?: boolean;
+  personas_a_cargo?: number;
+  departamento?: string;
+  codigo_categoria?: string;
+  cargo?: string;
+  salario?: number;
+  antiguedad_meses?: number;
+  tipo_contrato?: string;
+  sector_economico?: string;
+}
+
+interface PayloadLineaCredito {
+  tipcre?: string;
+}
+
+interface _PayloadStructure {
+  solicitud?: PayloadSolicitud;
+  solicitante?: PayloadSolicitante;
+  linea_credito?: PayloadLineaCredito;
+  informacion_laboral?: InformacionLaboral;
+  ingresos_descuentos?: IngresosDescuentos;
+  informacion_economica?: InformacionEconomica;
+  propiedades?: Propiedad[];
+  deudas?: Deuda[];
+  referencias?: { familiares: Referencia[]; personales: Referencia[] };
+  conyuge?: unknown;
+}
 
 const postulacionSolicitudService = () => {
   // Guardar número de solicitud
@@ -55,7 +126,7 @@ const postulacionSolicitudService = () => {
   // Guardar payload
   const guardarPayload = async (params: GuardarPayloadParams) => {
     const payload = await prisma.solicitud_payload.create({
-      data: params
+      data: params as Parameters<typeof prisma.solicitud_payload.create>[0]["data"]
     });
 
     return payload;
@@ -89,20 +160,25 @@ const postulacionSolicitudService = () => {
   };
 
   // Método principal para guardar toda la solicitud
-  const guardarSolicitudCompleta = async (payload: any) => {
+  const guardarSolicitudCompleta = async (payload: Record<string, unknown>) => {
     try {
       const {
-        solicitud,
-        solicitante,
-        linea_credito,
+        solicitud: solicitudRaw,
+        solicitante: solicitanteRaw,
+        linea_credito: lineaCreditoRaw,
         informacion_laboral,
         ingresos_descuentos,
         informacion_economica,
         propiedades,
         deudas,
         referencias,
-        conyuge
+        conyuge: _conyuge
       } = payload;
+
+      // Cast payload sections to proper types
+      const solicitud = solicitudRaw as PayloadSolicitud | undefined;
+      const solicitante = solicitanteRaw as PayloadSolicitante | undefined;
+      const linea_credito = lineaCreditoRaw as PayloadLineaCredito | undefined;
 
       // 1. Obtener estado inicial válido
       const estadoInicial = await prisma.estados_solicitud.findFirst({
@@ -137,7 +213,7 @@ const postulacionSolicitudService = () => {
           const vigencia = new Date().getFullYear();
           // Extraer secuencia del formato "000006-202604-01"
           const partes = solicitudIdEnviado.split("-");
-          const secuencia = partes.length >= 1 ? parseInt(partes[0], 10) || 1 : 1;
+          const secuencia = partes.length >= 1 ? parseInt(partes[0] || "1", 10) || 1 : 1;
 
           await prisma.numero_solicitudes.create({
             data: {
@@ -163,17 +239,17 @@ const postulacionSolicitudService = () => {
       const solicitudCredito = await guardarSolicitudCredito({
         numero_solicitud: numeroSolicitudRadicado,
         owner_username: solicitud?.owner_username || "",
-        valor_solicitud: solicitud?.valor_solicitud || 0,
-        plazo_meses: solicitud?.plazo_meses || 0,
-        tasa_interes: solicitud?.tasa_interes || 0,
+        valor_solicitud: Number(solicitud?.valor_solicitud) || 0,
+        plazo_meses: Number(solicitud?.plazo_meses) || 0,
+        tasa_interes: Number(solicitud?.tasa_interes) || 0,
         estado: solicitud?.estado || estadoInicial.id,
-        producto_tipo: productoTipoBackend,
-        ha_tenido_credito: solicitud?.ha_tenido_credito,
-        detalle_modalidad: solicitud?.detalle_modalidad,
-        tipo_credito: solicitud?.tipcre || linea_credito?.tipcre,
+        producto_tipo: productoTipoBackend ?? undefined,
+        ha_tenido_credito: solicitud?.ha_tenido_credito ?? undefined,
+        detalle_modalidad: solicitud?.detalle_modalidad ?? undefined,
+        tipo_credito: (solicitud?.tipcre || linea_credito?.tipcre) ?? undefined,
         moneda: solicitud?.moneda || "COP",
-        cuota_mensual: solicitud?.cuota_mensual,
-        rol_en_solicitud: solicitud?.rol_en_solicitud || "T",
+        cuota_mensual: Number(solicitud?.cuota_mensual) || undefined,
+        rol_en_solicitud: (solicitud?.rol_en_solicitud as "T" | "S" | "C" | "E") || "T",
         fecha_radicado: new Date()
       });
 
@@ -193,57 +269,58 @@ const postulacionSolicitudService = () => {
       // 5. Guardar payload
       await guardarPayload({
         solicitud_id: numeroSolicitudRadicado,
-        informacion_laboral,
-        ingresos_descuentos,
-        informacion_economica,
-        propiedades,
-        deudas,
-        referencias,
-        linea_credito
+        informacion_laboral: informacion_laboral as InformacionLaboral | undefined,
+        ingresos_descuentos: ingresos_descuentos as IngresosDescuentos | undefined,
+        informacion_economica: informacion_economica as InformacionEconomica | undefined,
+        propiedades: propiedades as Propiedad[] | undefined,
+        deudas: deudas as Deuda[] | undefined,
+        referencias: referencias as { familiares: Referencia[]; personales: Referencia[] } | undefined,
+        linea_credito: linea_credito as LineaCreditoSimulador | undefined
       });
 
       // 4. Guardar solicitante
       if (solicitante) {
+        const solicitanteData = solicitante as PayloadSolicitante;
         await guardarSolicitante({
           solicitud_id: numeroSolicitudRadicado,
-          tipo_persona: normalizeValue(solicitante.tipo_persona) as
+          tipo_persona: normalizeValue(solicitanteData.tipo_persona) as
             | "natural"
             | "juridica"
             | undefined,
-          tipo_documento: solicitante.tipo_documento,
-          numero_documento: solicitante.numero_documento,
-          nombres: solicitante.nombres,
-          apellidos: solicitante.apellidos,
-          razon_social: solicitante.razon_social,
-          nit: solicitante.nit,
-          fecha_nacimiento: solicitante.fecha_nacimiento
-            ? new Date(solicitante.fecha_nacimiento)
+          tipo_documento: solicitanteData.tipo_documento || "",
+          numero_documento: solicitanteData.numero_documento || "",
+          nombres: solicitanteData.nombres,
+          apellidos: solicitanteData.apellidos,
+          razon_social: solicitanteData.razon_social,
+          nit: solicitanteData.nit,
+          fecha_nacimiento: solicitanteData.fecha_nacimiento
+            ? new Date(solicitanteData.fecha_nacimiento as string)
             : undefined,
-          pais_nacimiento: solicitante.pais_nacimiento,
-          fecha_expedicion: solicitante.fecha_expedicion
-            ? new Date(solicitante.fecha_expedicion)
+          pais_nacimiento: solicitanteData.pais_nacimiento,
+          fecha_expedicion: solicitanteData.fecha_expedicion
+            ? new Date(solicitanteData.fecha_expedicion as string)
             : undefined,
-          genero: solicitante.genero,
-          estado_civil: solicitante.estado_civil,
-          nivel_educativo: solicitante.nivel_educativo,
-          profesion: solicitante.profesion,
-          email: solicitante.email,
-          telefono_fijo: solicitante.telefono_fijo,
-          telefono_movil: solicitante.celular || solicitante.telefono_movil,
-          direccion: solicitante.direccion,
-          barrio: solicitante.barrio,
-          ciudad: normalizeValue(solicitante.ciudad),
-          pais_residencia: solicitante.pais_residencia,
-          tipo_vivienda: solicitante.tipo_vivienda,
-          vive_con_nucleo_familiar: solicitante.vive_con_nucleo_familiar,
-          personas_a_cargo: solicitante.personas_a_cargo,
-          departamento: solicitante.departamento,
-          codigo_categoria: solicitante.codigo_categoria,
-          cargo: solicitante.cargo,
-          salario: solicitante.salario,
-          antiguedad_meses: solicitante.antiguedad_meses,
-          tipo_contrato: solicitante.tipo_contrato,
-          sector_economico: solicitante.sector_economico
+          genero: solicitanteData.genero as "M" | "F" | "O" | undefined,
+          estado_civil: solicitanteData.estado_civil,
+          nivel_educativo: solicitanteData.nivel_educativo,
+          profesion: solicitanteData.profesion,
+          email: solicitanteData.email,
+          telefono_fijo: solicitanteData.telefono_fijo,
+          telefono_movil: solicitanteData.celular || solicitanteData.telefono_movil,
+          direccion: solicitanteData.direccion,
+          barrio: solicitanteData.barrio,
+          ciudad: normalizeValue(solicitanteData.ciudad),
+          pais_residencia: solicitanteData.pais_residencia,
+          tipo_vivienda: solicitanteData.tipo_vivienda,
+          vive_con_nucleo_familiar: solicitanteData.vive_con_nucleo_familiar,
+          personas_a_cargo: solicitanteData.personas_a_cargo,
+          departamento: solicitanteData.departamento,
+          codigo_categoria: solicitanteData.codigo_categoria,
+          cargo: solicitanteData.cargo,
+          salario: solicitanteData.salario,
+          antiguedad_meses: solicitanteData.antiguedad_meses,
+          tipo_contrato: solicitanteData.tipo_contrato,
+          sector_economico: solicitanteData.sector_economico
         });
       }
 
@@ -252,7 +329,7 @@ const postulacionSolicitudService = () => {
         solicitud_id: numeroSolicitudRadicado,
         estado: solicitudCredito.estado,
         detalle: "Solicitud creada exitosamente",
-        usuario_username: solicitud?.owner_username,
+        usuario_username: (solicitud as PayloadSolicitud)?.owner_username,
         automatico: true
       });
 
@@ -261,8 +338,9 @@ const postulacionSolicitudService = () => {
         solicitud: solicitudCredito,
         payload
       };
-    } catch (error: any) {
-      throw new Error(`Error al guardar la solicitud: ${error.message}`);
+    } catch (error: unknown) {
+      const err = error as Error;
+      throw new Error(`Error al guardar la solicitud: ${err.message}`);
     }
   };
 

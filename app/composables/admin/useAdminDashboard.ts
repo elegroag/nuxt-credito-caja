@@ -1,9 +1,7 @@
 import { ref, computed, onMounted } from "vue";
 import { useApi } from "~/composables/useApi";
-import { useSession } from "~/composables/useSession";
 
 export function useAdminDashboard() {
-  const { authHeader } = useSession();
   const { getJson } = useApi();
 
   // Estado

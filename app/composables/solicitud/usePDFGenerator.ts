@@ -68,14 +68,14 @@ export function usePDFGenerator() {
 
       error.value = response.message || "Error al generar el PDF";
       return false;
-    } catch (err: any) {
-      const errorData = err.data;
+    } catch (err: unknown) {
+      const errorData = (err as { data?: { error_type?: string; message?: string } })?.data;
 
       if (errorData?.error_type === "NOT_FOUND") {
         error.value = "No se encontró la solicitud";
       } else if (errorData?.error_type === "VALIDATION_ERROR") {
         error.value
-          = errorData.message || "Datos insuficientes para generar el PDF";
+          = errorData?.message || "Datos insuficientes para generar el PDF";
       } else {
         error.value = "Error al generar el PDF. Intente nuevamente.";
       }
@@ -145,7 +145,7 @@ export function usePDFGenerator() {
       window.URL.revokeObjectURL(downloadUrl);
 
       return true;
-    } catch (err: any) {
+    } catch (err: unknown) {
       error.value = "Error al descargar el PDF";
       console.error("Error descargando PDF:", err);
       return false;
@@ -205,7 +205,7 @@ export function usePDFGenerator() {
       }, 60000);
 
       return true;
-    } catch (err: any) {
+    } catch (err: unknown) {
       error.value = "Error al visualizar el PDF";
       console.error("Error visualizando PDF:", err);
       return false;
@@ -234,7 +234,7 @@ export function usePDFGenerator() {
 
       error.value = response.message || "Error al verificar el estado del PDF";
       return false;
-    } catch (err: any) {
+    } catch (err: unknown) {
       error.value = "Error al verificar el estado del PDF";
       console.error("Error verificando estado PDF:", err);
       return false;

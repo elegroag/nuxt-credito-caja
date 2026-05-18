@@ -30,7 +30,8 @@ declare module "#auth-utils" {
   }
 
   // Define secure session data if you have any server-side only data
-  interface SecureSessionData {
+  // eslint-disable-next-line @typescript-eslint/no-empty-object-type
+  interface SecureSessionData extends Record<string, never> {
     // Add your own fields for server-side only data
   }
 }

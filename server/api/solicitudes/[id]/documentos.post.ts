@@ -11,17 +11,17 @@ import { join } from "path";
 import { CustomResponse } from "~~/server/utils/customResponse";
 
 // Helper para serializar fechas y BigInt
-const serializeData = (obj: any): any => {
+const _serializeData = (obj: Record<string, unknown> | unknown[] | unknown): Record<string, unknown> | unknown[] | unknown => {
   if (obj === null || obj === undefined) return obj;
   if (obj instanceof Date) return obj.toISOString();
   if (typeof obj === "bigint") return obj.toString();
   if (typeof obj === "object") {
     if (Array.isArray(obj)) {
-      return obj.map(serializeData);
+      return (obj as unknown[]).map(_serializeData);
     }
-    const result: any = {};
+    const result: Record<string, unknown> = {};
     for (const key in obj) {
-      result[key] = serializeData(obj[key]);
+      result[key] = _serializeData((obj as Record<string, unknown>)[key]);
     }
     return result;
   }
@@ -29,19 +29,34 @@ const serializeData = (obj: any): any => {
 };
 
 // Mapear documento de Prisma al formato DocumentoCargado
-const mapDocumentoCargado = (doc: any): any => ({
+interface DocumentoCargado {
+  id: string;
+  nombre_original: string;
+  created_at: string;
+  documento_requerido_id: string;
+  saved_filename: string;
+  tamano_bytes: number;
+  tipo_mime: string;
+  ruta_archivo: string;
+  documento_uuid: string;
+  updated_at: string;
+  activo: boolean;
+  solicitud_id: string;
+}
+
+const mapDocumentoCargado = (doc: Record<string, unknown>): DocumentoCargado => ({
   id: String(doc.id),
-  nombre_original: doc.nombre_original,
-  created_at: doc.created_at?.toISOString?.() || String(doc.created_at),
-  documento_requerido_id: doc.tipo_documento,
-  saved_filename: doc.saved_filename,
-  tamano_bytes: doc.tamano_bytes,
-  tipo_mime: doc.tipo_mime,
-  ruta_archivo: doc.ruta_archivo,
-  documento_uuid: doc.api_filename || doc.saved_filename,
-  updated_at: doc.updated_at?.toISOString?.() || String(doc.updated_at),
-  activo: doc.activo,
-  solicitud_id: doc.solicitud_id
+  nombre_original: doc.nombre_original as string,
+  created_at: doc.created_at instanceof Date ? doc.created_at.toISOString() : String(doc.created_at),
+  documento_requerido_id: doc.tipo_documento as string,
+  saved_filename: doc.saved_filename as string,
+  tamano_bytes: doc.tamano_bytes as number,
+  tipo_mime: doc.tipo_mime as string,
+  ruta_archivo: doc.ruta_archivo as string,
+  documento_uuid: (doc.api_filename || doc.saved_filename) as string,
+  updated_at: doc.updated_at instanceof Date ? doc.updated_at.toISOString() : String(doc.updated_at),
+  activo: doc.activo as boolean,
+  solicitud_id: doc.solicitud_id as string
 });
 
 export default defineEventHandler(async (event: H3Event) => {
@@ -133,7 +148,7 @@ export default defineEventHandler(async (event: H3Event) => {
     await writeFile(filePath, fileBuffer);
 
     // Crear registro en base de datos
-    const nuevoDocumento = await prisma.documentos_postulantes.create({
+    await prisma.documentos_postulantes.create({
       data: {
         username: session.user.username,
         solicitud_id: solicitudId,
@@ -171,13 +186,14 @@ export default defineEventHandler(async (event: H3Event) => {
       { documentos: documentosMapeados },
       "Documento subido exitosamente"
     );
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const err = error as unknown as { statusCode?: number; response?: { status?: number }; data?: { error?: string }; message?: string };
     console.error("Error al subir documento:", error);
-    const status = Number(error?.statusCode || error?.response?.status || 502);
+    const status = Number(err?.statusCode || err?.response?.status || 502);
     setResponseStatus(event, Number.isFinite(status) ? status : 502);
 
     return CustomResponse.error(
-      error?.data?.error || error?.message || "Error al subir documento",
+      err?.data?.error || err?.message || "Error al subir documento",
       "Error al subir documento."
     );
   }

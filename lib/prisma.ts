@@ -1,5 +1,5 @@
 import dotenv from "dotenv";
-import { PrismaClient } from "../prisma/generated/prisma/client";
+import { PrismaClient, Prisma, $Enums  } from "../prisma/generated/prisma/client";
 import { PrismaMariaDb } from "@prisma/adapter-mariadb";
 
 dotenv.config();
@@ -17,13 +17,13 @@ const prismaClientSingleton = () => {
   });
 };
 
-declare const globalThis: {
+const globalForPrisma = globalThis as {
   prismaGlobal: ReturnType<typeof prismaClientSingleton>
-} & typeof global;
+} & typeof globalThis;
 
-const prisma = globalThis.prismaGlobal ?? prismaClientSingleton();
+const prisma = globalForPrisma.prismaGlobal ?? prismaClientSingleton();
 
-export { prisma };
+export { prisma, Prisma, $Enums };
 export default prisma;
 
-if (process.env.NODE_ENV !== "production") globalThis.prismaGlobal = prisma;
+if (process.env.NODE_ENV !== "production") globalForPrisma.prismaGlobal = prisma;

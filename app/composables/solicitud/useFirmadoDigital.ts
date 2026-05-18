@@ -86,15 +86,15 @@ export function useFirmadoDigital() {
       error.value
         = response.message || "Error al iniciar el proceso de firmado";
       return false;
-    } catch (err: any) {
-      const errorData = err.data;
+    } catch (err: unknown) {
+      const errorData = (err as { data?: { error_type?: string; message?: string } })?.data;
 
       if (errorData?.error_type === "NOT_FOUND") {
         error.value
           = "No se encontró la solicitud o el PDF no ha sido generado";
       } else if (errorData?.error_type === "VALIDATION_ERROR") {
         error.value
-          = errorData.message
+          = errorData?.message
             || "Faltan datos requeridos para iniciar el firmado";
       } else {
         error.value = "Error al iniciar el firmado. Intente nuevamente.";
@@ -129,8 +129,8 @@ export function useFirmadoDigital() {
 
       error.value = response.message || "Error al consultar el estado";
       return null;
-    } catch (err: any) {
-      const errorData = err.data;
+    } catch (err: unknown) {
+      const errorData = (err as { data?: { error_type?: string } })?.data;
 
       if (errorData?.error_type === "NOT_FOUND") {
         error.value = "No se encontró proceso de firmado para esta solicitud";

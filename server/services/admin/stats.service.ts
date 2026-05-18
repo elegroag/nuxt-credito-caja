@@ -1,10 +1,48 @@
 import prisma from "~~/lib/prisma";
+import type { H3Event } from "h3";
 
-const statsAdminDashboard = (event: any) => {
-  const getSession = async () => {
-    return await getUserSession(event).catch(() => null);
-  };
+interface SolicitudPorMesRaw {
+  mes: string
+  count: bigint
+}
 
+interface _SolicitudPorEstado {
+  estado: string
+  nombre: string
+  count: string
+  color: string
+}
+
+interface EmpresaTop {
+  razon_social: string
+  nit: bigint
+  numero_empleados: number | null
+  tipo_empresa: string | null
+}
+
+interface _EmpresaPorTipo {
+  tipo_empresa: string
+  count: bigint
+}
+
+interface _UserWithRoles {
+  roles: string[]
+}
+
+interface EstadoSolicitud {
+  id: string
+  nombre: string
+  color: string
+}
+
+interface _PorEstadoResult {
+  estado: string
+  nombre: string
+  count: string
+  color: string
+}
+
+const statsAdminDashboard = (_event: H3Event) => {
   const statsSolicitudes = async () => {
     const aprobadas = await prisma.solicitudes_credito.count({
       where: {
@@ -49,7 +87,7 @@ const statsAdminDashboard = (event: any) => {
 
     // Contar solicitudes por cada estado
     const solicitudesPorEstado = await Promise.all(
-      estados.map(async (estado: any) => {
+      estados.map(async (estado: EstadoSolicitud) => {
         const count = await prisma.solicitudes_credito.count({
           where: {
             estado: estado.id
@@ -75,8 +113,8 @@ const statsAdminDashboard = (event: any) => {
       ORDER BY mes ASC
     `;
 
-    const solicitudesPorMes = (solicitudesPorMesRaw as any[]).map(
-      (item: any) => ({
+    const solicitudesPorMes = (solicitudesPorMesRaw as SolicitudPorMesRaw[]).map(
+      (item: SolicitudPorMesRaw) => ({
         mes: item.mes,
         nombre: new Date(item.mes + "-01").toLocaleString("es-ES", {
           month: "long",
@@ -107,11 +145,11 @@ const statsAdminDashboard = (event: any) => {
       }
     });
 
-    const totalEmpresasRaw = await prisma.$queryRaw`
+    const totalEmpresasRaw = await prisma.$queryRaw<Array<{ count: bigint }>>`
       SELECT COUNT(DISTINCT nit) as count
       FROM empresas_convenio
     `;
-    const totalEmpresas = Number((totalEmpresasRaw as any)[0]?.count || 0);
+    const totalEmpresas = Number(totalEmpresasRaw[0]?.count || 0);
 
     const topEmpresas = await prisma.empresas_convenio.findMany({
       take: 5,
@@ -136,13 +174,13 @@ const statsAdminDashboard = (event: any) => {
     return {
       activos: String(activos),
       totalEmpresas: String(totalEmpresas),
-      topEmpresas: topEmpresas.map((empresa: any) => ({
+      topEmpresas: topEmpresas.map((empresa: EmpresaTop) => ({
         razon_social: empresa.razon_social,
         nit: String(empresa.nit),
         numero_empleados: String(empresa.numero_empleados),
         tipo_empresa: empresa.tipo_empresa
       })),
-      porTipo: porTipo.map((tipo: any) => ({
+      porTipo: porTipo.map((tipo) => ({
         tipo_empresa: tipo.tipo_empresa,
         count: String(tipo._count.id)
       }))
@@ -166,8 +204,8 @@ const statsAdminDashboard = (event: any) => {
 
     // Aplanar roles y contar cada rol individualmente
     const roleCounts: Record<string, number> = {};
-    users.forEach((user: any) => {
-      const roles = user.roles as string[];
+    users.forEach((user) => {
+      const roles = (user.roles as string[]) || [];
       roles.forEach((role) => {
         roleCounts[role] = (roleCounts[role] || 0) + 1;
       });

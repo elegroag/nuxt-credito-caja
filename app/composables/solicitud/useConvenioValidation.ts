@@ -36,8 +36,8 @@ export function useConvenioValidation() {
 
       error.value = response.message || "Error al validar convenio";
       return false;
-    } catch (err: any) {
-      const errorData = err.data as ConvenioValidationError | undefined;
+    } catch (err: unknown) {
+      const errorData = (err as { data?: ConvenioValidationError }).data;
 
       if (errorData?.error_type === "NOT_FOUND") {
         error.value
@@ -83,8 +83,8 @@ export function useConvenioValidation() {
 
       error.value = response.message || "Error al validar convenio";
       return false;
-    } catch (err: any) {
-      const errorData = err.data as ConvenioValidationError | undefined;
+    } catch (err: unknown) {
+      const errorData = (err as { data?: ConvenioValidationError }).data;
 
       if (errorData?.error_type === "NOT_FOUND") {
         error.value = errorData.message || "No se encontró convenio activo";

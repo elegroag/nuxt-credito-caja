@@ -58,6 +58,7 @@
           v-else-if="currentStepKey === 'economica'"
           :form="form"
           :errors="stepErrors"
+          @update:form="handleUpdateForm"
         />
 
         <PropiedadesStep
@@ -180,5 +181,9 @@ const stepErrors = computed(() => {
 const handleNext = () => {
   validateStep(currentStepKey.value, form.value);
   next();
+};
+
+const handleUpdateForm = (section: keyof SolicitudCreditoPayload, data: Record<string, unknown>) => {
+  (form.value as unknown as Record<string, Record<string, unknown>>)[section] = data;
 };
 </script>

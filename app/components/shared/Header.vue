@@ -21,7 +21,6 @@ const items = computed<NavigationMenuItem[]>(() => [
 ]);
 
 const isLoginPage = computed(() => route.path === "/login");
-const isRegistroPage = computed(() => route.path === "/registro");
 
 const responsiveMenu = computed(() => [
   ...items.value,
@@ -104,7 +103,7 @@ const responsiveMenu = computed(() => [
           />
           <!-- En registro: mostrar Login -->
           <UButton
-            v-else="isRegistroPage"
+            v-else
             color="primary"
             variant="solid"
             icon="i-lucide-log-in"

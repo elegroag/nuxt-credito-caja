@@ -87,10 +87,9 @@ export function useVerify() {
 
       // Éxito - la página manejará la redirección
       return;
-    } catch (err: any) {
-      error.value
-        = err.data?.message
-          || "Error al verificar el código. Por favor, inténtalo de nuevo.";
+    } catch (err: unknown) {
+      const errObj = err as { data?: { message?: string }; response?: { status?: number } };
+      error.value = errObj.data?.message || "Error al verificar el código. Por favor, inténtalo de nuevo.";
       throw err; // Re-lanzar para que la página pueda manejarlo si es necesario
     } finally {
       loading.value = false;

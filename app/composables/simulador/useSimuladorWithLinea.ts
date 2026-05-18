@@ -1,6 +1,21 @@
 // frontend/composables/simulador/useSimuladorWithLinea.ts
-import { computed, ref, watch, nextTick, type Ref } from "vue";
+import { computed, ref, watch, type Ref } from "vue";
 import { useSimuladorCore } from "./useSimuladorCore";
+
+export interface LineaCreditoApiResponse {
+  tipcre: string
+  detalle: string
+  modxml4: number
+  numcuo: number
+  estcre: number
+  pagseg: string
+  valmax: number
+  estado?: string
+  codcre?: string
+  auxest?: string
+  codcen?: string
+  categorias?: Array<Record<string, unknown>>
+}
 
 export interface LineaCreditoData {
   tipcre: string
@@ -10,6 +25,11 @@ export interface LineaCreditoData {
   estcre: number
   pagseg: string
   valmax: number
+  estado?: string
+  codcre?: string
+  auxest?: string
+  codcen?: string
+  categorias?: Array<Record<string, unknown>>
   // ... otras propiedades de la línea
 }
 

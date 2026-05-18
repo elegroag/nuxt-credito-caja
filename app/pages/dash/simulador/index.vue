@@ -234,7 +234,6 @@ const {
   // Datos del simulador
   monto,
   plazoMeses,
-  tasaEfectivaAnual,
   tipoTasa,
   ingresosMensuales,
   descuentosMensuales,
@@ -257,7 +256,6 @@ const {
   fmt,
   fmtPct,
   reset,
-  cambiarTipoTasa,
 
   // Computed y funciones específicas
   tasaInput,

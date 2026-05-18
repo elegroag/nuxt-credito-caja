@@ -70,10 +70,10 @@ interface Props {
   tienePdf: boolean
 }
 
-const props = defineProps<Props>();
+defineProps<Props>();
 
 defineEmits<{
-  (e: "descargar-pdf"): void
-  (e: "eliminar"): void
+  "descargar-pdf": []
+  eliminar: []
 }>();
 </script>

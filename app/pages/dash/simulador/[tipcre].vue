@@ -561,9 +561,7 @@ const {
   getMensajeError,
 
   // Datos del simulador
-  monto,
   plazoMeses,
-  tasaEfectivaAnual,
   tipoTasa,
   ingresosMensuales,
   descuentosMensuales,
@@ -573,7 +571,6 @@ const {
   tasaEASan,
   tasaMensualSan,
   ingresosSan,
-  ingresosBrutosSan,
   descuentosSan,
   tasaMensual,
   cuotaMensual,
@@ -586,7 +583,6 @@ const {
   fmt,
   fmtPct,
   reset,
-  cambiarTipoTasa,
 
   // Computed y funciones específicas
   tasaInput,
@@ -596,7 +592,6 @@ const {
   navigateToLineas,
   cargarLineaCredito,
   saveDataManual,
-  validarMontoMaximo,
   clearSolicitudData
 } = useSimuladorConLineaPage();
 

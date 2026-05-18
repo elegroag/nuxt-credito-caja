@@ -171,7 +171,7 @@ const props = withDefaults(defineProps<Props>(), {
 });
 
 const emit = defineEmits<{
-  pdfGenerado: [data: any]
+  pdfGenerado: [data: unknown]
   pdfDescargado: []
   error: [error: string]
 }>();

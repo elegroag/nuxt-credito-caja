@@ -11,7 +11,7 @@ const {
   solicitud,
   loading,
   error,
-  loadingFirmado,
+  loadingFirmado: _loadingFirmado,
   estadosTimeline,
   fmtMoney,
   fmtDate,
@@ -27,7 +27,7 @@ const {
   iniciarFirmado
 } = useShowSolicitud();
 
-const handleIniciarFirmado = async () => {
+const _handleIniciarFirmado = async () => {
   const confirmacion = confirm(
     "¿Está seguro de iniciar el proceso de firmado digital? Se enviará el documento al proveedor de firmas."
   );

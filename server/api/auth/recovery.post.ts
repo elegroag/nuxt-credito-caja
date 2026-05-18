@@ -8,14 +8,15 @@ export default defineEventHandler(async (event: H3Event) => {
   const payload = await readBody(event);
 
   try {
-    const result = await authSrv.recovery(event, payload);
+    const result = await authSrv._recovery(event, payload);
     return CustomResponse.success(result);
-  } catch (e: any) {
-    const status = Number(e?.statusCode || e?.response?.status || 502);
+  } catch (e: unknown) {
+    const err = e as { statusCode?: number; response?: { status?: number }; data?: { error?: string }; message?: string };
+    const status = Number(err?.statusCode || err?.response?.status || 502);
     setResponseStatus(event, Number.isFinite(status) ? status : 502);
 
     return CustomResponse.error(
-      e?.data?.error || e?.message || "Error conectando con backend",
+      err?.data?.error || err?.message || "Error conectando con backend",
       "Error en recovery."
     );
   }

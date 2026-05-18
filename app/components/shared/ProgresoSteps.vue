@@ -19,8 +19,8 @@
         v-for="(step, index) in steps"
         :key="step.key"
         class="flex flex-col items-center group cursor-default"
-        :class="{ 'cursor-pointer': canNavigateTo(index) }"
-        @click="canNavigateTo(index) && $emit('navigate', step.key)"
+        :class="{ 'cursor-not-allowed': canNavigateTo(index) }"
+        @click="canNavigateTo(index) && void 0"
       >
         <div
           class="w-10 h-10 rounded-full flex items-center justify-center border-2 bg-card transition-colors duration-300"
@@ -70,10 +70,6 @@ interface Step {
 
 const props = defineProps<{
   currentStep: StepKey
-}>();
-
-const emit = defineEmits<{
-  (e: "navigate", step: StepKey): void
 }>();
 
 const steps: Step[] = [

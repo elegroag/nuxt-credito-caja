@@ -37,7 +37,7 @@ export function useAdviser() {
       authData.value = data;
 
       const accessToken = String(data?.access_token || "");
-      const tokenType = String(data?.token_type || "bearer");
+      const _tokenType = String(data?.token_type || "bearer");
       const user = data?.user;
 
       if (!accessToken) {
@@ -59,9 +59,10 @@ export function useAdviser() {
 
       // Si no hay puntos, continuar con el flujo normal
       return await completeLogin(data);
-    } catch (e: any) {
-      const status = Number(e?.statusCode || e?.response?.status || 0);
-      const code = e?.data?.code;
+    } catch (e: unknown) {
+      const err = e as { statusCode?: number; response?: { status?: number }; data?: { code?: string; error?: string }; message?: string };
+      const status = Number(err?.statusCode || err?.response?.status || 0);
+      const code = err?.data?.code;
 
       if (status === 404 && code === "USER_NOT_FOUND") {
         errorMsg.value
@@ -72,8 +73,8 @@ export function useAdviser() {
         errorMsg.value = "El usuario no tiene permisos de asesor.";
       } else {
         errorMsg.value
-          = e?.data?.error
-            || e?.message
+          = err?.data?.error
+            || err?.message
             || "No fue posible iniciar sesión como asesor";
       }
 

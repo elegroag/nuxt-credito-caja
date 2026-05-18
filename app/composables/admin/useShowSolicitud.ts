@@ -135,10 +135,16 @@ export function useShowSolicitud() {
   };
 
   // Funciones de manejo de documentos
-  const descargarDocumento = async (documento: any) => {
+  const descargarDocumento = async (documento: unknown) => {
     try {
+      const docId = typeof documento === "object" && documento !== null && "id" in documento
+        ? String((documento as Record<string, unknown>).id)
+        : "";
+      const docFilename = typeof documento === "object" && documento !== null && "saved_filename" in documento
+        ? String((documento as Record<string, unknown>).saved_filename)
+        : "";
       const path = urlFor(
-        `/api/solicitudes/${solicitudId}/documentos/${documento.id}/descargar`
+        `/api/solicitudes/${solicitudId}/documentos/${docId}/descargar`
       );
       const headers: Record<string, string> = {
         ...(authHeader.value as Record<string, string>)
@@ -153,7 +159,7 @@ export function useShowSolicitud() {
       const a = document.createElement("a");
 
       a.href = objectUrl;
-      a.download = getDocumentoNombre(documento.saved_filename);
+      a.download = getDocumentoNombre({ nombre_original: docFilename });
       document.body.appendChild(a);
       a.click();
       a.remove();
@@ -174,10 +180,10 @@ export function useShowSolicitud() {
         data: SolicitudCredito
       }>(`/api/admin/solicitudes/${solicitudId}`, { auth: true });
       solicitud.value = response.data;
-    } catch (e: any) {
+    } catch (e: unknown) {
       console.error(e);
-      error.value
-        = e.message || "No se pudo cargar la información de la solicitud.";
+      const message = e instanceof Error ? e.message : String(e);
+      error.value = message || "No se pudo cargar la información de la solicitud.";
     } finally {
       loading.value = false;
     }
@@ -235,7 +241,7 @@ export function useShowSolicitud() {
     try {
       const response = await postJson<{
         success: boolean
-        data: any
+        data: unknown
         message: string
       }>(`/api/solicitudes/${solicitudId}/iniciar-firmado`, {}, { auth: true });
 
@@ -249,11 +255,12 @@ export function useShowSolicitud() {
       } else {
         throw new Error(response.message || "Error al iniciar firmado");
       }
-    } catch (e: any) {
+    } catch (e: unknown) {
       console.error("Error al iniciar firmado:", e);
+      const message = e instanceof Error ? e.message : String(e);
       return {
         success: false,
-        message: e.message || "Error al iniciar el proceso de firmado"
+        message: message || "Error al iniciar el proceso de firmado"
       };
     } finally {
       loadingFirmado.value = false;

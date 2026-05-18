@@ -274,7 +274,7 @@ describe("POST /api/auth/register — integración", () => {
           password: "Password123.",
           confirmar_password: "Password123."
         };
-        delete payload[field as keyof typeof payload];
+        Reflect.deleteProperty(payload, field as keyof typeof payload);
 
         const response = await fetch(`${BASE_URL}/api/auth/register`, {
           method: "POST",

@@ -1,3 +1,5 @@
+import type { Trabajador } from './trabajador'
+
 // Puntos de asesoría del asesor
 export interface PuntoAsesoria {
   numero: string
@@ -30,7 +32,7 @@ export interface AdviserAuthResponse {
       estado: string
       tipo_funcionario: string
     }
-    trabajador?: any
+    trabajador?: Trabajador
     puntos_asesorias?: PuntoAsesoria[]
   }
 }

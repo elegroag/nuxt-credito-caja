@@ -1,6 +1,6 @@
 import type { TipoInversion } from "./credito";
 import type { Ciudades, Ocupacion, TipoContrato } from "./parametros";
-import type { Conyuge, Deuda, InformacionLaboral, IngresosDescuentos } from "./payload";
+import type { Conyuge, Deuda, InformacionLaboral, IngresosDescuentos, Propiedad } from "./payload";
 import type { SolicitanteBasic } from "./solicitante";
 import type { Solicitud } from "./solicitud";
 
@@ -29,7 +29,9 @@ export interface RevisionProps {
 }
 
 export interface PropiedadesProps {
-  form: any;
+  form: {
+    propiedades: Propiedad[];
+  };
   addPropiedad: () => void;
   removePropiedad: (index: number) => void;
   ciudades?: readonly Ciudades[];

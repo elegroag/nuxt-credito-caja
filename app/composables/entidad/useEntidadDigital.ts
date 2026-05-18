@@ -1,4 +1,4 @@
-import { ref, onMounted, computed, nextTick } from "vue";
+import { ref, onMounted, computed } from "vue";
 import { useRoute } from "vue-router";
 import { navigateTo } from "#app";
 import { useApi } from "~/composables/useApi";
@@ -30,7 +30,7 @@ export function useEntidadDigital() {
   // UI state
   const loading = ref(false);
   const errorMsg = ref("");
-  const result = ref<any | null>(null);
+  const result = ref<unknown | null>(null);
 
   // Flow state
   const currentStep = ref<"basic" | "qr">("basic");
@@ -86,7 +86,7 @@ export function useEntidadDigital() {
     return true;
   };
 
-  const handleQrConfirm = async (data: any) => {
+  const _handleQrConfirm = async (data: unknown) => {
     await storage.setItem("completeVerificationData", JSON.stringify(data));
     result.value = data;
     await navigateTo("/dash/entidad-digital/confirmation");
@@ -99,8 +99,9 @@ export function useEntidadDigital() {
       if (!userSession) throw new Error("No se encontró sesión de usuario");
       const { username } = JSON.parse(userSession);
       await generateQR(username, canvasRef);
-    } catch (error: any) {
-      errorMsg.value = error.message || "Error al generar el código QR";
+    } catch (error: unknown) {
+      const err = error as { message?: string };
+      errorMsg.value = err.message || "Error al generar el código QR";
     }
   };
 
@@ -160,7 +161,7 @@ export function useEntidadDigital() {
         selfie = data.selfie || "";
       }
 
-      result.value = await postJson<any>("/api/entidad-digital/completo", {
+      result.value = await postJson<unknown>("/api/entidad-digital/completo", {
         username,
         tipo_identificacion: tipoIdentificacion.value,
         numero_identificacion: numeroIdentificacion.value,
@@ -172,9 +173,10 @@ export function useEntidadDigital() {
       if (redirectTo.value) {
         await navigateTo(redirectTo.value);
       }
-    } catch (e: any) {
+    } catch (e: unknown) {
+      const err = e as { data?: { error?: string }; message?: string };
       errorMsg.value
-        = e?.data?.error || e?.message || "Error creando entidad digital";
+        = err?.data?.error || err?.message || "Error creando entidad digital";
     } finally {
       loading.value = false;
     }

@@ -5,6 +5,7 @@ import { useSimuladorStorage } from "~/composables/useSimuladorStorage";
 import { useSession } from "~/composables/useSession";
 import { useConfigurations } from "~/composables/admin/useConfigurations";
 import type { WizardStep, WizardProps } from "~~/shared/types/wizard";
+import type { TiempoServicioUnidad } from "~~/shared/types/enums";
 
 export type { WizardStep, WizardProps };
 
@@ -38,8 +39,8 @@ export const getStoredWizardStepKey = (): string => {
   return storedStep && isWizardStepKey(storedStep) ? storedStep : DEFAULT_WIZARD_STEP_KEY;
 };
 
-export function useWizardSolicitud(props?: WizardProps) {
-  const route = useRoute();
+export function useWizardSolicitud(_props?: WizardProps) {
+  const _route = useRoute();
   const router = useRouter();
   const { postJson } = useApi();
   const simuladorStorage = useSimuladorStorage();
@@ -210,7 +211,7 @@ export function useWizardSolicitud(props?: WizardProps) {
     }
 
     // Cargar datos del trabajador desde localStorage
-    let trabajador: any = null;
+    let trabajador: Record<string, unknown> = {};
     if (import.meta.client) {
       try {
         const trabajadorStorage = localStorage.getItem("comfaca_credito_trabaajdor");
@@ -227,79 +228,82 @@ export function useWizardSolicitud(props?: WizardProps) {
       trabajador = session.value.user.trabajador;
     }
 
+    // Helper to safely get string values from Record<string, unknown>
+    const getString = (obj: Record<string, unknown>, key: string, fallback: string = ""): string => {
+      const val = obj[key];
+      return typeof val === "string" ? val : fallback;
+    };
+
     if (trabajador) {
       form.value.solicitante.tipo_persona = "natural";
       form.value.solicitante.tipo_documento =
-        trabajador.coddoc || trabajador.tipo_documento || form.value.solicitante.tipo_documento;
+        getString(trabajador, "coddoc") || getString(trabajador, "tipo_documento") || form.value.solicitante.tipo_documento;
       form.value.solicitante.numero_documento =
-        trabajador.cedtra ||
-        trabajador.cedula ||
-        trabajador.numero_documento ||
+        getString(trabajador, "cedtra") ||
+        getString(trabajador, "cedula") ||
+        getString(trabajador, "numero_documento") ||
         form.value.solicitante.numero_documento;
       form.value.solicitante.nombres = [
-        trabajador.prinom || trabajador.primer_nombre,
-        trabajador.segnom || trabajador.segundo_nombre
+        getString(trabajador, "prinom") || getString(trabajador, "primer_nombre"),
+        getString(trabajador, "segnom") || getString(trabajador, "segundo_nombre")
       ]
         .filter(Boolean)
         .join(" ")
         .trim();
       form.value.solicitante.apellidos = [
-        trabajador.priape || trabajador.primer_apellido,
-        trabajador.segape || trabajador.segundo_apellido
+        getString(trabajador, "priape") || getString(trabajador, "primer_apellido"),
+        getString(trabajador, "segape") || getString(trabajador, "segundo_apellido")
       ]
         .filter(Boolean)
         .join(" ")
         .trim();
       form.value.solicitante.fecha_nacimiento =
-        trabajador.fecnac || trabajador.fecha_nacimiento || form.value.solicitante.fecha_nacimiento;
+        getString(trabajador, "fecnac") || getString(trabajador, "fecha_nacimiento") || form.value.solicitante.fecha_nacimiento;
       form.value.solicitante.genero =
-        trabajador.sexo || trabajador.genero || form.value.solicitante.genero;
+        getString(trabajador, "sexo") || getString(trabajador, "genero") || form.value.solicitante.genero;
       form.value.solicitante.estado_civil =
-        trabajador.estciv || trabajador.estado_civil || form.value.solicitante.estado_civil;
+        getString(trabajador, "estciv") || getString(trabajador, "estado_civil") || form.value.solicitante.estado_civil;
       form.value.solicitante.nivel_educativo =
-        trabajador.nivedu || trabajador.nivel_educativo || form.value.solicitante.nivel_educativo;
+        getString(trabajador, "nivedu") || getString(trabajador, "nivel_educativo") || form.value.solicitante.nivel_educativo;
       form.value.solicitante.profesion =
-        trabajador.cargo || trabajador.profesion || form.value.solicitante.profesion;
-      form.value.solicitante.email = trabajador.email || form.value.solicitante.email;
-      form.value.solicitante.telefono = trabajador.telefono || form.value.solicitante.telefono;
+        getString(trabajador, "cargo") || getString(trabajador, "profesion") || form.value.solicitante.profesion;
+      form.value.solicitante.email = getString(trabajador, "email") || form.value.solicitante.email;
+      form.value.solicitante.telefono = getString(trabajador, "telefono") || form.value.solicitante.telefono;
       form.value.solicitante.celular =
-        trabajador.telefono || trabajador.celular || form.value.solicitante.celular;
-      form.value.solicitante.direccion = trabajador.direccion || form.value.solicitante.direccion;
+        getString(trabajador, "telefono") || getString(trabajador, "celular") || form.value.solicitante.celular;
+      form.value.solicitante.direccion = getString(trabajador, "direccion") || form.value.solicitante.direccion;
       form.value.solicitante.barrio =
-        trabajador.barrio || trabajador.direccion || form.value.solicitante.barrio;
+        getString(trabajador, "barrio") || getString(trabajador, "direccion") || form.value.solicitante.barrio;
       form.value.solicitante.ciudad =
-        trabajador.codciu ||
-        trabajador.ciudad_codigo ||
-        trabajador.ciudad ||
+        getString(trabajador, "codciu") ||
+        getString(trabajador, "ciudad_codigo") ||
+        getString(trabajador, "ciudad") ||
         form.value.solicitante.ciudad;
       form.value.solicitante.departamento =
-        trabajador.departamento || form.value.solicitante.departamento || "Caquetá";
-      form.value.solicitante.cargo = trabajador.cargo || form.value.solicitante.cargo;
-      form.value.solicitante.salario = trabajador.salario || form.value.solicitante.salario;
+        getString(trabajador, "departamento") || form.value.solicitante.departamento || "Caquetá";
+      form.value.solicitante.cargo = getString(trabajador, "cargo") || form.value.solicitante.cargo;
+      form.value.solicitante.salario = typeof trabajador.salario === "number" ? trabajador.salario : form.value.solicitante.salario;
       form.value.solicitante.codigo_categoria =
-        trabajador.codcat || trabajador.codigo_categoria || form.value.solicitante.codigo_categoria;
+        getString(trabajador, "codcat") || getString(trabajador, "codigo_categoria") || form.value.solicitante.codigo_categoria;
       form.value.solicitud.categoria =
-        trabajador.codcat || trabajador.codigo_categoria || form.value.solicitud.categoria;
-      form.value.solicitante.pais_residencia = trabajador.pais_residencia || "CO";
+        getString(trabajador, "codcat") || getString(trabajador, "codigo_categoria") || form.value.solicitud.categoria;
+      form.value.solicitante.pais_residencia = getString(trabajador, "pais_residencia") || "CO";
       form.value.solicitante.personas_a_cargo =
-        trabajador.personas_a_cargo || form.value.solicitante.personas_a_cargo || 0;
+        typeof trabajador.personas_a_cargo === "number" ? trabajador.personas_a_cargo : form.value.solicitante.personas_a_cargo || 0;
       form.value.solicitante.antiguedad_meses =
-        trabajador.antiguedad_meses || form.value.solicitante.antiguedad_meses || 0;
+        typeof trabajador.antiguedad_meses === "number" ? trabajador.antiguedad_meses : form.value.solicitante.antiguedad_meses || 0;
       form.value.solicitante.tipo_vivienda =
-        trabajador.vivienda || form.value.solicitante.tipo_vivienda || "";
+        getString(trabajador, "vivienda") || form.value.solicitante.tipo_vivienda || "";
       form.value.solicitante.vive_con_nucleo_familiar =
         trabajador.estciv == 2 || trabajador.estciv == 4 || false;
-      form.value.solicitante.sector_economico = trabajador.agro == "S" ? "1" : "3";
+      form.value.solicitante.sector_economico = getString(trabajador, "agro") == "S" ? "1" : "3";
 
       // Datos de la empresa
-      const nit = trabajador.nit || trabajador.empresa_cedrep;
-      const razonSocial = trabajador.razsoc || trabajador.empresa_razsoc;
-      const empresaDireccion = trabajador.empresa_direccion || trabajador.dirlab;
-      const empresaTelefono = trabajador.empresa_telefono || trabajador.telefono;
-      const empresaCiudad = trabajador.empresa_codciu || trabajador.codciu;
-      const representanteLegal = trabajador.repleg || trabajador.empresa_repleg;
-      const representanteCedula = trabajador.empresa_cedrep;
-
+      const nit = getString(trabajador, "nit") || getString(trabajador, "empresa_cedrep");
+      const razonSocial = getString(trabajador, "razsoc") || getString(trabajador, "empresa_razsoc");
+      const empresaDireccion = getString(trabajador, "empresa_direccion") || getString(trabajador, "dirlab");
+      const empresaTelefono = getString(trabajador, "empresa_telefono") || getString(trabajador, "telefono");
+      const empresaCiudad = getString(trabajador, "empresa_codciu") || getString(trabajador, "codciu");
       if (nit) {
         form.value.solicitante.nit = nit || form.value.solicitante.nit;
         form.value.solicitante.razon_social = razonSocial || form.value.solicitante.razon_social;
@@ -314,22 +318,22 @@ export function useWizardSolicitud(props?: WizardProps) {
         form.value.informacion_laboral.empresa_ciudad =
           empresaCiudad || form.value.informacion_laboral.empresa_ciudad;
         form.value.informacion_laboral.cargo =
-          trabajador.cargo || form.value.informacion_laboral.cargo;
+          getString(trabajador, "cargo") || form.value.informacion_laboral.cargo;
         form.value.informacion_laboral.fecha_ingreso =
-          trabajador.fecafi ||
-          trabajador.fecha_afiliacion ||
-          trabajador.fecha_ingreso ||
+          getString(trabajador, "fecafi") ||
+          getString(trabajador, "fecha_afiliacion") ||
+          getString(trabajador, "fecha_ingreso") ||
           form.value.informacion_laboral.fecha_ingreso;
-        form.value.informacion_laboral.tiempo_servicio = trabajador.antiguedad_meses || 1;
+        form.value.informacion_laboral.tiempo_servicio = typeof trabajador.antiguedad_meses === "number" ? trabajador.antiguedad_meses : 1;
         form.value.informacion_laboral.tiempo_servicio_unidad =
-          trabajador.tiempo_servicio_unidad ||
+          (getString(trabajador, "tiempo_servicio_unidad") as TiempoServicioUnidad) ||
           form.value.informacion_laboral.tiempo_servicio_unidad ||
           "anios";
         form.value.informacion_laboral.tipo_contrato =
-          trabajador.tipcon || form.value.informacion_laboral.tipo_contrato;
+          getString(trabajador, "tipcon") || form.value.informacion_laboral.tipo_contrato;
       }
 
-      if (trabajador.salario) {
+      if (typeof trabajador.salario === "number") {
         form.value.ingresos_descuentos.salario_basico_mensual = trabajador.salario;
         form.value.ingresos_descuentos.salud_pension = Math.round(trabajador.salario * 0.08);
       }

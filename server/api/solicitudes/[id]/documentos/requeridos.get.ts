@@ -4,6 +4,24 @@ import prisma from "~~/lib/prisma";
 import apiSisuweb from "~~/server/services/api-sisuweb";
 import { CustomResponse } from "~~/server/utils/customResponse";
 
+interface TipoCreditoSisuweb {
+  tipcre: string;
+  detalle: string;
+  documentos?: Array<{
+    tipdoc: string;
+    detalle: string;
+    obliga: string;
+  }>;
+}
+
+interface DocumentoRequerido {
+  id: string;
+  nombre: string;
+  tipo: string;
+  obligatorio: boolean;
+  descripcion: string;
+}
+
 export default defineEventHandler(async (event: H3Event) => {
   try {
     const solicitudId = getRouterParam(event, "id");
@@ -54,13 +72,15 @@ export default defineEventHandler(async (event: H3Event) => {
     }
 
     const sisuweb = apiSisuweb();
-    const response = await sisuweb.postJson<any>(
-      "creditos/tipo-creditos",
-      {},
-      { auth: true }
-    );
+    let tipoCreditos: TipoCreditoSisuweb[];
 
-    if (!response.success || !response.data) {
+    try {
+      tipoCreditos = await sisuweb.postJson<TipoCreditoSisuweb[]>(
+        "creditos/tipo-creditos",
+        {},
+        { auth: true }
+      );
+    } catch {
       setResponseStatus(event, 500);
       return CustomResponse.error(
         "Error al obtener tipos de crédito desde SISUWEB",
@@ -68,8 +88,16 @@ export default defineEventHandler(async (event: H3Event) => {
       );
     }
 
-    const tipoCredito = response.data.find(
-      (tc: any) => tc.tipcre === solicitud.tipo_credito
+    if (!tipoCreditos || !Array.isArray(tipoCreditos)) {
+      setResponseStatus(event, 500);
+      return CustomResponse.error(
+        "Error al obtener tipos de crédito desde SISUWEB",
+        "Error en SISUWEB"
+      );
+    }
+
+    const tipoCredito = tipoCreditos.find(
+      (tc: TipoCreditoSisuweb) => tc.tipcre === solicitud.tipo_credito
     );
 
     if (!tipoCredito) {
@@ -80,8 +108,8 @@ export default defineEventHandler(async (event: H3Event) => {
       );
     }
 
-    const documentosRequeridos = (tipoCredito.documentos || []).map(
-      (doc: any) => ({
+    const documentosRequeridos: DocumentoRequerido[] = (tipoCredito.documentos || []).map(
+      (doc: { tipdoc: string; detalle: string; obliga: string }) => ({
         id: doc.tipdoc,
         nombre: doc.detalle,
         tipo: doc.tipdoc,
@@ -94,14 +122,15 @@ export default defineEventHandler(async (event: H3Event) => {
       { documentos: documentosRequeridos, count: documentosRequeridos.length },
       "Documentos requeridos obtenidos exitosamente"
     );
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const err = error as { statusCode?: number; response?: { status?: number }; data?: { error?: string }; message?: string };
     console.error("Error al obtener documentos requeridos:", error);
-    const status = Number(error?.statusCode || error?.response?.status || 502);
+    const status = Number(err?.statusCode || err?.response?.status || 502);
     setResponseStatus(event, Number.isFinite(status) ? status : 502);
 
     return CustomResponse.error(
-      error?.data?.error
-      || error?.message
+      err?.data?.error
+      || err?.message
       || "Error al obtener documentos requeridos",
       "Error al obtener documentos requeridos."
     );

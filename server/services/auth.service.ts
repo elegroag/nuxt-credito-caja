@@ -10,6 +10,32 @@ import type {
 } from "~~/shared/types/users-session";
 import jwtManager from "~~/shared/utils/jwt";
 
+interface UserWithPassword {
+  id: number
+  username: string
+  email: string
+  full_name: string
+  password_hash: string
+  roles: string[]
+  numero_documento: string | null
+}
+
+interface TrabajadorData {
+  nit: string
+  estado: string
+  sucursal: string
+  phone: string
+  email: string
+}
+
+interface AdviserData {
+  estado: string
+  phone: string
+  email: string
+  codigo_funcionario: string
+  tipo_funcionario: string
+}
+
 const authService = () => {
   const userSrv = userService();
   const api = apiSisuweb();
@@ -78,27 +104,37 @@ const authService = () => {
     return allPermissions;
   };
 
-  const createToken = async (user: any) => {
+  const createToken = async (user: UserWithPassword) => {
     return await jwt.signJwt({
       sub: user.id,
-      email: user.email,
+      email: user.email || "",
       roles: user.roles
     });
   };
 
   const validateCredentials = async (
     credentials: LoginCredentials
-  ): Promise<{ user: any, isValid: boolean }> => {
-    const user = await userSrv.findByUsername(credentials.username);
+  ): Promise<{ user: UserWithPassword | null, isValid: boolean }> => {
+    const prismaUser = await userSrv.findByUsername(credentials.username);
 
-    if (!user) {
+    if (!prismaUser) {
       return { user: null, isValid: false };
     }
 
     const isPasswordValid = bcrypt.compareSync(
       credentials.password,
-      user.password_hash
+      prismaUser.password_hash
     );
+
+    const user: UserWithPassword = {
+      id: Number(prismaUser.id),
+      username: prismaUser.username,
+      email: prismaUser.email || "",
+      full_name: prismaUser.full_name || "",
+      password_hash: prismaUser.password_hash,
+      roles: (prismaUser.roles as string[]) || [],
+      numero_documento: prismaUser.numero_documento
+    };
 
     return { user, isValid: isPasswordValid };
   };
@@ -108,9 +144,9 @@ const authService = () => {
   };
 
   const createUserSession = (
-    user: any,
-    trabajador: any | null,
-    adviser: any | null
+    user: UserWithPassword,
+    trabajador: TrabajadorData | null,
+    adviser: AdviserData | null
   ): UserSession => {
     const session = {
       id: user.id.toString(),
@@ -142,12 +178,12 @@ const authService = () => {
     }
 
     let trabajadorSesion = null;
-    let trabajadorData: any = null;
+    let trabajadorData: unknown = null;
 
     // valida en user.roles si hay rol de user_trabajador
     if (user.roles.includes("user_trabajador")) {
       // usamos la api_sisuweb
-      const responseApi = await api.postJson<any>(
+      const responseApi = await api.postJson<Record<string, unknown>>(
         "company/informacion_trabajador",
         {
           cedtra: user.numero_documento
@@ -160,13 +196,14 @@ const authService = () => {
         // procesar dataApi.data
         trabajadorData = responseApi.data || null;
 
-        if (trabajadorData) {
+        if (trabajadorData && typeof trabajadorData === 'object') {
+          const td = trabajadorData as Record<string, unknown>;
           trabajadorSesion = {
-            nit: trabajadorData.nit,
-            estado: trabajadorData.estado,
-            sucursal: trabajadorData.codsuc,
-            phone: trabajadorData.telefono,
-            email: trabajadorData.email
+            nit: td.nit as string,
+            estado: td.estado as string,
+            sucursal: td.codsuc as string,
+            phone: td.telefono as string,
+            email: td.email as string
           };
         }
       }
@@ -227,10 +264,10 @@ const authService = () => {
     }
 
     // buscamos los datos del trabajador
-    let trabajadorData: any = null;
+    let trabajadorData: unknown = null;
     const roles = (user.roles as string[]) || [];
     if (roles.includes("user_trabajador")) {
-      const responseApi = await api.postJson<any>(
+      const responseApi = await api.postJson<Record<string, unknown>>(
         "company/informacion_trabajador",
         {
           cedtra: user.numero_documento
@@ -285,7 +322,7 @@ const authService = () => {
     }
 
     let adviserSesion = null;
-    let adviserData: any = null;
+    let adviserData: unknown = null;
 
     // valida en user.roles si hay rol de adviser
     if (user.roles.includes("adviser")) {
@@ -296,10 +333,10 @@ const authService = () => {
     }
 
     let trabajadorSesion = null;
-    let trabajadorData: any = null;
+    let trabajadorData: unknown = null;
 
     // usamos la api_sisuweb
-    const responseApi = await api.getJson<any>(
+    const responseApi = await api.getJson<Record<string, unknown>>(
       "usuarios/trae_usuario/" + user.username,
       {
         auth: true
@@ -323,7 +360,8 @@ const authService = () => {
       });
     }
 
-    const estadoAdviser = adviserData.estado || null;
+    const ad = adviserData as Record<string, unknown>;
+    const estadoAdviser = (ad.estado as string) || null;
 
     if (!estadoAdviser || estadoAdviser !== "A") {
       throw createError({
@@ -334,16 +372,16 @@ const authService = () => {
 
     adviserSesion = {
       estado: estadoAdviser,
-      phone: adviserData.telefono,
-      email: adviserData.email,
-      codigo_funcionario: adviserData.tipfun,
-      tipo_funcionario: adviserData.tipfun_detalle
+      phone: ad.telefono as string,
+      email: ad.email as string,
+      codigo_funcionario: ad.tipfun as string,
+      tipo_funcionario: ad.tipfun_detalle as string
     };
 
     // valida en user.roles si hay rol de user_trabajador
     if (user.roles.includes("user_trabajador")) {
       // usamos la api_sisuweb
-      const responseApi = await api.postJson<any>(
+      const responseApi = await api.postJson<Record<string, unknown>>(
         "company/informacion_trabajador",
         {
           cedtra: user.numero_documento
@@ -356,13 +394,14 @@ const authService = () => {
         // procesar dataApi.data
         trabajadorData = responseApi.data || null;
 
-        if (trabajadorData) {
+        if (trabajadorData && typeof trabajadorData === 'object') {
+          const td = trabajadorData as Record<string, unknown>;
           trabajadorSesion = {
-            nit: trabajadorData.nit,
-            estado: trabajadorData.estado,
-            sucursal: trabajadorData.codsuc,
-            phone: trabajadorData.telefono,
-            email: trabajadorData.email
+            nit: td.nit as string,
+            estado: td.estado as string,
+            sucursal: td.codsuc as string,
+            phone: td.telefono as string,
+            email: td.email as string
           };
         }
       }
@@ -382,7 +421,7 @@ const authService = () => {
     await userSrv.updateLastLogin(user.id);
 
     // consultar puntos del asesor
-    const dataPuntos = await api.getJson<any>(
+    const dataPuntos = await api.getJson<Record<string, unknown>>(
       "creditos/puntos-asesor/" + user.username,
       {
         auth: true
@@ -411,7 +450,7 @@ const authService = () => {
     };
   };
 
-  const recovery = async (event: H3Event, payload: RecoveryPayload) => {
+  const _recovery = async (_event: H3Event, _payload: RecoveryPayload) => {
     return {
       message: "Recovery successful"
     };
@@ -448,6 +487,16 @@ const authService = () => {
 
     const user = await userSrv.createUserTrabajador(userData);
 
+    const userForToken: UserWithPassword = {
+      id: Number(user.id),
+      username: user.username,
+      email: user.email || "",
+      full_name: user.full_name || "",
+      password_hash: user.password_hash,
+      roles: (user.roles as string[]) || [],
+      numero_documento: user.numero_documento
+    };
+
     const pin = generateRandomPin();
 
     const body = `<html>
@@ -465,7 +514,7 @@ const authService = () => {
       </body>
       </html>`;
 
-    await api.postJson<any>(
+    await api.postJson<Record<string, unknown>>(
       "/utils/sender-email",
       {
         body: body,
@@ -477,7 +526,7 @@ const authService = () => {
       }
     );
 
-    const token = await createToken(user);
+    const token = await createToken(userForToken);
 
     return {
       message: "Register successful",
@@ -494,7 +543,7 @@ const authService = () => {
     createUserSession,
     verify,
     adviser,
-    recovery,
+    _recovery,
     register
   };
 };

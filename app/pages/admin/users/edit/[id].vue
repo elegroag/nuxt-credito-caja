@@ -372,11 +372,6 @@ import {
   ShieldCheckIcon,
   IdentificationIcon,
   PhoneIcon,
-  BuildingOfficeIcon,
-  BuildingOffice2Icon,
-  HomeIcon,
-  MapPinIcon,
-  UserGroupIcon,
   ArrowPathIcon,
   NoSymbolIcon
 } from "@heroicons/vue/24/outline";
@@ -394,9 +389,7 @@ const {
   errors,
   form,
   cargarUsuario,
-  validateForm,
   handleSubmit,
-  resetForm,
   goBack
 } = useEditUser();
 </script>

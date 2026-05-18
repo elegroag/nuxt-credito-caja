@@ -56,5 +56,5 @@ interface Props {
   netoRecibido: string
 }
 
-const props = defineProps<Props>();
+defineProps<Props>();
 </script>

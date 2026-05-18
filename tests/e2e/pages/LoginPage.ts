@@ -1,3 +1,14 @@
+export interface SnapshotElement {
+  uid?: string;
+  tagName?: string;
+  type?: string;
+  role?: string;
+  placeholder?: string;
+  text?: string;
+  disabled?: boolean;
+  classes?: string[];
+}
+
 export class LoginPage {
   private baseURL: string;
 
@@ -28,14 +39,14 @@ export class LoginPage {
     await chrome.devtools_navigate_page({ type: "url", url: this.loginURL });
   }
 
-  async getSnapshot(): Promise<any> {
+  async getSnapshot(): Promise<SnapshotElement> {
     return await chrome.devtools_take_snapshot({ verbose: true });
   }
 
   async fillUsername(username: string): Promise<void> {
     const snapshot = await this.getSnapshot();
     const inputEl = snapshot.elements?.find(
-      (el: any) => el.placeholder?.includes("Tu nombre de usuario")
+      (el: SnapshotElement) => el.placeholder?.includes("Tu nombre de usuario")
     );
     if (inputEl) {
       await chrome.devtools_fill({ uid: inputEl.uid, value: username });
@@ -45,7 +56,7 @@ export class LoginPage {
   async fillPassword(password: string): Promise<void> {
     const snapshot = await this.getSnapshot();
     const inputEl = snapshot.elements?.find(
-      (el: any) => el.placeholder?.includes("••••••••")
+      (el: SnapshotElement) => el.placeholder?.includes("••••••••")
     );
     if (inputEl) {
       await chrome.devtools_fill({ uid: inputEl.uid, value: password });
@@ -55,7 +66,7 @@ export class LoginPage {
   async submit(): Promise<void> {
     const snapshot = await this.getSnapshot();
     const buttonEl = snapshot.elements?.find(
-      (el: any) => el.role === "button" && el.tagName === "button" && el.type === "submit"
+      (el: SnapshotElement) => el.role === "button" && el.tagName === "button" && el.type === "submit"
     );
     if (buttonEl) {
       await chrome.devtools_click({ uid: buttonEl.uid });
@@ -79,7 +90,7 @@ export class LoginPage {
   async closeModal(): Promise<void> {
     const snapshot = await this.getSnapshot();
     const closeButton = snapshot.elements?.find(
-      (el: any) => el.tagName === "button" && el.classes?.some((c: string) => c.includes("outline"))
+      (el: SnapshotElement) => el.tagName === "button" && el.classes?.some((c: string) => c.includes("outline"))
     );
     if (closeButton) {
       await chrome.devtools_click({ uid: closeButton.uid });
@@ -89,7 +100,7 @@ export class LoginPage {
   async isSubmitEnabled(): Promise<boolean> {
     const snapshot = await this.getSnapshot();
     const buttonEl = snapshot.elements?.find(
-      (el: any) => el.role === "button" && el.type === "submit"
+      (el: SnapshotElement) => el.role === "button" && el.type === "submit"
     );
     return buttonEl ? !buttonEl.disabled : false;
   }
@@ -102,7 +113,7 @@ export class LoginPage {
   async getConnectionStatus(): Promise<string | null> {
     const snapshot = await this.getSnapshot();
     const statusEl = snapshot.elements?.find(
-      (el: any) => el.tagName === "div" && el.classes?.some((c: string) => c.includes("mt-4"))
+      (el: SnapshotElement) => el.tagName === "div" && el.classes?.some((c: string) => c.includes("mt-4"))
     );
     return statusEl?.text ?? null;
   }

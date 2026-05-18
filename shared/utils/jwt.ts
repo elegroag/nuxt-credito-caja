@@ -1,4 +1,4 @@
-import { SignJWT, jwtVerify, type JWTPayload } from "jose";
+import { SignJWT, jwtVerify } from "jose";
 import type { JwtPayload } from "~~/shared/types/users-session";
 
 const jwtManager = () => {

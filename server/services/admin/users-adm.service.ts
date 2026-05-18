@@ -51,8 +51,8 @@ interface CreateUserParams {
 
 const usersAdmService = () => {
   // Validar datos de creación de usuario
-  const validateCreateUser = (data: any): CreateUserParams => {
-    return createUserSchema.parse(data);
+  const validateCreateUser = (data: unknown): CreateUserParams => {
+    return createUserSchema.parse(data) as CreateUserParams;
   };
 
   // Verificar si el username ya existe
@@ -235,7 +235,21 @@ const usersAdmService = () => {
       telefono
     } = params;
 
-    const updateData: any = {};
+    interface UpdateUserData {
+      email?: string
+      password_hash?: string
+      nombres?: string
+      apellidos?: string
+      full_name?: string
+      roles?: string[]
+      disabled?: boolean
+      is_active?: boolean
+      tipo_documento?: string
+      numero_documento?: string
+      phone?: string
+    }
+
+    const updateData: UpdateUserData = {};
 
     if (email !== undefined) {
       // Verificar unicidad de email si se está actualizando
@@ -260,8 +274,8 @@ const usersAdmService = () => {
     if (nombre !== undefined || apellido !== undefined) {
       const user = await prisma.users.findUnique({ where: { id } });
       if (user) {
-        updateData.nombres = nombre ?? user.nombres;
-        updateData.apellidos = apellido ?? user.apellidos;
+        updateData.nombres = nombre ?? user.nombres ?? undefined;
+        updateData.apellidos = apellido ?? user.apellidos ?? undefined;
         updateData.full_name = `${updateData.nombres} ${updateData.apellidos}`;
       }
     }

@@ -1,5 +1,7 @@
 import { ref, computed, reactive } from "vue";
 import { useApi } from "~/composables/useApi";
+import type { EmpresaConvenio, ConveniosResponse } from "~~/shared/types/convenios";
+import type { SuccessResponse } from "~~/shared/types/response";
 
 export function useAdminConvenios() {
   // Estado reactivo
@@ -73,7 +75,7 @@ export function useAdminConvenios() {
       if (filtros.busqueda) params.append("busqueda", filtros.busqueda);
 
       const api = useApi();
-      const response = await api.getJson<any>(`/api/admin/convenios?${params.toString()}`, {
+      const response = await api.getJson<SuccessResponse<ConveniosResponse>>(`/api/admin/convenios?${params.toString()}`, {
         auth: true
       });
 
@@ -98,9 +100,9 @@ export function useAdminConvenios() {
         totalEmpresas.value = 0;
         conteoEstados.value = {};
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error("Error al cargar empresas con convenios:", err);
-      error.value = err.message || "Error al cargar las empresas con convenios";
+      error.value = (err as Error).message || "Error al cargar las empresas con convenios";
       empresas.value = [];
       totalEmpresas.value = 0;
     } finally {
@@ -181,9 +183,9 @@ export function useAdminConvenios() {
         conteoEstados.value[estadoAnterior] = (conteoEstados.value[estadoAnterior] || 0) - 1;
         conteoEstados.value[nuevoEstado] = (conteoEstados.value[nuevoEstado] || 0) + 1;
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error("Error al cambiar estado de la empresa:", err);
-      error.value = err.message || "Error al cambiar el estado de la empresa";
+      error.value = (err as Error).message || "Error al cambiar el estado de la empresa";
     }
   };
 
@@ -203,9 +205,9 @@ export function useAdminConvenios() {
         // Actualizar conteos
         conteoEstados.value[empresa.estado] = (conteoEstados.value[empresa.estado] || 0) - 1;
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error("Error al eliminar empresa:", err);
-      error.value = err.message || "Error al eliminar la empresa";
+      error.value = (err as Error).message || "Error al eliminar la empresa";
     }
   };
 

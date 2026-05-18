@@ -1,5 +1,5 @@
 import type { H3Event } from "h3";
-import { defineEventHandler, readBody, setResponseStatus } from "h3";
+import { defineEventHandler, readValidatedBody, setResponseStatus } from "h3";
 import AuthService from "~~/server/services/auth.service";
 import { z } from "zod";
 import { CustomResponse } from "~~/server/utils/customResponse";
@@ -26,11 +26,12 @@ export default defineEventHandler(async (event: H3Event) => {
       result,
       result.message || "Login completado."
     );
-  } catch (e: any) {
-    const status = Number(e?.statusCode || e?.response?.status || 502);
+  } catch (e: unknown) {
+    const err = e as { statusCode?: number; response?: { status?: number }; data?: { error?: string }; message?: string };
+    const status = Number(err?.statusCode || err?.response?.status || 502);
     setResponseStatus(event, Number.isFinite(status) ? status : 502);
     return CustomResponse.error(
-      e?.data?.error || e?.message || "Error conectando con backend",
+      err?.data?.error || err?.message || "Error conectando con backend",
       "Error en el proceso de login."
     );
   }

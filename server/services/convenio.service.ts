@@ -1,5 +1,6 @@
 import apiSisuweb from "./api-sisuweb";
 import userService from "./user.service";
+import type { $Enums } from "~~/lib/prisma";
 import prisma from "~~/lib/prisma";
 
 const convenioService = () => {
@@ -15,7 +16,7 @@ const convenioService = () => {
     }
 
     // Obtener datos del trabajador desde sisuweb
-    const trabajadorData = await api.postJson<any>(
+    const trabajadorData = await api.postJson<Record<string, unknown>>(
       "company/informacion_trabajador",
       {
         cedtra: user.numero_documento
@@ -29,7 +30,8 @@ const convenioService = () => {
       return [];
     }
 
-    const nit = BigInt(trabajadorData.data.nit);
+    const td = trabajadorData.data as Record<string, unknown>;
+    const nit = BigInt(td.nit as string);
 
     // Buscar convenios por NIT
     const convenios = await prisma.empresas_convenio.findMany({
@@ -42,7 +44,7 @@ const convenioService = () => {
       }
     });
 
-    return convenios.map((convenio: any) => ({
+    return convenios.map((convenio) => ({
       id: String(convenio.id),
       nit: String(convenio.nit),
       razon_social: convenio.razon_social,
@@ -84,7 +86,7 @@ const convenioService = () => {
       }
     });
 
-    return convenios.map((convenio: any) => ({
+    return convenios.map((convenio) => ({
       id: String(convenio.id),
       nit: String(convenio.nit),
       razon_social: convenio.razon_social,
@@ -124,7 +126,7 @@ const convenioService = () => {
         correo: data.correo,
         fecha_vencimiento: data.fecha_vencimiento ? new Date(data.fecha_vencimiento) : null,
         fecha_convenio: new Date(),
-        estado: (data.estado as any) || "Activo",
+        estado: (data.estado || "Activo") as unknown as $Enums.empresas_convenio_estado,
         direccion: data.direccion,
         ciudad: data.ciudad,
         departamento: data.departamento,
@@ -150,7 +152,7 @@ const convenioService = () => {
     const offset = (page - 1) * limit;
 
     // Construir where clause
-    const where: any = {};
+    const where: Record<string, unknown> = {};
 
     if (estado) {
       where.estado = estado;
@@ -195,7 +197,7 @@ const convenioService = () => {
     });
 
     // Transformar datos
-    const empresas = convenios.map((convenio: any) => ({
+    const empresas = convenios.map((convenio) => ({
       id: String(convenio.id),
       nit: String(convenio.nit),
       razon_social: convenio.razon_social,
@@ -282,7 +284,7 @@ const convenioService = () => {
       notas_internas?: string;
     }
   ) => {
-    const updateData: any = {};
+    const updateData: Record<string, unknown> = {};
 
     if (data.nit !== undefined) updateData.nit = BigInt(data.nit);
     if (data.razon_social !== undefined) updateData.razon_social = data.razon_social;

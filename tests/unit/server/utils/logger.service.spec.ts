@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
+import { describe, it, expect, vi } from "vitest";
 
 describe("loggerService", () => {
   describe("formatLogEntry", () => {
@@ -37,22 +37,22 @@ describe("loggerService", () => {
 
   describe("shouldLog logic", () => {
     it("ERROR is logged when level is INFO (INFO < ERROR)", () => {
-      const currentLevel = "INFO";
-      const messageLevel = "ERROR";
+      const _currentLevel = "INFO";
+      const _messageLevel = "ERROR";
       const shouldLog = 3 >= 1;
       expect(shouldLog).toBe(true);
     });
 
     it("DEBUG is not logged when level is INFO (DEBUG < INFO)", () => {
-      const currentLevel = "INFO";
-      const messageLevel = "DEBUG";
+      const _currentLevel = "INFO";
+      const _messageLevel = "DEBUG";
       const shouldLog = 0 >= 1;
       expect(shouldLog).toBe(false);
     });
 
     it("INFO is logged when level is WARN (INFO >= WARN is false, but INFO >= INFO is true)", () => {
-      const currentLevel = "WARN";
-      const messageLevel = "INFO";
+      const _currentLevel = "WARN";
+      const _messageLevel = "INFO";
       const shouldLog = 1 >= 2;
       expect(shouldLog).toBe(false);
     });

@@ -21,12 +21,13 @@ export default defineEventHandler(async (event: H3Event) => {
     }
 
     return CustomResponse.success(solicitud);
-  } catch (e: any) {
-    const status = Number(e?.statusCode || e?.response?.status || 502);
+  } catch (e: unknown) {
+    const err = e as { statusCode?: number; response?: { status?: number }; data?: { error?: string }; message?: string };
+    const status = Number(err?.statusCode || err?.response?.status || 502);
     setResponseStatus(event, Number.isFinite(status) ? status : 502);
 
     return CustomResponse.error(
-      e?.data?.error || e?.message || "Error conectando con backend",
+      err?.data?.error || err?.message || "Error conectando con backend",
       "Error al obtener solicitud."
     );
   }

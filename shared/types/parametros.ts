@@ -1,4 +1,3 @@
-import type { TipoIdentificacion, TipoVivienda } from "./enums";
 import type { EstadoSolicitudData } from "./inicio";
 
 export type AuxiliarContable = {

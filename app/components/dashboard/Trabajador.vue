@@ -205,10 +205,4 @@ const {
   cargarConvenioActivo,
   nombreBienvenida
 } = useInicioTrabajador();
-
-const descripcionEstadoSolicitud = (s: { estado?: string }): string => {
-  return (
-    getEstadoData(String(s.estado || ""))?.descripcion || "Consulta el seguimiento de tu solicitud"
-  );
-};
 </script>

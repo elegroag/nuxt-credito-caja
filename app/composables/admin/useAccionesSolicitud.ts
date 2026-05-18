@@ -35,9 +35,9 @@ export function useAccionesSolicitud() {
 
       solicitud.value = response.data;
       estadoSeleccionado.value = response.data.estado;
-    } catch (e: any) {
+    } catch (e: unknown) {
       console.error("Error al cargar solicitud:", e);
-      error.value = e.message || "No se pudo cargar la información de la solicitud.";
+      error.value = (e as Error).message || "No se pudo cargar la información de la solicitud.";
     } finally {
       loading.value = false;
     }
@@ -56,9 +56,9 @@ export function useAccionesSolicitud() {
       if (response.data && Array.isArray(response.data)) {
         estados.value = response.data.sort((a, b) => a.orden - b.orden);
       }
-    } catch (e: any) {
+    } catch (e: unknown) {
       console.error("Error al cargar estados:", e);
-      error.value = e.message || "No se pudieron cargar los estados disponibles.";
+      error.value = (e as Error).message || "No se pudieron cargar los estados disponibles.";
     } finally {
       loadingEstados.value = false;
     }
@@ -101,11 +101,11 @@ export function useAccionesSolicitud() {
       } else {
         throw new Error(response.message || "Error al actualizar estado");
       }
-    } catch (e: any) {
+    } catch (e: unknown) {
       console.error("Error al registrar acción:", e);
       return {
         success: false,
-        message: e.message || "Error al registrar la acción"
+        message: (e as Error).message || "Error al registrar la acción"
       };
     } finally {
       loadingAccion.value = false;

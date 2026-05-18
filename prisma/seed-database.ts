@@ -46,7 +46,7 @@ async function main() {
   await seedConfigurations();
 }
 
-async function resetSolicitudesTables() {
+async function _resetSolicitudesTables() {
   console.log("Limpiando tablas de solicitudes...");
   await prisma.solicitud_documentos.deleteMany({});
   await prisma.firmantes_solicitud.deleteMany({});
@@ -71,7 +71,7 @@ async function seedConfigurations() {
       };
     });
     await prisma.configurations.createMany({
-      data: configData as any
+      data: configData as unknown[]
     });
     console.log("✅ Configurations seeded");
   } else {
@@ -85,7 +85,7 @@ async function seedEstadosSolicitud() {
   const countEstados = await prisma.estados_solicitud.count();
   if (countEstados == 0) {
     await prisma.estados_solicitud.createMany({
-      data: estadosSolicitud as any[]
+      data: estadosSolicitud as unknown[]
     });
     console.log("✅ Estados de solicitud seeded");
   } else {
@@ -112,7 +112,7 @@ async function seedUsers() {
     });
 
     await prisma.users.createMany({
-      data: userData as any
+      data: userData as unknown[]
     });
     console.log("✅ Users seeded");
   } else {
@@ -147,7 +147,7 @@ async function seedRoles() {
     });
 
     await prisma.roles.createMany({
-      data: rolesData as any
+      data: rolesData as unknown[]
     });
     console.log("✅ Roles seeded");
   } else {
@@ -168,7 +168,7 @@ async function seedModules() {
       };
     });
     await prisma.modules.createMany({
-      data: modulesData as any
+      data: modulesData as unknown[]
     });
     console.log("✅ Modules seeded");
   } else {
@@ -189,7 +189,7 @@ async function seedTipoDocumentos() {
       };
     });
     await prisma.tipo_documentos.createMany({
-      data: tipoDocumentosData as any
+      data: tipoDocumentosData as unknown[]
     });
     console.log("✅ Tipo documentos seeded");
   } else {
@@ -212,7 +212,7 @@ async function seedEmpresasConvenio() {
       };
     });
     await prisma.empresas_convenio.createMany({
-      data: empresasData as any
+      data: empresasData as unknown[]
     });
     console.log("✅ Empresas convenio seeded");
   } else {
@@ -226,7 +226,7 @@ async function seedSessions() {
   const countSessions = await prisma.sessions.count();
   if (countSessions == 0) {
     await prisma.sessions.createMany({
-      data: sessions as any
+      data: sessions as unknown[]
     });
     console.log("✅ Sessions seeded");
   } else {
@@ -253,7 +253,7 @@ async function seedPersonalAccessTokens() {
       };
     });
     await prisma.personal_access_tokens.createMany({
-      data: tokensData as any
+      data: tokensData as unknown[]
     });
     console.log("✅ Personal access tokens seeded");
   } else {
@@ -261,7 +261,7 @@ async function seedPersonalAccessTokens() {
   }
 }
 
-async function seedNotifications() {
+async function _seedNotifications() {
   console.log("Seeding notifications...");
 
   const countNotifications = await prisma.notifications.count();
@@ -277,7 +277,7 @@ async function seedNotifications() {
       };
     });
     await prisma.notifications.createMany({
-      data: notificationsData as any
+      data: notificationsData as unknown[]
     });
     console.log("✅ Notifications seeded");
   } else {
@@ -298,7 +298,7 @@ async function seedNumeroSolicitudes() {
       };
     });
     await prisma.numero_solicitudes.createMany({
-      data: numeroData as any
+      data: numeroData as unknown[]
     });
     console.log("✅ Numero solicitudes seeded");
   } else {
@@ -330,7 +330,7 @@ async function seedSolicitudesCredito() {
       };
     });
     await prisma.solicitudes_credito.createMany({
-      data: solicitudesData as any
+      data: solicitudesData as unknown[]
     });
     console.log("✅ Solicitudes credito seeded");
   } else {
@@ -357,7 +357,7 @@ async function seedSolicitudSolicitante() {
       };
     });
     await prisma.solicitud_solicitante.createMany({
-      data: solicitanteData as any
+      data: solicitanteData as unknown[]
     });
     console.log("✅ Solicitud solicitante seeded");
   } else {
@@ -378,7 +378,7 @@ async function seedSolicitudPayload() {
       };
     });
     await prisma.solicitud_payload.createMany({
-      data: payloadData as any
+      data: payloadData as unknown[]
     });
     console.log("✅ Solicitud payload seeded");
   } else {
@@ -400,7 +400,7 @@ async function seedSolicitudTimeline() {
       };
     });
     await prisma.solicitud_timeline.createMany({
-      data: timelineData as any
+      data: timelineData as unknown[]
     });
     console.log("✅ Solicitud timeline seeded");
   } else {
@@ -424,7 +424,7 @@ async function seedSolicitudDocumentos() {
       };
     });
     await prisma.solicitud_documentos.createMany({
-      data: documentosData as any
+      data: documentosData as unknown[]
     });
     console.log("✅ Solicitud documentos seeded");
   } else {
@@ -445,7 +445,7 @@ async function seedDocumentosPostulantes() {
       };
     });
     await prisma.documentos_postulantes.createMany({
-      data: postulantesData as any
+      data: postulantesData as unknown[]
     });
     console.log("✅ Documentos postulantes seeded");
   } else {
@@ -453,7 +453,7 @@ async function seedDocumentosPostulantes() {
   }
 }
 
-async function seedPdfsGenerados() {
+async function _seedPdfsGenerados() {
   console.log("Seeding pdfs_generados...");
 
   const countPdfs = await prisma.pdfs_generados.count();
@@ -471,7 +471,7 @@ async function seedPdfsGenerados() {
       };
     });
     await prisma.pdfs_generados.createMany({
-      data: pdfsData as any
+      data: pdfsData as unknown[]
     });
     console.log("✅ PDFs generados seeded");
   } else {
@@ -492,7 +492,7 @@ async function seedFirmantesSolicitud() {
       };
     });
     await prisma.firmantes_solicitud.createMany({
-      data: firmantesData as any
+      data: firmantesData as unknown[]
     });
     console.log("✅ Firmantes solicitud seeded");
   } else {

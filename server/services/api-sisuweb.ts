@@ -1,6 +1,13 @@
 import { useRuntimeConfig } from "#imports";
 import { ofetch } from "ofetch";
 
+interface FetchError {
+  statusCode?: number
+  data?: { error: string }
+  message?: string
+  response?: { status?: number }
+}
+
 const apiSisuweb = () => {
   const config = useRuntimeConfig();
   const env = config.apiSISU.env;
@@ -50,15 +57,15 @@ const apiSisuweb = () => {
       }
 
       return dataToken;
-    } catch (e: any) {
-      const status = Number(e?.statusCode || e?.response?.status || 502);
-      if (e?.data && typeof e.data === "object") {
-        return e.data;
+    } catch (e: unknown) {
+      const err = e as FetchError;
+      if (err?.data && typeof err.data === "object") {
+        return err.data;
       }
 
       return {
         error:
-          e?.data?.error || e?.message || "Error conectando con SISUWEB API"
+          err?.data?.error || err?.message || "Error conectando con SISUWEB API"
       };
     }
   };
@@ -97,7 +104,7 @@ const apiSisuweb = () => {
 
   const postJson = async <T>(
     path: string,
-    body: any,
+    body: Record<string, unknown>,
     opts?: {
       auth?: boolean
       headers?: Record<string, string>
@@ -132,7 +139,7 @@ const apiSisuweb = () => {
 
   const putJson = async <T>(
     path: string,
-    body: any,
+    body: Record<string, unknown>,
     opts?: {
       auth?: boolean
       headers?: Record<string, string>

@@ -5,12 +5,11 @@ import { useSession } from "~/composables/useSession";
 interface Notification {
   id: string;
   type: string;
-  data: {
+  data: Record<string, unknown> & {
     titulo: string;
     mensaje: string;
     solicitud_id?: string;
     url?: string;
-    [key: string]: any;
   };
   read_at: string | null;
   created_at: string;
@@ -62,9 +61,9 @@ export function useNotifications() {
       } else {
         throw new Error(response.message || "Error al cargar notificaciones");
       }
-    } catch (e: any) {
+    } catch (e: unknown) {
       console.error("Error al cargar notificaciones:", e);
-      error.value = e.message || "Error al cargar notificaciones";
+      error.value = e instanceof Error ? e.message : "Error al cargar notificaciones";
       notifications.value = [];
     } finally {
       loading.value = false;
@@ -86,7 +85,7 @@ export function useNotifications() {
       if (response.success && response.data) {
         unreadCount.value = response.data.unread_count;
       }
-    } catch (e: any) {
+    } catch (e: unknown) {
       console.error("Error al actualizar contador:", e);
     }
   };
@@ -119,7 +118,7 @@ export function useNotifications() {
       }
 
       return false;
-    } catch (e: any) {
+    } catch (e: unknown) {
       console.error("Error al marcar como leída:", e);
       return false;
     }
@@ -149,7 +148,7 @@ export function useNotifications() {
       }
 
       return false;
-    } catch (e: any) {
+    } catch (e: unknown) {
       console.error("Error al marcar todas como leídas:", e);
       return false;
     }
@@ -184,7 +183,7 @@ export function useNotifications() {
       }
 
       return false;
-    } catch (e: any) {
+    } catch (e: unknown) {
       console.error("Error al eliminar notificación:", e);
       return false;
     }

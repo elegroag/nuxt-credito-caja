@@ -236,7 +236,6 @@
 <script setup lang="ts">
 import { ref, reactive } from "vue";
 import { useRouter } from "vue-router";
-import { useApi } from "~/composables/useApi";
 
 definePageMeta({
   layout: "dashboard",
@@ -330,15 +329,16 @@ const handleSubmit = async () => {
       loading.value = false;
       router.push("/admin/convenios");
     }
-  } catch (err: any) {
+  } catch (err: unknown) {
     console.error("Error al crear convenio:", err);
 
-    if (err.data?.errors) {
-      errors.value = err.data.errors;
-    } else if (err.data?.error) {
-      errors.value.general = err.data.error;
+    if ((err as { data?: { errors?: Record<string, string[]> } }).data?.errors) {
+      const backendErrors = (err as { data?: { errors?: Record<string, string[]> } }).data?.errors;
+      errors.value.general = Object.values(backendErrors || {}).flat().join(', ');
+    } else if ((err as { data?: { error?: string } }).data?.error) {
+      errors.value.general = (err as { data?: { error?: string } }).data?.error || "Error al crear el convenio";
     } else {
-      errors.value.general = err.message || "Error al crear el convenio";
+      errors.value.general = (err as Error).message || "Error al crear el convenio";
     }
   } finally {
     loading.value = false;

@@ -16,12 +16,12 @@ export default defineEventHandler(async (event: H3Event) => {
     const onlyUnread = query.unread === "true";
     const limit = query.limit ? parseInt(query.limit as string) : 50;
 
-    const where: any = {
+    const where: Record<string, unknown> = {
       owner_username: session.user.username
     };
 
     if (onlyUnread) {
-      where.read_at = null;
+      where.leido_el = null;
     }
 
     const notifications = await prisma.notifications.findMany({
@@ -33,7 +33,7 @@ export default defineEventHandler(async (event: H3Event) => {
     const unreadCount = await prisma.notifications.count({
       where: {
         owner_username: session.user.username,
-        read_at: null
+        leido_el: null
       }
     });
 
@@ -47,13 +47,14 @@ export default defineEventHandler(async (event: H3Event) => {
       { notifications, unread_count: unreadCount, total },
       "Notificaciones obtenidas exitosamente"
     );
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const err = error as { statusCode?: number; response?: { status?: number }; data?: { error?: string }; message?: string };
     console.error("Error al cargar notificaciones:", error);
-    const status = Number(error?.statusCode || error?.response?.status || 502);
+    const status = Number(err?.statusCode || err?.response?.status || 502);
     setResponseStatus(event, Number.isFinite(status) ? status : 502);
 
     return CustomResponse.error(
-      error?.data?.error || error?.message || "Error al cargar notificaciones",
+      err?.data?.error || err?.message || "Error al cargar notificaciones",
       "Error al obtener notificaciones."
     );
   }

@@ -1,13 +1,13 @@
 // Declaración de tipos para vue-select
 declare module "vue-select" {
   import type { DefineComponent } from "vue";
-  import { PropType } from "vue";
 
-  export interface VueSelectOption {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export interface SelectOption<T = string> {
     label: string
     value: string | number | boolean
     description?: string
-    [key: string]: any
+    [key: string]: unknown
   }
 
   export interface VueSelectProps {
@@ -21,13 +21,13 @@ declare module "vue-select" {
     multiple?: boolean
     closeOnSelect?: boolean
     maxHeight?: number
-    reduce?: (option: VueSelectOption) => any
+    reduce?: (option: VueSelectOption) => unknown
     getOptionLabel?: (option: VueSelectOption) => string
     getOptionKey?: (option: VueSelectOption) => string | number
   }
 
   export interface VueSelectEmits {
-    "update:modelValue": [value: any]
+    "update:modelValue": [value: unknown]
     "search": [query: string]
     "option:selected": [option: VueSelectOption]
     "option:deselected": [option: VueSelectOption]

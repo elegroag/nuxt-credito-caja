@@ -140,6 +140,9 @@ const props = defineProps<{
   error?: string | null
 }>();
 
+// props is used for modelValue, loading, progress, error through the template
+void props;
+
 const emit = defineEmits<{
   "upload": [file: File]
   "delete": [id: string]

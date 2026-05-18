@@ -24,13 +24,14 @@ export default defineEventHandler(async (event: H3Event) => {
     });
 
     return CustomResponse.success({ marked_count: result.count }, "Notificaciones marcadas como leídas");
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const err = error as { statusCode?: number; response?: { status?: number }; data?: { error?: string }; message?: string };
     console.error("Error al marcar todas las notificaciones como leídas:", error);
-    const status = Number(error?.statusCode || error?.response?.status || 502);
+    const status = Number(err?.statusCode || err?.response?.status || 502);
     setResponseStatus(event, Number.isFinite(status) ? status : 502);
 
     return CustomResponse.error(
-      error?.data?.error || error?.message || "Error al marcar todas las notificaciones como leídas",
+      err?.data?.error || err?.message || "Error al marcar todas las notificaciones como leídas",
       "Error al marcar leídas."
     );
   }

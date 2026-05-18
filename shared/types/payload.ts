@@ -1,4 +1,4 @@
-import type { Moneda, TipoBien, TiempoServicioUnidad, RolEnSolicitud } from "./enums";
+import type { Moneda, TipoBien, TiempoServicioUnidad } from "./enums";
 import type { Solicitante } from "./solicitante";
 import type { LineaCredito } from "./linea-credito";
 import type { Solicitud } from "./solicitud";

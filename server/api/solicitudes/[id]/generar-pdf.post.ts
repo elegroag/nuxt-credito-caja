@@ -1,5 +1,6 @@
 import type { H3Event } from "h3";
 import { defineEventHandler, getRouterParam, setResponseStatus } from "h3";
+import type { Prisma } from "~~/lib/prisma";
 import prisma from "~~/lib/prisma";
 import apiFlaskPdf from "~~/server/services/api-flaskpdf";
 import { documentoStorage } from "~~/server/services/storage/documento-storage.service";
@@ -7,17 +8,34 @@ import { CustomResponse } from "~~/server/utils/customResponse";
 import { loggerService } from "~~/server/utils/logger.service";
 
 const Log = loggerService();
-const serializeForPdf = (obj: any): any => {
+
+interface PdfPayloadData {
+  informacion_laboral?: Record<string, unknown>;
+  ingresos_descuentos?: Record<string, unknown>;
+  informacion_economica?: Record<string, unknown>;
+  propiedades?: unknown[];
+  deudas?: unknown[];
+  referencias?: { familiares?: unknown[]; personales?: unknown[] };
+}
+
+interface FlaskPdfResponse {
+  success: boolean;
+  message?: string;
+  data?: Record<string, unknown>;
+  errors?: unknown;
+}
+
+const serializeForPdf = (obj: Record<string, unknown> | unknown[] | unknown): Record<string, unknown> | unknown[] | unknown => {
   if (obj === null || obj === undefined) return obj;
   if (obj instanceof Date) return obj.toISOString();
   if (typeof obj === "bigint") return obj.toString();
   if (typeof obj === "object") {
     if (Array.isArray(obj)) {
-      return obj.map(serializeForPdf);
+      return (obj as unknown[]).map(serializeForPdf);
     }
-    const result: any = {};
+    const result: Record<string, unknown> = {};
     for (const key in obj) {
-      result[key] = serializeForPdf(obj[key]);
+      result[key] = serializeForPdf((obj as Record<string, unknown>)[key]);
     }
     return result;
   }
@@ -73,20 +91,17 @@ export default defineEventHandler(async (event: H3Event) => {
       pdfs_generados,
       ...solicitudData
     } = solicitud;
-    const payloadData = solicitud_payload?.[0];
     const solicitante = solicitud_solicitante?.[0];
 
     // Obtener datos del payload JSON si existe
-    const informacionLaboral = (payloadData?.informacion_laboral as any) || {};
-    const ingresosDescuentos = (payloadData?.ingresos_descuentos as any) || {};
-    const informacionEconomica
-      = (payloadData?.informacion_economica as any) || {};
-    const propiedades = (payloadData?.propiedades as any) || [];
-    const deudas = (payloadData?.deudas as any) || [];
-    const referencias = (payloadData?.referencias as any) || {
-      familiares: [],
-      personales: []
-    };
+    const rawPayload = solicitud_payload?.[0];
+    const payloadData = (rawPayload as Record<string, unknown> | null) as PdfPayloadData | undefined;
+    const informacionLaboral = (payloadData?.informacion_laboral || {}) as Record<string, unknown>;
+    const ingresosDescuentos = (payloadData?.ingresos_descuentos || {}) as Record<string, unknown>;
+    const informacionEconomica = (payloadData?.informacion_economica || {}) as Record<string, unknown>;
+    const propiedades = payloadData?.propiedades || [];
+    const deudas = payloadData?.deudas || [];
+    const referencias = payloadData?.referencias || { familiares: [], personales: [] };
 
     // Construir el payload completo para Flask PDF
     const payload = {
@@ -320,7 +335,7 @@ export default defineEventHandler(async (event: H3Event) => {
       payload: serializeForPdf(payload)
     });
 
-    const response = await flaskPdf.generatePdf<any>(payload);
+    const response = await flaskPdf.generatePdf<FlaskPdfResponse>(payload);
 
     await Log.info("=== RESPUESTA RECIBIDA DE FLASK PDF ===", {
       solicitudId,
@@ -331,13 +346,13 @@ export default defineEventHandler(async (event: H3Event) => {
     });
 
     if (response.data) {
-      const pdfData = response.data as any;
+      const pdfData = response.data as Record<string, unknown>;
       await Log.debug("Datos del PDF recibido", {
         solicitudId,
         hasPath: !!pdfData.api_path || !!pdfData.path,
         hasFilename: !!pdfData.api_filename || !!pdfData.filename,
         hasContent: !!pdfData.api_content || !!pdfData.content,
-        contentLength: (pdfData.api_content || pdfData.content || "").length
+        contentLength: ((pdfData.api_content || pdfData.content) as string || "").length
       });
     }
 
@@ -355,12 +370,12 @@ export default defineEventHandler(async (event: H3Event) => {
       );
     }
 
-    const pdfData = response.data as any;
+    const pdfData = response.data as Record<string, unknown>;
 
     // Usar api_path si está disponible, sino usar path
-    const pdfPath = pdfData.api_path || pdfData.path || "";
-    const pdfFilename = pdfData.api_filename || pdfData.filename || "";
-    const pdfContent = pdfData.api_content || pdfData.content || "";
+    const pdfPath = String(pdfData.api_path || pdfData.path || "");
+    const pdfFilename = String(pdfData.api_filename || pdfData.filename || "");
+    const pdfContent = String(pdfData.api_content || pdfData.content || "");
 
     // Guardar el PDF en storage si hay contenido base64
     let storagePath = pdfPath;
@@ -390,7 +405,7 @@ export default defineEventHandler(async (event: H3Event) => {
         data: {
           path: storagePath,
           filename: pdfFilename,
-          generado_en: pdfData,
+          generado_en: pdfData as unknown as Prisma.InputJsonValue,
           updated_at: new Date()
         }
       });
@@ -400,7 +415,7 @@ export default defineEventHandler(async (event: H3Event) => {
           solicitud_id: solicitudId,
           path: storagePath,
           filename: pdfFilename,
-          generado_en: pdfData,
+          generado_en: pdfData as unknown as Prisma.InputJsonValue,
           created_at: new Date(),
           updated_at: new Date()
         }
@@ -415,17 +430,18 @@ export default defineEventHandler(async (event: H3Event) => {
       },
       "PDF generado exitosamente"
     );
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const err = error as { statusCode?: number; response?: { status?: number }; data?: { error?: string }; message?: string; stack?: string };
     const sid = typeof solicitudId === "string" ? solicitudId : "unknown";
-    await Log.error("Error al generar PDF", error, {
+    await Log.error("Error al generar PDF", error as Error, {
       solicitudId: sid,
-      stack: error?.stack
+      stack: err?.stack
     });
-    const status = Number(error?.statusCode || error?.response?.status || 502);
+    const status = Number(err?.statusCode || err?.response?.status || 502);
     setResponseStatus(event, Number.isFinite(status) ? status : 502);
 
     return CustomResponse.error(
-      error?.data?.error || error?.message || "Error al generar el PDF",
+      err?.data?.error || err?.message || "Error al generar el PDF",
       "Error al generar PDF."
     );
   }

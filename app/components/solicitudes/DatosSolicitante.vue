@@ -95,5 +95,5 @@ interface Props {
   empresaRazonSocial: string
 }
 
-const props = defineProps<Props>();
+defineProps<Props>();
 </script>

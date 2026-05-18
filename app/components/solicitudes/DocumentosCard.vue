@@ -67,7 +67,7 @@ interface Props {
   documentos: Documento[]
 }
 
-const props = defineProps<Props>();
+defineProps<Props>();
 
 const formatDate = (dateString: string): string => {
   if (!dateString) return "-";

@@ -1,11 +1,10 @@
 import { describe, it, expect, vi } from "vitest";
-// @ts-ignore
+// @ts-expect-error - Mock data JSON import
 import mockDatosGenerales from "@tests/mocks/api-creditos-datos-generales.json";
 
-// @ts-ignore
-import datosApiSisuwebService from "~~/server/services/shared/datos-api-sisuweb.service";
-// @ts-ignore
+// @ts-expect-error - Mock data for external API response
 import apiSisuweb from "~~/server/services/api-sisuweb";
+import datosApiSisuwebService from "~~/server/services/shared/datos-api-sisuweb.service";
 
 vi.mock("~~/server/services/api-sisuweb", () => ({
   default: vi.fn(() => ({

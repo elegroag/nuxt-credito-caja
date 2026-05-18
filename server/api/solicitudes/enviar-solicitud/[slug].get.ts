@@ -24,13 +24,11 @@ export default defineEventHandler(async (event) => {
   const numeroDocumento = solicitante?.numero_documento ?? "";
   const codigoCategoria = solicitante?.codigo_categoria ?? "";
   const salario = solicitante?.salario ? Number(solicitante.salario) : 0;
-  const ciudad = solicitante?.ciudad ?? "";
 
-  const datosLaborales = (solicitud_payload?.informacion_laboral as any) ?? [];
   const ingresosDescuentos
-    = (solicitud_payload?.ingresos_descuentos as any) ?? [];
+    = (solicitud_payload?.ingresos_descuentos as Record<string, unknown>) ?? [];
   const informacionEconomica
-    = (solicitud_payload?.informacion_economica as any) ?? [];
+    = (solicitud_payload?.informacion_economica as Record<string, unknown>) ?? [];
 
   const payload = {
     documento: numero_solicitud,

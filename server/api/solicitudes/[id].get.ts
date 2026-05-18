@@ -4,15 +4,15 @@ import prisma from "~~/lib/prisma";
 import { CustomResponse } from "~~/server/utils/customResponse";
 
 // Helper para serializar datos y manejar BigInt
-const serializeResponse = (obj: any): any => {
+const serializeResponse = (obj: Record<string, unknown> | unknown[] | unknown): Record<string, unknown> | unknown[] | unknown => {
   if (obj === null || obj === undefined) return obj;
   if (typeof obj === "bigint") return obj.toString();
   if (obj instanceof Date) return obj.toISOString();
   if (Array.isArray(obj)) return obj.map(serializeResponse);
   if (typeof obj === "object") {
-    const result: any = {};
+    const result: Record<string, unknown> = {};
     for (const key in obj) {
-      result[key] = serializeResponse(obj[key]);
+      result[key] = serializeResponse((obj as Record<string, unknown>)[key]);
     }
     return result;
   }
@@ -52,13 +52,14 @@ export default defineEventHandler(async (event: H3Event) => {
     }
 
     return CustomResponse.success(serializeResponse(solicitud));
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const err = error as { statusCode?: number; response?: { status?: number }; data?: { error?: string }; message?: string };
     console.error("Error al obtener solicitud:", error);
-    const status = Number(error?.statusCode || error?.response?.status || 502);
+    const status = Number(err?.statusCode || err?.response?.status || 502);
     setResponseStatus(event, Number.isFinite(status) ? status : 502);
 
     return CustomResponse.error(
-      error?.data?.error || error?.message || "Error al obtener la solicitud",
+      err?.data?.error || err?.message || "Error al obtener la solicitud",
       "Error al obtener solicitud."
     );
   }

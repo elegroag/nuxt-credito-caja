@@ -282,6 +282,8 @@
 import { ref, reactive, onMounted } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import { useApi } from "~/composables/useApi";
+import type { EmpresaConvenio } from "~~/shared/types/convenios";
+import type { SuccessResponse } from "~~/shared/types/response";
 
 definePageMeta({
   layout: "dashboard",
@@ -292,7 +294,7 @@ const router = useRouter();
 const route = useRoute();
 const loading = ref(false);
 const error = ref<string | null>(null);
-const convenio = ref<any>(null);
+const convenio = ref<EmpresaConvenio | null>(null);
 const errors = ref<Record<string, string>>({});
 
 // Formulario reactivo
@@ -314,7 +316,7 @@ const cargarConvenio = async () => {
 
   try {
     const api = useApi();
-    const response = await api.getJson<any>(
+    const response = await api.getJson<SuccessResponse<EmpresaConvenio>>(
       `/api/admin/convenios/${route.params.id}`,
       {
         auth: true
@@ -349,9 +351,9 @@ const cargarConvenio = async () => {
     } else {
       throw new Error("Estructura de respuesta inválida");
     }
-  } catch (err: any) {
+  } catch (err: unknown) {
     console.error("Error al cargar convenio:", err);
-    error.value = err.message || "Error al cargar la información del convenio";
+    error.value = (err as Error)?.message || "Error al cargar la información del convenio";
   } finally {
     loading.value = false;
   }
@@ -428,14 +430,15 @@ const handleSubmit = async () => {
       // Redirigir a la página de detalles
       router.push(`/admin/convenios/show/${route.params.id}`);
     }
-  } catch (err: any) {
+  } catch (err: unknown) {
     console.error("Error al actualizar convenio:", err);
 
     // Manejar errores de validación del backend
-    if (err.response?.data?.errors) {
-      errors.value = err.response.data.errors;
+    const errorRecord = err as { response?: { data?: { errors?: Record<string, string> } } };
+    if (errorRecord.response?.data?.errors) {
+      errors.value = errorRecord.response.data.errors;
     } else {
-      errors.value.general = err.message || "Error al actualizar el convenio";
+      errors.value.general = (err as Error)?.message || "Error al actualizar el convenio";
     }
   } finally {
     loading.value = false;

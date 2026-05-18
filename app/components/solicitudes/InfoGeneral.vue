@@ -67,5 +67,5 @@ interface Props {
   cuotaEstimada: string
 }
 
-const props = defineProps<Props>();
+defineProps<Props>();
 </script>

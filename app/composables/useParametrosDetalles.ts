@@ -43,8 +43,8 @@ export function useParametrosDetalles() {
       };
 
       return parametrosCache.value;
-    } catch (e: any) {
-      const errorMessage = e?.message || "Error cargando parámetros de detalles";
+    } catch (e: unknown) {
+      const errorMessage = e instanceof Error ? e.message : "Error cargando parámetros de detalles";
       error.value = errorMessage;
       console.error("Error en useParametrosDetalles:", errorMessage, e);
       throw e;
@@ -169,12 +169,11 @@ export function useParametrosDetalles() {
     getTipoVivienda,
     getTipoContrato,
     getEstadoData,
-
-    // Funciones de estados
     getEstadoColor,
     getEstadoNombre,
     getEstadoBadgeClass,
     flujoAprobacion,
+    _estadoProgressPercent: estadoProgressPercent,
 
     // Funciones helper
     buscarTipoIdentificacion,

@@ -25,6 +25,47 @@ interface IniciarFirmadoResult {
   }
 }
 
+interface FirmanteApiFormat {
+  nombre: string
+  documento: string
+  email: string
+  rol: string
+  orden: number
+}
+
+interface SolicitudFirmaPayload {
+  documento: string
+  nombre_documento: string
+  descripcion: string
+  firmantes: FirmanteApiFormat[]
+  callback_url: string
+  fecha_expiracion: string
+}
+
+interface SolicitudWithFirmantes {
+  numero_solicitud: string
+  pdf_generado: {
+    url?: string
+    content?: string
+    path?: string
+    nombre?: string
+  } | null
+  firmantes_solicitud: FirmanteData[]
+}
+
+interface FirmaPlusResponse {
+  success?: boolean
+  transaccion_id?: string
+  urls_firma?: Record<string, string>
+  estado?: string
+  message?: string
+  data?: {
+    transaccion_id?: string
+    urls_firma?: Record<string, string>
+    estado?: string
+  }
+}
+
 class ProcesoFirmadoAdm {
   /**
    * Inicia el proceso de firmado para una solicitud
@@ -73,7 +114,7 @@ class ProcesoFirmadoAdm {
 
       // 4. Obtener el documento del storage
       const documento = await documentoStorage.obtenerContenidoDesdePdfGenerado(
-        solicitud.pdf_generado as any
+        solicitud.pdf_generado as unknown as PdfGenerado
       );
       if (!documento) {
         return {
@@ -85,16 +126,16 @@ class ProcesoFirmadoAdm {
       // 5. Preparar datos para FirmaPlus
       const firmantes = this.prepararFirmantes(solicitud.firmantes_solicitud);
       const solicitudFirma = this.prepararSolicitudFirma(
-        solicitud,
+        solicitud as SolicitudWithFirmantes,
         documento,
         firmantes
       );
 
       // 6. Llamar al servicio de FirmaPlus para iniciar el firmado
       const api = apiFirmaPlus();
-      const respuesta = await api.postJson<any>(
+      const respuesta = await api.postJson<FirmaPlusResponse>(
         "generarsolicitud",
-        solicitudFirma,
+        solicitudFirma as unknown as Record<string, unknown>,
         {
           auth: true
         }
@@ -120,11 +161,12 @@ class ProcesoFirmadoAdm {
           urls_firma: respuesta.data?.urls_firma
         }
       };
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const err = error as Error;
       console.error("Error al iniciar firmado:", error);
       return {
         success: false,
-        message: error.message || "Error al iniciar proceso de firmado"
+        message: err?.message || "Error al iniciar proceso de firmado"
       };
     }
   }
@@ -132,7 +174,7 @@ class ProcesoFirmadoAdm {
   /**
    * Prepara los firmantes en el formato esperado por FirmaPlus
    */
-  private prepararFirmantes(firmantes: FirmanteData[]): any[] {
+  private prepararFirmantes(firmantes: FirmanteData[]): FirmanteApiFormat[] {
     return firmantes.map(f => ({
       nombre: f.nombre_completo,
       documento: f.numero_documento,
@@ -146,12 +188,12 @@ class ProcesoFirmadoAdm {
    * Prepara la solicitud de firma en el formato esperado por FirmaPlus
    */
   private prepararSolicitudFirma(
-    solicitud: any,
+    solicitud: SolicitudWithFirmantes,
     documento: string,
-    firmantes: any[]
-  ): any {
+    firmantes: FirmanteApiFormat[]
+  ): SolicitudFirmaPayload {
     return {
-      documento: documento, // Base64 o URL del documento
+      documento: documento,
       nombre_documento: `Solicitud_${solicitud.numero_solicitud}.pdf`,
       descripcion: `Solicitud de crédito #${solicitud.numero_solicitud}`,
       firmantes: firmantes,
@@ -175,7 +217,7 @@ class ProcesoFirmadoAdm {
   async consultarEstado(solicitudId: string): Promise<IniciarFirmadoResult> {
     try {
       const api = apiFirmaPlus();
-      const respuesta = await api.getJson<any>(
+      const respuesta = await api.getJson<FirmaPlusResponse>(
         `consultarsolicitud/${solicitudId}`,
         { auth: true }
       );
@@ -196,11 +238,12 @@ class ProcesoFirmadoAdm {
           urls_firma: respuesta.data?.urls_firma
         }
       };
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const err = error as Error;
       console.error("Error al consultar estado de firmado:", error);
       return {
         success: false,
-        message: error.message || "Error al consultar estado de firmado"
+        message: err?.message || "Error al consultar estado de firmado"
       };
     }
   }
@@ -211,7 +254,7 @@ class ProcesoFirmadoAdm {
   async cancelarFirmado(solicitudId: string): Promise<IniciarFirmadoResult> {
     try {
       const api = apiFirmaPlus();
-      const respuesta = await api.putJson<any>(
+      const respuesta = await api.putJson<FirmaPlusResponse>(
         `cancelarsolicitud/${solicitudId}`,
         {},
         { auth: true }
@@ -232,11 +275,12 @@ class ProcesoFirmadoAdm {
           estado: "CANCELADO"
         }
       };
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const err = error as Error;
       console.error("Error al cancelar firmado:", error);
       return {
         success: false,
-        message: error.message || "Error al cancelar proceso de firmado"
+        message: err?.message || "Error al cancelar proceso de firmado"
       };
     }
   }

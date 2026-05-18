@@ -57,7 +57,7 @@ export const useDocumentosSolicitud = () => {
           return (
             decodeURIComponent(encodedName.replace(/['"]/g, "")) || defaultName
           );
-        } catch (e) {
+        } catch {
           // Si falla la decodificación, continuar con el fallback estándar
         }
       }
@@ -171,10 +171,10 @@ export const useDocumentosSolicitud = () => {
 
       // Cargar documentos requeridos y existentes con una sola llamada
       await cargarDocumentos();
-    } catch (e: any) {
+    } catch (e: unknown) {
       console.error(e);
       errorSolicitud.value
-        = e.message || "No se pudo cargar la información de la solicitud.";
+        = (e as Error).message || "No se pudo cargar la información de la solicitud.";
     } finally {
       loadingSolicitud.value = false;
     }
@@ -184,7 +184,7 @@ export const useDocumentosSolicitud = () => {
     cargandoId.value = docReqId;
     try {
       await subirDocumento(file, docReqId);
-    } catch (e) {
+    } catch {
       // El error ya se maneja en el composable y se pasa via prop
     } finally {
       cargandoId.value = null;
@@ -278,10 +278,10 @@ export const useDocumentosSolicitud = () => {
 
       // Navegar al resumen
       router.push(`/dash/solicitud/resumen/${solicitudId}`);
-    } catch (e: any) {
+    } catch (e: unknown) {
       console.error("Error al cambiar estado:", e);
       errorSolicitud.value
-        = e.message || "Error al actualizar el estado de la solicitud";
+        = (e as Error).message || "Error al actualizar el estado de la solicitud";
     }
   };
 

@@ -18,7 +18,7 @@ interface Props {
   valueClass?: string
 }
 
-const props = withDefaults(defineProps<Props>(), {
+withDefaults(defineProps<Props>(), {
   valueClass: "text-gray-900 dark:text-gray-100"
 });
 </script>

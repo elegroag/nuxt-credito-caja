@@ -4,7 +4,7 @@ const datosApiSisuwebService = () => {
   const api = apiSisuweb();
 
   const dataGeneral = async () => {
-    const responseApi = await api.postJson<any>(
+    const responseApi = await api.postJson<Record<string, unknown>>(
       "creditos/datos-generales",
       {},
       {
@@ -20,14 +20,14 @@ const datosApiSisuwebService = () => {
     if (!responseApi.success) {
       throw createError({
         statusCode: 500,
-        message: responseApi.error || "Error al obtener los datos generales"
+        message: String(responseApi.error || "Error al obtener los datos generales")
       });
     }
     return responseApi.data || null;
   };
 
   const tipoCreditos = async () => {
-    const responseApi = await api.postJson<any>(
+    const responseApi = await api.postJson<Record<string, unknown>>(
       "creditos/tipo-creditos",
       {},
       {
@@ -43,14 +43,14 @@ const datosApiSisuwebService = () => {
     if (!responseApi.success) {
       throw createError({
         statusCode: 500,
-        message: responseApi.error || "Error al obtener los tipos de créditos"
+        message: String(responseApi.error || "Error al obtener los tipos de créditos")
       });
     }
     return responseApi.data || null;
   };
 
-  const crearSolicitudCredito = async (payload: any) => {
-    const responseApi = await api.postJson<any>(
+  const crearSolicitudCredito = async (payload: Record<string, unknown>) => {
+    const responseApi = await api.postJson<Record<string, unknown>>(
       "creditos/crear-solicitud",
       payload,
       {
@@ -66,14 +66,14 @@ const datosApiSisuwebService = () => {
     if (!responseApi.success) {
       throw createError({
         statusCode: 500,
-        message: responseApi.error || "Error al crear la solicitud de crédito"
+        message: String(responseApi.error || "Error al crear la solicitud de crédito")
       });
     }
     return responseApi.data || null;
   };
 
-  const conyugeTrabajador = async (payload: any) => {
-    const responseApi = await api.postJson<any>(
+  const conyugeTrabajador = async (payload: Record<string, unknown>) => {
+    const responseApi = await api.postJson<Record<string, unknown>>(
       "affiliation/listar_conyuges_trabajador",
       payload,
       {
@@ -90,7 +90,7 @@ const datosApiSisuwebService = () => {
       throw createError({
         statusCode: 500,
         message:
-          responseApi.error || "Error al obtener el conyuge del trabajador"
+          String(responseApi.error) || "Error al obtener el conyuge del trabajador"
       });
     }
     return responseApi.data || null;

@@ -1,5 +1,4 @@
 import { ref, computed, watch } from "vue";
-import { useRouter } from "vue-router";
 import { useApi } from "~/composables/useApi";
 import { storage } from "~/composables/useStorage";
 import {
@@ -7,8 +6,14 @@ import {
   getDefaultTipoDocumento
 } from "~/lib/tipos_documento";
 
+interface RegistroResponseData {
+  user?: {
+    username?: string
+    roles?: string[]
+  }
+}
+
 export function useRegistro() {
-  const router = useRouter();
   const { postJson } = useApi();
   const errorMsg = ref("");
 
@@ -101,21 +106,25 @@ export function useRegistro() {
       loading.value = true;
       error.value = null;
 
-      const response = await postJson<any>(
+      const response = await postJson<{
+        success: boolean
+        data?: unknown
+      }>(
         "/api/auth/register",
         formData.value
       );
 
       if (response) {
         success.value = true;
+        const responseData = response.data as RegistroResponseData | undefined;
         const userData = {
-          username: response.user?.username || "",
+          username: responseData?.user?.username || "",
           email: formData.value.email,
           tipo_documento: formData.value.tipo_documento,
           numero_documento: formData.value.numero_documento,
           nombres: formData.value.nombres,
           apellidos: formData.value.apellidos,
-          roles: response.user?.roles || ["user"]
+          roles: responseData?.user?.roles || ["user"]
         };
         await storage.setItem("comfaca_credito_user", JSON.stringify(userData));
 
@@ -127,20 +136,17 @@ export function useRegistro() {
       }
       errorMsg.value = "Error en el registro. Por favor, inténtalo de nuevo.";
       return false;
-    } catch (err: any) {
-      if (err.response?.status === 409) {
-        error.value
-          = "El usuario ya existe. Por favor, usa otro nombre de usuario o inicia sesión.";
-      } else if (err.response?.data?.error) {
-        error.value = err.response.data.error;
+    } catch (err: unknown) {
+      const errObj = err as { response?: { status?: number; data?: { error?: string } }; data?: { error?: string }; message?: string };
+      if (errObj.response?.status === 409) {
+        error.value = "El usuario ya existe. Por favor, usa otro nombre de usuario o inicia sesión.";
+      } else if (errObj.response?.data?.error) {
+        error.value = errObj.response.data.error;
       } else {
         error.value = "Error en el registro. Por favor, inténtalo de nuevo.";
       }
 
-      errorMsg.value
-        = err?.data?.error
-          || err?.message
-          || "No fue posible registrar el usuario";
+      errorMsg.value = errObj.data?.error || errObj.message || "No fue posible registrar el usuario";
       return false;
     } finally {
       loading.value = false;

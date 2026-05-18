@@ -45,10 +45,10 @@ export const useSession = () => {
           if (u && typeof u === "object") {
             const username = typeof u.username === "string" ? u.username : "";
             const roles = Array.isArray(u.roles)
-              ? u.roles.filter((r: any) => typeof r === "string")
+              ? u.roles.filter((r: unknown) => typeof r === "string")
               : [];
             const permissions = Array.isArray(u.permissions)
-              ? u.permissions.filter((p: any) => typeof p === "string")
+              ? u.permissions.filter((p: unknown) => typeof p === "string")
               : [];
             const email = typeof u.email === "string" ? u.email : "";
             const tipo_documento
@@ -97,10 +97,10 @@ export const useSession = () => {
         const username
           = typeof parsed.user.username === "string" ? parsed.user.username : "";
         const roles = Array.isArray(parsed.user.roles)
-          ? parsed.user.roles.filter((r: any) => typeof r === "string")
+          ? parsed.user.roles.filter((r: unknown) => typeof r === "string")
           : [];
         const permissions = Array.isArray(parsed.user.permissions)
-          ? parsed.user.permissions.filter((p: any) => typeof p === "string")
+          ? parsed.user.permissions.filter((p: unknown) => typeof p === "string")
           : [];
         const email
           = typeof parsed.user.email === "string" ? parsed.user.email : "";
@@ -306,6 +306,7 @@ export const useSession = () => {
   return {
     session,
     isAuthenticated,
+    isLoggedIn,
     setSession,
     clearSession,
     validateToken,

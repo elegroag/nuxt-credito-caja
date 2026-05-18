@@ -218,7 +218,7 @@ const {
   cambiarFiltroEstado,
   verDetalles,
   formatearFecha,
-  getEstadoColor,
+  getEstadoColor: _getEstadoColor,
   getEstadoIcon,
   getEstadoBadgeColor,
   convenioActivo,

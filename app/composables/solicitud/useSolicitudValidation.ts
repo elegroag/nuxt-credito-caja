@@ -14,7 +14,7 @@ type ValidatorFn = (form: SolicitudCreditoPayload, configs: {
   minimoEndeudamiento: number;
 }) => ValidationResult;
 
-const isEmpty = (value: unknown): boolean => {
+const _isEmpty = (value: unknown): boolean => {
   if (value === null || value === undefined) return true;
   if (typeof value === "string") return value.trim() === "";
   if (typeof value === "number") return false;

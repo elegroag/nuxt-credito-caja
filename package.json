@@ -18,7 +18,7 @@
     "db:seed": "prisma db seed",
     "test": "vitest",
     "test:ui": "vitest --ui",
-    "test:unit": "vitest run --project server-unit --project client-unit",
+    "test:unit": "vitest run",
     "test:unit:server": "vitest run --project server-unit",
     "test:unit:client": "vitest run --project client-unit",
     "test:integration": "vitest run --project integration",

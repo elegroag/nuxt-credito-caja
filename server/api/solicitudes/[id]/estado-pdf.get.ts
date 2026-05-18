@@ -69,13 +69,14 @@ export default defineEventHandler(async (event: H3Event) => {
       },
       tienePdf ? "PDF disponible" : "PDF no generado"
     );
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const err = error as { statusCode?: number; response?: { status?: number }; data?: { error?: string }; message?: string };
     console.error("Error al verificar estado del PDF:", error);
-    const status = Number(error?.statusCode || error?.response?.status || 502);
+    const status = Number(err?.statusCode || err?.response?.status || 502);
     setResponseStatus(event, Number.isFinite(status) ? status : 502);
 
     return CustomResponse.error(
-      error?.data?.error || error?.message || "Error al verificar el estado del PDF",
+      err?.data?.error || err?.message || "Error al verificar el estado del PDF",
       "Error al verificar PDF."
     );
   }

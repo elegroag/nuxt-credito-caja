@@ -70,7 +70,7 @@ async function createTestSolicitud(): Promise<string> {
 
 async function fetchWithRetry(
   url: string,
-  options: any,
+  options: RequestInit,
   retries = 3,
   delay = 1000
 ): Promise<Response> {
@@ -194,7 +194,7 @@ describe("POST /api/solicitudes/:id/generar-pdf — integración", () => {
   });
 
   describe("manejo de errores del servicio Flask PDF", () => {
-    let solicitudId: string;
+    let _solicitudId: string;
 
     beforeAll(async () => {
       solicitudId = await createTestSolicitud();

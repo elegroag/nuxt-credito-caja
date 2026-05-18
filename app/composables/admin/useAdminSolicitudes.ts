@@ -2,6 +2,7 @@
  * Composable para administración de solicitudes
  * Maneja la lógica de filtros, paginación y operaciones CRUD
  */
+import type { SolicitudAdmin, FiltrosSolicitudes, EstadosCount, OpcionesFiltro } from "~~/shared/types/admin-solicitudes";
 
 export const useAdminSolicitudes = () => {
   const { getJson, putJson, deleteJson } = useApi();
@@ -41,7 +42,10 @@ export const useAdminSolicitudes = () => {
   /**
    * Maneja la respuesta del backend de forma estandarizada
    */
-  const handleApiResponse = (response: any, defaultValue: any = null) => {
+  const handleApiResponse = (
+    response: { success?: boolean; data?: unknown; message?: string },
+    defaultValue: unknown = null
+  ): unknown => {
     if (response && response.success) {
       return response.data || defaultValue;
     } else {
@@ -69,16 +73,16 @@ export const useAdminSolicitudes = () => {
         params.append("estado", estado);
       }
 
-      const response = await getJson<any>(
+      const response = await getJson<SolicitudesResponse>(
         `/api/admin/solicitudes?${params.toString()}`,
         { auth: true }
       );
 
       // Usar el manejador de respuestas estandarizado
       const data = handleApiResponse(response, {
-        collection: [],
+        collection: [] as SolicitudAdmin[],
         pagination: { total: 0 }
-      });
+      }) as { collection?: SolicitudAdmin[], pagination?: { total?: number } };
       solicitudes.value = data.collection || [];
       totalItems.value = data.pagination?.total || 0;
     } catch (err) {
@@ -113,11 +117,11 @@ export const useAdminSolicitudes = () => {
    */
   const cargarEstadosCount = async () => {
     try {
-      const response = await getJson<any>(
+      const response = await getJson<{ data: EstadosCount }>(
         "/api/admin/solicitudes/estados-count",
         { auth: true }
       );
-      const conteo = handleApiResponse(response, {});
+      const conteo = handleApiResponse(response, {} as EstadosCount) as EstadosCount;
 
       // Si ya tenemos los estados disponibles, combinamos con el conteo
       if (estadosDisponibles.value.length > 0) {
@@ -130,7 +134,7 @@ export const useAdminSolicitudes = () => {
         });
         estadosCount.value = conteoCompleto;
       } else {
-        estadosCount.value = conteo;
+        estadosCount.value = conteo as EstadosCount;
       }
     } catch (err) {
       console.error("Error cargando conteo por estados:", err);
@@ -166,7 +170,7 @@ export const useAdminSolicitudes = () => {
     descripcion?: string
   ) => {
     try {
-      const response = await putJson<any>(
+      const response = await putJson<{ data: SolicitudAdmin }>(
         `/api/admin/solicitudes/${solicitudId}/estado`,
         { estado, descripcion },
         { auth: true }
@@ -175,7 +179,7 @@ export const useAdminSolicitudes = () => {
       // Recargar los datos
       await cargarSolicitudes();
       await cargarEstadosCount();
-      return handleApiResponse(response, null);
+      return handleApiResponse(response, null) as SolicitudAdmin;
     } catch (err) {
       console.error("Error actualizando estado:", err);
       throw new Error("Error al actualizar el estado de la solicitud");
@@ -189,11 +193,11 @@ export const useAdminSolicitudes = () => {
     solicitudId: string
   ): Promise<SolicitudAdmin> => {
     try {
-      const response = await getJson<any>(
+      const response = await getJson<{ data: SolicitudAdmin }>(
         `/api/admin/solicitudes/${solicitudId}`,
         { auth: true }
       );
-      return handleApiResponse(response, null);
+      return handleApiResponse(response, null) as SolicitudAdmin;
     } catch (err) {
       console.error("Error obteniendo solicitud:", err);
       throw new Error("Error al obtener la solicitud");
@@ -237,7 +241,7 @@ export const useAdminSolicitudes = () => {
   /**
    * Abre el modal para cambiar estado
    */
-  const cambiarEstado = (solicitud: SolicitudAdmin | any) => {
+  const cambiarEstado = (solicitud: SolicitudAdmin) => {
     solicitudSeleccionada.value = solicitud;
     nuevoEstado.value = solicitud.estado;
     estadoDescripcion.value = "";
@@ -285,17 +289,16 @@ export const useAdminSolicitudes = () => {
   /**
    * Elimina una solicitud con confirmación
    */
-  const eliminarSolicitudConfirm = (solicitud: SolicitudAdmin | any) => {
+  const eliminarSolicitudConfirm = (solicitud: SolicitudAdmin) => {
     if (
       confirm(
         `¿Estás seguro de eliminar la solicitud ${solicitud.numero_solicitud}?`
       )
     ) {
-      eliminarSolicitud(solicitud.numero_solicitud);
+      eliminarSolicitud(solicitud.numero_solicitud!);
     }
   };
-
-  // Computed properties
+// Computed properties
   const tieneFiltrosActivos = computed(() => {
     const f = filtrosActivos.value;
     return !!(

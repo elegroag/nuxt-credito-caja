@@ -105,9 +105,10 @@ export function useAdminUsers() {
         conteoRoles.value = {};
         conteoEstados.value = {};
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error("Error al cargar usuarios:", err);
-      error.value = err.message || "Error al cargar los usuarios";
+      const message = err instanceof Error ? err.message : String(err);
+      error.value = message || "Error al cargar los usuarios";
       usuarios.value = [];
       totalUsuarios.value = 0;
       conteoRoles.value = {};
@@ -183,9 +184,10 @@ export function useAdminUsers() {
       } else {
         error.value = response.message || "No se pudo cambiar el estado";
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error("Error al cambiar estado:", err);
-      error.value = err.message || "Error al cambiar el estado";
+      const message = err instanceof Error ? err.message : String(err);
+      error.value = message || "Error al cambiar el estado";
     }
   };
 

@@ -1,4 +1,3 @@
-import type { In } from "vue-router/dist/index-D_VEAp3P.js";
 import type { CiudadOption } from "./componentes";
 import type {
   CodigoTipoDocumento,
@@ -9,7 +8,7 @@ import type {
   SexoParam,
   TipoViviendaParam
 } from "./parametros";
-import type { InformacionLaboral, SolicitudCreditoPayload } from "./payload";
+import type { SolicitudCreditoPayload } from "./payload";
 
 export interface SolicitanteBasic {
   email: string;

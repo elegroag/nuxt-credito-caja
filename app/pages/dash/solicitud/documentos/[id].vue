@@ -1,36 +1,37 @@
 <template>
-  <div class="min-h-[calc(100vh-4rem)]">
-    <div class="mx-auto max-w-7xl p-4 sm:p-8">
-      <!-- Header -->
-      <UPageCard class="mb-6">
-        <div class="flex items-center justify-between">
-          <div>
-            <h1 class="text-3xl font-bold mb-2 text-foreground">
-              Carga de Documentos
-            </h1>
-            <p class="text-sm text-muted-foreground">
-              Complete los documentos requeridos para su solicitud de crédito
-            </p>
+  <div>
+    <div class="min-h-[calc(100vh-4rem)]">
+      <div class="mx-auto max-w-7xl p-4 sm:p-8">
+        <!-- Header -->
+        <UPageCard class="mb-6">
+          <div class="flex items-center justify-between">
+            <div>
+              <h1 class="text-3xl font-bold mb-2 text-foreground">
+                Carga de Documentos
+              </h1>
+              <p class="text-sm text-muted-foreground">
+                Complete los documentos requeridos para su solicitud de crédito
+              </p>
+            </div>
+            <div class="flex items-center gap-2 text-sm text-muted-foreground">
+              <DocumentTextIcon class="w-4 h-4" />
+              <UIcon
+                name="i-lucide-file-text"
+                class="w-4 h-4"
+              />
+              <span>{{ documentosRequeridos?.length || 0 }} documentos
+                requeridos</span>
+            </div>
           </div>
-          <div class="flex items-center gap-2 text-sm text-muted-foreground">
-            <DocumentTextIcon class="w-4 h-4" />
-            <UIcon
-              name="i-lucide-file-text"
-              class="w-4 h-4"
-            />
-            <span>{{ documentosRequeridos?.length || 0 }} documentos
-              requeridos</span>
-          </div>
-        </div>
-      </UPageCard>
+        </UPageCard>
 
-      <div class="space-y-6 max-w-6xl mx-auto">
-        <!-- Progress Steps -->
-        <SharedProgresoSteps
-          current-step="documentos"
-          class="mb-8"
-          @navigate="handleNavigation"
-        />
+        <div class="space-y-6 max-w-6xl mx-auto">
+          <!-- Progress Steps -->
+          <SharedProgresoSteps
+            current-step="documentos"
+            class="mb-8"
+            @navigate="handleNavigation"
+          />
 
         <!-- Loading State -->
         <div
@@ -302,10 +303,10 @@
           </UPageCard>
         </div>
       </div>
+      </div>
     </div>
-  </div>
-  <UModal
-    v-model:open="downloadErrorDialogOpen"
+    <UModal
+      v-model:open="downloadErrorDialogOpen"
     title="Error al descargar documento"
     :description="
       downloadError
@@ -353,15 +354,12 @@ const {
   handleDelete,
   handleDownload,
   handleNavigation,
-  handleBack,
   handleContinue,
-  documentosCargados,
   documentosRequeridos,
   progreso,
   errorUpload,
   downloadError,
-  downloadErrorDialogOpen,
-  setDownloadErrorDialogOpen
+  downloadErrorDialogOpen
 } = useDocumentosSolicitud();
 
 // Lifecycle

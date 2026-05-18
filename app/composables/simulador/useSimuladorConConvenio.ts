@@ -100,7 +100,7 @@ export function useSimuladorConConvenio() {
       errorConvenio.value = "No se encontró un convenio activo para tu empresa.";
 
       return false;
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error("Error consultando convenios:", err);
       errorConvenio.value = "Error al consultar convenios";
       convenio.value = null;

@@ -84,7 +84,7 @@ interface Props {
   title: string
   value: number | string
   subtitle?: string
-  icon: any
+  icon: object
   variant?: "default" | "primary" | "success" | "warning" | "danger" | "info"
   format?: "number" | "currency" | "percentage" | "text"
   trend?: "up" | "down"

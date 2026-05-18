@@ -28,9 +28,9 @@ const userService = () => {
     });
   };
 
-  const createUserTrabajador = async (data: any) => {
+  const createUserTrabajador = async (data: Record<string, unknown>) => {
     const user = await prisma.users.create({
-      data: data as any
+      data: data as Parameters<typeof prisma.users.create>[0]['data']
     });
     return user;
   };

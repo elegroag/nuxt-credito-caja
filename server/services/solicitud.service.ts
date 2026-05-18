@@ -33,7 +33,7 @@ const solicitudService = () => {
     });
 
     return {
-      data: solicitudes.map((solicitud: any) => ({
+      data: solicitudes.map((solicitud) => ({
         numero_solicitud: solicitud.numero_solicitud,
         owner_username: solicitud.owner_username,
         valor_solicitud: String(solicitud.valor_solicitud),
@@ -272,7 +272,7 @@ const solicitudService = () => {
     const total = await prisma.solicitudes_credito.count();
 
     return {
-      data: solicitudes.map((solicitud: any) => ({
+      data: solicitudes.map((solicitud) => ({
         numero_solicitud: solicitud.numero_solicitud,
         owner_username: solicitud.owner_username,
         valor_solicitud: String(solicitud.valor_solicitud),
@@ -306,7 +306,7 @@ const solicitudService = () => {
   }) => {
     const { limit, skip, estado } = params;
 
-    const where: any = {};
+    const where: Record<string, unknown> = {};
 
     if (estado && estado !== "@") {
       where.estado = estado;
@@ -342,7 +342,7 @@ const solicitudService = () => {
     ]);
 
     return {
-      collection: solicitudes.map((solicitud: any) => ({
+      collection: solicitudes.map((solicitud) => ({
         numero_solicitud: solicitud.numero_solicitud,
         owner_username: solicitud.owner_username,
         valor_solicitud: String(solicitud.valor_solicitud),

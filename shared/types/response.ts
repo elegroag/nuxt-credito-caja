@@ -61,3 +61,9 @@ export interface ParametrosResponse {
   message: string;
   success: boolean;
 }
+
+export interface SuccessResponse<T> {
+  data: T;
+  message: string;
+  success: boolean;
+}

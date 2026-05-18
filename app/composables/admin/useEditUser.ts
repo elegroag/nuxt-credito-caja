@@ -3,6 +3,7 @@ import { useRouter, useRoute } from "vue-router";
 import { useApi } from "~/composables/useApi";
 import { useSession } from "~/composables/useSession";
 import { getDefaultTipoDocumento } from "~/lib/tipos_documento";
+import type { EditUserForm } from "~~/shared/types/admin-usuarios";
 
 export function useEditUser() {
   const router = useRouter();
@@ -13,7 +14,10 @@ export function useEditUser() {
   // Estado
   const loading = ref(false);
   const error = ref("");
-  const usuario = ref<any>(null);
+  const usuario = ref<{
+    nombres?: string
+    apellidos?: string
+  } | null>(null);
 
   // Formulario reactivo
   const form = reactive<EditUserForm>({
@@ -46,7 +50,20 @@ export function useEditUser() {
 
       const response = await getJson<{
         success: boolean
-        data: any
+        data: {
+          username?: string
+          email?: string
+          nombres?: string
+          nombre?: string
+          apellidos?: string
+          apellido?: string
+          roles?: string[]
+          disabled?: boolean
+          tipo_documento?: string
+          numero_documento?: string
+          phone?: string
+          telefono?: string
+        }
         message?: string
       }>(`/api/admin/users/${route.params.id}`, { auth: true });
 
@@ -68,9 +85,10 @@ export function useEditUser() {
         error.value
           = response.message || "No se pudo cargar la información del usuario";
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error("Error al cargar usuario:", err);
-      error.value = err.message || "Error al cargar el usuario";
+      const message = err instanceof Error ? err.message : String(err);
+      error.value = message || "Error al cargar el usuario";
     } finally {
       loading.value = false;
     }
@@ -146,7 +164,7 @@ export function useEditUser() {
       await ready;
 
       // Preparar payload para el backend
-      const payload: any = {
+      const payload: Record<string, unknown> = {
         username: form.username.trim(),
         email: form.email.trim(),
         nombre: form.nombre.trim(),
@@ -176,17 +194,17 @@ export function useEditUser() {
         errors.value.general
           = response.message || "Error al actualizar el usuario";
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Error al actualizar usuario:", error);
 
       // Manejar errores específicos del backend
-      if (error.message?.includes("username")) {
+      const message = error instanceof Error ? error.message : String(error);
+      if (message.includes("username")) {
         errors.value.username = "El nombre de usuario ya existe";
-      } else if (error.message?.includes("email")) {
+} else if (message.includes("email")) {
         errors.value.email = "El email ya está registrado";
       } else {
-        errors.value.general
-          = error.message || "Error al actualizar el usuario";
+        errors.value.general = message || "Error al actualizar el usuario";
       }
     } finally {
       loading.value = false;
@@ -195,17 +213,31 @@ export function useEditUser() {
 
   // Resetear formulario a datos originales
   const resetForm = () => {
-    if (usuario.value) {
-      form.username = usuario.value.username || "";
-      form.email = usuario.value.email || "";
-      form.nombre = usuario.value.nombres || usuario.value.nombre || "";
-      form.apellido = usuario.value.apellidos || usuario.value.apellido || "";
-      form.roles = usuario.value.roles || [];
-      form.disabled = usuario.value.disabled || false;
+    if (usuario.value && typeof usuario.value === 'object') {
+      const userData = usuario.value as {
+        username?: string
+        email?: string
+        nombres?: string
+        nombre?: string
+        apellidos?: string
+        apellido?: string
+        roles?: string[]
+        disabled?: boolean
+        tipo_documento?: string
+        numero_documento?: string
+        phone?: string
+        telefono?: string
+      };
+      form.username = userData.username || "";
+      form.email = userData.email || "";
+      form.nombre = userData.nombres || userData.nombre || "";
+      form.apellido = userData.apellidos || userData.apellido || "";
+      form.roles = userData.roles || [];
+      form.disabled = userData.disabled || false;
       form.tipo_documento
-        = usuario.value.tipo_documento || getDefaultTipoDocumento();
-      form.numero_documento = usuario.value.numero_documento || "";
-      form.phone = usuario.value.phone || usuario.value.telefono || "";
+        = userData.tipo_documento || getDefaultTipoDocumento();
+      form.numero_documento = userData.numero_documento || "";
+      form.phone = userData.phone || userData.telefono || "";
       form.password = "";
       form.confirmPassword = "";
     }

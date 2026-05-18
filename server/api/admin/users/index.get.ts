@@ -28,13 +28,13 @@ export default defineEventHandler(async (event: H3Event) => {
     let usuariosFiltrados = result.data;
 
     if (rol) {
-      usuariosFiltrados = usuariosFiltrados.filter((user: any) =>
-        user.roles?.includes(rol)
+      usuariosFiltrados = usuariosFiltrados.filter((user) =>
+        Array.isArray(user.roles) && (user.roles as string[]).includes(rol)
       );
     }
 
     if (estado) {
-      usuariosFiltrados = usuariosFiltrados.filter((user: any) => {
+      usuariosFiltrados = usuariosFiltrados.filter((user) => {
         if (estado === "active") return user.is_active && !user.disabled;
         if (estado === "inactive") return !user.is_active || user.disabled;
         if (estado === "suspended") return user.disabled;
@@ -45,7 +45,7 @@ export default defineEventHandler(async (event: H3Event) => {
     if (busqueda) {
       const busquedaLower = busqueda.toLowerCase();
       usuariosFiltrados = usuariosFiltrados.filter(
-        (user: any) =>
+        (user) =>
           user.full_name?.toLowerCase().includes(busquedaLower)
           || user.email?.toLowerCase().includes(busquedaLower)
           || user.username?.toLowerCase().includes(busquedaLower)
@@ -54,9 +54,9 @@ export default defineEventHandler(async (event: H3Event) => {
 
     // Calcular conteos de roles
     const conteoRoles: Record<string, number> = {};
-    usuariosFiltrados.forEach((user: any) => {
+    usuariosFiltrados.forEach((user) => {
       if (user.roles && Array.isArray(user.roles)) {
-        user.roles.forEach((role: string) => {
+        (user.roles as string[]).forEach((role: string) => {
           conteoRoles[role] = (conteoRoles[role] || 0) + 1;
         });
       }
@@ -69,7 +69,7 @@ export default defineEventHandler(async (event: H3Event) => {
       suspended: 0
     };
 
-    usuariosFiltrados.forEach((user: any) => {
+    usuariosFiltrados.forEach((user) => {
       if (user.disabled) {
         conteoEstados.suspended++;
       } else if (user.is_active) {
@@ -80,7 +80,7 @@ export default defineEventHandler(async (event: H3Event) => {
     });
 
     // Transformar usuarios al formato esperado por el frontend
-    const usuariosTransformados = usuariosFiltrados.map((user: any) => ({
+    const usuariosTransformados = usuariosFiltrados.map((user) => ({
       id: Number(user.id),
       username: user.username,
       email: user.email,
@@ -88,7 +88,7 @@ export default defineEventHandler(async (event: H3Event) => {
       apellidos: user.apellidos,
       full_name: user.full_name,
       numero_documento: user.numero_documento,
-      rol: user.roles?.[0] || "user_trabajador",
+      rol: (Array.isArray(user.roles) ? user.roles[0] : undefined) as string || "user_trabajador",
       roles: user.roles,
       estado: user.disabled
         ? "suspended"
@@ -108,12 +108,13 @@ export default defineEventHandler(async (event: H3Event) => {
       },
       "Usuarios obtenidos exitosamente"
     );
-  } catch (e: any) {
-    const status = Number(e?.statusCode || e?.response?.status || 502);
+  } catch (e: unknown) {
+    const err = e as { statusCode?: number; response?: { status?: number }; data?: { error?: string }; message?: string };
+    const status = Number(err?.statusCode || err?.response?.status || 502);
     setResponseStatus(event, Number.isFinite(status) ? status : 502);
 
     return CustomResponse.error(
-      e?.data?.error || e?.message || "Error conectando con backend",
+      err?.data?.error || err?.message || "Error conectando con backend",
       "Error al obtener usuarios."
     );
   }

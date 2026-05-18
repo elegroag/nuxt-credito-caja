@@ -11,21 +11,21 @@
     </div>
 
     <div
-      v-if="(form as any).propiedades.length === 0"
+      v-if="form.propiedades.length === 0"
       class="rounded-lg bg-muted/50 p-8 text-center border-2 border-dashed border-border"
     >
       <p class="text-sm text-muted-foreground italic">No se han registrado propiedades.</p>
     </div>
 
     <div class="grid gap-4">
-      <UCard v-for="(p, idx) in (form as any).propiedades" :key="idx" class="border-border/50 bg-muted/20">
+      <UCard v-for="(p, idx) in form.propiedades" :key="idx" class="border-border/50 bg-muted/20">
         <div class="flex flex-row items-center justify-between mb-3">
-          <p class="text-sm font-semibold">Propiedad #{{ (idx as number) + 1 }}</p>
+          <p class="text-sm font-semibold">Propiedad #{{ idx + 1 }}</p>
           <UButton
             variant="ghost"
             size="sm"
             class="text-destructive hover:text-destructive hover:bg-destructive/10 h-8 px-2"
-            @click="removePropiedad(idx as number)"
+            @click="removePropiedad(idx)"
           >
             <Trash2 class="h-4 w-4" />
           </UButton>
@@ -80,11 +80,11 @@
 import { Plus, Trash2 } from "lucide-vue-next";
 import { computed } from "#imports";
 import FormField from "~/components/shared/FormField.vue";
-
 import CustomSelect from "~/components/shared/CustomSelect.vue";
+import type { SolicitudCreditoPayload } from "~~/shared/types/payload";
 
 const props = defineProps<{
-  form: any;
+  form: SolicitudCreditoPayload;
   addPropiedad: () => void;
   removePropiedad: (index: number) => void;
   ciudades?: readonly { codciu: string; detciu: string }[];

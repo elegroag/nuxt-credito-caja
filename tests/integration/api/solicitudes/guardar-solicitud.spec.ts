@@ -5,7 +5,7 @@ const BASE_URL = "http://localhost:4000";
 
 async function fetchWithRetry(
   url: string,
-  options: any,
+  options: RequestInit,
   retries = 3,
   delay = 500
 ): Promise<Response> {

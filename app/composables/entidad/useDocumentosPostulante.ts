@@ -6,7 +6,7 @@ export function useDocumentosPostulante() {
 
   const loading = ref(false);
   const errorMsg = ref("");
-  const result = ref<any | null>(null);
+  const result = ref<unknown | null>(null);
 
   const guardarDocumentos = async (
     documentos: DocumentosPostulante,
@@ -48,15 +48,16 @@ export function useDocumentosPostulante() {
         documentos: documentosBase64
       };
 
-      result.value = await postJson<any>(
+      result.value = await postJson<unknown>(
         "/api/entidad-digital/documentos",
         payload
       );
 
       return result.value;
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const err = error as { data?: { error?: string }; message?: string };
       errorMsg.value
-        = error?.data?.error || error?.message || "Error guardando documentos";
+        = err?.data?.error || err?.message || "Error guardando documentos";
       throw error;
     } finally {
       loading.value = false;
@@ -91,15 +92,16 @@ export function useDocumentosPostulante() {
         selfie: selfieBase64
       };
 
-      result.value = await postJson<any>(
+      result.value = await postJson<unknown>(
         "/api/entidad-digital/selfie",
         payload
       );
 
       return result.value;
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const err = error as { data?: { error?: string }; message?: string };
       errorMsg.value
-        = error?.data?.error || error?.message || "Error guardando selfie";
+        = err?.data?.error || err?.message || "Error guardando selfie";
       throw error;
     } finally {
       loading.value = false;
@@ -157,16 +159,17 @@ export function useDocumentosPostulante() {
         selfie: selfieBase64
       };
 
-      result.value = await postJson<any>(
+      result.value = await postJson<unknown>(
         "/api/entidad-digital/completo",
         payload
       );
 
       return result.value;
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const err = error as { data?: { error?: string }; message?: string };
       errorMsg.value
-        = error?.data?.error
-          || error?.message
+        = err?.data?.error
+          || err?.message
           || "Error guardando proceso completo";
       throw error;
     } finally {

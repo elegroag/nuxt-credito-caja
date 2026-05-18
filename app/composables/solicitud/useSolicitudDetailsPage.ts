@@ -11,9 +11,9 @@ export const useSolicitudDetailsPage = () => {
   const { ready } = useSession();
 
   const {
-    loading: loadingParametros,
-    error: errorParametros,
-    cargarParametros,
+    loading: _loadingParametros,
+    error: _errorParametros,
+    cargarParametros: _cargarParametros,
     buscarTipoIdentificacion,
     buscarCiudad,
     buscarCargo,
@@ -129,10 +129,10 @@ export const useSolicitudDetailsPage = () => {
         data: SolicitudCreditoResponse
       }>(`/api/solicitudes/${solicitudId}`, { auth: true });
       solicitud.value = response.data;
-    } catch (e: any) {
+    } catch (e: unknown) {
       console.error(e);
       error.value
-        = e.message || "No se pudo cargar la información de la solicitud.";
+        = (e as Error).message || "No se pudo cargar la información de la solicitud.";
     } finally {
       loading.value = false;
     }
@@ -208,9 +208,9 @@ export const useSolicitudDetailsPage = () => {
 
       // Redirigir a la página de solicitudes después de eliminar
       router.push("/dash");
-    } catch (e: any) {
+    } catch (e: unknown) {
       console.error("Error eliminando solicitud:", e);
-      error.value = e.message || "No se pudo eliminar la solicitud.";
+      error.value = (e as Error).message || "No se pudo eliminar la solicitud.";
       mostrarModalEliminar.value = false;
     } finally {
       eliminando.value = false;

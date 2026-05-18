@@ -160,8 +160,8 @@ const saveConfig = async () => {
     await updateConfiguration(selectedConfig.value.clave, newValue.value);
     await loadConfigurations(true);
     isModalOpen.value = false;
-  } catch (e: any) {
-    error.value = e?.data?.error || "Error al guardar configuración";
+  } catch (e: unknown) {
+    error.value = (e as { data?: { error?: string } }).data?.error || "Error al guardar configuración";
   } finally {
     isSaving.value = false;
   }
@@ -170,7 +170,7 @@ const saveConfig = async () => {
 onMounted(async () => {
   try {
     await loadConfigurations(true);
-  } catch (e) {
+  } catch {
     error.value = "Error al cargar configuraciones";
   } finally {
     isLoading.value = false;

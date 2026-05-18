@@ -43,9 +43,9 @@ interface Props {
   valor: string | number
   descripcion: string
   icono: string
-  colorFondo: string
-  colorIcono: string
-  colorTexto: string
+  colorFondo?: string
+  colorIcono?: string
+  colorTexto?: string
   colorBarra?: string
   porcentaje?: number
 }

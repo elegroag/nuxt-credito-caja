@@ -30,17 +30,17 @@
 
     <div v-if="form.conyuge && !loadingLocal" class="grid gap-4 sm:grid-cols-2">
       <FormField label="Identificación" :error="errors && errors['conyuge.identificacion']">
-        <UInput v-model="(form as any).conyuge.identificacion" />
+        <UInput v-model="form.conyuge!.identificacion" />
       </FormField>
       <FormField label="Nombres y apellidos" :error="errors && errors['conyuge.nombres_apellidos']">
-        <UInput v-model="(form as any).conyuge.nombres_apellidos" />
+        <UInput v-model="form.conyuge!.nombres_apellidos" />
       </FormField>
       <FormField label="Ingresos laborales">
-        <UInput v-model.number="(form as any).conyuge.ingresos_laborales" type="number" min="0" />
+        <UInput v-model.number="form.conyuge!.ingresos_laborales" type="number" min="0" />
       </FormField>
       <FormField label="¿Trabaja?">
         <URadioGroup
-          v-model="(form as any).conyuge.trabaja"
+          v-model="form.conyuge!.trabaja"
           :items="[
             { label: 'Sí', value: true },
             { label: 'No', value: false }
@@ -48,13 +48,13 @@
         />
       </FormField>
       <FormField label="Teléfono móvil">
-        <UInput v-model="(form as any).conyuge.telefono_movil" />
+        <UInput v-model="form.conyuge!.telefono_movil" />
       </FormField>
 
       <div class="sm:col-span-2 mt-2 text-sm font-semibold text-foreground">Empresa (opcional)</div>
       <FormField label="¿Incluir empresa?" class="sm:col-span-2">
         <URadioGroup
-          :model-value="!!(form as any).conyuge?.empresa"
+          :model-value="!!form.conyuge?.empresa"
           :items="[
             { label: 'Sí', value: true },
             { label: 'No', value: false }
@@ -63,18 +63,18 @@
         />
       </FormField>
 
-      <template v-if="(form as any).conyuge?.empresa">
+      <template v-if="form.conyuge?.empresa">
         <FormField label="Nombre" class="sm:col-span-2">
-          <UInput v-model="(form as any).conyuge.empresa.nombre" />
+          <UInput v-model="form.conyuge!.empresa!.nombre" />
         </FormField>
         <FormField label="Dirección" class="sm:col-span-2">
-          <UInput v-model="(form as any).conyuge.empresa.direccion" />
+          <UInput v-model="form.conyuge!.empresa!.direccion" />
         </FormField>
         <FormField label="Teléfono">
-          <UInput v-model="(form as any).conyuge.empresa.telefono" />
+          <UInput v-model="form.conyuge!.empresa!.telefono" />
         </FormField>
         <FormField label="Email">
-          <UInput v-model="(form as any).conyuge.empresa.email" type="email" />
+          <UInput v-model="form.conyuge!.empresa!.email" type="email" />
         </FormField>
       </template>
     </div>
@@ -84,9 +84,10 @@
 <script setup lang="ts">
 import FormField from "~/components/shared/FormField.vue";
 import { useConyugeStep } from "~/composables/solicitud/useConyugeStep";
+import type { SolicitudCreditoPayload } from "~~/shared/types/payload";
 
 const props = defineProps<{
-  form: any;
+  form: SolicitudCreditoPayload;
   toggleConyuge: (checked: boolean) => void;
   toggleEmpresaConyuge: (checked: boolean) => void;
   errors?: Record<string, string>;
@@ -95,9 +96,9 @@ const props = defineProps<{
 const { loadingLocal, toggleConyugeHandler } = useConyugeStep({
   form: {
     get conyuge() { return props.form?.conyuge; },
-    set(v: any) { (props.form as any).conyuge = v; },
+    set(v: Record<string, unknown>) { (props.form as unknown as Record<string, unknown>).conyuge = v; },
     get informacion_laboral() { return props.form?.informacion_laboral; }
-  } as any,
+  } as { conyuge?: Conyuge; informacion_laboral?: InformacionLaboral },
   toggleConyuge: props.toggleConyuge,
   toggleEmpresaConyuge: props.toggleEmpresaConyuge
 });

@@ -91,9 +91,10 @@ export function useSeguimientoFirmas() {
       } else {
         throw new Error(response.message || "Error al cargar solicitudes");
       }
-    } catch (e: any) {
+    } catch (e: unknown) {
       console.error("Error al cargar solicitudes:", e);
-      error.value = e.message || "Error al cargar las solicitudes";
+      const message = e instanceof Error ? e.message : String(e);
+      error.value = message || "Error al cargar las solicitudes";
       solicitudes.value = [];
     } finally {
       loading.value = false;
@@ -139,11 +140,12 @@ export function useSeguimientoFirmas() {
       } else {
         throw new Error(response.message || "Error al consultar estado");
       }
-    } catch (e: any) {
+    } catch (e: unknown) {
       console.error("Error al consultar estado:", e);
+      const message = e instanceof Error ? e.message : String(e);
       return {
         success: false,
-        message: e.message || "Error al consultar el estado"
+        message: message || "Error al consultar el estado"
       };
     }
   };
@@ -247,8 +249,10 @@ export function useSeguimientoFirmas() {
       } else {
         throw new Error(response.message || "Error al cargar convenio activo");
       }
-    } catch (e: any) {
+    } catch (e: unknown) {
       console.error("Error al cargar convenio activo:", e);
+      const message = e instanceof Error ? e.message : String(e);
+      error.value = message || "Error al cargar convenio activo";
       convenioActivo.value = null;
     }
   };

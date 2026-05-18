@@ -155,7 +155,7 @@
                 <span class="font-medium">
                   {{
                     (linea.documentos || []).filter(
-                      (d: any) => d?.obliga === "S"
+                      (d) => d?.obliga === "S"
                     ).length
                   }}
                   obligatorios

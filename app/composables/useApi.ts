@@ -1,6 +1,11 @@
 import { computed, useRuntimeConfig, useSession } from "#imports";
 import { $fetch } from "ofetch";
 
+export interface ApiRequestOptions {
+  auth?: boolean
+  headers?: Record<string, string>
+}
+
 export const useApi = () => {
   const config = useRuntimeConfig();
   const { authHeader } = useSession();
@@ -18,11 +23,8 @@ export const useApi = () => {
 
   const postJson = async <T>(
     path: string,
-    body: Record<string, any>,
-    opts?: {
-      auth?: boolean
-      headers?: Record<string, string>
-    }
+    body: unknown,
+    opts?: ApiRequestOptions
   ) => {
     const headers: Record<string, string> = {
       "content-type": "application/json",
@@ -30,12 +32,12 @@ export const useApi = () => {
     };
 
     if (opts?.auth) {
-      Object.assign(headers, authHeader.value as any);
+      Object.assign(headers, authHeader.value as unknown as Record<string, string>);
     }
 
     return await $fetch<T>(urlFor(path), {
       method: "POST",
-      body: body as any,
+      body: body as BodyInit,
       headers
     });
   };
@@ -43,17 +45,14 @@ export const useApi = () => {
   // Agregar métodos GET, PUT, DELETE para completar la API
   const getJson = async <T>(
     path: string,
-    opts?: {
-      auth?: boolean
-      headers?: Record<string, string>
-    }
+    opts?: ApiRequestOptions
   ) => {
     const headers: Record<string, string> = {
       ...(opts?.headers || {})
     };
 
     if (opts?.auth) {
-      Object.assign(headers, authHeader.value as any);
+      Object.assign(headers, authHeader.value as unknown as Record<string, string>);
     }
 
     return await $fetch<T>(urlFor(path), {
@@ -64,11 +63,8 @@ export const useApi = () => {
 
   const putJson = async <T>(
     path: string,
-    body: Record<string, any>,
-    opts?: {
-      auth?: boolean
-      headers?: Record<string, string>
-    }
+    body: unknown,
+    opts?: ApiRequestOptions
   ) => {
     const headers: Record<string, string> = {
       "content-type": "application/json",
@@ -76,29 +72,26 @@ export const useApi = () => {
     };
 
     if (opts?.auth) {
-      Object.assign(headers, authHeader.value as any);
+      Object.assign(headers, authHeader.value as unknown as Record<string, string>);
     }
 
     return await $fetch<T>(urlFor(path), {
       method: "PUT",
-      body: body as any,
+      body: body as BodyInit,
       headers
     });
   };
 
   const deleteJson = async <T>(
     path: string,
-    opts?: {
-      auth?: boolean
-      headers?: Record<string, string>
-    }
+    opts?: ApiRequestOptions
   ) => {
     const headers: Record<string, string> = {
       ...(opts?.headers || {})
     };
 
     if (opts?.auth) {
-      Object.assign(headers, authHeader.value as any);
+      Object.assign(headers, authHeader.value as unknown as Record<string, string>);
     }
 
     return await $fetch<T>(urlFor(path), {

@@ -38,7 +38,6 @@ export default defineNuxtConfig({
 
   css: ["@/assets/css/main.css"],
 
-  // @ts-ignore
   ui: {
     theme: {
       colors: ["primary", "secondary", "accent", "destructive", "muted"]

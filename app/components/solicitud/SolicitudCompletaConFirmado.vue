@@ -158,7 +158,6 @@ const emit = defineEmits<{
 // Convenio
 const {
   loading: loadingConvenio,
-  error: errorConvenio,
   isElegible,
   validarConvenio: validarConvenioFn,
   getMensajeError

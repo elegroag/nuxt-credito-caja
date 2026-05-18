@@ -65,14 +65,15 @@ export default defineEventHandler(async (event: H3Event) => {
     });
 
     return CustomResponse.ok(null, "Contraseña actualizada exitosamente");
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const err = error as { statusCode?: number; response?: { status?: number }; data?: { error?: string }; message?: string };
     console.error("Error en endpoint /api/user/password-change (PUT):", error);
 
-    const status = Number(error?.statusCode || error?.response?.status || 502);
+    const status = Number(err?.statusCode || err?.response?.status || 502);
     setResponseStatus(event, Number.isFinite(status) ? status : 502);
 
     return CustomResponse.error(
-      error?.data?.error || error?.message || "Error al cambiar la contraseña",
+      err?.data?.error || err?.message || "Error al cambiar la contraseña",
       "Error al cambiar contraseña."
     );
   }

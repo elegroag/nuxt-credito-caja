@@ -127,10 +127,6 @@ import { AlertTriangle } from "lucide-vue-next";
 import SolicitudHeader from "@/components/solicitudes/SolicitudHeader.vue";
 import SolicitudTimeline from "@/components/shared/SolicitudTimeline.vue";
 import InfoGeneral from "@/components/solicitudes/InfoGeneral.vue";
-import DatosSolicitante from "@/components/solicitudes/DatosSolicitante.vue";
-import InfoLaboral from "@/components/solicitudes/InfoLaboral.vue";
-import InfoFinanciera from "@/components/solicitudes/InfoFinanciera.vue";
-import InfoEconomica from "@/components/solicitudes/InfoEconomica.vue";
 import AccionesCard from "@/components/solicitudes/AccionesCard.vue";
 import { useSolicitudDetailsPage } from "~/composables/solicitud/useSolicitudDetailsPage";
 
@@ -153,11 +149,6 @@ const {
   tienePdf,
 
   // Funciones de parámetros
-  buscarTipoIdentificacion,
-  buscarCiudad,
-  buscarCargo,
-  buscarTipoVivienda,
-  buscarTipoContrato,
   getEstadoNombre,
   getEstadoBadgeClass,
 

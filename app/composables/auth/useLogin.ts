@@ -1,11 +1,26 @@
 // frontend/composables/auth/useLogin.ts
 import { ref } from "vue";
-import { useRouter, useRoute } from "vue-router";
+import { useRoute } from "vue-router";
 import { useApi } from "~/composables/useApi";
 import { useSession } from "~/composables/useSession";
 
+interface LoginResponseData {
+  access_token?: string
+  token_type?: string
+  user?: {
+    username?: string
+    roles?: string[]
+    permissions?: string[]
+    email?: string
+    tipo_documento?: string
+    numero_documento?: string
+    nombres?: string
+    apellidos?: string
+    trabajador?: Record<string, unknown>
+  }
+}
+
 export function useLogin() {
-  const router = useRouter();
   const route = useRoute();
   const { postJson } = useApi();
   const { isAuthenticated, setSession } = useSession();
@@ -20,11 +35,14 @@ export function useLogin() {
     errorMsg.value = "";
 
     try {
-      const response = await postJson<any>("/api/auth/login", {
+      const response = await postJson<{
+        success: boolean
+        data?: unknown
+      }>("/api/auth/login", {
         username: username.value,
         password: password.value
       });
-      const data = response.data;
+      const data = response.data as LoginResponseData | undefined;
 
       const accessToken = String(data?.access_token || "");
       const tokenType = String(data?.token_type || "bearer");
@@ -64,36 +82,36 @@ export function useLogin() {
               ? trabajadorData.email
               : "",
           empresa:
-            trabajadorData.empresa && typeof trabajadorData.empresa === "object"
-              ? {
-                  ciudad_codigo:
-                    typeof trabajadorData.empresa.ciudad_codigo === "string"
-                      ? trabajadorData.empresa.ciudad_codigo
-                      : "",
-                  direccion:
-                    typeof trabajadorData.empresa.direccion === "string"
-                      ? trabajadorData.empresa.direccion
-                      : "",
-                  nit:
-                    typeof trabajadorData.empresa.nit === "string"
-                      ? trabajadorData.empresa.nit
-                      : "",
-                  razon_social:
-                    typeof trabajadorData.empresa.razon_social === "string"
-                      ? trabajadorData.empresa.razon_social
-                      : "",
-                  telefono:
-                    typeof trabajadorData.empresa.telefono === "string"
-                      ? trabajadorData.empresa.telefono
-                      : ""
-                }
-              : {
-                  ciudad_codigo: "",
-                  direccion: "",
-                  nit: "",
-                  razon_social: "",
-                  telefono: ""
-                },
+          typeof trabajadorData.empresa === "object" && trabajadorData.empresa !== null
+          ? {
+          ciudad_codigo:
+          typeof (trabajadorData.empresa as { ciudad_codigo?: unknown }).ciudad_codigo === "string"
+          ? (trabajadorData.empresa as { ciudad_codigo: string }).ciudad_codigo
+          : "",
+          direccion:
+          typeof (trabajadorData.empresa as { direccion?: unknown }).direccion === "string"
+          ? (trabajadorData.empresa as { direccion: string }).direccion
+          : "",
+          nit:
+          typeof (trabajadorData.empresa as { nit?: unknown }).nit === "string"
+          ? (trabajadorData.empresa as { nit: string }).nit
+          : "",
+          razon_social:
+          typeof (trabajadorData.empresa as { razon_social?: unknown }).razon_social === "string"
+          ? (trabajadorData.empresa as { razon_social: string }).razon_social
+          : "",
+          telefono:
+          typeof (trabajadorData.empresa as { telefono?: unknown }).telefono === "string"
+          ? (trabajadorData.empresa as { telefono: string }).telefono
+          : ""
+          }
+          : {
+          ciudad_codigo: "",
+          direccion: "",
+          nit: "",
+          razon_social: "",
+          telefono: ""
+          },
           estado:
             typeof trabajadorData.estado === "string"
               ? trabajadorData.estado
@@ -191,11 +209,12 @@ export function useLogin() {
       await navigateTo(redirect.startsWith("/") ? redirect : "/dash");
 
       return true;
-    } catch (e: any) {
-      const status = Number(e?.statusCode || e?.response?.status || 0);
-      const code = e?.data?.code;
+    } catch (e: unknown) {
+      const err = e as { statusCode?: number; response?: { status?: number }; data?: { code?: string; error?: string }; message?: string };
+      const status = Number(err?.statusCode || err?.response?.status || 0);
+      const _code = err?.data?.code;
 
-      if (status === 404 && code === "USER_NOT_FOUND") {
+      if (status === 404 && _code === "USER_NOT_FOUND") {
         const redirect
           = typeof route.query.redirect === "string" ? route.query.redirect : "/";
         const q = new URLSearchParams();
@@ -206,7 +225,7 @@ export function useLogin() {
       }
 
       errorMsg.value
-        = e?.data?.error || e?.message || "No fue posible iniciar sesión";
+        = err?.data?.error || err?.message || "No fue posible iniciar sesión";
       return false;
     } finally {
       loading.value = false;

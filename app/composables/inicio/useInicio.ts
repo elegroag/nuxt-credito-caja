@@ -5,7 +5,7 @@ import { useApi } from "~/composables/useApi";
 import { normalizeEstado } from "#shared/utils/generales";
 
 export function useInicio() {
-  const { session, authHeader } = useSession();
+  useSession();
   const { getJson } = useApi();
 
   // Estado de solicitudes
@@ -94,8 +94,8 @@ export function useInicio() {
         estadosData.value = data;
         flujoAprobacion.value = estadosOrdenados;
       }
-    } catch (e: any) {
-      estadosError.value = e?.message || "No fue posible cargar los estados de solicitud";
+    } catch (e: unknown) {
+      estadosError.value = (e as Error).message || "No fue posible cargar los estados de solicitud";
       // Mantener los valores por defecto si falla la carga
     } finally {
       loadingEstados.value = false;

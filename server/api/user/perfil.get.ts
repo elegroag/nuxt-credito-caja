@@ -42,8 +42,9 @@ export default defineEventHandler(async (event: H3Event) => {
       { ...user, id: Number(user.id) },
       "Perfil obtenido exitosamente"
     );
-  } catch (error: any) {
-    if (error.statusCode) throw error;
+  } catch (error: unknown) {
+    const err = error as { statusCode?: number; statusMessage?: string };
+    if (err?.statusCode) throw error;
     throw createError({
       statusCode: 500,
       statusMessage: "Error al obtener el perfil"

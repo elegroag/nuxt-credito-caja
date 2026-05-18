@@ -96,7 +96,7 @@ export function useEntidadDigitalConfirmation() {
       }
 
       if (verificationData.value?.tipoIdentificacion) {
-        tipoId.value = verificationData.value.tipoIdentificacion as any;
+        tipoId.value = verificationData.value.tipoIdentificacion as TipoIdentificacionExtendido;
       }
       if (verificationData.value?.numeroIdentificacion) {
         numId.value = verificationData.value.numeroIdentificacion;
@@ -118,10 +118,10 @@ export function useEntidadDigitalConfirmation() {
           router.push("/inicio");
         }, 3000);
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Error creando entidad digital:", error);
       errorMsg.value
-        = error?.data?.error || error?.message || "Error creating digital entity";
+        = (error as { data?: { error?: string } })?.data?.error || (error as Error)?.message || "Error creating digital entity";
     }
   };
 

@@ -26,10 +26,10 @@ export default defineEventHandler(async (event) => {
       return CustomResponse.error("Usuario no encontrado", "Error de autenticación");
     }
 
-    const userRoles = (user.roles as any[]) || [];
+    const userRoles = (user.roles as Array<{ nombre?: string; permisos?: string[] }>) || [];
     const isAdmin =
-      userRoles.some((role: any) => role.nombre === "administrator") ||
-      userRoles.some((role: any) => role.permisos?.includes("system.admin"));
+      userRoles.some((role) => role.nombre === "administrator") ||
+      userRoles.some((role) => role.permisos?.includes("system.admin"));
 
     if (!isAdmin) {
       setResponseStatus(event, 403);
@@ -63,7 +63,7 @@ export default defineEventHandler(async (event) => {
     const updated = await service.setConfiguration(clave, body.valor);
 
     return CustomResponse.success(updated, `Configuración '${clave}' actualizada exitosamente`);
-  } catch (e: any) {
+  } catch (e: unknown) {
     if (e instanceof z.ZodError) {
       setResponseStatus(event, 400);
       return CustomResponse.error(
@@ -72,7 +72,8 @@ export default defineEventHandler(async (event) => {
       );
     }
 
+    const err = e as { message?: string };
     setResponseStatus(event, 500);
-    return CustomResponse.error(e?.message || "Error interno del servidor", "Error al actualizar configuración");
+    return CustomResponse.error(err?.message || "Error interno del servidor", "Error al actualizar configuración");
   }
 });

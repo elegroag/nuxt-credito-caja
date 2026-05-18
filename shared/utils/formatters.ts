@@ -18,7 +18,7 @@ export const formatDate = (dateString: string): string => {
 };
 
 // Función para formatear valores
-export const formatValue = (value: any) => {
+export const formatValue = (value: null | undefined | '' | boolean | number | object | string): string => {
   if (value === null || value === undefined || value === "") {
     return "N/A";
   }

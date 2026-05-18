@@ -141,7 +141,6 @@ const {
   session,
   sidebarOpen,
   sidebarCollapsed,
-  navItems,
   groupedNavItems,
   isActive,
   _abbr

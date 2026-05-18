@@ -33,9 +33,11 @@ const validateField = (field: keyof typeof form.value) => {
     if (fieldError) {
       errors.value[field] = fieldError.message;
     } else {
+      // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
       delete errors.value[field];
     }
   } else {
+    // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
     delete errors.value[field];
   }
 };

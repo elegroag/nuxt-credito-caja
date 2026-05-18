@@ -26,10 +26,11 @@ export default defineEventHandler(async (event) => {
     });
 
     return CustomResponse.success(response, "Perfil actualizado exitosamente");
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const err = error as { statusCode?: number; statusMessage?: string };
     console.error("Error en endpoint /api/auth/perfil (PUT):", error);
 
-    if (error.statusCode) {
+    if (err?.statusCode) {
       throw error;
     }
 

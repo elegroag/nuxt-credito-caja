@@ -1,3 +1,6 @@
+import type { InformacionLaboral, IngresosDescuentos, InformacionEconomica, Propiedad, Deuda, Referencia  } from "./payload";
+import type { LineaCreditoSimulador } from "./simulador";
+
 export interface GuardarNumeroSolicitudParams {
   linea_credito?: string;
   vigencia: number;
@@ -23,13 +26,13 @@ export interface GuardarSolicitudCreditoParams {
 
 export interface GuardarPayloadParams {
   solicitud_id: string;
-  informacion_laboral?: any;
-  ingresos_descuentos?: any;
-  informacion_economica?: any;
-  propiedades?: any;
-  deudas?: any;
-  referencias?: any;
-  linea_credito?: any;
+  informacion_laboral?: InformacionLaboral;
+  ingresos_descuentos?: IngresosDescuentos;
+  informacion_economica?: InformacionEconomica;
+  propiedades?: Propiedad[];
+  deudas?: Deuda[];
+  referencias?: { familiares: Referencia[]; personales: Referencia[] };
+  linea_credito?: LineaCreditoSimulador;
 }
 
 export interface GuardarSolicitanteParams {

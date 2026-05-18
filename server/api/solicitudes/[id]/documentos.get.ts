@@ -4,17 +4,17 @@ import prisma from "~~/lib/prisma";
 import { CustomResponse } from "~~/server/utils/customResponse";
 
 // Helper para serializar BigInt y fechas
-const serializeData = (obj: any): any => {
+const _serializeData = (obj: Record<string, unknown> | unknown[] | unknown): Record<string, unknown> | unknown[] | unknown => {
   if (obj === null || obj === undefined) return obj;
   if (obj instanceof Date) return obj.toISOString();
   if (typeof obj === "bigint") return obj.toString();
   if (typeof obj === "object") {
     if (Array.isArray(obj)) {
-      return obj.map(serializeData);
+      return (obj as unknown[]).map(_serializeData);
     }
-    const result: any = {};
+    const result: Record<string, unknown> = {};
     for (const key in obj) {
-      result[key] = serializeData(obj[key]);
+      result[key] = _serializeData((obj as Record<string, unknown>)[key]);
     }
     return result;
   }
@@ -22,13 +22,30 @@ const serializeData = (obj: any): any => {
 };
 
 // Mapear documento de Prisma al formato DocumentoCargado
-const mapDocumentoCargado = (doc: any): any => ({
+interface DocumentoPrisma {
+  id: bigint;
+  username: string;
+  nombre_original: string | null;
+  created_at: Date | null;
+  updated_at: Date | null;
+  tipo_documento: string | null;
+  saved_filename: string | null;
+  tamano_bytes: bigint | null;
+  tipo_mime: string | null;
+  ruta_archivo: string | null;
+  api_path: string | null;
+  api_filename: string | null;
+  solicitud_id: string | null;
+  activo: boolean | null;
+}
+
+const mapDocumentoCargado = (doc: DocumentoPrisma): Record<string, unknown> => ({
   id: String(doc.id),
   nombre_original: doc.nombre_original,
   created_at: doc.created_at?.toISOString?.() || String(doc.created_at),
   documento_requerido_id: doc.tipo_documento,
   saved_filename: doc.saved_filename,
-  tamano_bytes: doc.tamano_bytes,
+  tamano_bytes: doc.tamano_bytes ? doc.tamano_bytes.toString() : null,
   tipo_mime: doc.tipo_mime,
   ruta_archivo: doc.ruta_archivo,
   documento_uuid: doc.api_filename || doc.saved_filename,
@@ -76,19 +93,20 @@ export default defineEventHandler(async (event: H3Event) => {
       }
     });
 
-    const documentosMapeados = documentos.map(mapDocumentoCargado);
+    const documentosMapeados = documentos.map((doc) => mapDocumentoCargado(doc as DocumentoPrisma));
 
     return CustomResponse.success(
       { documentos: documentosMapeados, count: documentosMapeados.length },
       "Documentos listados exitosamente"
     );
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const err = error as { statusCode?: number; response?: { status?: number }; data?: { error?: string }; message?: string };
     console.error("Error al listar documentos:", error);
-    const status = Number(error?.statusCode || error?.response?.status || 502);
+    const status = Number(err?.statusCode || err?.response?.status || 502);
     setResponseStatus(event, Number.isFinite(status) ? status : 502);
 
     return CustomResponse.error(
-      error?.data?.error || error?.message || "Error al listar documentos",
+      err?.data?.error || err?.message || "Error al listar documentos",
       "Error al listar documentos."
     );
   }

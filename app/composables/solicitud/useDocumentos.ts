@@ -1,4 +1,4 @@
-import { ref, computed } from "vue";
+import { ref } from "vue";
 import { useApi } from "~/composables/useApi";
 import { useSession } from "~/composables/useSession";
 
@@ -72,7 +72,7 @@ export const useDocumentos = (solicitudId: string) => {
       } else {
         documentosRequeridos.value = [];
       }
-    } catch (e: any) {
+    } catch (e: unknown) {
       console.error("Error cargando documentos", e);
       documentosRequeridos.value = [];
       documentosCargados.value = [];
@@ -104,7 +104,7 @@ export const useDocumentos = (solicitudId: string) => {
         method: "POST",
         body: formData,
         headers: {
-          ...(authHeader.value as any)
+          ...(authHeader.value as Record<string, string>)
         }
       });
 
@@ -117,8 +117,8 @@ export const useDocumentos = (solicitudId: string) => {
       await cargarDocumentos();
 
       return response;
-    } catch (e: any) {
-      error.value = e.message || "Error al subir el documento";
+    } catch (e: unknown) {
+      error.value = (e as Error).message || "Error al subir el documento";
       throw e;
     } finally {
       cargando.value = false;
@@ -134,14 +134,14 @@ export const useDocumentos = (solicitudId: string) => {
       await $fetch(urlFor(`/api/solicitudes/${solicitudId}/documentos/${documentoId}`), {
         method: "DELETE",
         headers: {
-          ...(authHeader.value as any)
+          ...(authHeader.value as Record<string, string>)
         }
       });
 
       // Forzar refresh de documentos después de eliminar
       await cargarDocumentos();
-    } catch (e: any) {
-      error.value = e.message || "Error al eliminar el documento";
+    } catch (e: unknown) {
+      error.value = (e as Error).message || "Error al eliminar el documento";
       throw e;
     } finally {
       cargando.value = false;

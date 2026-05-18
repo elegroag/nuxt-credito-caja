@@ -174,13 +174,11 @@
 
 <script setup lang="ts">
 import {
-  CheckCircle,
   Clock,
   Mail,
   Phone,
   Download,
   Home,
-  FileText,
   Eye,
   AlertCircle
 } from "lucide-vue-next";
@@ -204,9 +202,6 @@ const {
 
   // Estado del PDF
   pdfLoading,
-  pdfError,
-  tienePDF,
-  estadoPdf,
 
   // Funciones
   handleVisualizarPDF,

@@ -113,5 +113,5 @@ export interface ConvenioValidationError {
   success: false
   error_type: string
   message: string
-  details?: Record<string, any>
+  details?: Record<string, string>
 }

@@ -34,9 +34,10 @@ export function useShowUser() {
         error.value
           = response.message || "No se pudo cargar la información del usuario";
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error("Error al cargar usuario:", err);
-      error.value = err.message || "Error al cargar el usuario";
+      const message = err instanceof Error ? err.message : String(err);
+      error.value = message || "Error al cargar el usuario";
     } finally {
       loading.value = false;
     }
@@ -63,9 +64,10 @@ export function useShowUser() {
       } else {
         error.value = response.message || "No se pudo cambiar el estado";
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error("Error al cambiar estado:", err);
-      error.value = err.message || "Error al cambiar el estado";
+      const message = err instanceof Error ? err.message : String(err);
+      error.value = message || "Error al cambiar el estado";
     }
   };
 

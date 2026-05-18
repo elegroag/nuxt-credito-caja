@@ -137,9 +137,10 @@ import { Plus, Trash2 } from "lucide-vue-next";
 import { computed } from "vue";
 import FormField from "~/components/shared/FormField.vue";
 import { useConfigurations } from "~/composables/admin/useConfigurations";
+import type { SolicitudCreditoPayload } from "~~/shared/types/payload";
 
 interface Props {
-  form: any;
+  form: SolicitudCreditoPayload;
   addReferencia: (type: "familiares" | "personales") => void;
   removeReferencia: (type: "familiares" | "personales", index: number) => void;
   errors?: Record<string, string>;
@@ -163,5 +164,5 @@ const personalesValido = computed(() => {
   return (props.form?.referencias?.personales?.length || 0) >= minimaPersonales.value;
 });
 
-const cantidadValida = computed(() => familiaresValido.value && personalesValido.value);
+const _cantidadValida = computed(() => familiaresValido.value && personalesValido.value);
 </script>

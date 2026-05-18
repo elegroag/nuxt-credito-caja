@@ -85,7 +85,7 @@ const {
   loading,
   error,
   isComplete,
-  code,
+  code: _code,
   setDigitRef,
   onDigitInput,
   onBackspace,

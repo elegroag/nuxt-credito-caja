@@ -9,14 +9,14 @@
     </div>
 
     <div
-      v-if="(form as any).deudas.length === 0"
+      v-if="form.deudas.length === 0"
       class="rounded-lg bg-muted/50 p-8 text-center border-2 border-dashed border-border"
     >
       <p class="text-sm text-muted-foreground italic">No se han registrado deudas.</p>
     </div>
 
     <div class="grid gap-4">
-      <UCard v-for="(d, idx) in (form as any).deudas" :key="idx" class="border-border/50 bg-muted/20">
+      <UCard v-for="(d, idx) in form.deudas" :key="idx" class="border-border/50 bg-muted/20">
         <div class="flex flex-row items-center justify-between mb-3">
           <p class="text-sm font-semibold">Deuda #{{ Number(idx) + 1 }}</p>
           <UButton
@@ -68,9 +68,10 @@
 <script setup lang="ts">
 import { Plus, Trash2 } from "lucide-vue-next";
 import FormField from "~/components/shared/FormField.vue";
+import type { SolicitudCreditoPayload } from "~~/shared/types/payload";
 
 defineProps<{
-  form: any;
+  form: SolicitudCreditoPayload;
   addDeuda: () => void;
   removeDeuda: (index: number) => void;
   errors?: Record<string, string>;

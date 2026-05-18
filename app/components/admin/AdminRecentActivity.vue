@@ -98,7 +98,6 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from "vue";
 import {
   Clock,
   RefreshCw,
@@ -122,7 +121,7 @@ interface Props {
   loading?: boolean
 }
 
-const props = withDefaults(defineProps<Props>(), {
+withDefaults(defineProps<Props>(), {
   loading: false
 });
 

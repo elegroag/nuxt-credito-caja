@@ -84,17 +84,19 @@
 </template>
 
 <script setup lang="ts">
-interface Notification {
-  id: string
-  type: string
-  data: {
+interface NotificationData {
     titulo: string
     mensaje: string
-    [key: string]: any
+    [key: string]: unknown
   }
-  read_at: string | null
-  created_at: string
-}
+
+interface Notification {
+    id: string
+    type: string
+    data: NotificationData
+    read_at: string | null
+    created_at: string
+  }
 
 interface Props {
   notifications: Notification[]

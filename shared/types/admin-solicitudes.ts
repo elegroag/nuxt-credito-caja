@@ -3,6 +3,8 @@
  */
 
 import type { ComputedRef, Ref } from "vue";
+import type { InformacionLaboral, IngresosDescuentos, InformacionEconomica } from "./payload";
+import type { LineaCreditoSimulador } from "./simulador";
 
 export interface FiltrosSolicitudes {
   // Filtros de fecha
@@ -48,10 +50,10 @@ export interface SolicitudAdmin {
   detalle_modalidad?: string
   owner_username: string
   payload?: {
-    informacion_laboral?: any
-    ingresos_descuentos?: any
-    informacion_economica?: any
-    linea_credito?: any
+    informacion_laboral?: InformacionLaboral
+    ingresos_descuentos?: IngresosDescuentos
+    informacion_economica?: InformacionEconomica
+    linea_credito?: LineaCreditoSimulador
   }
   timeline: Array<{
     estado: string

@@ -102,7 +102,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, onUnmounted } from "#imports";
+import { computed, onMounted, onUnmounted } from "#imports";
 import { FileSignature as FileSignatureIcon } from "lucide-vue-next";
 import { useFirmadoDigital } from "~/composables/solicitud/useFirmadoDigital";
 
@@ -118,9 +118,8 @@ const props = withDefaults(defineProps<Props>(), {
 });
 
 const emit = defineEmits<{
-  firmadoIniciado: [data: any]
+  firmadoIniciado: [data: unknown]
   firmadoCompletado: []
-  firmadoRechazado: []
   estadoActualizado: [estado: string]
 }>();
 
@@ -131,7 +130,6 @@ const {
   estadoActual,
   enProceso,
   firmadoCompleto,
-  firmadoRechazado,
   porcentajeCompletado,
   mensajeEstado,
   puedeReintentar,
@@ -185,7 +183,7 @@ const startPolling = () => {
         emit("firmadoCompletado");
         stopPolling();
       } else if (estado === "RECHAZADO") {
-        emit("firmadoRechazado");
+        // emit removed - navigation to past steps is disabled
         stopPolling();
       }
     }

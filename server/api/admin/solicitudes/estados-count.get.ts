@@ -16,9 +16,10 @@ export default defineEventHandler(async (event: H3Event) => {
     }
 
     return CustomResponse.success(conteo, "Conteo por estados obtenido");
-  } catch (e: any) {
-    const status = Number(e?.statusCode || e?.response?.status || 502);
+  } catch (e: unknown) {
+    const err = e as { statusCode?: number; response?: { status?: number }; data?: { error?: string }; message?: string };
+    const status = Number(err?.statusCode || err?.response?.status || 502);
     setResponseStatus(event, Number.isFinite(status) ? status : 502);
-    return CustomResponse.error(e?.message || "Error al obtener conteo por estados", "Error al obtener estados.");
+    return CustomResponse.error(err?.message || "Error al obtener conteo por estados", "Error al obtener estados.");
   }
 });

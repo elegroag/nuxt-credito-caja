@@ -27,9 +27,9 @@ export const useParametros = () => {
       } else {
         throw new Error(response.message || "Error al cargar parámetros");
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error("Error cargando parámetros:", err);
-      error.value = err.message || "No se pudieron cargar los parámetros";
+      error.value = err instanceof Error ? err.message : "No se pudieron cargar los parámetros";
       throw err;
     } finally {
       loading.value = false;

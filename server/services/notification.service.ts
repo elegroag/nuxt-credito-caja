@@ -1,3 +1,4 @@
+import type { Prisma } from "~~/lib/prisma";
 import prisma from "~~/lib/prisma";
 
 const notificationService = () => {
@@ -16,7 +17,7 @@ const notificationService = () => {
       take: 50
     });
 
-    return notifications.map((notification: any) => ({
+    return notifications.map((notification) => ({
       id: String(notification.id),
       type: notification.type,
       data: notification.data,
@@ -77,14 +78,14 @@ const notificationService = () => {
   const createNotification = async (data: {
     owner_username: string
     type: string
-    data: any
+    data: Record<string, unknown>
   }) => {
     const notification = await prisma.notifications.create({
       data: {
         id: generateId(),
         owner_username: data.owner_username,
         type: data.type,
-        data: data.data as any,
+        data: data.data as unknown as Prisma.InputJsonValue,
         notifiable_type: "User",
         notifiable_id: "1",
         read_at: null,

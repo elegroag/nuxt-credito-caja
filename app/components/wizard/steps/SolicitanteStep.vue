@@ -228,7 +228,7 @@ const {
   sectoresEconomicosOptions,
   ciudadesOptions,
   paisesOptions,
-  booleanOptions,
+  booleanOptions: _booleanOptions,
   tiposContratoOptions,
   handleCiudadChange
 } = useSolicitanteStep(props);

@@ -30,7 +30,7 @@ export default defineEventHandler(async (event: H3Event) => {
 
     const payload = await readValidatedBody(event, updateSolicitudSchema.parse);
 
-    const updateData: any = {};
+    const updateData: Record<string, unknown> = {};
 
     if (payload.estado !== undefined) updateData.estado = payload.estado;
     if (payload.valor_solicitud !== undefined) updateData.valor_solicitud = payload.valor_solicitud;
@@ -57,12 +57,13 @@ export default defineEventHandler(async (event: H3Event) => {
       },
       "Solicitud actualizada exitosamente"
     );
-  } catch (e: any) {
-    const status = Number(e?.statusCode || e?.response?.status || 502);
+  } catch (e: unknown) {
+    const err = e as { statusCode?: number; response?: { status?: number }; data?: { error?: string }; message?: string };
+    const status = Number(err?.statusCode || err?.response?.status || 502);
     setResponseStatus(event, Number.isFinite(status) ? status : 502);
 
     return CustomResponse.error(
-      e?.data?.error || e?.message || "Error conectando con backend",
+      err?.data?.error || err?.message || "Error conectando con backend",
       "Error al actualizar solicitud."
     );
   }

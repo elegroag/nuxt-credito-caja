@@ -1,19 +1,20 @@
 export interface CustomResponseAttributes {
   success: boolean
-  data?: any
+  data?: unknown
   message: string
   errors?: Record<string, string>[]
   error?: string
   tracer?: string
 }
 
+// eslint-disable-next-line @typescript-eslint/no-extraneous-class
 export class CustomResponse {
   private static generateId(): string {
     return `tr_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
   }
 
   static success(
-    data: any,
+    data: unknown,
     message = "Operación exitosa"
   ): CustomResponseAttributes {
     return {
@@ -47,7 +48,7 @@ export class CustomResponse {
     };
   }
 
-  static ok(data?: any, message = "OK"): CustomResponseAttributes {
+  static ok(data?: unknown, message = "OK"): CustomResponseAttributes {
     return {
       success: true,
       data,

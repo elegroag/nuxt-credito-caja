@@ -3,25 +3,26 @@
  * Encapsula la lógica de filtros y estado de carga.
  */
 import { computed, onMounted, ref } from "vue";
+import type { FiltrosSolicitudes, UseSolicitudesBuscar, SolicitudAdmin } from "~~/shared/types/admin-solicitudes";
 
 export const useSolicitudesBuscar = (props: {
-  filtrosActivos: any
+  filtrosActivos: FiltrosSolicitudes
 }): UseSolicitudesBuscar => {
-  const { postJson, getJson } = useApi();
+  const { getJson } = useApi();
   const loading = ref(false);
   const error = ref<string | null>(null);
   const solicitudesCache = ref<SolicitudAdmin[]>([]);
   const totalItems = ref(0);
 
   // Opciones para filtros
-  const opcionesFiltro = ref<OpcionesFiltro>({
+  const _opcionesFiltro = ref<OpcionesFiltro>({
     estados: [],
     usuarios: []
   });
 
   // Computed properties
   const tieneFiltrosActivos = computed(() => {
-    const f = props.filtrosActivos.value;
+    const f = props.filtrosActivos;
     return !!(
       f.numero_documento
       || f.nombre_usuario
@@ -34,7 +35,10 @@ export const useSolicitudesBuscar = (props: {
   /**
    * Maneja la respuesta del backend de forma estandarizada
    */
-  const handleApiResponse = (response: any, defaultValue: any = null) => {
+  const handleApiResponse = (
+    response: { success?: boolean; data?: unknown; message?: string },
+    defaultValue: unknown = null
+  ): unknown => {
     if (response && response.success) {
       return response.data || defaultValue;
     } else {
@@ -51,16 +55,19 @@ export const useSolicitudesBuscar = (props: {
     loading.value = true;
     error.value = null;
     try {
-      const payload = props.filtrosActivos.value;
+      const payload = props.filtrosActivos;
       const params = new URLSearchParams();
       if (payload?.limit) params.set("limit", String(payload.limit));
       if (payload?.skip) params.set("skip", String(payload.skip));
-      if (payload?.estado) params.set("estado", payload.estado);
-      const response = await getJson<any>(
+      if (payload?.estados && payload.estados.length > 0) {
+        const firstEstado = payload.estados[0];
+        if (firstEstado) params.set("estado", firstEstado);
+      }
+      const response = await getJson<unknown>(
         `/api/admin/solicitudes?${params.toString()}`,
         { auth: true }
       );
-      const data = handleApiResponse(response, []);
+      const data = handleApiResponse(response as { success?: boolean; data?: unknown; message?: string }, []);
       solicitudesCache.value = Array.isArray(data) ? data : [];
       totalItems.value = solicitudesCache.value.length;
     } catch (err) {
@@ -77,8 +84,8 @@ export const useSolicitudesBuscar = (props: {
    * Aplica filtros y recarga los datos
    */
   const aplicarFiltros = (nuevosFiltros: Partial<FiltrosSolicitudes>) => {
-    props.filtrosActivos.value = {
-      ...props.filtrosActivos.value,
+    props.filtrosActivos = {
+      ...props.filtrosActivos,
       ...nuevosFiltros,
       skip: 0
     };
@@ -89,7 +96,7 @@ export const useSolicitudesBuscar = (props: {
    * Limpia todos los filtros
    */
   const limpiarFiltros = () => {
-    props.filtrosActivos.value = {
+    props.filtrosActivos = {
       skip: 0,
       limit: 20
     };

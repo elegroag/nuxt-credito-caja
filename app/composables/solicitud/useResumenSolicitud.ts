@@ -8,7 +8,7 @@ export const useResumenSolicitud = () => {
   const route = useRoute();
   const router = useRouter();
   const { getJson, postJson } = useApi();
-  const { session } = useSession();
+  const { ready: _ready } = useSession();
 
   const solicitudId = route.params.id as string;
 
@@ -53,10 +53,10 @@ export const useResumenSolicitud = () => {
 
       // Cargar documentos requeridos y existentes
       await cargarDocumentos();
-    } catch (e: any) {
+    } catch (e: unknown) {
       console.error(e);
       errorSolicitud.value
-        = e.message || "No se pudo cargar la información de la solicitud.";
+        = (e as Error).message || "No se pudo cargar la información de la solicitud.";
     } finally {
       loadingSolicitud.value = false;
     }
@@ -125,10 +125,10 @@ export const useResumenSolicitud = () => {
       } else {
         errorSolicitud.value = pdfResponse.message || "Error al generar el PDF";
       }
-    } catch (e: any) {
+    } catch (e: unknown) {
       console.error(e);
       errorSolicitud.value
-        = e.message || "Error al enviar la solicitud para validación.";
+        = (e as Error).message || "Error al enviar la solicitud para validación.";
     } finally {
       enviando.value = false;
     }

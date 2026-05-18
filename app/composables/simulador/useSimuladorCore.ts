@@ -1,5 +1,4 @@
 // frontend/composables/simulador/useSimuladorCore.ts
-import { computed, ref } from "vue";
 
 // Funciones puras reutilizables para cálculos financieros
 export function useSimuladorCore() {
