@@ -21,11 +21,7 @@
         <UButton
           variant="ghost"
           size="sm"
-          :icon="
-            sidebarCollapsed
-              ? 'i-lucide-panel-left'
-              : 'i-lucide-panel-left-close'
-          "
+          :icon="sidebarCollapsed ? 'i-lucide-panel-left' : 'i-lucide-panel-left-close'"
           type="button"
           class="hidden lg:flex"
           @click="sidebarCollapsed = !sidebarCollapsed"
@@ -37,9 +33,7 @@
           Comfaca Crédito
         </span>
         <span class="text-muted-foreground">/</span>
-        <span class="text-sm font-semibold text-foreground">{{
-          sectionTitle
-        }}</span>
+        <span class="text-sm font-semibold text-foreground">{{ sectionTitle }}</span>
       </div>
     </template>
 
@@ -109,13 +103,6 @@
 import NotificationBell from "@/components/notifications/NotificationBell.vue";
 import { useDashboardLayout } from "~/composables/layout/useDashboardLayout";
 
-const {
-  session,
-  sidebarOpen,
-  sidebarCollapsed,
-  userMenuOpen,
-  sectionTitle,
-  logout,
-  _abbr
-} = useDashboardLayout();
+const { session, sidebarOpen, sidebarCollapsed, userMenuOpen, sectionTitle, logout, _abbr } =
+  useDashboardLayout();
 </script>

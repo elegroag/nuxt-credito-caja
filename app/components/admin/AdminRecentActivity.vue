@@ -80,7 +80,6 @@
       </p>
     </div>
 
-    <!-- Ver más -->
     <div
       v-if="activities.length > 0"
       class="mt-4 pt-4 border-t"

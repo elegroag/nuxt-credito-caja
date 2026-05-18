@@ -5,10 +5,7 @@
         {{ titulo }}
       </h3>
       <div :class="['p-3 rounded-lg', colorFondo]">
-        <Icon
-          :name="icono"
-          :class="['h-6 w-6', colorIcono]"
-        />
+        <Icon :name="icono" :class="['h-6 w-6', colorIcono]" />
       </div>
     </div>
     <div class="space-y-2">
@@ -18,16 +15,10 @@
       <p class="text-sm text-gray-500">
         {{ descripcion }}
       </p>
-      <div
-        v-if="porcentaje !== undefined"
-        class="flex items-center gap-2 mt-2"
-      >
+      <div v-if="porcentaje !== undefined" class="flex items-center gap-2 mt-2">
         <div class="flex-1 bg-gray-200 rounded-full h-2">
           <div
-            :class="[
-              'h-2 rounded-full transition-all duration-500',
-              colorBarra
-            ]"
+            :class="['h-2 rounded-full transition-all duration-500', colorBarra]"
             :style="{ width: `${porcentaje}%` }"
           />
         </div>
@@ -39,15 +30,15 @@
 
 <script setup lang="ts">
 interface Props {
-  titulo: string
-  valor: string | number
-  descripcion: string
-  icono: string
-  colorFondo?: string
-  colorIcono?: string
-  colorTexto?: string
-  colorBarra?: string
-  porcentaje?: number
+  titulo: string;
+  valor: string | number;
+  descripcion: string;
+  icono: string;
+  colorFondo?: string;
+  colorIcono?: string;
+  colorTexto?: string;
+  colorBarra?: string;
+  porcentaje?: number;
 }
 
 withDefaults(defineProps<Props>(), {

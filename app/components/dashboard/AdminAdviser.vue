@@ -1,9 +1,7 @@
 <template>
   <!-- Header -->
   <div class="mb-6">
-    <div
-      class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between"
-    >
+    <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
       <div class="min-w-0">
         <h1 class="text-2xl font-semibold tracking-tight text-foreground">
           Dashboard Administrativo
@@ -38,10 +36,7 @@
   </div>
 
   <!-- Error State -->
-  <div
-    v-if="error"
-    class="rounded-lg bg-red-50 border border-red-200 p-4 mb-6"
-  >
+  <div v-if="error" class="rounded-lg bg-red-50 border border-red-200 p-4 mb-6">
     <div class="flex items-center gap-2 text-red-800">
       <ExclamationTriangleIcon class="h-5 w-5" />
       <p class="font-medium">
@@ -59,16 +54,9 @@
   </div>
 
   <!-- Loading State -->
-  <div
-    v-if="loading && !tieneDatos"
-    class="space-y-6"
-  >
+  <div v-if="loading && !tieneDatos" class="space-y-6">
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      <div
-        v-for="i in 6"
-        :key="i"
-        class="rounded-lg border border-border bg-card p-6"
-      >
+      <div v-for="i in 6" :key="i" class="rounded-lg border border-border bg-card p-6">
         <div class="space-y-3">
           <div class="h-4 bg-muted rounded animate-pulse" />
           <div class="h-8 bg-muted rounded animate-pulse" />
@@ -79,10 +67,7 @@
   </div>
 
   <!-- Dashboard Content -->
-  <div
-    v-else
-    class="space-y-6"
-  >
+  <div v-else class="space-y-6">
     <AdminStatsGrid :stats="stats" />
 
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -98,15 +83,10 @@
       <UCard>
         <div class="flex items-center gap-2 mb-4">
           <UsersIcon class="h-5 w-5 text-muted-foreground" />
-          <h3 class="text-lg font-semibold">
-            Usuarios por Rol
-          </h3>
+          <h3 class="text-lg font-semibold">Usuarios por Rol</h3>
         </div>
 
-        <div
-          v-if="stats.usuariosPorRol.length > 0"
-          class="space-y-3"
-        >
+        <div v-if="stats.usuariosPorRol.length > 0" class="space-y-3">
           <div
             v-for="rol in stats.usuariosPorRol"
             :key="rol.rol"
@@ -125,14 +105,9 @@
           </div>
         </div>
 
-        <div
-          v-else
-          class="text-center py-8 text-muted-foreground"
-        >
+        <div v-else class="text-center py-8 text-muted-foreground">
           <Users class="h-12 w-12 mx-auto mb-2 opacity-50" />
-          <p class="text-sm">
-            No hay datos de usuarios
-          </p>
+          <p class="text-sm">No hay datos de usuarios</p>
         </div>
       </UCard>
     </div>

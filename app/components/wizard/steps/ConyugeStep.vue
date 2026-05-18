@@ -50,34 +50,34 @@
       <FormField label="Teléfono móvil">
         <UInput v-model="form.conyuge!.telefono_movil" />
       </FormField>
-
-      <div class="sm:col-span-2 mt-2 text-sm font-semibold text-foreground">Empresa (opcional)</div>
-      <FormField label="¿Incluir empresa?" class="sm:col-span-2">
-        <URadioGroup
-          :model-value="!!form.conyuge?.empresa"
-          :items="[
-            { label: 'Sí', value: true },
-            { label: 'No', value: false }
-          ]"
-          @update:model-value="toggleEmpresaConyuge"
-        />
-      </FormField>
-
-      <template v-if="form.conyuge?.empresa">
-        <FormField label="Nombre" class="sm:col-span-2">
-          <UInput v-model="form.conyuge!.empresa!.nombre" />
-        </FormField>
-        <FormField label="Dirección" class="sm:col-span-2">
-          <UInput v-model="form.conyuge!.empresa!.direccion" />
-        </FormField>
-        <FormField label="Teléfono">
-          <UInput v-model="form.conyuge!.empresa!.telefono" />
-        </FormField>
-        <FormField label="Email">
-          <UInput v-model="form.conyuge!.empresa!.email" type="email" />
-        </FormField>
-      </template>
     </div>
+
+    <div class="sm:col-span-2 mt-2 text-sm font-semibold text-foreground">Empresa (opcional)</div>
+    <FormField label="¿Incluir empresa?" class="sm:col-span-2">
+      <URadioGroup
+        :model-value="!!form.conyuge?.empresa"
+        :items="[
+          { label: 'Sí', value: true },
+          { label: 'No', value: false }
+        ]"
+        @update:model-value="toggleEmpresaConyuge"
+      />
+    </FormField>
+
+    <template v-if="form.conyuge?.empresa">
+      <FormField label="Nombre" class="sm:col-span-2">
+        <UInput v-model="form.conyuge!.empresa!.nombre" />
+      </FormField>
+      <FormField label="Dirección" class="sm:col-span-2">
+        <UInput v-model="form.conyuge!.empresa!.direccion" />
+      </FormField>
+      <FormField label="Teléfono">
+        <UInput v-model="form.conyuge!.empresa!.telefono" />
+      </FormField>
+      <FormField label="Email">
+        <UInput v-model="form.conyuge!.empresa!.email" type="email" />
+      </FormField>
+    </template>
   </div>
 </template>
 
@@ -95,9 +95,15 @@ const props = defineProps<{
 
 const { loadingLocal, toggleConyugeHandler } = useConyugeStep({
   form: {
-    get conyuge() { return props.form?.conyuge; },
-    set(v: Record<string, unknown>) { (props.form as unknown as Record<string, unknown>).conyuge = v; },
-    get informacion_laboral() { return props.form?.informacion_laboral; }
+    get conyuge() {
+      return props.form?.conyuge;
+    },
+    set(v: Record<string, unknown>) {
+      (props.form as unknown as Record<string, unknown>).conyuge = v;
+    },
+    get informacion_laboral() {
+      return props.form?.informacion_laboral;
+    }
   } as { conyuge?: Conyuge; informacion_laboral?: InformacionLaboral },
   toggleConyuge: props.toggleConyuge,
   toggleEmpresaConyuge: props.toggleEmpresaConyuge

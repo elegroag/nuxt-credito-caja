@@ -7,16 +7,8 @@
     <template #title>
       <div class="flex items-center justify-between">
         <div class="flex items-center gap-3">
-          <div
-            :class="[
-              'p-2 rounded-lg flex items-center justify-center',
-              iconBgClass
-            ]"
-          >
-            <component
-              :is="icon"
-              :class="['h-5 w-5', iconClass]"
-            />
+          <div :class="['p-2 rounded-lg flex items-center justify-center', iconBgClass]">
+            <component :is="icon" :class="['h-5 w-5', iconClass]" />
           </div>
           <div class="min-w-0">
             <p class="text-sm font-medium text-muted-foreground">
@@ -25,43 +17,27 @@
             <p :class="['text-2xl font-bold', valueClass]">
               {{ formattedValue }}
             </p>
-            <p
-              v-if="subtitle"
-              class="text-xs text-muted-foreground mt-0.5"
-            >
+            <p v-if="subtitle" class="text-xs text-muted-foreground mt-0.5">
               {{ subtitle }}
             </p>
           </div>
         </div>
-        <div
-          v-if="trend"
-          class="flex items-center gap-1"
-        >
+        <div v-if="trend" class="flex items-center gap-1">
           <component
             :is="trend === 'up' ? TrendingUp : TrendingDown"
-            :class="[
-              'h-4 w-4',
-              trend === 'up' ? 'text-green-600' : 'text-red-600'
-            ]"
+            :class="['h-4 w-4', trend === 'up' ? 'text-green-600' : 'text-red-600']"
           />
           <span
-            :class="[
-              'text-xs font-medium',
-              trend === 'up' ? 'text-green-600' : 'text-red-600'
-            ]"
-          >{{ trendValue }}</span>
+            :class="['text-xs font-medium', trend === 'up' ? 'text-green-600' : 'text-red-600']"
+            >{{ trendValue }}</span
+          >
         </div>
       </div>
     </template>
 
     <!-- Barra de progreso si aplica -->
-    <div
-      v-if="showProgress && progress !== undefined"
-      class="mt-2"
-    >
-      <div
-        class="flex items-center justify-between text-xs text-muted-foreground mb-1"
-      >
+    <div v-if="showProgress && progress !== undefined" class="mt-2">
+      <div class="flex items-center justify-between text-xs text-muted-foreground mb-1">
         <span>Progreso</span>
         <span>{{ progress }}%</span>
       </div>
@@ -81,16 +57,16 @@ import { computed } from "vue";
 import { TrendingUp, TrendingDown } from "lucide-vue-next";
 
 interface Props {
-  title: string
-  value: number | string
-  subtitle?: string
-  icon: object
-  variant?: "default" | "primary" | "success" | "warning" | "danger" | "info"
-  format?: "number" | "currency" | "percentage" | "text"
-  trend?: "up" | "down"
-  trendValue?: string
-  showProgress?: boolean
-  progress?: number
+  title: string;
+  value: number | string;
+  subtitle?: string;
+  icon: object;
+  variant?: "default" | "primary" | "success" | "warning" | "danger" | "info";
+  format?: "number" | "currency" | "percentage" | "text";
+  trend?: "up" | "down";
+  trendValue?: string;
+  showProgress?: boolean;
+  progress?: number;
 }
 
 const props = withDefaults(defineProps<Props>(), {

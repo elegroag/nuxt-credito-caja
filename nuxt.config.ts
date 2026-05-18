@@ -11,7 +11,8 @@ export default defineNuxtConfig({
     "@nuxt/icon",
     "@nuxt/fonts",
     "nuxt-auth-utils",
-    "@nuxt/test-utils/module"
+    "@nuxt/test-utils/module",
+    "@vee-validate/nuxt"
   ],
 
   devtools: {
@@ -165,6 +166,17 @@ export default defineNuxtConfig({
         commaDangle: "never",
         braceStyle: "1tbs"
       }
+    }
+  },
+  veeValidate: {
+    // disable or enable auto imports
+    autoImports: true,
+    // Use different names for components
+    componentNames: {
+      Form: "VeeForm",
+      Field: "VeeField",
+      FieldArray: "VeeFieldArray",
+      ErrorMessage: "VeeErrorMessage"
     }
   }
 });

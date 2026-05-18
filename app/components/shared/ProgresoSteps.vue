@@ -1,12 +1,8 @@
 <template>
   <div class="w-full py-4">
-    <div
-      class="relative flex items-center justify-between w-full max-w-3xl mx-auto"
-    >
+    <div class="relative flex items-center justify-between w-full max-w-3xl mx-auto">
       <!-- Línea de fondo -->
-      <div
-        class="absolute left-0 top-1/2 transform -translate-y-1/2 w-full h-1 bg-muted -z-10"
-      />
+      <div class="absolute left-0 top-1/2 transform -translate-y-1/2 w-full h-1 bg-muted -z-10" />
 
       <!-- Línea de progreso -->
       <div
@@ -32,11 +28,7 @@
                 : 'border-border text-muted-foreground'
           ]"
         >
-          <UIcon
-            v-if="isCompleted(index)"
-            name="i-lucide-check"
-            class="w-6 h-6"
-          />
+          <UIcon v-if="isCompleted(index)" name="i-lucide-check" class="w-6 h-6" />
           <span v-else>{{ index + 1 }}</span>
         </div>
         <span
@@ -64,12 +56,12 @@ import { computed } from "vue";
 export type StepKey = "formulario" | "documentos" | "completado";
 
 interface Step {
-  key: StepKey
-  label: string
+  key: StepKey;
+  label: string;
 }
 
 const props = defineProps<{
-  currentStep: StepKey
+  currentStep: StepKey;
 }>();
 
 const steps: Step[] = [
@@ -78,9 +70,7 @@ const steps: Step[] = [
   { key: "completado", label: "Enviar para Validación" }
 ];
 
-const currentIndex = computed(() =>
-  steps.findIndex(s => s.key === props.currentStep)
-);
+const currentIndex = computed(() => steps.findIndex((s) => s.key === props.currentStep));
 
 const isCurrent = (key: StepKey) => key === props.currentStep;
 

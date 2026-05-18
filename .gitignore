@@ -42,3 +42,4 @@ payload-api-flask-pdf.json
 /.kilo
 /.hermes
 /.github
+*.py
