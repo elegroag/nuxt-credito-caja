@@ -21,7 +21,7 @@ export default defineEventHandler(async (event: H3Event) => {
     };
 
     if (onlyUnread) {
-      where.leido_el = null;
+      where.read_at = null;
     }
 
     const notifications = await prisma.notifications.findMany({
@@ -33,7 +33,7 @@ export default defineEventHandler(async (event: H3Event) => {
     const unreadCount = await prisma.notifications.count({
       where: {
         owner_username: session.user.username,
-        leido_el: null
+        read_at: null
       }
     });
 

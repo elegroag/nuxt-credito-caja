@@ -14,11 +14,7 @@
         <DashboardFooter />
 
         <!-- Overlay para cerrar menú de usuario al hacer click fuera -->
-        <div
-          v-if="userMenuOpen"
-          class="fixed inset-0 z-40"
-          @click="userMenuOpen = false"
-        />
+        <div v-if="userMenuOpen" class="fixed inset-0 z-40" @click="userMenuOpen = false" />
       </div>
     </div>
   </div>
