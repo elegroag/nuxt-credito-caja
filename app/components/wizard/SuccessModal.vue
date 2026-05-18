@@ -6,7 +6,7 @@
     >
       <div
         class="absolute inset-0 bg-background/80 backdrop-blur-sm"
-        @click="$emit('close')"
+        @keydown.esc.prevent
       />
       <UCard
         class="relative w-full max-w-md shadow-2xl border-primary/20 animate-in zoom-in-95 duration-200 text-center"
@@ -59,14 +59,6 @@
             >
               <FileText class="mr-2 h-4 w-4" />
               Continuar a Carga de Documentos
-            </UButton>
-
-            <UButton
-              variant="ghost"
-              class="w-full text-muted-foreground hover:text-foreground"
-              @click="$emit('close')"
-            >
-              Cerrar
             </UButton>
           </div>
         </div>

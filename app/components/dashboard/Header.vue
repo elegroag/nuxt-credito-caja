@@ -96,13 +96,40 @@
         </div>
       </div>
     </template>
+
+    <template #body>
+      <UNavigationMenu
+        :items="mobileMenuItems"
+        orientation="vertical"
+        class="-mx-2.5"
+      />
+    </template>
   </UHeader>
 </template>
 
 <script setup lang="ts">
+import type { NavigationMenuItem } from "@nuxt/ui";
 import NotificationBell from "@/components/notifications/NotificationBell.vue";
 import { useDashboardLayout } from "~/composables/layout/useDashboardLayout";
 
 const { session, sidebarOpen, sidebarCollapsed, userMenuOpen, sectionTitle, logout, _abbr } =
   useDashboardLayout();
+
+const mobileMenuItems = computed<NavigationMenuItem[]>(() => [
+  {
+    label: "Mi Perfil",
+    to: "/dash/perfil",
+    icon: "i-lucide-user"
+  },
+  {
+    label: "Notificaciones",
+    to: "/dash/notify",
+    icon: "i-lucide-bell"
+  },
+  {
+    label: "Cerrar sesión",
+    icon: "i-lucide-log-out",
+    onClick: logout
+  }
+]);
 </script>

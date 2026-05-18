@@ -195,6 +195,18 @@ const validateDeudas: ValidatorFn = (form, _configs) => {
   return { valid: true, errors };
 };
 
+const validateCelular = (celular: string, tipo: string, index: number): string | null => {
+  const celularStr = String(celular || "").trim();
+  if (!celularStr) return null;
+  if (!celularStr.startsWith("3")) {
+    return `El celular debe iniciar con 3 (${tipo} ${index + 1})`;
+  }
+  if (celularStr.replace(/\D/g, "").length < 10) {
+    return `El celular debe tener al menos 10 dígitos (${tipo} ${index + 1})`;
+  }
+  return null;
+};
+
 /**
  * Valida el paso de referencias.
  * Verifica cantidad mínima de referencias por tipo desde app_configurations.
@@ -207,11 +219,16 @@ const validateReferencias: ValidatorFn = (form, configs) => {
     errors["referencias.familiares"] = `Al menos ${configs.minimaFamiliares} referencia familiar es requerida`;
   } else {
     form.referencias.familiares.forEach((ref, index) => {
-      if (!String(ref.nombre_apellidos || '').trim()) {
+      if (!String(ref.nombre_apellidos || "").trim()) {
         errors[`referencias.familiares.${index}.nombre_apellidos`] = `El nombre es requerido (familiar ${index + 1})`;
       }
-      if (!String(ref.celular || '').trim()) {
+      if (!String(ref.celular || "").trim()) {
         errors[`referencias.familiares.${index}.celular`] = `El celular es requerido (familiar ${index + 1})`;
+      } else {
+        const celularError = validateCelular(ref.celular, "familiar", index);
+        if (celularError) {
+          errors[`referencias.familiares.${index}.celular`] = celularError;
+        }
       }
     });
   }
@@ -221,11 +238,16 @@ const validateReferencias: ValidatorFn = (form, configs) => {
     errors["referencias.personales"] = `Al menos ${configs.minimaPersonales} referencia personal es requerida`;
   } else {
     form.referencias.personales.forEach((ref, index) => {
-      if (!String(ref.nombre_apellidos || '').trim()) {
+      if (!String(ref.nombre_apellidos || "").trim()) {
         errors[`referencias.personales.${index}.nombre_apellidos`] = `El nombre es requerido (personal ${index + 1})`;
       }
-      if (!String(ref.celular || '').trim()) {
+      if (!String(ref.celular || "").trim()) {
         errors[`referencias.personales.${index}.celular`] = `El celular es requerido (personal ${index + 1})`;
+      } else {
+        const celularError = validateCelular(ref.celular, "personal", index);
+        if (celularError) {
+          errors[`referencias.personales.${index}.celular`] = celularError;
+        }
       }
     });
   }

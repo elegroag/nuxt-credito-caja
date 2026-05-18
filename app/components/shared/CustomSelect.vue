@@ -14,7 +14,7 @@
       value-key="value"
       label-key="label"
       by="value"
-      class="w-100"
+      class="w-90"
       :ui="{ content: 'w-full' }"
     />
 

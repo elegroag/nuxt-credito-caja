@@ -214,7 +214,7 @@ export function useWizardSolicitud(_props?: WizardProps) {
     let trabajador: Record<string, unknown> = {};
     if (import.meta.client) {
       try {
-        const trabajadorStorage = localStorage.getItem("comfaca_credito_trabaajdor");
+        const trabajadorStorage = localStorage.getItem("comfaca_credito_trabajador");
         if (trabajadorStorage) {
           trabajador = JSON.parse(trabajadorStorage);
         }

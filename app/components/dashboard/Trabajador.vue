@@ -126,7 +126,7 @@
   </UPageCard>
 
   <!-- Convenio Card -->
-  <UPageCard>
+  <UPageCard v-if="loadingConvenio == false && convenioActivo != null">
     <div class="flex items-center justify-between gap-3 mb-4">
       <div class="flex items-center gap-3">
         <div class="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center">
@@ -175,6 +175,30 @@
           ><br />
           Vence:
           {{ convenioActivo?.fecha_vencimiento ? fmtDate(convenioActivo.fecha_vencimiento) : "-" }}
+        </p>
+      </div>
+    </div>
+  </UPageCard>
+  <UPageCard v-else>
+    <div class="flex items-center justify-between gap-3 mb-4">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center">
+          <UIcon name="i-lucide-building-2" class="w-5 h-5 text-primary" />
+        </div>
+        <div>
+          <h2 class="text-lg font-semibold text-foreground">Convenio activo</h2>
+          <p class="text-sm text-muted-foreground">Información del convenio de tu empresa</p>
+        </div>
+      </div>
+    </div>
+    <div class="flex flex-col items-center gap-3 rounded-xl border border-dashed border-muted-foreground/20 bg-muted/30 p-8 text-center">
+      <div class="w-12 h-12 bg-muted rounded-xl flex items-center justify-center">
+        <UIcon name="i-lucide-building-2" class="w-6 h-6 text-muted-foreground" />
+      </div>
+      <div>
+        <p class="text-sm font-medium text-foreground">No hay convenio activo</p>
+        <p class="text-xs text-muted-foreground mt-1">
+          Contacta a tu empresa para activar un convenio
         </p>
       </div>
     </div>
