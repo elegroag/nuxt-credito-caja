@@ -102,12 +102,15 @@
     </FormField>
 
     <FormField label="Ciudad">
-      <CustomSelect
+      <USelectMenu
         v-model="form.solicitante.ciudad"
-        :options="ciudadesOptions"
+        :items="ciudadesOptions"
+        value-key="value"
+        label-key="label"
         placeholder="Seleccionar ciudad"
-        clearable
-        searchable
+        by="value"
+        class="w-90"
+        :ui="{ content: 'w-full' }"
         @option:selected="handleCiudadChange"
       />
     </FormField>
@@ -117,12 +120,15 @@
     </FormField>
 
     <FormField label="País de residencia">
-      <CustomSelect
+      <USelectMenu
         v-model="form.solicitante.pais_residencia"
-        :options="paisesOptions"
-        placeholder="Seleccionar país"
-        clearable
-        searchable
+        :items="paisesOptions"
+        placeholder="Seleccionar paises"
+        value-key="value"
+        label-key="label"
+        by="value"
+        class="w-90"
+        :ui="{ content: 'w-full' }"
       />
     </FormField>
 
@@ -207,6 +213,7 @@ import type { SolicitanteProps } from "~~/shared/types/solicitante";
 
 const props = withDefaults(defineProps<SolicitanteProps>(), {
   ciudades: () => [],
+  paises: () => [],
   tiposDocumento: () => [],
   sexos: () => [],
   nivelesEducativos: () => [],

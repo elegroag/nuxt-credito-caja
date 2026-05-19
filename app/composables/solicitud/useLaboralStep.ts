@@ -17,10 +17,12 @@ export const useLaboralStep = (props: LaboralProps) => {
 
   // Convertir ciudades a formato SelectOption
   const ciudadesOptions = computed(() =>
-    (props.ciudades || []).map(item => ({
-      label: item.detciu,
-      value: item.codciu
-    }))
+    (props.ciudades || [])
+      .filter((item) => item.codciu && item.codciu.trim() !== "")
+      .map(item => ({
+        label: item.detciu,
+        value: item.codciu
+      }))
   );
 
   // Convertir tipos de contrato a formato SelectOption

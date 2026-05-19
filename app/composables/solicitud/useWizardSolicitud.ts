@@ -287,7 +287,7 @@ export function useWizardSolicitud(_props?: WizardProps) {
         getString(trabajador, "codcat") || getString(trabajador, "codigo_categoria") || form.value.solicitante.codigo_categoria;
       form.value.solicitud.categoria =
         getString(trabajador, "codcat") || getString(trabajador, "codigo_categoria") || form.value.solicitud.categoria;
-      form.value.solicitante.pais_residencia = getString(trabajador, "pais_residencia") || "CO";
+      form.value.solicitante.pais_residencia = getString(trabajador, "pais_residencia") || "170";
       form.value.solicitante.personas_a_cargo =
         typeof trabajador.personas_a_cargo === "number" ? trabajador.personas_a_cargo : form.value.solicitante.personas_a_cargo || 0;
       form.value.solicitante.antiguedad_meses =

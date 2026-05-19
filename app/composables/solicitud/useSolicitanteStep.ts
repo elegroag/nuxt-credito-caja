@@ -58,26 +58,23 @@ export const useSolicitanteStep = (props: SolicitanteProps) => {
   );
 
   const ciudadesOptions = computed(() =>
-    (props.ciudades || []).map((item) => ({
-      label: item.detciu,
-      value: item.codciu,
-      description: `Código: ${item.codciu}`
-    }))
+    (props.ciudades || [])
+      .filter((item) => item.codciu && item.codciu.trim() !== "")
+      .map((item) => ({
+        label: item.detciu,
+        value: item.codciu,
+        description: `Código: ${item.codciu}`
+      }))
   );
 
-  // Opciones para países (lista básica, puede ser expandida)
-  const paisesOptions = computed(() => [
-    { label: "Colombia", value: "CO" },
-    { label: "Argentina", value: "AR" },
-    { label: "Brasil", value: "BR" },
-    { label: "Chile", value: "CL" },
-    { label: "Ecuador", value: "EC" },
-    { label: "Estados Unidos", value: "US" },
-    { label: "España", value: "ES" },
-    { label: "México", value: "MX" },
-    { label: "Perú", value: "PE" },
-    { label: "Venezuela", value: "VE" }
-  ]);
+  // Opciones para países desde el API
+  const paisesOptions = computed(() =>
+    (props.paises || []).map((item) => ({
+      label: item.nombre,
+      value: item.cod1,
+      description: `Código: ${item.cod1}`
+    }))
+  );
 
   // Opciones para booleanos
   const booleanOptions = computed(() => [

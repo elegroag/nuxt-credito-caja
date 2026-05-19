@@ -4,6 +4,7 @@ import type {
   EstadoCivil,
   NivelEducativoParam,
   Ocupacion,
+  Paises,
   SectorEconomico,
   SexoParam,
   TipoViviendaParam
@@ -69,5 +70,6 @@ export interface SolicitanteProps {
   ocupaciones?: readonly Ocupacion[];
   estadoCiviles?: readonly EstadoCivil[];
   sectoresEconomicos?: readonly SectorEconomico[];
+  paises?: readonly Paises[];
   errors?: Record<string, string>;
 }

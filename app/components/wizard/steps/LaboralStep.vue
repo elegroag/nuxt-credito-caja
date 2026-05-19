@@ -81,10 +81,12 @@ const tiempoUnidadOptions = [
 ];
 
 const ciudadesOptions = computed(() =>
-  (props.ciudades || []).map((item) => ({
-    label: item.detciu,
-    value: item.codciu
-  }))
+  (props.ciudades || [])
+    .filter((item) => item.codciu && item.codciu.trim() !== "")
+    .map((item) => ({
+      label: item.detciu,
+      value: item.codciu
+    }))
 );
 
 const tiposContratoOptions = computed(() =>

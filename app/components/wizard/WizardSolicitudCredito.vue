@@ -20,6 +20,7 @@
           v-else-if="currentStepKey === 'solicitante'"
           :form="form"
           :ciudades="props.parametros?.ciudades || []"
+          :paises="props.parametros?.paises || []"
           :tipos-documento="props.parametros?.codigos_tipo_documento || []"
           :sexos="props.parametros?.sexos || []"
           :niveles-educativos="props.parametros?.nivel_educativos || []"

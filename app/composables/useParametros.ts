@@ -84,6 +84,14 @@ export const useParametros = () => {
     return parametrosCache.value?.formas_de_pagos_tesoreria || [];
   });
 
+  const getCiudades = computed(() => {
+    return parametrosCache.value?.ciudades || [];
+  });
+
+  const getPaises = computed(() => {
+    return parametrosCache.value?.paises || [];
+  });
+
   const getTiposTerceros = computed(() => {
     return parametrosCache.value?.tipos_de_terceros || [];
   });
@@ -167,6 +175,8 @@ export const useParametros = () => {
     getPeriodosPago,
     getFondosCreditoSocial,
     getFormasPagoTesoreria,
+    getCiudades,
+    getPaises,
     getTiposTerceros,
 
     // Funciones de búsqueda

@@ -1,6 +1,5 @@
 import type { H3Event } from "h3";
 import { defineEventHandler, getRouterParam, setResponseStatus } from "h3";
-import { unknown } from "zod";
 import prisma from "~~/lib/prisma";
 import apiSisuweb from "~~/server/services/api-sisuweb";
 import { CustomResponse } from "~~/server/utils/customResponse";
