@@ -130,7 +130,7 @@ export default defineEventHandler(async (event: H3Event) => {
       solicitud: {
         fecha_radicado: solicitudData.fecha_radicado,
         numero_solicitud: solicitudData.numero_solicitud,
-        valor_solicitud: solicitudData.valor_solicitud?.toString() || "0",
+        valor_solicitud: parseFloat(solicitudData.valor_solicitud?.toString() || "0").toFixed(2),
         plazo_meses: solicitudData.plazo_meses,
         numero_comprobante: 0,
         rol_en_solicitud: solicitudData.rol_en_solicitud || "T",
@@ -176,7 +176,7 @@ export default defineEventHandler(async (event: H3Event) => {
           || solicitante?.created_at?.toISOString().split("T")[0]
           || "",
         tipo_contrato:
-          solicitante?.tipo_contrato || informacionLaboral.tipo_contrato || "",
+          (solicitante?.tipo_contrato || informacionLaboral.tipo_contrato) || null,
         empresa_ciudad:
           resolveCiudadNombre(
             (informacionLaboral.empresa_ciudad as string) || solicitante?.ciudad,
@@ -254,7 +254,11 @@ export default defineEventHandler(async (event: H3Event) => {
         representante_nombre: informacionLaboral.representante_nombre || "",
         fecha_vencimiento: informacionLaboral.fecha_vencimiento || "",
         fecha_convenio: informacionLaboral.fecha_convenio || "",
-        nit: solicitante?.nit || informacionLaboral.nit || "",
+        nit: (() => {
+          const raw = solicitante?.nit ?? informacionLaboral.nit;
+          const str = typeof raw === "number" ? String(raw) : (typeof raw === "string" ? raw : "0");
+          return parseInt(str, 10) || null;
+        })(),
         razon_social:
           solicitante?.razon_social || informacionLaboral.razon_social || "",
         estado: informacionLaboral.estado || "Activo"

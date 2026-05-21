@@ -1,0 +1,160 @@
+{
+  "solicitudId": "000002-2026-06",
+  "payload": {
+    "solicitud_id": "000002-2026-06",
+    "solicitud": {
+      "fecha_radicado": "2026-05-21T00:00:00.000Z",
+      "numero_solicitud": "000002-2026-06",
+      "valor_solicitud": "5000000",
+      "plazo_meses": 120,
+      "numero_comprobante": 0,
+      "rol_en_solicitud": "T",
+      "categoria": "B",
+      "producto_tipo": "06",
+      "ha_tenido_credito": false,
+      "tipo_credito": "06"
+    },
+    "solicitante": {
+      "fecha_vinculacion": "",
+      "tipo_documento": "1",
+      "numero_documento": "1110491951",
+      "fecha_nacimiento": "1989-12-19",
+      "pais_nacimiento": "",
+      "nombre_completo": "EDWIN ANDRES LEGRO AGUDELO",
+      "fecha_expedicion_documento": null,
+      "profesion_ocupacion": "2519",
+      "sexo": "M",
+      "nivel_educativo": "11",
+      "barrio_residencia": "CR 2 G 13 49 BRR ABBAS TURBAY",
+      "ciudad_residencia": "18001",
+      "pais_residencia": "170",
+      "telefono_fijo": "",
+      "telefono_movil": "",
+      "email": "maxedwwin@gmail.com",
+      "tipo_vivienda": "A",
+      "vive_con_nucleo_familiar": true,
+      "personas_a_cargo": 2,
+      "direccion_residencia": "CR 2 G 13 49 BRR ABBAS TURBAY"
+    },
+    "laboral": {
+      "cargo": "2519",
+      "empresa_nit": "891190047",
+      "fecha_ingreso": "2026-01-13",
+      "tipo_contrato": "I",
+      "empresa_ciudad": "18001",
+      "tiempo_servicio": 4,
+      "empresa_telefono": "6084366300",
+      "empresa_direccion": "CR 11 10 34 BRR LA COOPERATIVA",
+      "empresa_razon_social": "CAJA DE COMPENSACION FAMILIAR DEL CAQUETA",
+      "nombramiento_o_pagador": null,
+      "tiempo_servicio_unidad": "meses"
+    },
+    "economica": {
+      "otros": 0,
+      "moneda": "COP",
+      "descripcion": null,
+      "total_gastos": 0,
+      "total_activos": 0,
+      "total_pasivos": 0,
+      "arrendamientos": 0,
+      "gastos_descripcion": null
+    },
+    "ingresos": {
+      "moneda": "COP",
+      "comisiones": 0,
+      "horas_extras": 0,
+      "otros_ingresos": 0,
+      "total_ingresos": 5039295,
+      "total_neto_recibido": 4656079,
+      "salario_basico_mensual": 4790200
+    },
+    "descuentos": {
+      "judiciales": 0,
+      "salud_pension": 383216,
+      "otras_libranzas": 0,
+      "total_descuentos": 383216,
+      "libranzas_comfaca": 0,
+      "otras_deducciones": 0,
+      "subsidio_transporte": 249095,
+      "total_neto_recibido": 4656079
+    },
+    "conyuge": [],
+    "referencias": {
+      "familiares": [
+        {
+          "celular": 3184525635,
+          "nombre_apellidos": "Et aut sed sint vero"
+        }
+      ],
+      "personales": [
+        {
+          "celular": 31571459742,
+          "nombre_apellidos": "Et velit in earum s"
+        }
+      ]
+    },
+    "deudas": [],
+    "propiedades": [],
+    "firmantes": [],
+    "convenio": {
+      "representante_documento": "",
+      "representante_nombre": "",
+      "fecha_vencimiento": "",
+      "fecha_convenio": "",
+      "nit": "891190047",
+      "razon_social": "CAJA DE COMPENSACION FAMILIAR DEL CAQUETA",
+      "estado": "Activo"
+    },
+    "proceso_firmado": {
+      "proveedor": "CAJA DE COMPENSACIÓN FAMILIAR DEL CAQUETÁ",
+      "estado": "POSTULADO",
+      "transaccion_id": "0",
+      "fecha_inicio": "20/5/2026, 10:17:13 p. m."
+    },
+    "encabezado": {
+      "fecha_radicado": "2026-05-21T00:00:00.000Z",
+      "solicitud_id": "000002-2026-06"
+    },
+    "pdf_metadata": {
+      "fecha_generacion": "20/5/2026, 10:17:13 p. m.",
+      "solicitud_id": "000002-2026-06",
+      "version": "2.0"
+    },
+    "trabajador": {
+      "cedula": "1110491951",
+      "tipo_documento": "1",
+      "primer_apellido": "LEGRO",
+      "segundo_apellido": "AGUDELO",
+      "primer_nombre": "EDWIN",
+      "segundo_nombre": "ANDRES",
+      "direccion": "CR 2 G 13 49 BRR ABBAS TURBAY",
+      "ciudad_codigo": "18001",
+      "telefono": "",
+      "email": "maxedwwin@gmail.com",
+      "salario": 4790200,
+      "fecha_salario": "2026-05-21",
+      "sexo": "M",
+      "estado_civil": "4",
+      "fecha_nacimiento": "1989-12-19",
+      "ciudad_nacimiento": "",
+      "nivel_educativo": "11",
+      "codigo_categoria": "B",
+      "empresa": {
+        "nit": "891190047",
+        "razon_social": "CAJA DE COMPENSACION FAMILIAR DEL CAQUETA",
+        "direccion": "CR 11 10 34 BRR LA COOPERATIVA",
+        "telefono": "6084366300",
+        "ciudad_codigo": "18001",
+        "representante_legal": "",
+        "representante_cedula": "",
+        "estado": "A"
+      },
+      "estado": "A",
+      "fecha_afiliacion": "",
+      "cargo": "2519",
+      "tipo_contrato": "",
+      "personas_a_cargo": 2,
+      "antiguedad_meses": 4
+    }
+  }
+}
