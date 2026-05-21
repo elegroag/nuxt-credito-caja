@@ -3,9 +3,15 @@ import { defineEventHandler, getRouterParam, setResponseStatus } from "h3";
 import type { Prisma } from "~~/lib/prisma";
 import prisma from "~~/lib/prisma";
 import apiFlaskPdf from "~~/server/services/api-flaskpdf";
+import datosApiSisuwebService from "~~/server/services/shared/datos-api-sisuweb.service";
 import { documentoStorage } from "~~/server/services/storage/documento-storage.service";
 import { CustomResponse } from "~~/server/utils/customResponse";
 import { loggerService } from "~~/server/utils/logger.service";
+import {
+  buildDatosGeneralesMap,
+  resolveCiudadNombre,
+  resolvePaisNombre
+} from "~~/server/utils/datosGeneralesMap";
 
 const Log = loggerService();
 
@@ -83,6 +89,21 @@ export default defineEventHandler(async (event: H3Event) => {
 
     const flaskPdf = apiFlaskPdf();
 
+    // Obtener mapas de ciudades y países para resolver códigos a nombres
+    const datosApi = datosApiSisuwebService();
+    let datosGeneralesMap = { ciudades: new Map<string, string>(), paises: new Map<string, string>() };
+    try {
+      const datosGenerales = await datosApi.dataGeneral() as { ciudades?: readonly Ciudades[]; paises?: readonly Paises[] } | null;
+      if (datosGenerales) {
+        datosGeneralesMap = buildDatosGeneralesMap({
+          ciudades: datosGenerales.ciudades,
+          paises: datosGenerales.paises
+        });
+      }
+    } catch {
+      await Log.warn("No se pudieron cargar datos generales, usando códigos sin resolver", { solicitudId });
+    }
+
     // Extraer datos
     const {
       solicitud_solicitante,
@@ -115,7 +136,7 @@ export default defineEventHandler(async (event: H3Event) => {
         rol_en_solicitud: solicitudData.rol_en_solicitud || "T",
         categoria: solicitante?.codigo_categoria || "B",
         producto_tipo: solicitudData.producto_tipo || "",
-        ha_tenido_credito: solicitudData.ha_tenido_credito || false,
+        ha_tenido_credito_comfaca: solicitudData.ha_tenido_credito || false,
         tipo_credito: solicitudData.tipo_credito || "01"
       },
       solicitante: {
@@ -136,8 +157,8 @@ export default defineEventHandler(async (event: H3Event) => {
         sexo: solicitante?.genero || "",
         nivel_educativo: solicitante?.nivel_educativo || "",
         barrio_residencia: solicitante?.barrio || "",
-        ciudad_residencia: solicitante?.ciudad || "",
-        pais_residencia: solicitante?.pais_residencia || "CO",
+        ciudad_residencia: resolveCiudadNombre(solicitante?.ciudad, datosGeneralesMap),
+        pais_residencia: resolvePaisNombre(solicitante?.pais_residencia, datosGeneralesMap),
         telefono_fijo: solicitante?.telefono_fijo || "",
         telefono_movil: solicitante?.telefono_movil || "",
         email: solicitante?.email || "",
@@ -157,7 +178,10 @@ export default defineEventHandler(async (event: H3Event) => {
         tipo_contrato:
           solicitante?.tipo_contrato || informacionLaboral.tipo_contrato || "",
         empresa_ciudad:
-          informacionLaboral.empresa_ciudad || solicitante?.ciudad || "",
+          resolveCiudadNombre(
+            (informacionLaboral.empresa_ciudad as string) || solicitante?.ciudad,
+            datosGeneralesMap
+          ),
         tiempo_servicio:
           informacionLaboral.tiempo_servicio
           || solicitante?.antiguedad_meses
