@@ -16,7 +16,7 @@
       class="overflow-hidden"
       :ui="{
         root: 'border-0 shadow-md',
-        body: { padding: 'px-6 py-6 sm:px-8 sm:py-8' }
+        body: 'px-6 py-6 sm:px-8 sm:py-8'
       }"
     >
       <div class="flex flex-col lg:flex-row lg:items-start justify-between gap-6">
@@ -89,17 +89,17 @@ const props = withDefaults(defineProps<Props>(), {
 const router = useRouter();
 
 // Compute badge color from estado color
-const badgeColor = computed<"neutral" | "info" | "warning" | "success" | "error" | "primary">(() => {
+const badgeColor = computed<"neutral" | "destructive" | "primary" | "muted">(() => {
   if (!props.estadoColor) return "neutral";
 
-  const colorMap: Record<string, "neutral" | "info" | "warning" | "success" | "error" | "primary"> = {
+  const colorMap: Record<string, "neutral" | "destructive" | "primary" | "muted"> = {
     "#6B7280": "neutral",
-    "#3B82F6": "info",
-    "#F59E0B": "warning",
-    "#10B981": "success",
-    "#EF4444": "error",
+    "#3B82F6": "primary",
+    "#F59E0B": "muted",
+    "#10B981": "primary",
+    "#EF4444": "destructive",
     "#8B5CF6": "primary",
-    "#F97316": "warning"
+    "#F97316": "muted"
   };
 
   return colorMap[props.estadoColor] || "neutral";

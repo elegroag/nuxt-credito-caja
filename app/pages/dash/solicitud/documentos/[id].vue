@@ -5,7 +5,7 @@
       <UCard
         :ui="{
           root: 'border-0 shadow-md',
-          body: { padding: 'px-6 py-6 sm:px-8 sm:py-6' }
+          body: 'px-6 py-6 sm:px-8 sm:py-6'
         }"
       >
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -32,7 +32,7 @@
         v-if="loadingSolicitud"
         :ui="{
           root: 'border-0 shadow-md',
-          body: { padding: 'py-16' }
+          body: 'py-16'
         }"
       >
         <div class="flex flex-col items-center justify-center gap-4">
@@ -49,7 +49,7 @@
         v-else-if="errorSolicitud"
         :ui="{
           root: 'border-destructive/30 shadow-md',
-          body: { padding: 'py-12' }
+          body: 'py-12'
         }"
       >
         <div class="text-center max-w-md mx-auto">
@@ -58,7 +58,7 @@
           </div>
           <h3 class="text-xl font-bold text-destructive mb-2">Error al cargar la solicitud</h3>
           <p class="text-muted-foreground mb-6">{{ errorSolicitud }}</p>
-          <UButton color="error" @click="cargarSolicitud">
+          <UButton color="destructive" @click="cargarSolicitud">
             <UIcon name="i-lucide-refresh-cw" class="w-4 h-4 mr-2" />
             Reintentar
           </UButton>
@@ -72,7 +72,7 @@
           class="bg-primary border-primary/20"
           :ui="{
             root: 'border-primary/30',
-            body: { padding: 'px-6 py-6 sm:px-8 sm:py-6' }
+            body: 'px-6 py-6 sm:px-8 sm:py-6'
           }"
         >
           <div class="flex items-start gap-6">
@@ -106,7 +106,7 @@
         <UCard
           :ui="{
             root: 'shadow-md',
-            body: { padding: 'px-6 py-6' }
+            body: 'px-6 py-6'
           }"
         >
           <div class="flex items-center justify-between mb-4">
@@ -131,7 +131,7 @@
             :key="docReq.id"
             :ui="{
               root: `shadow-md transition-shadow duration-300`,
-              body: { padding: 'p-0' }
+              body: 'p-0'
             }"
             :class="{
               'border-success ring-1 ring-success/20': getDocumentoCargado(docReq.id),
@@ -148,7 +148,7 @@
                   <h3 class="font-semibold text-foreground text-lg">{{ docReq.nombre }}</h3>
                   <div class="flex items-center gap-2 mt-1">
                     <UBadge
-                      :color="docReq.obligatorio ? 'error' : 'neutral'"
+                      :color="docReq.obligatorio ? 'destructive' : 'neutral'"
                       variant="subtle"
                       size="sm"
                     >
@@ -196,7 +196,7 @@
         <UCard
           :ui="{
             root: 'shadow-md',
-            body: { padding: 'px-6 py-5 sm:px-6 sm:py-5' }
+            body: 'px-6 py-5 sm:px-6 sm:py-5'
           }"
         >
           <div class="flex flex-col sm:flex-row items-center justify-between gap-6">

@@ -153,7 +153,6 @@ const {
   getEstadoNombre,
   getEstadoColor,
   getEstadoDescripcion,
-  getEstadoBadgeClass,
 
   // Funciones de utilidad
   fmtMoney,

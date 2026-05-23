@@ -5,7 +5,7 @@
       <UCard
         :ui="{
           root: 'border-0 shadow-md',
-          body: { padding: 'px-6 py-6 sm:px-8 sm:py-6' }
+          body: 'px-6 py-6 sm:px-8 sm:py-6'
         }"
       >
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -35,7 +35,7 @@
         v-if="loadingSolicitud"
         :ui="{
           root: 'border-0 shadow-md',
-          body: { padding: 'py-16' }
+          body: 'py-16'
         }"
       >
         <div class="flex flex-col items-center justify-center gap-4">
@@ -56,7 +56,7 @@
         v-else-if="errorSolicitud"
         :ui="{
           root: 'border-destructive/30 shadow-md',
-          body: { padding: 'py-12' }
+          body: 'py-12'
         }"
       >
         <div class="text-center max-w-md mx-auto">
@@ -67,7 +67,7 @@
             Error al cargar la solicitud
           </h3>
           <p class="text-muted-foreground mb-6">{{ errorSolicitud }}</p>
-          <UButton color="error" @click="cargarSolicitud">
+          <UButton color="destructive" @click="cargarSolicitud">
             <UIcon name="i-lucide-refresh-cw" class="w-4 h-4 mr-2" />
             Reintentar
           </UButton>
@@ -81,7 +81,7 @@
           class="bg-primary border-primary/20"
           :ui="{
             root: 'border-primary/30',
-            body: { padding: 'px-6 py-6 sm:px-8 sm:py-6' }
+            body: 'px-6 py-6 sm:px-8 sm:py-6'
           }"
         >
           <div class="flex items-start gap-6">
@@ -109,7 +109,7 @@
         <UCard
           :ui="{
             root: 'shadow-md',
-            body: { padding: 'p-0' }
+            body: 'p-0'
           }"
         >
           <template #header>
@@ -171,7 +171,7 @@
         <UCard
           :ui="{
             root: 'shadow-md',
-            body: { padding: 'p-0' }
+            body: 'p-0'
           }"
         >
           <template #header>
@@ -186,7 +186,7 @@
                 <UBadge color="neutral" variant="subtle">
                   {{ documentosCargados?.length || 0 }} cargados
                 </UBadge>
-                <UBadge color="warning" variant="subtle">
+                <UBadge color="muted" variant="subtle">
                   {{ documentosRequeridos?.filter((d) => d.obligatorio).length || 0 }} obligatorios
                 </UBadge>
               </div>
@@ -225,7 +225,7 @@
           class="border-destructive/30"
           :ui="{
             root: 'border-destructive/20 bg-destructive/5',
-            body: { padding: 'px-6 py-4' }
+            body: 'px-6 py-4'
           }"
         >
           <div class="flex items-start gap-3">
@@ -245,7 +245,7 @@
         <UCard
           :ui="{
             root: 'shadow-md',
-            body: { padding: 'px-6 py-4 sm:px-6 sm:py-4' }
+            body: 'px-6 py-4 sm:px-6 sm:py-4'
           }"
         >
           <div class="flex flex-col sm:flex-row gap-4 justify-between items-center">
