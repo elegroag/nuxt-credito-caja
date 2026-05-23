@@ -138,6 +138,11 @@ export type TipoContrato = {
   detalle: string;
 };
 
+export type TipoContratoParam = {
+  tipcon: string;
+  detalle: string;
+};
+
 export type EstadoCivil = {
   detest: string;
   estciv: string;

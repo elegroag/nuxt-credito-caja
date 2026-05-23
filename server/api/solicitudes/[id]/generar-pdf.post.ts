@@ -7,11 +7,15 @@ import datosApiSisuwebService from "~~/server/services/shared/datos-api-sisuweb.
 import { documentoStorage } from "~~/server/services/storage/documento-storage.service";
 import { CustomResponse } from "~~/server/utils/customResponse";
 import { loggerService } from "~~/server/utils/logger.service";
-import {
-  buildDatosGeneralesMap,
-  resolveCiudadNombre,
-  resolvePaisNombre
-} from "~~/server/utils/datosGeneralesMap";
+import type {
+  Ciudades,
+  Paises,
+  Ocupacion,
+  SectorEconomico,
+  CodigoTipoDocumento,
+  TipoViviendaParam,
+  EstadoCivil
+} from "~~/shared/types/parametros";
 
 const Log = loggerService();
 
@@ -31,7 +35,9 @@ interface FlaskPdfResponse {
   errors?: unknown;
 }
 
-const serializeForPdf = (obj: Record<string, unknown> | unknown[] | unknown): Record<string, unknown> | unknown[] | unknown => {
+const serializeForPdf = (
+  obj: Record<string, unknown> | unknown[] | unknown
+): Record<string, unknown> | unknown[] | unknown => {
   if (obj === null || obj === undefined) return obj;
   if (obj instanceof Date) return obj.toISOString();
   if (typeof obj === "bigint") return obj.toString();
@@ -56,10 +62,7 @@ export default defineEventHandler(async (event: H3Event) => {
 
     if (!rawSolicitudId) {
       setResponseStatus(event, 400);
-      return CustomResponse.error(
-        "ID de solicitud no proporcionado",
-        "Error de validación"
-      );
+      return CustomResponse.error("ID de solicitud no proporcionado", "Error de validación");
     }
 
     solicitudId = rawSolicitudId;
@@ -81,27 +84,52 @@ export default defineEventHandler(async (event: H3Event) => {
 
     if (!solicitud) {
       setResponseStatus(event, 404);
-      return CustomResponse.error(
-        "Solicitud no encontrada",
-        "Recurso no encontrado"
-      );
+      return CustomResponse.error("Solicitud no encontrada", "Recurso no encontrado");
     }
 
     const flaskPdf = apiFlaskPdf();
 
-    // Obtener mapas de ciudades y países para resolver códigos a nombres
+    // Obtener datos de ciudades, países y ocupaciones para resolver códigos a nombres
     const datosApi = datosApiSisuwebService();
-    let datosGeneralesMap = { ciudades: new Map<string, string>(), paises: new Map<string, string>() };
+    let datosGeneralesCiudades: readonly Ciudades[] = [];
+    let datosGeneralesPaises: readonly Paises[] = [];
+    let datosGeneralesOcupaciones: readonly Ocupacion[] = [];
+    let datosNivelesEducativos: readonly NivelEducativoParam[] = [];
+    let datosTipoVivienda: readonly TipoViviendaParam[] = [];
+    let datosTipoContrato: readonly TipoContratoParam[] = [];
+    let datosSectoresEconomicos: readonly SectorEconomico[] = [];
+    let datosSexos: readonly SexoParam[] = [];
+    let datosCodigosTipoDocumento: readonly CodigoTipoDocumento[] = [];
+    let datosEstadoCivil: readonly EstadoCivil[] = [];
     try {
-      const datosGenerales = await datosApi.dataGeneral() as { ciudades?: readonly Ciudades[]; paises?: readonly Paises[] } | null;
+      const datosGenerales = (await datosApi.dataGeneral()) as {
+        ciudades?: readonly Ciudades[];
+        paises?: readonly Paises[];
+        ocupaciones?: readonly Ocupacion[];
+        nivel_educativos?: readonly NivelEducativoParam[];
+        tipo_vivienda?: readonly TipoViviendaParam[];
+        tipo_contrato?: readonly TipoContratoParam[];
+        sectores_economicos?: readonly SectorEconomico[];
+        sexos?: readonly SexoParam[];
+        codigos_tipo_documento?: readonly CodigoTipoDocumento[];
+        estado_civiles?: readonly EstadoCivil[];
+      } | null;
       if (datosGenerales) {
-        datosGeneralesMap = buildDatosGeneralesMap({
-          ciudades: datosGenerales.ciudades,
-          paises: datosGenerales.paises
-        });
+        datosGeneralesCiudades = datosGenerales.ciudades || [];
+        datosGeneralesPaises = datosGenerales.paises || [];
+        datosGeneralesOcupaciones = datosGenerales.ocupaciones || [];
+        datosNivelesEducativos = datosGenerales.nivel_educativos || [];
+        datosTipoVivienda = datosGenerales.tipo_vivienda || [];
+        datosTipoContrato = datosGenerales.tipo_contrato || [];
+        datosSectoresEconomicos = datosGenerales.sectores_economicos || [];
+        datosSexos = datosGenerales.sexos || [];
+        datosCodigosTipoDocumento = datosGenerales.codigos_tipo_documento || [];
+        datosEstadoCivil = datosGenerales.estado_civiles || [];
       }
     } catch {
-      await Log.warn("No se pudieron cargar datos generales, usando códigos sin resolver", { solicitudId });
+      await Log.warn("No se pudieron cargar datos generales, usando códigos sin resolver", {
+        solicitudId
+      });
     }
 
     // Extraer datos
@@ -116,10 +144,13 @@ export default defineEventHandler(async (event: H3Event) => {
 
     // Obtener datos del payload JSON si existe
     const rawPayload = solicitud_payload?.[0];
-    const payloadData = (rawPayload as Record<string, unknown> | null) as PdfPayloadData | undefined;
+    const payloadData = rawPayload as Record<string, unknown> | null as PdfPayloadData | undefined;
     const informacionLaboral = (payloadData?.informacion_laboral || {}) as Record<string, unknown>;
     const ingresosDescuentos = (payloadData?.ingresos_descuentos || {}) as Record<string, unknown>;
-    const informacionEconomica = (payloadData?.informacion_economica || {}) as Record<string, unknown>;
+    const informacionEconomica = (payloadData?.informacion_economica || {}) as Record<
+      string,
+      unknown
+    >;
     const propiedades = payloadData?.propiedades || [];
     const deudas = payloadData?.deudas || [];
     const referencias = payloadData?.referencias || { familiares: [], personales: [] };
@@ -132,7 +163,7 @@ export default defineEventHandler(async (event: H3Event) => {
         numero_solicitud: solicitudData.numero_solicitud,
         valor_solicitud: parseFloat(solicitudData.valor_solicitud?.toString() || "0").toFixed(2),
         plazo_meses: solicitudData.plazo_meses,
-        numero_comprobante: 0,
+        numero_comprobante: solicitudData.numero_comprobante,
         rol_en_solicitud: solicitudData.rol_en_solicitud || "T",
         categoria: solicitante?.codigo_categoria || "B",
         producto_tipo: solicitudData.producto_tipo || "",
@@ -140,62 +171,69 @@ export default defineEventHandler(async (event: H3Event) => {
         tipo_credito: solicitudData.tipo_credito || "01"
       },
       solicitante: {
-        fecha_vinculacion:
-          solicitante?.created_at?.toISOString().split("T")[0] || "",
+        fecha_vinculacion: solicitante?.created_at?.toISOString().split("T")[0] || "",
         tipo_documento: solicitante?.tipo_documento || "",
         numero_documento: solicitante?.numero_documento || "",
-        fecha_nacimiento:
-          solicitante?.fecha_nacimiento?.toISOString().split("T")[0] || "",
-        pais_nacimiento: solicitante?.pais_nacimiento || "",
+        fecha_nacimiento: solicitante?.fecha_nacimiento?.toISOString().split("T")[0] || "",
+        pais_nacimiento:
+          datosGeneralesPaises.find((p) => p.cod1 === solicitante?.pais_residencia)?.nombre || "",
         nombre_completo:
           solicitante?.tipo_persona === "juridica"
             ? solicitante?.razon_social || ""
             : `${solicitante?.nombres || ""} ${solicitante?.apellidos || ""}`.trim(),
         fecha_expedicion_documento:
           solicitante?.fecha_expedicion?.toISOString().split("T")[0] || null,
-        profesion_ocupacion: solicitante?.profesion || solicitante?.cargo || "",
-        sexo: solicitante?.genero || "",
-        nivel_educativo: solicitante?.nivel_educativo || "",
+        profesion_ocupacion:
+          datosGeneralesOcupaciones.find((o) => o.codocu === solicitante?.cargo)?.detalle || "",
+        sexo: datosSexos.find((p) => p.codsex === solicitante?.genero)?.detsex || "",
+        nivel_educativo:
+          datosNivelesEducativos.find((o) => o.nivedu === solicitante?.nivel_educativo)?.detalle ||
+          "",
         barrio_residencia: solicitante?.barrio || "",
-        ciudad_residencia: resolveCiudadNombre(solicitante?.ciudad, datosGeneralesMap),
-        pais_residencia: resolvePaisNombre(solicitante?.pais_residencia, datosGeneralesMap),
+        ciudad_residencia:
+          datosGeneralesCiudades.find((c) => c.codciu === solicitante?.ciudad)?.detciu ||
+          solicitante?.ciudad ||
+          "",
+        pais_residencia:
+          datosGeneralesPaises.find((p) => p.cod1 === solicitante?.pais_residencia)?.nombre ||
+          solicitante?.pais_residencia ||
+          "",
         telefono_fijo: solicitante?.telefono_fijo || "",
         telefono_movil: solicitante?.telefono_movil || "",
         email: solicitante?.email || "",
-        tipo_vivienda: solicitante?.tipo_vivienda || "",
-        vive_con_nucleo_familiar:
-          solicitante?.vive_con_nucleo_familiar || false,
+        tipo_vivienda:
+          datosTipoVivienda.find((o) => o.vivienda === solicitante?.tipo_vivienda)?.detalle || "",
+        vive_con_nucleo_familiar: solicitante?.vive_con_nucleo_familiar || false,
         personas_a_cargo: solicitante?.personas_a_cargo || 0,
         direccion_residencia: solicitante?.direccion || ""
       },
       laboral: {
-        cargo: solicitante?.cargo || informacionLaboral.cargo || "",
+        cargo:
+          datosGeneralesOcupaciones.find((o) => o.codocu === solicitante?.cargo)?.detalle ||
+          solicitante?.cargo ||
+          informacionLaboral.cargo ||
+          "",
         empresa_nit: solicitante?.nit || informacionLaboral.empresa_nit || "",
         fecha_ingreso:
-          informacionLaboral.fecha_ingreso
-          || solicitante?.created_at?.toISOString().split("T")[0]
-          || "",
-        tipo_contrato:
-          (solicitante?.tipo_contrato || informacionLaboral.tipo_contrato) || null,
+          informacionLaboral.fecha_ingreso ||
+          solicitante?.created_at?.toISOString().split("T")[0] ||
+          "",
+        tipo_contrato: solicitante?.tipo_contrato || informacionLaboral.tipo_contrato || null,
         empresa_ciudad:
-          resolveCiudadNombre(
-            (informacionLaboral.empresa_ciudad as string) || solicitante?.ciudad,
-            datosGeneralesMap
-          ),
-        tiempo_servicio:
-          informacionLaboral.tiempo_servicio
-          || solicitante?.antiguedad_meses
-          || 0,
+          datosGeneralesCiudades.find(
+            (c) =>
+              c.codciu === ((informacionLaboral.empresa_ciudad as string) || solicitante?.ciudad)
+          )?.detciu ||
+          (informacionLaboral.empresa_ciudad as string) ||
+          solicitante?.ciudad ||
+          "",
+        tiempo_servicio: informacionLaboral.tiempo_servicio || solicitante?.antiguedad_meses || 0,
         empresa_telefono: informacionLaboral.empresa_telefono || "",
         empresa_direccion: informacionLaboral.empresa_direccion || "",
         empresa_razon_social:
-          solicitante?.razon_social
-          || informacionLaboral.empresa_razon_social
-          || "",
-        nombramiento_o_pagador:
-          informacionLaboral.nombramiento_o_pagador || null,
-        tiempo_servicio_unidad:
-          informacionLaboral.tiempo_servicio_unidad || "meses"
+          solicitante?.razon_social || informacionLaboral.empresa_razon_social || "",
+        nombramiento_o_pagador: informacionLaboral.nombramiento_o_pagador || null,
+        tiempo_servicio_unidad: informacionLaboral.tiempo_servicio_unidad || "meses"
       },
       economica: {
         otros: informacionEconomica.otros || 0,
@@ -212,15 +250,10 @@ export default defineEventHandler(async (event: H3Event) => {
         comisiones: ingresosDescuentos.comisiones || 0,
         horas_extras: ingresosDescuentos.horas_extras || 0,
         otros_ingresos: ingresosDescuentos.otros_ingresos || 0,
-        total_ingresos:
-          ingresosDescuentos.total_ingresos
-          || solicitante?.salario?.toNumber()
-          || 0,
+        total_ingresos: ingresosDescuentos.total_ingresos || solicitante?.salario?.toNumber() || 0,
         total_neto_recibido: ingresosDescuentos.total_neto_recibido || 0,
         salario_basico_mensual:
-          ingresosDescuentos.salario_basico_mensual
-          || solicitante?.salario?.toNumber()
-          || 0
+          ingresosDescuentos.salario_basico_mensual || solicitante?.salario?.toNumber() || 0
       },
       descuentos: {
         judiciales: ingresosDescuentos.judiciales || 0,
@@ -240,7 +273,7 @@ export default defineEventHandler(async (event: H3Event) => {
       deudas: Array.isArray(deudas) ? deudas : [],
       propiedades: Array.isArray(propiedades) ? propiedades : [],
       firmantes:
-        firmantes_solicitud?.map(f => ({
+        firmantes_solicitud?.map((f) => ({
           tipo: f.tipo,
           rol: f.rol,
           nombre_completo: f.nombre_completo,
@@ -249,18 +282,16 @@ export default defineEventHandler(async (event: H3Event) => {
           orden: f.orden
         })) || [],
       convenio: {
-        representante_documento:
-          informacionLaboral.representante_documento || "",
+        representante_documento: informacionLaboral.representante_documento || "",
         representante_nombre: informacionLaboral.representante_nombre || "",
         fecha_vencimiento: informacionLaboral.fecha_vencimiento || "",
         fecha_convenio: informacionLaboral.fecha_convenio || "",
         nit: (() => {
           const raw = solicitante?.nit ?? informacionLaboral.nit;
-          const str = typeof raw === "number" ? String(raw) : (typeof raw === "string" ? raw : "0");
+          const str = typeof raw === "number" ? String(raw) : typeof raw === "string" ? raw : "0";
           return parseInt(str, 10) || null;
         })(),
-        razon_social:
-          solicitante?.razon_social || informacionLaboral.razon_social || "",
+        razon_social: solicitante?.razon_social || informacionLaboral.razon_social || "",
         estado: informacionLaboral.estado || "Activo"
       },
       proceso_firmado: {
@@ -270,9 +301,7 @@ export default defineEventHandler(async (event: H3Event) => {
         fecha_inicio: new Date().toLocaleString("es-CO")
       },
       encabezado: {
-        fecha_radicado:
-          solicitudData.fecha_radicado?.toISOString()
-          || new Date().toISOString(),
+        fecha_radicado: solicitudData.fecha_radicado?.toISOString() || new Date().toISOString(),
         solicitud_id: solicitudId
       },
       pdf_metadata: {
@@ -284,23 +313,21 @@ export default defineEventHandler(async (event: H3Event) => {
         cedula: solicitante?.numero_documento || "",
         tipo_documento: solicitante?.tipo_documento || "",
         primer_apellido: solicitante?.apellidos?.split(" ")[0] || "",
-        segundo_apellido:
-          solicitante?.apellidos?.split(" ").slice(1).join(" ") || "",
+        segundo_apellido: solicitante?.apellidos?.split(" ").slice(1).join(" ") || "",
         primer_nombre: solicitante?.nombres?.split(" ")[0] || "",
-        segundo_nombre:
-          solicitante?.nombres?.split(" ").slice(1).join(" ") || "",
+        segundo_nombre: solicitante?.nombres?.split(" ").slice(1).join(" ") || "",
         direccion: solicitante?.direccion || "",
         ciudad_codigo: solicitante?.ciudad || "",
-        telefono:
-          solicitante?.telefono_movil || solicitante?.telefono_fijo || "",
+        telefono: solicitante?.telefono_movil || solicitante?.telefono_fijo || "",
         email: solicitante?.email || "",
         salario: solicitante?.salario?.toNumber() || 0,
         fecha_salario: new Date().toISOString().split("T")[0],
-        sexo: solicitante?.genero || "",
-        estado_civil: solicitante?.estado_civil || "",
-        fecha_nacimiento:
-          solicitante?.fecha_nacimiento?.toISOString().split("T")[0] || "",
-        ciudad_nacimiento: solicitante?.pais_nacimiento || "",
+        sexo: datosSexos.find((p) => p.codsex === solicitante?.genero)?.detsex || "",
+        estado_civil:
+          datosEstadoCivil.find((p) => p.estciv === solicitante?.estado_civil)?.detest || "",
+        fecha_nacimiento: solicitante?.fecha_nacimiento?.toISOString().split("T")[0] || "",
+        ciudad_nacimiento:
+          datosGeneralesCiudades.find((p) => p.codciu === solicitante?.ciudad)?.detciu || "",
         nivel_educativo: solicitante?.nivel_educativo || "",
         codigo_categoria: solicitante?.codigo_categoria || "",
         empresa: {
@@ -308,55 +335,22 @@ export default defineEventHandler(async (event: H3Event) => {
           razon_social: solicitante?.razon_social || "",
           direccion: informacionLaboral.empresa_direccion || "",
           telefono: informacionLaboral.empresa_telefono || "",
-          ciudad_codigo:
-            informacionLaboral.empresa_ciudad || solicitante?.ciudad || "",
+          ciudad_codigo: informacionLaboral.empresa_ciudad || solicitante?.ciudad || "",
           representante_legal: informacionLaboral.representante_nombre || "",
-          representante_cedula:
-            informacionLaboral.representante_documento || "",
+          representante_cedula: informacionLaboral.representante_documento || "",
           estado: "A"
         },
         estado: "A",
-        fecha_afiliacion:
-          solicitante?.created_at?.toISOString().split("T")[0] || "",
-        cargo: solicitante?.cargo || "",
+        fecha_afiliacion: solicitante?.created_at?.toISOString().split("T")[0] || "",
+        cargo:
+          datosGeneralesOcupaciones.find((o) => o.codocu === solicitante?.cargo)?.detalle || "",
         tipo_contrato: solicitante?.tipo_contrato || "",
         personas_a_cargo: solicitante?.personas_a_cargo || 0,
         antiguedad_meses: solicitante?.antiguedad_meses || 0
       }
     };
 
-    await Log.info("=== INICIO GENERAR PDF ===", {
-      solicitudId,
-      fechaSolicitud: new Date().toISOString()
-    });
-
-    await Log.debug("Payload construido para Flask PDF", {
-      solicitudId,
-      payloadKeys: Object.keys(payload),
-      solicitud: {
-        numero_solicitud: payload.solicitud.numero_solicitud,
-        valor_solicitud: payload.solicitud.valor_solicitud,
-        producto_tipo: payload.solicitud.producto_tipo
-      },
-      solicitante: {
-        tipo_documento: payload.solicitante.tipo_documento,
-        numero_documento: payload.solicitante.numero_documento,
-        nombre_completo: payload.solicitante.nombre_completo
-      },
-      laboral: {
-        cargo: payload.laboral.cargo,
-        empresa_nit: payload.laboral.empresa_nit,
-        empresa_razon_social: payload.laboral.empresa_razon_social
-      },
-      firmantesCount: payload.firmantes.length,
-      deudasCount: payload.deudas.length,
-      propiedadesCount: payload.propiedades.length
-    });
-
-    await Log.info("Enviando solicitud a servicio externo Flask PDF", {
-      solicitudId,
-      serviceUrl: "flask-pdf-api/generate"
-    });
+    await Log.debug("Payload construido para Flask PDF", payload);
 
     await Log.info("Payload enviado a Flask PDF", {
       solicitudId,
@@ -380,7 +374,7 @@ export default defineEventHandler(async (event: H3Event) => {
         hasPath: !!pdfData.api_path || !!pdfData.path,
         hasFilename: !!pdfData.api_filename || !!pdfData.filename,
         hasContent: !!pdfData.api_content || !!pdfData.content,
-        contentLength: ((pdfData.api_content || pdfData.content) as string || "").length
+        contentLength: (((pdfData.api_content || pdfData.content) as string) || "").length
       });
     }
 
@@ -409,11 +403,7 @@ export default defineEventHandler(async (event: H3Event) => {
     let storagePath = pdfPath;
     if (pdfContent) {
       try {
-        storagePath = await documentoStorage.guardarPdf(
-          solicitudId,
-          pdfContent,
-          pdfFilename
-        );
+        storagePath = await documentoStorage.guardarPdf(solicitudId, pdfContent, pdfFilename);
         await Log.info("PDF guardado en storage exitosamente", {
           solicitudId,
           storagePath,
@@ -459,7 +449,13 @@ export default defineEventHandler(async (event: H3Event) => {
       "PDF generado exitosamente"
     );
   } catch (error: unknown) {
-    const err = error as { statusCode?: number; response?: { status?: number }; data?: { error?: string }; message?: string; stack?: string };
+    const err = error as {
+      statusCode?: number;
+      response?: { status?: number };
+      data?: { error?: string };
+      message?: string;
+      stack?: string;
+    };
     const sid = typeof solicitudId === "string" ? solicitudId : "unknown";
     await Log.error("Error al generar PDF", error as Error, {
       solicitudId: sid,

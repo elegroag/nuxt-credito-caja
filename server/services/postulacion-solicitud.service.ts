@@ -1,12 +1,19 @@
 import prisma from "~~/lib/prisma";
-import type { InformacionLaboral, IngresosDescuentos, InformacionEconomica, Propiedad, Deuda, Referencia } from "~~/shared/types/payload";
+import type {
+  InformacionLaboral,
+  IngresosDescuentos,
+  InformacionEconomica,
+  Propiedad,
+  Deuda,
+  Referencia
+} from "~~/shared/types/payload";
 import type { LineaCreditoSimulador } from "~~/shared/types/simulador";
 
 // Helper para normalizar valores que pueden ser string u objeto {label, value}
 const normalizeValue = (value: unknown): string | undefined => {
   if (value === null || value === undefined) return undefined;
   if (typeof value === "string") return value;
-  if (typeof value === "object" && 'value' in value) {
+  if (typeof value === "object" && "value" in value) {
     return String((value as { value: unknown }).value);
   }
   return String(value);
@@ -45,6 +52,7 @@ interface PayloadSolicitante {
   nivel_educativo?: string;
   profesion?: string;
   email?: string;
+  telefono?: string;
   telefono_fijo?: string;
   celular?: string;
   telefono_movil?: string;
@@ -193,6 +201,7 @@ const postulacionSolicitudService = () => {
       // 2. Determinar número de solicitud
       let numeroSolicitudRadicado: string;
       const solicitudIdEnviado = solicitud?.numero_solicitud;
+      let secuencia = 0;
 
       if (solicitudIdEnviado) {
         // Verificar si el número enviado ya existe
@@ -213,7 +222,7 @@ const postulacionSolicitudService = () => {
           const vigencia = new Date().getFullYear();
           // Extraer secuencia del formato "000006-202604-01"
           const partes = solicitudIdEnviado.split("-");
-          const secuencia = partes.length >= 1 ? parseInt(partes[0] || "1", 10) || 1 : 1;
+          secuencia = partes.length >= 1 ? parseInt(partes[0] || "1", 10) || 1 : 1;
 
           await prisma.numero_solicitudes.create({
             data: {
@@ -238,6 +247,7 @@ const postulacionSolicitudService = () => {
       const productoTipoBackend = linea_credito?.tipcre || solicitud?.producto_tipo || null;
       const solicitudCredito = await guardarSolicitudCredito({
         numero_solicitud: numeroSolicitudRadicado,
+        numero_comprobante: secuencia.toString(),
         owner_username: solicitud?.owner_username || "",
         valor_solicitud: Number(solicitud?.valor_solicitud) || 0,
         plazo_meses: Number(solicitud?.plazo_meses) || 0,
@@ -253,18 +263,11 @@ const postulacionSolicitudService = () => {
         fecha_radicado: new Date()
       });
 
-      // 4. Obtener numeric_secuencia para numero_comprobante
-      const numeroSolicitudRecord = await prisma.numero_solicitudes.findUnique({
-        where: { radicado: numeroSolicitudRadicado }
+      const numeroComprobante = String(numeroSolicitudRadicado).padStart(6, "0");
+      await prisma.solicitudes_credito.update({
+        where: { numero_solicitud: numeroSolicitudRadicado },
+        data: { numero_comprobante: numeroComprobante }
       });
-
-      if (numeroSolicitudRecord) {
-        const numeroComprobante = String(numeroSolicitudRecord.numeric_secuencia).padStart(6, "0");
-        await prisma.solicitudes_credito.update({
-          where: { numero_solicitud: numeroSolicitudRadicado },
-          data: { numero_comprobante: numeroComprobante }
-        });
-      }
 
       // 5. Guardar payload
       await guardarPayload({
@@ -274,7 +277,9 @@ const postulacionSolicitudService = () => {
         informacion_economica: informacion_economica as InformacionEconomica | undefined,
         propiedades: propiedades as Propiedad[] | undefined,
         deudas: deudas as Deuda[] | undefined,
-        referencias: referencias as { familiares: Referencia[]; personales: Referencia[] } | undefined,
+        referencias: referencias as
+          | { familiares: Referencia[]; personales: Referencia[] }
+          | undefined,
         linea_credito: linea_credito as LineaCreditoSimulador | undefined
       });
 
@@ -305,7 +310,7 @@ const postulacionSolicitudService = () => {
           nivel_educativo: solicitanteData.nivel_educativo,
           profesion: solicitanteData.profesion,
           email: solicitanteData.email,
-          telefono_fijo: solicitanteData.telefono_fijo,
+          telefono_fijo: solicitanteData.telefono || solicitanteData.telefono_fijo,
           telefono_movil: solicitanteData.celular || solicitanteData.telefono_movil,
           direccion: solicitanteData.direccion,
           barrio: solicitanteData.barrio,
