@@ -8,6 +8,7 @@ export function useParametrosDetalles() {
   const loading = ref(false);
   const error = ref("");
   const parametrosCache = ref<ParametrosDetalles | null>(null);
+  const _cacheLoaded = ref(false);
 
   // Función para cargar todos los parámetros usando el endpoint existente
   const cargarParametros = async () => {
@@ -42,6 +43,7 @@ export function useParametrosDetalles() {
         estados_solicitud: estadosRes.data || []
       };
 
+      _cacheLoaded.value = true;
       return parametrosCache.value;
     } catch (e: unknown) {
       const errorMessage = e instanceof Error ? e.message : "Error cargando parámetros de detalles";
@@ -52,6 +54,9 @@ export function useParametrosDetalles() {
       loading.value = false;
     }
   };
+
+  // Cargar parámetros automáticamente al inicio
+  cargarParametros();
 
   // Funciones de búsqueda optimizadas
   const getTipoIdentificacion = computed(() => {
@@ -88,6 +93,11 @@ export function useParametrosDetalles() {
   const getEstadoColor = (estadoId: string): string => {
     const estado = getEstadoData.value.get(estadoId);
     return estado?.color || "#6B7280";
+  };
+
+  const getEstadoDescripcion = (estadoId: string): string => {
+    const estado = getEstadoData.value.get(estadoId);
+    return estado?.descripcion || "";
   };
 
   const getEstadoNombre = (estadoId: string): string => {
@@ -170,6 +180,7 @@ export function useParametrosDetalles() {
     getTipoContrato,
     getEstadoData,
     getEstadoColor,
+    getEstadoDescripcion,
     getEstadoNombre,
     getEstadoBadgeClass,
     flujoAprobacion,

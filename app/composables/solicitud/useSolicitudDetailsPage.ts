@@ -20,6 +20,8 @@ export const useSolicitudDetailsPage = () => {
     buscarTipoVivienda,
     buscarTipoContrato,
     getEstadoNombre,
+    getEstadoColor,
+    getEstadoDescripcion,
     getEstadoBadgeClass
   } = useParametrosDetalles();
 
@@ -243,6 +245,8 @@ export const useSolicitudDetailsPage = () => {
     buscarTipoVivienda,
     buscarTipoContrato,
     getEstadoNombre,
+    getEstadoColor,
+    getEstadoDescripcion,
     getEstadoBadgeClass,
 
     // Funciones de utilidad

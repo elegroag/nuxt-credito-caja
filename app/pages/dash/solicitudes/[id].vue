@@ -48,7 +48,8 @@
         <SolicitudHeader
           :numero-solicitud="numeroSolicitudDisplay"
           :estado-nombre="getEstadoNombre(String(solicitud.estado || ''))"
-          :badge-class="getEstadoBadgeClass(String(solicitud.estado || ''))"
+          :estado-color="getEstadoColor(String(solicitud.estado || ''))"
+          :estado-descripcion="getEstadoDescripcion(String(solicitud.estado || ''))"
         />
 
         <!-- Timeline del Proceso -->
@@ -150,6 +151,8 @@ const {
 
   // Funciones de parámetros
   getEstadoNombre,
+  getEstadoColor,
+  getEstadoDescripcion,
   getEstadoBadgeClass,
 
   // Funciones de utilidad
