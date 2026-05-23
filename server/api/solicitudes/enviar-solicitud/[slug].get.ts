@@ -25,10 +25,10 @@ export default defineEventHandler(async (event) => {
   const codigoCategoria = solicitante?.codigo_categoria ?? "";
   const salario = solicitante?.salario ? Number(solicitante.salario) : 0;
 
-  const ingresosDescuentos
-    = (solicitud_payload?.ingresos_descuentos as Record<string, unknown>) ?? [];
-  const informacionEconomica
-    = (solicitud_payload?.informacion_economica as Record<string, unknown>) ?? [];
+  const ingresosDescuentos =
+    (solicitud_payload?.ingresos_descuentos as Record<string, unknown>) ?? [];
+  const informacionEconomica =
+    (solicitud_payload?.informacion_economica as Record<string, unknown>) ?? [];
 
   const payload = {
     documento: numero_solicitud,
@@ -49,9 +49,7 @@ export default defineEventHandler(async (event) => {
     mancat: solicitudCredito?.producto_tipo,
     tipcre: solicitudCredito?.tipo_credito ?? "CONSUMO",
     perpag: solicitudCredito?.plazo_meses,
-    facfin: solicitudCredito?.tasa_interes
-      ? Number(solicitudCredito.tasa_interes) / 100
-      : 0, // Convertir a factor
+    facfin: solicitudCredito?.tasa_interes ? Number(solicitudCredito.tasa_interes) / 100 : 0, // Convertir a factor
     nocts: solicitudCredito?.plazo_meses,
     nitseg: "",
     facseg: 0.01, // Factor seguro (1% por defecto)
@@ -72,9 +70,7 @@ export default defineEventHandler(async (event) => {
     cancelado: "N",
     aprseg: "N",
     documentos: JSON.stringify(
-      solicitudCredito?.solicitud_documentos?.map(
-        doc => doc.documento_requerido_id
-      ) ?? []
+      solicitudCredito?.solicitud_documentos?.map((doc) => doc.documento_requerido_id) ?? []
     )
   };
 

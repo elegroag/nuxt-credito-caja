@@ -77,7 +77,8 @@ export default defineNuxtConfig({
       basic_user: env.API_FIRMA_BASIC_USER || "",
       basic_password: env.API_FIRMA_BASIC_PASSWORD || "",
       client_id: env.API_FIRMA_CLIENT_ID || "",
-      password: env.API_FIRMA_PASSWORD || ""
+      password: env.API_FIRMA_PASSWORD || "",
+      apy_key: env.API_FIRMA_KEY || ""
     },
     apiFLASKPDF: {
       env: env.API_FLASKPDF_ENV || "dev",

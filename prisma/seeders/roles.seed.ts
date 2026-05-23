@@ -67,5 +67,55 @@ export const roles = [
     activo: true,
     created_at: "2026-02-25 02:06:11.0",
     updated_at: "2026-02-25 02:06:11.0"
+  },
+  {
+    id: 5,
+    nombre: "empleador",
+    descripcion: "Empleador que gestiona créditos empresariales",
+    permisos: [
+      "solicitudes.create",
+      "solicitudes.read",
+      "solicitudes.update",
+      "empresas.read",
+      "trabajadores.read",
+      "firma_digital"
+    ],
+    color: "#0891B2",
+    orden: 5,
+    activo: true,
+    created_at: "2026-02-25 02:06:11.0",
+    updated_at: "2026-02-25 02:06:11.0"
+  },
+  {
+    id: 6,
+    nombre: "codeudor",
+    descripcion: "Codeudor que firma créditos como garante",
+    permisos: ["solicitudes.read", "firma_digital"],
+    color: "#BE185D",
+    orden: 6,
+    activo: true,
+    created_at: "2026-02-25 02:06:11.0",
+    updated_at: "2026-02-25 02:06:11.0"
+  },
+  {
+    id: 7,
+    nombre: "director",
+    descripcion: "Director con acceso a reportes y administración",
+    permisos: [
+      "users.read",
+      "solicitudes.create",
+      "solicitudes.read",
+      "solicitudes.update",
+      "trabajadores.read",
+      "empresas.read",
+      "reports.read",
+      "firma_digital",
+      "system.admin"
+    ],
+    color: "#1E3A5F",
+    orden: 7,
+    activo: true,
+    created_at: "2026-02-25 02:06:11.0",
+    updated_at: "2026-02-25 02:06:11.0"
   }
 ];

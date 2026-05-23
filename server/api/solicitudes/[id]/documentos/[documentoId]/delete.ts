@@ -1,6 +1,9 @@
 import type { H3Event } from "h3";
 import { defineEventHandler, getRouterParam, setResponseStatus } from "h3";
 import prisma from "~~/lib/prisma";
+import { unlink } from "fs/promises";
+import { join } from "path";
+import { existsSync } from "fs";
 import { CustomResponse } from "~~/server/utils/customResponse";
 
 export default defineEventHandler(async (event: H3Event) => {
@@ -14,16 +17,12 @@ export default defineEventHandler(async (event: H3Event) => {
       return CustomResponse.error("No hay sesión activa", "Error de autenticación");
     }
 
-    if (!solicitudId) {
+    if (!solicitudId || !documentoId) {
       setResponseStatus(event, 400);
-      return CustomResponse.error("ID de solicitud no proporcionado", "Error de validación");
+      return CustomResponse.error("Parámetros incompletos", "Error de validación");
     }
 
-    if (!documentoId) {
-      setResponseStatus(event, 400);
-      return CustomResponse.error("ID de documento no proporcionado", "Error de validación");
-    }
-
+    // Obtener la solicitud para verificar permisos
     const solicitud = await prisma.solicitudes_credito.findUnique({
       where: { numero_solicitud: solicitudId }
     });
@@ -33,7 +32,10 @@ export default defineEventHandler(async (event: H3Event) => {
       return CustomResponse.error("Solicitud no encontrada", "Recurso no encontrado");
     }
 
-    if (solicitud.owner_username !== session.user.username) {
+    // Solo admin o el owner pueden eliminar
+    const isAdmin =
+      Array.isArray(session.user.roles) && session.user.roles.includes("administrator");
+    if (!isAdmin && solicitud.owner_username !== session.user.username) {
       setResponseStatus(event, 403);
       return CustomResponse.error(
         "No tienes permiso para eliminar documentos de esta solicitud",
@@ -41,23 +43,46 @@ export default defineEventHandler(async (event: H3Event) => {
       );
     }
 
+    // Buscar el documento por su id
+    const documentoIdBigInt = BigInt(documentoId);
+
     const documento = await prisma.solicitud_documentos.findFirst({
       where: {
-        id: BigInt(documentoId),
+        id: documentoIdBigInt,
         solicitud_id: solicitudId
       }
     });
 
     if (!documento) {
+      // Verificar si existe pero ya está inactivo (soft deleted previamente)
+      const docInactivo = await prisma.solicitud_documentos.findFirst({
+        where: { id: documentoIdBigInt, solicitud_id: solicitudId }
+      });
+      if (!docInactivo) {
+        // Ya está eliminado — comportamiento idempotente
+        return CustomResponse.success(
+          { id: documentoId, yaEliminado: true },
+          "Documento ya había sido eliminado"
+        );
+      }
       setResponseStatus(event, 404);
       return CustomResponse.error("Documento no encontrado", "Recurso no encontrado");
     }
 
+    // Eliminar el archivo físico
+    if (documento.ruta_archivo) {
+      const filePath = join(process.cwd(), documento.ruta_archivo);
+      if (existsSync(filePath)) {
+        await unlink(filePath);
+      }
+    }
+
+    // delete definitivo
     await prisma.solicitud_documentos.delete({
       where: { id: documento.id }
     });
 
-    return CustomResponse.ok(null, "Documento eliminado exitosamente");
+    return CustomResponse.success({ id: documentoId }, "Documento eliminado exitosamente");
   } catch (error: unknown) {
     const err = error as {
       statusCode?: number;

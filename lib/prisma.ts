@@ -1,15 +1,20 @@
 import dotenv from "dotenv";
-import { PrismaClient, Prisma, $Enums  } from "../prisma/generated/prisma/client";
+import { PrismaClient, Prisma, $Enums } from "../prisma/generated/prisma/client";
 import { PrismaMariaDb } from "@prisma/adapter-mariadb";
+import type { PoolConfig } from "mariadb";
 
 dotenv.config();
 
-const url
-  = process.env.DATABASE_ENV === "dev"
-    ? process.env.DATABASE_URL_DEV
-    : process.env.DATABASE_URL_PRO;
+const url =
+  process.env.DATABASE_ENV === "dev" ? process.env.DATABASE_URL_DEV : process.env.DATABASE_URL_PRO;
 
-const adapter = new PrismaMariaDb(url!);
+const poolConfig: PoolConfig = {
+  connectionLimit: 20,
+  connectTimeout: 30000,
+  socketTimeout: 180000
+};
+
+const adapter = new PrismaMariaDb(url!, poolConfig);
 
 const prismaClientSingleton = () => {
   return new PrismaClient({
@@ -18,7 +23,7 @@ const prismaClientSingleton = () => {
 };
 
 const globalForPrisma = globalThis as {
-  prismaGlobal: ReturnType<typeof prismaClientSingleton>
+  prismaGlobal: ReturnType<typeof prismaClientSingleton>;
 } & typeof globalThis;
 
 const prisma = globalForPrisma.prismaGlobal ?? prismaClientSingleton();

@@ -250,6 +250,15 @@
         <UButton color="neutral" variant="outline" label="Cerrar" @click="close" />
       </template>
     </UModal>
+
+    <!-- Loading Overlay global para uploads -->
+    <UiLoadingOverlay
+      :show="!!cargandoId"
+      mensaje="Subiendo documento"
+      :sub-mensaje="progreso > 0 ? `(${Math.round(progreso)}%)` : 'Por favor espere'"
+      :mostrar-progreso="progreso > 0"
+      :progreso="progreso"
+    />
   </div>
 </template>
 

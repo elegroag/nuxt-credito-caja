@@ -1,10 +1,5 @@
 import type { H3Event } from "h3";
-import {
-  defineEventHandler,
-  getRouterParam,
-  setResponseStatus,
-  sendStream
-} from "h3";
+import { defineEventHandler, getRouterParam, setResponseStatus, sendStream } from "h3";
 import { createReadStream, existsSync } from "fs";
 import { join } from "path";
 import prisma from "~~/lib/prisma";
@@ -18,26 +13,17 @@ export default defineEventHandler(async (event: H3Event) => {
 
     if (!session?.user?.username) {
       setResponseStatus(event, 401);
-      return CustomResponse.error(
-        "No hay sesión activa",
-        "Error de autenticación"
-      );
+      return CustomResponse.error("No hay sesión activa", "Error de autenticación");
     }
 
     if (!solicitudId) {
       setResponseStatus(event, 400);
-      return CustomResponse.error(
-        "ID de solicitud no proporcionado",
-        "Error de validación"
-      );
+      return CustomResponse.error("ID de solicitud no proporcionado", "Error de validación");
     }
 
     if (!documentoId) {
       setResponseStatus(event, 400);
-      return CustomResponse.error(
-        "ID de documento no proporcionado",
-        "Error de validación"
-      );
+      return CustomResponse.error("ID de documento no proporcionado", "Error de validación");
     }
 
     const solicitud = await prisma.solicitudes_credito.findUnique({
@@ -46,10 +32,7 @@ export default defineEventHandler(async (event: H3Event) => {
 
     if (!solicitud) {
       setResponseStatus(event, 404);
-      return CustomResponse.error(
-        "Solicitud no encontrada",
-        "Recurso no encontrado"
-      );
+      return CustomResponse.error("Solicitud no encontrada", "Recurso no encontrado");
     }
 
     // Admin con cualquier rol puede descargar sin restriction de ownership
@@ -64,39 +47,30 @@ export default defineEventHandler(async (event: H3Event) => {
         "Acceso denegado"
       );
     }
-
+// Buscar el documento por su id en la base de datos
     const documento = await prisma.solicitud_documentos.findFirst({
       where: {
         id: BigInt(documentoId),
-        solicitud_id: solicitudId,
+        solicitud_id: solicitud.numero_solicitud,
         activo: true
       }
     });
 
     if (!documento) {
       setResponseStatus(event, 404);
-      return CustomResponse.error(
-        "Documento no encontrado",
-        "Recurso no encontrado"
-      );
+      return CustomResponse.error("Documento no encontrado", "Recurso no encontrado");
     }
 
     if (!documento.ruta_archivo) {
       setResponseStatus(event, 404);
-      return CustomResponse.error(
-        "Ruta del documento no disponible",
-        "Recurso no disponible"
-      );
+      return CustomResponse.error("Ruta del documento no disponible", "Recurso no disponible");
     }
 
     const filePath = join(process.cwd(), documento.ruta_archivo);
 
     if (!existsSync(filePath)) {
       setResponseStatus(event, 404);
-      return CustomResponse.error(
-        "El archivo no existe en el servidor",
-        "Archivo no encontrado"
-      );
+      return CustomResponse.error("El archivo no existe en el servidor", "Archivo no encontrado");
     }
 
     setResponseHeaders(event, {
@@ -107,7 +81,12 @@ export default defineEventHandler(async (event: H3Event) => {
     const fileStream = createReadStream(filePath);
     return sendStream(event, fileStream);
   } catch (error: unknown) {
-    const err = error as { statusCode?: number; response?: { status?: number }; data?: { error?: string }; message?: string };
+    const err = error as {
+      statusCode?: number;
+      response?: { status?: number };
+      data?: { error?: string };
+      message?: string;
+    };
     console.error("Error al descargar documento:", error);
     const status = Number(err?.statusCode || err?.response?.status || 502);
     setResponseStatus(event, Number.isFinite(status) ? status : 502);

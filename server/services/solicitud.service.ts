@@ -1,11 +1,7 @@
 import prisma from "~~/lib/prisma";
 
 const solicitudService = () => {
-  const getSolicitudesByUser = async (
-    username: string,
-    limit: number = 20,
-    offset: number = 0
-  ) => {
+  const getSolicitudesByUser = async (username: string, limit: number = 20, offset: number = 0) => {
     const solicitudes = await prisma.solicitudes_credito.findMany({
       where: {
         owner_username: username
@@ -47,9 +43,7 @@ const solicitudService = () => {
         detalle_modalidad: solicitud.detalle_modalidad,
         tipo_credito: solicitud.tipo_credito,
         moneda: solicitud.moneda,
-        cuota_mensual: solicitud.cuota_mensual
-          ? String(solicitud.cuota_mensual)
-          : null,
+        cuota_mensual: solicitud.cuota_mensual ? String(solicitud.cuota_mensual) : null,
         created_at: solicitud.created_at?.toISOString() || null,
         updated_at: solicitud.updated_at?.toISOString() || null
       })),
@@ -148,9 +142,7 @@ const solicitudService = () => {
         valor_solicitud: String(solicitud.valor_solicitud),
         rol_en_solicitud: solicitud.rol_en_solicitud,
         valor_solicitado: String(solicitud.valor_solicitud),
-        cuota_mensual: solicitud.cuota_mensual
-          ? String(solicitud.cuota_mensual)
-          : null,
+        cuota_mensual: solicitud.cuota_mensual ? String(solicitud.cuota_mensual) : null,
         plazo_meses: solicitud.plazo_meses,
         moneda: solicitud.moneda,
         detalle_modalidad: solicitud.detalle_modalidad,
@@ -163,23 +155,50 @@ const solicitudService = () => {
         detalle_modalidad: solicitud.detalle_modalidad,
         estado: solicitud.estado,
         numero_cuotas: solicitud.plazo_meses,
-        tasa_interes: solicitud.tasa_interes
-          ? Number(solicitud.tasa_interes)
-          : 0,
+        tasa_interes: solicitud.tasa_interes ? Number(solicitud.tasa_interes) : 0,
         total_intereses: 0,
         total_pagar: 0
       },
       solicitante: solicitud.solicitud_solicitante?.[0] || null,
-      informacion_laboral:
-        solicitud.solicitud_payload?.[0]?.informacion_laboral || null,
-      ingresos_descuentos:
-        solicitud.solicitud_payload?.[0]?.ingresos_descuentos || null,
-      informacion_economica:
-        solicitud.solicitud_payload?.[0]?.informacion_economica || null,
+      informacion_laboral: solicitud.solicitud_payload?.[0]?.informacion_laboral || null,
+      ingresos_descuentos: solicitud.solicitud_payload?.[0]?.ingresos_descuentos || null,
+      informacion_economica: solicitud.solicitud_payload?.[0]?.informacion_economica || null,
       propiedades: solicitud.solicitud_payload?.[0]?.propiedades || null,
       deudas: solicitud.solicitud_payload?.[0]?.deudas || null,
       referencias: solicitud.solicitud_payload?.[0]?.referencias || null
     };
+
+    const solicitante = solicitud.solicitud_solicitante?.[0]
+      ? {
+          nombres: solicitud.solicitud_solicitante[0].nombres,
+          apellidos: solicitud.solicitud_solicitante[0].apellidos,
+          tipo_documento: solicitud.solicitud_solicitante[0].tipo_documento,
+          numero_documento: solicitud.solicitud_solicitante[0].numero_documento,
+          fecha_nacimiento: solicitud.solicitud_solicitante[0].fecha_nacimiento,
+          genero: solicitud.solicitud_solicitante[0].genero,
+          estado_civil: solicitud.solicitud_solicitante[0].estado_civil,
+          nivel_educativo: solicitud.solicitud_solicitante[0].nivel_educativo,
+          profesion: solicitud.solicitud_solicitante[0].profesion,
+          email: solicitud.solicitud_solicitante[0].email,
+          telefono_fijo: solicitud.solicitud_solicitante[0].telefono_fijo,
+          telefono_movil: solicitud.solicitud_solicitante[0].telefono_movil,
+          direccion: solicitud.solicitud_solicitante[0].direccion,
+          ciudad: solicitud.solicitud_solicitante[0].ciudad,
+          departamento: solicitud.solicitud_solicitante[0].departamento,
+          tipo_persona: solicitud.solicitud_solicitante[0].tipo_persona,
+          razon_social: solicitud.solicitud_solicitante[0].razon_social,
+          nit: solicitud.solicitud_solicitante[0].nit,
+          codigo_categoria: solicitud.solicitud_solicitante[0].codigo_categoria,
+          tipo_vivienda: solicitud.solicitud_solicitante[0].tipo_vivienda
+        }
+      : null;
+
+    const documentos =
+      solicitud.solicitud_documentos?.map((doc) => ({
+        ...doc,
+        id: String(doc.id),
+        tamano_bytes: doc.tamano_bytes ? String(doc.tamano_bytes) : null
+      })) || [];
 
     return {
       numero_solicitud: solicitud.numero_solicitud,
@@ -195,52 +214,13 @@ const solicitudService = () => {
       detalle_modalidad: solicitud.detalle_modalidad,
       tipo_credito: solicitud.tipo_credito,
       moneda: solicitud.moneda,
-      cuota_mensual: solicitud.cuota_mensual
-        ? String(solicitud.cuota_mensual)
-        : null,
+      cuota_mensual: solicitud.cuota_mensual ? String(solicitud.cuota_mensual) : null,
       created_at: solicitud.created_at?.toISOString() || null,
       updated_at: solicitud.updated_at?.toISOString() || null,
       user: solicitud.users,
-      solicitante: solicitud.solicitud_solicitante?.[0]
-        ? {
-            nombres: solicitud.solicitud_solicitante[0].nombres,
-            apellidos: solicitud.solicitud_solicitante[0].apellidos,
-            tipo_documento: solicitud.solicitud_solicitante[0].tipo_documento,
-            numero_documento:
-              solicitud.solicitud_solicitante[0].numero_documento,
-            fecha_nacimiento:
-              solicitud.solicitud_solicitante[0].fecha_nacimiento,
-            genero: solicitud.solicitud_solicitante[0].genero,
-            estado_civil: solicitud.solicitud_solicitante[0].estado_civil,
-            nivel_educativo: solicitud.solicitud_solicitante[0].nivel_educativo,
-            profesion: solicitud.solicitud_solicitante[0].profesion,
-            email: solicitud.solicitud_solicitante[0].email,
-            telefono_fijo: solicitud.solicitud_solicitante[0].telefono_fijo,
-            telefono_movil: solicitud.solicitud_solicitante[0].telefono_movil,
-            direccion: solicitud.solicitud_solicitante[0].direccion,
-            ciudad: solicitud.solicitud_solicitante[0].ciudad,
-            departamento: solicitud.solicitud_solicitante[0].departamento,
-            tipo_persona: solicitud.solicitud_solicitante[0].tipo_persona,
-            razon_social: solicitud.solicitud_solicitante[0].razon_social,
-            nit: solicitud.solicitud_solicitante[0].nit,
-            codigo_categoria:
-              solicitud.solicitud_solicitante[0].codigo_categoria,
-            tipo_vivienda: solicitud.solicitud_solicitante[0].tipo_vivienda
-          }
-        : null,
+      solicitante,
       payload,
-      documentos:
-        solicitud.solicitud_documentos?.map(doc => ({
-          ...doc,
-          id: String(doc.id),
-          tamano_bytes: doc.tamano_bytes ? String(doc.tamano_bytes) : null
-        })) || [],
-      payload_raw: solicitud.solicitud_payload?.[0]
-        ? {
-            ...solicitud.solicitud_payload[0],
-            id: String(solicitud.solicitud_payload[0].id)
-          }
-        : null
+      documentos
     };
   };
 
@@ -286,9 +266,7 @@ const solicitudService = () => {
         detalle_modalidad: solicitud.detalle_modalidad,
         tipo_credito: solicitud.tipo_credito,
         moneda: solicitud.moneda,
-        cuota_mensual: solicitud.cuota_mensual
-          ? String(solicitud.cuota_mensual)
-          : null,
+        cuota_mensual: solicitud.cuota_mensual ? String(solicitud.cuota_mensual) : null,
         created_at: solicitud.created_at?.toISOString() || null,
         updated_at: solicitud.updated_at?.toISOString() || null,
         user: solicitud.users
@@ -300,9 +278,9 @@ const solicitudService = () => {
   };
 
   const getSolicitudesPaginadas = async (params: {
-    limit: number
-    skip: number
-    estado?: string
+    limit: number;
+    skip: number;
+    estado?: string;
   }) => {
     const { limit, skip, estado } = params;
 
@@ -356,9 +334,7 @@ const solicitudService = () => {
         detalle_modalidad: solicitud.detalle_modalidad,
         tipo_credito: solicitud.tipo_credito,
         moneda: solicitud.moneda,
-        cuota_mensual: solicitud.cuota_mensual
-          ? String(solicitud.cuota_mensual)
-          : null,
+        cuota_mensual: solicitud.cuota_mensual ? String(solicitud.cuota_mensual) : null,
         created_at: solicitud.created_at?.toISOString() || null,
         updated_at: solicitud.updated_at?.toISOString() || null,
         solicitante: solicitud.solicitud_solicitante?.[0] || null

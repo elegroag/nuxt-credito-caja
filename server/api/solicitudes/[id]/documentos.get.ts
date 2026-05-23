@@ -3,55 +3,36 @@ import { defineEventHandler, getRouterParam, setResponseStatus } from "h3";
 import prisma from "~~/lib/prisma";
 import { CustomResponse } from "~~/server/utils/customResponse";
 
-// Helper para serializar BigInt y fechas
-const _serializeData = (obj: Record<string, unknown> | unknown[] | unknown): Record<string, unknown> | unknown[] | unknown => {
-  if (obj === null || obj === undefined) return obj;
-  if (obj instanceof Date) return obj.toISOString();
-  if (typeof obj === "bigint") return obj.toString();
-  if (typeof obj === "object") {
-    if (Array.isArray(obj)) {
-      return (obj as unknown[]).map(_serializeData);
-    }
-    const result: Record<string, unknown> = {};
-    for (const key in obj) {
-      result[key] = _serializeData((obj as Record<string, unknown>)[key]);
-    }
-    return result;
-  }
-  return obj;
-};
-
-// Mapear documento de Prisma al formato DocumentoCargado
-interface DocumentoPrisma {
+// Tipado basado en el modelo Prisma solicitud_documentos
+interface SolicitudDocumentos {
   id: bigint;
-  username: string;
-  nombre_original: string | null;
+  documento_uuid: string;
+  solicitud_id: string;
+  documento_requerido_id: string;
+  nombre_original: string;
+  saved_filename: string;
+  tipo_mime: string | null;
+  tamano_bytes: number | null;
+  ruta_archivo: string | null;
+  activo: boolean;
   created_at: Date | null;
   updated_at: Date | null;
-  tipo_documento: string | null;
-  saved_filename: string | null;
-  tamano_bytes: bigint | null;
-  tipo_mime: string | null;
-  ruta_archivo: string | null;
-  api_path: string | null;
-  api_filename: string | null;
-  solicitud_id: string | null;
-  activo: boolean | null;
 }
 
-const mapDocumentoCargado = (doc: DocumentoPrisma): Record<string, unknown> => ({
+// Mapear documento al formato de respuesta
+const mapDocumentoCargado = (doc: SolicitudDocumentos): Record<string, unknown> => ({
   id: String(doc.id),
+  documento_uuid: doc.documento_uuid,
+  solicitud_id: doc.solicitud_id,
+  documento_requerido_id: doc.documento_requerido_id,
   nombre_original: doc.nombre_original,
-  created_at: doc.created_at?.toISOString?.() || String(doc.created_at),
-  documento_requerido_id: doc.tipo_documento,
   saved_filename: doc.saved_filename,
-  tamano_bytes: doc.tamano_bytes ? doc.tamano_bytes.toString() : null,
   tipo_mime: doc.tipo_mime,
+  tamano_bytes: doc.tamano_bytes != null ? String(doc.tamano_bytes) : null,
   ruta_archivo: doc.ruta_archivo,
-  documento_uuid: doc.api_filename || doc.saved_filename,
-  updated_at: doc.updated_at?.toISOString?.() || String(doc.updated_at),
   activo: doc.activo,
-  solicitud_id: doc.solicitud_id
+  created_at: doc.created_at?.toISOString() || null,
+  updated_at: doc.updated_at?.toISOString() || null
 });
 
 export default defineEventHandler(async (event: H3Event) => {
@@ -80,10 +61,13 @@ export default defineEventHandler(async (event: H3Event) => {
 
     if (solicitud.owner_username !== session.user.username) {
       setResponseStatus(event, 403);
-      return CustomResponse.error("No tienes permiso para ver los documentos de esta solicitud", "Acceso denegado");
+      return CustomResponse.error(
+        "No tienes permiso para ver los documentos de esta solicitud",
+        "Acceso denegado"
+      );
     }
 
-    const documentos = await prisma.documentos_postulantes.findMany({
+    const documentos = await prisma.solicitud_documentos.findMany({
       where: {
         solicitud_id: solicitudId,
         activo: true
@@ -93,14 +77,21 @@ export default defineEventHandler(async (event: H3Event) => {
       }
     });
 
-    const documentosMapeados = documentos.map((doc) => mapDocumentoCargado(doc as DocumentoPrisma));
+    const documentosMapeados = documentos.map((doc) =>
+      mapDocumentoCargado(doc as unknown as SolicitudDocumentos)
+    );
 
     return CustomResponse.success(
       { documentos: documentosMapeados, count: documentosMapeados.length },
       "Documentos listados exitosamente"
     );
   } catch (error: unknown) {
-    const err = error as { statusCode?: number; response?: { status?: number }; data?: { error?: string }; message?: string };
+    const err = error as {
+      statusCode?: number;
+      response?: { status?: number };
+      data?: { error?: string };
+      message?: string;
+    };
     console.error("Error al listar documentos:", error);
     const status = Number(err?.statusCode || err?.response?.status || 502);
     setResponseStatus(event, Number.isFinite(status) ? status : 502);

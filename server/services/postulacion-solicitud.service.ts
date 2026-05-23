@@ -74,6 +74,7 @@ interface PayloadSolicitante {
 
 interface PayloadLineaCredito {
   tipcre?: string;
+  tasa_interes?: number;
 }
 
 interface _PayloadStructure {
@@ -251,7 +252,7 @@ const postulacionSolicitudService = () => {
         owner_username: solicitud?.owner_username || "",
         valor_solicitud: Number(solicitud?.valor_solicitud) || 0,
         plazo_meses: Number(solicitud?.plazo_meses) || 0,
-        tasa_interes: Number(solicitud?.tasa_interes) || 0,
+        tasa_interes: Number(linea_credito?.tasa_interes) || 0,
         estado: solicitud?.estado || estadoInicial.id,
         producto_tipo: productoTipoBackend ?? undefined,
         ha_tenido_credito: solicitud?.ha_tenido_credito ?? undefined,

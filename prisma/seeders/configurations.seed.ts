@@ -152,5 +152,17 @@ export const configurations = [
     required: true,
     created_at: "2026-02-25 02:06:11.0",
     updated_at: "2026-02-25 02:06:11.0"
+  },
+  {
+    clave: "firma_digital_local",
+    valor: "false",
+    descripcion:
+      "Indica si el proceso de firma digital se realiza localmente o mediante proveedor externo",
+    tipo: "boolean",
+    categoria: "firma_digital",
+    editable: true,
+    required: true,
+    created_at: "2026-02-25 02:06:11.0",
+    updated_at: "2026-02-25 02:06:11.0"
   }
 ];

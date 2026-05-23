@@ -22,6 +22,7 @@ const {
   getTipoVivienda,
   formatFileSize,
   descargarDocumento,
+  eliminarDocumento,
   goBack,
   cargarSolicitud,
   iniciarFirmado
@@ -39,6 +40,21 @@ const _handleIniciarFirmado = async () => {
       ? "Proceso iniciado exitosamente"
       : "Error al iniciar el proceso")
   );
+};
+
+const documentoAEliminar = ref<Record<string, unknown> | null>(null);
+const confirmDeleteOpen = ref(false);
+
+const handleEliminarDocumento = async () => {
+  if (!documentoAEliminar.value) return;
+  const success = await eliminarDocumento(documentoAEliminar.value);
+  confirmDeleteOpen.value = false;
+  documentoAEliminar.value = null;
+  if (success) {
+    alert("Documento eliminado exitosamente");
+  } else {
+    alert("Error al eliminar el documento");
+  }
 };
 </script>
 
@@ -674,6 +690,16 @@ const _handleIniciarFirmado = async () => {
                 >
                   Descargar
                 </UButton>
+                <UButton
+                  size="xs"
+                  variant="outline"
+                  color="destructive"
+                  icon="i-lucide-trash-2"
+                  class="mt-3 ml-2"
+                  @click="documentoAEliminar = documento; confirmDeleteOpen = true"
+                >
+                  Eliminar
+                </UButton>
               </div>
             </div>
           </div>
@@ -695,6 +721,33 @@ const _handleIniciarFirmado = async () => {
           </p>
         </div>
       </UPageCard>
+
+      <!-- Modal de confirmación para eliminar documento -->
+      <UModal v-model:open="confirmDeleteOpen" title="Confirmar eliminación">
+        <template #body>
+          <p class="text-foreground">
+            ¿Está seguro de que desea eliminar este documento? Esta acción no se puede deshacer.
+          </p>
+        </template>
+        <template #footer>
+          <div class="flex justify-end gap-3">
+            <UButton
+              variant="outline"
+              color="neutral"
+              @click="confirmDeleteOpen = false"
+            >
+              Cancelar
+            </UButton>
+            <UButton
+              color="destructive"
+              icon="i-lucide-trash-2"
+              @click="handleEliminarDocumento"
+            >
+              Eliminar
+            </UButton>
+          </div>
+        </template>
+      </UModal>
     </template>
   </div>
 </template>

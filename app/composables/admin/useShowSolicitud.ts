@@ -169,6 +169,40 @@ export function useShowSolicitud() {
     }
   };
 
+  // Eliminar documento
+  const eliminarDocumento = async (documento: unknown): Promise<boolean> => {
+    try {
+      const docId = typeof documento === "object" && documento !== null && "id" in documento
+        ? String((documento as Record<string, unknown>).id)
+        : "";
+
+      if (!docId) {
+        console.error("No se pudo obtener el ID del documento");
+        return false;
+      }
+
+      const response = await $fetch<{
+        success: boolean
+        message?: string
+      }>(`/api/solicitudes/${solicitudId}/documentos/${docId}/delete`, {
+        method: "DELETE",
+        headers: {
+          ...(authHeader.value as Record<string, string>)
+        }
+      });
+
+      if (response?.success) {
+        // Recargar la solicitud para actualizar la lista de documentos
+        await cargarSolicitud();
+        return true;
+      }
+      return false;
+    } catch (error) {
+      console.error("Error al eliminar documento:", error);
+      return false;
+    }
+  };
+
   // Función principal de carga
   const cargarSolicitud = async () => {
     loading.value = true;
@@ -303,6 +337,7 @@ export function useShowSolicitud() {
 
     // Funciones de documentos
     descargarDocumento,
+    eliminarDocumento,
 
     // Funciones de navegación
     goBack,
