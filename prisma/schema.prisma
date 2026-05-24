@@ -183,6 +183,7 @@ model personal_access_tokens {
 model roles {
   id          BigInt    @id @default(autoincrement()) @db.UnsignedBigInt
   nombre      String    @unique(map: "roles_nombre_unique") @db.VarChar(50)
+  etiqueta    String?   @db.VarChar(45)
   descripcion String?   @db.VarChar(255)
   permisos    Json?
   color       String    @default("#6B7280") @db.VarChar(7)
@@ -197,16 +198,16 @@ model roles {
 }
 
 model configurations {
-  id                  BigInt    @id @default(autoincrement()) @db.UnsignedBigInt
-  clave               String    @unique(map: "configurations_clave_unique") @db.VarChar(100)
-  valor               String    @db.Text
-  descripcion         String?   @db.VarChar(255)
-  tipo                String    @default("string") @db.VarChar(50)
-  categoria           String    @default("general") @db.VarChar(100)
-  editable            Boolean   @default(true)
-  required            Boolean   @default(false)
-  created_at          DateTime? @db.Timestamp(0)
-  updated_at          DateTime? @db.Timestamp(0)
+  id          BigInt    @id @default(autoincrement()) @db.UnsignedBigInt
+  clave       String    @unique(map: "configurations_clave_unique") @db.VarChar(100)
+  valor       String    @db.Text
+  descripcion String?   @db.VarChar(255)
+  tipo        String    @default("string") @db.VarChar(50)
+  categoria   String    @default("general") @db.VarChar(100)
+  editable    Boolean   @default(true)
+  required    Boolean   @default(false)
+  created_at  DateTime? @db.Timestamp(0)
+  updated_at  DateTime? @db.Timestamp(0)
 
   @@index([categoria], map: "configurations_categoria_index")
   @@index([clave], map: "configurations_clave_index")
