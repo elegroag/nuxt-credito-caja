@@ -239,7 +239,7 @@
 </template>
 
 <script setup lang="ts">
-import { ChevronLeft, FileText, Settings, History } from "lucide-vue-next";
+import { ChevronLeft, FileText, Settings, History } from "@lucide/vue";
 
 import Badge from "@/components/shared/Badge.vue";
 import { useAccionesSolicitud } from "~/composables/admin/useAccionesSolicitud";

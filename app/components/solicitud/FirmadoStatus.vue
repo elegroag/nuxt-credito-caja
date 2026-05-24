@@ -103,7 +103,7 @@
 
 <script setup lang="ts">
 import { computed, onMounted, onUnmounted } from "#imports";
-import { FileSignature as FileSignatureIcon } from "lucide-vue-next";
+import { FileSignature as FileSignatureIcon } from "@lucide/vue";
 import { useFirmadoDigital } from "~/composables/solicitud/useFirmadoDigital";
 
 interface Props {

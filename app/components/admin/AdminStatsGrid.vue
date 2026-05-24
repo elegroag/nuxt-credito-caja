@@ -190,7 +190,7 @@ import {
   CheckCircle,
   DollarSign,
   BarChart3
-} from "lucide-vue-next";
+} from "@lucide/vue";
 import AdminStatsCard from "./AdminStatsCard.vue";
 
 interface Props {

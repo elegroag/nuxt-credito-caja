@@ -34,7 +34,7 @@
 
 <script setup lang="ts">
 import { computed } from "vue";
-import { ChevronLeft, ChevronRight, Send } from "lucide-vue-next";
+import { ChevronLeft, ChevronRight, Send } from "@lucide/vue";
 import { useConfigurations } from "~/composables/admin/useConfigurations";
 
 interface ReferenciasProps {

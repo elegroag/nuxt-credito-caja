@@ -53,7 +53,7 @@
 </template>
 
 <script setup lang="ts">
-import { FileText, FolderOpen } from "lucide-vue-next";
+import { FileText, FolderOpen } from "@lucide/vue";
 import SectionCard from "./SectionCard.vue";
 import Badge from "@/components/shared/Badge.vue";
 

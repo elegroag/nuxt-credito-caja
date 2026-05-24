@@ -133,7 +133,7 @@
 </template>
 
 <script setup lang="ts">
-import { Plus, Trash2 } from "lucide-vue-next";
+import { Plus, Trash2 } from "@lucide/vue";
 import { computed } from "vue";
 import FormField from "~/components/shared/FormField.vue";
 import { useConfigurations } from "~/composables/admin/useConfigurations";

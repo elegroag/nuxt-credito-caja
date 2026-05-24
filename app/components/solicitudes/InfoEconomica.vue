@@ -59,7 +59,7 @@
 </template>
 
 <script setup lang="ts">
-import { TrendingUp } from "lucide-vue-next";
+import { TrendingUp } from "@lucide/vue";
 import SectionCard from "./SectionCard.vue";
 import InfoField from "./InfoField.vue";
 

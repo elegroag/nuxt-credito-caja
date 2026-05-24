@@ -211,7 +211,7 @@
 
 <script setup lang="ts">
 import { computed } from "vue";
-import { FileCode, AlertCircle, ClipboardList, PenTool } from "lucide-vue-next";
+import { FileCode, AlertCircle, ClipboardList, PenTool } from "@lucide/vue";
 
 import { useRevisionStep } from "~/composables/solicitud/useRevisionStep";
 

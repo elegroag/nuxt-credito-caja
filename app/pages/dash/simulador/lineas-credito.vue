@@ -181,7 +181,7 @@
 </template>
 
 <script setup lang="ts">
-import { AlertCircle } from "lucide-vue-next";
+import { AlertCircle } from "@lucide/vue";
 
 import Badge from "@/components/shared/Badge.vue";
 import { useLineasCredito } from "~/composables/simulador/useLineasCredito";

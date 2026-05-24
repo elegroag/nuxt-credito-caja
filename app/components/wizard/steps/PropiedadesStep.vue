@@ -77,7 +77,7 @@
 </template>
 
 <script setup lang="ts">
-import { Plus, Trash2 } from "lucide-vue-next";
+import { Plus, Trash2 } from "@lucide/vue";
 import { computed } from "#imports";
 import FormField from "~/components/shared/FormField.vue";
 import CustomSelect from "~/components/shared/CustomSelect.vue";

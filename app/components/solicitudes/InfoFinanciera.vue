@@ -43,7 +43,7 @@
 </template>
 
 <script setup lang="ts">
-import { DollarSign } from "lucide-vue-next";
+import { DollarSign } from "@lucide/vue";
 import SectionCard from "./SectionCard.vue";
 import InfoField from "./InfoField.vue";
 

@@ -14,7 +14,7 @@ import {
   Building,
   Bell,
   Settings
-} from "lucide-vue-next";
+} from "@lucide/vue";
 
 // Estado compartido (singleton)
 const sidebarOpen = ref(false);

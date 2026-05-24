@@ -181,7 +181,7 @@ import {
   Home,
   Eye,
   AlertCircle
-} from "lucide-vue-next";
+} from "@lucide/vue";
 
 import Badge from "@/components/shared/Badge.vue";
 import SolicitudTimeline from "~/components/shared/SolicitudTimeline.vue";

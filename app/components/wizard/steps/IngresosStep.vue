@@ -191,7 +191,7 @@
 
 <script setup lang="ts">
 import { computed, watch, onMounted } from "vue";
-import { RefreshCw } from "lucide-vue-next";
+import { RefreshCw } from "@lucide/vue";
 import FormField from "~/components/shared/FormField.vue";
 
 import { useSolicitudCreditoForm } from "~/composables/solicitud/useSolicitudCreditoForm";

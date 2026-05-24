@@ -68,7 +68,7 @@
 
 <script setup lang="ts">
 import { onMounted } from "vue";
-import { AlertCircle } from "lucide-vue-next";
+import { AlertCircle } from "@lucide/vue";
 
 import WizardSolicitudCredito from "~/components/wizard/WizardSolicitudCredito.vue";
 import { useParametros } from "~/composables/useParametros";

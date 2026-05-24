@@ -54,7 +54,7 @@
 
 <script setup lang="ts">
 import { computed } from "vue";
-import { TrendingUp, TrendingDown } from "lucide-vue-next";
+import { TrendingUp, TrendingDown } from "@lucide/vue";
 
 interface Props {
   title: string;

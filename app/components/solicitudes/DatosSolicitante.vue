@@ -74,7 +74,7 @@
 </template>
 
 <script setup lang="ts">
-import { User } from "lucide-vue-next";
+import { User } from "@lucide/vue";
 import SectionCard from "./SectionCard.vue";
 import InfoField from "./InfoField.vue";
 

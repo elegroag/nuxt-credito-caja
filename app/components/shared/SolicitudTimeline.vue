@@ -98,7 +98,7 @@
 
 <script setup lang="ts">
 import { computed } from "#imports";
-import { CheckCircle, Clock, FileText } from "lucide-vue-next";
+import { CheckCircle, Clock, FileText } from "@lucide/vue";
 
 interface EstadoTimeline {
   id: string

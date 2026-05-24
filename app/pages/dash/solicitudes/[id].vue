@@ -124,7 +124,7 @@
 </template>
 
 <script setup lang="ts">
-import { AlertTriangle } from "lucide-vue-next";
+import { AlertTriangle } from "@lucide/vue";
 import SolicitudHeader from "@/components/solicitudes/SolicitudHeader.vue";
 import SolicitudTimeline from "@/components/shared/SolicitudTimeline.vue";
 import InfoGeneral from "@/components/solicitudes/InfoGeneral.vue";

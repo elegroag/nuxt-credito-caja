@@ -106,7 +106,7 @@ import {
   CheckCircle,
   ChevronRight,
   ArrowRight
-} from "lucide-vue-next";
+} from "@lucide/vue";
 
 interface Activity {
   id: string

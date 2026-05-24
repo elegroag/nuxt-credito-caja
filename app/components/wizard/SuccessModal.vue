@@ -68,7 +68,7 @@
 </template>
 
 <script setup lang="ts">
-import { CheckCircle2, ClipboardList, FileText } from "lucide-vue-next";
+import { CheckCircle2, ClipboardList, FileText } from "@lucide/vue";
 
 interface Props {
   isOpen: boolean

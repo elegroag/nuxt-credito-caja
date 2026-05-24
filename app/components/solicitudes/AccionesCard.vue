@@ -61,7 +61,7 @@ import {
   Download,
   Trash2,
   Settings
-} from "lucide-vue-next";
+} from "@lucide/vue";
 import SectionCard from "./SectionCard.vue";
 
 interface Props {

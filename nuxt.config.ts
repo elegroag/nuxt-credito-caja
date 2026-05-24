@@ -140,7 +140,7 @@ export default defineNuxtConfig({
       include: [
         "@vue/devtools-core",
         "@vue/devtools-kit",
-        "lucide-vue-next",
+        "@lucide/vue",
         "@heroicons/vue/24/outline",
         "class-variance-authority",
         "clsx",

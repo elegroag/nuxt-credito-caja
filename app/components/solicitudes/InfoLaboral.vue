@@ -52,7 +52,7 @@
 </template>
 
 <script setup lang="ts">
-import { Building } from "lucide-vue-next";
+import { Building } from "@lucide/vue";
 import SectionCard from "./SectionCard.vue";
 import InfoField from "./InfoField.vue";
 

@@ -109,7 +109,7 @@
 
 <script setup lang="ts">
 import { computed } from "vue";
-import { X } from "lucide-vue-next";
+import { X } from "@lucide/vue";
 import { cn } from "@/lib/utils";
 
 import { useDashboardLayout } from "~/composables/layout/useDashboardLayout";
