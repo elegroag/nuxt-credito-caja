@@ -89,8 +89,30 @@ const datosApiSisuwebService = () => {
     if (!responseApi.success) {
       throw createError({
         statusCode: 500,
-        message:
-          String(responseApi.error) || "Error al obtener el conyuge del trabajador"
+        message: String(responseApi.error) || "Error al obtener el conyuge del trabajador"
+      });
+    }
+    return responseApi.data || null;
+  };
+
+  const dataFirmaDigitalKeys = async (payload: Record<string, unknown>) => {
+    const responseApi = await api.postJson<Record<string, unknown>>(
+      "mercurio/firma-digital-keys",
+      payload,
+      {
+        auth: true
+      }
+    );
+    if (!responseApi) {
+      throw createError({
+        statusCode: 500,
+        message: "Error al crear la solicitud de crédito"
+      });
+    }
+    if (!responseApi.success) {
+      throw createError({
+        statusCode: 500,
+        message: String(responseApi.error || "Error al crear la solicitud de crédito")
       });
     }
     return responseApi.data || null;
@@ -101,7 +123,8 @@ const datosApiSisuwebService = () => {
     dataGeneral,
     tipoCreditos,
     crearSolicitudCredito,
-    conyugeTrabajador
+    conyugeTrabajador,
+    dataFirmaDigitalKeys
   };
 };
 

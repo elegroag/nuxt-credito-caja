@@ -25,10 +25,7 @@
       </UCard>
 
       <!-- Progress Steps -->
-      <SharedProgresoSteps
-        current-step="completado"
-        @navigate="handleNavigation"
-      />
+      <SharedProgresoSteps current-step="completado" @navigate="handleNavigation" />
 
       <!-- Loading State -->
       <UCard
@@ -41,12 +38,8 @@
         <div class="flex flex-col items-center justify-center gap-4">
           <UIcon name="i-lucide-loader-2" class="w-10 h-10 text-primary animate-spin" />
           <div class="text-center">
-            <p class="text-lg font-medium text-foreground">
-              Cargando resumen...
-            </p>
-            <p class="text-sm text-muted-foreground mt-1">
-              Estamos preparando su información
-            </p>
+            <p class="text-lg font-medium text-foreground">Cargando resumen...</p>
+            <p class="text-sm text-muted-foreground mt-1">Estamos preparando su información</p>
           </div>
         </div>
       </UCard>
@@ -60,12 +53,12 @@
         }"
       >
         <div class="text-center max-w-md mx-auto">
-          <div class="w-16 h-16 bg-destructive/10 rounded-full flex items-center justify-center mx-auto mb-4">
+          <div
+            class="w-16 h-16 bg-destructive/10 rounded-full flex items-center justify-center mx-auto mb-4"
+          >
             <UIcon name="i-lucide-alert-circle" class="w-8 h-8 text-destructive" />
           </div>
-          <h3 class="text-xl font-bold text-destructive mb-2">
-            Error al cargar la solicitud
-          </h3>
+          <h3 class="text-xl font-bold text-destructive mb-2">Error al cargar la solicitud</h3>
           <p class="text-muted-foreground mb-6">{{ errorSolicitud }}</p>
           <UButton color="destructive" @click="cargarSolicitud">
             <UIcon name="i-lucide-refresh-cw" class="w-4 h-4 mr-2" />
@@ -94,12 +87,15 @@
               </h2>
               <p class="text-white/90 mb-4">
                 Para continuar con su solicitud de crédito
-                <strong>{{ solicitud?.payload?.linea_credito?.detalle_modalidad || "" }}</strong>,
-                una vez enviada para validación previa, algunos datos no podrán ser modificados.
+                <strong>{{ solicitud?.payload?.linea_credito?.detalle_modalidad || "" }}</strong
+                >, una vez enviada para validación previa, algunos datos no podrán ser modificados.
               </p>
               <div class="flex items-center gap-2 text-white/80 text-sm">
                 <UIcon name="i-lucide-info" class="w-4 h-4" fixed-mode />
-                <span>Verifique que todos los documentos obligatorios estén cargados y sean legibles</span>
+                <span
+                  >Verifique que todos los documentos obligatorios estén cargados y sean
+                  legibles</span
+                >
               </div>
             </div>
           </div>
@@ -157,7 +153,9 @@
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 pt-6 border-t border-border">
               <div>
                 <h4 class="text-sm font-medium text-muted-foreground mb-1">Línea de Crédito</h4>
-                <p class="text-foreground font-medium">{{ solicitud?.detalle_modalidad || "N/A" }}</p>
+                <p class="text-foreground font-medium">
+                  {{ solicitud?.detalle_modalidad || "N/A" }}
+                </p>
               </div>
               <div>
                 <h4 class="text-sm font-medium text-muted-foreground mb-1">Tipo de Crédito</h4>
@@ -200,11 +198,15 @@
                 :key="documento.id"
                 class="flex items-center gap-3 p-4 bg-muted/30 rounded-lg"
               >
-                <div class="w-10 h-10 bg-success/10 rounded-lg flex items-center justify-center shrink-0">
+                <div
+                  class="w-10 h-10 bg-success/10 rounded-lg flex items-center justify-center shrink-0"
+                >
                   <UIcon name="i-lucide-file-text" class="w-5 h-5 text-success" />
                 </div>
                 <div class="flex-1 min-w-0">
-                  <p class="font-medium text-foreground truncate">{{ documento.nombre_original }}</p>
+                  <p class="font-medium text-foreground truncate">
+                    {{ documento.nombre_original }}
+                  </p>
                   <p class="text-sm text-muted-foreground truncate">
                     {{ documento.saved_filename || documento.nombre_original }}
                   </p>
@@ -212,7 +214,10 @@
                 <UIcon name="i-lucide-check-circle" class="w-5 h-5 text-success shrink-0" />
               </div>
             </div>
-            <div v-else class="flex flex-col items-center justify-center py-12 text-muted-foreground">
+            <div
+              v-else
+              class="flex flex-col items-center justify-center py-12 text-muted-foreground"
+            >
               <UIcon name="i-lucide-inbox" class="w-12 h-12 mb-3 text-muted-foreground/50" />
               <p>No se han cargado documentos</p>
             </div>
@@ -229,12 +234,18 @@
           }"
         >
           <div class="flex items-start gap-3">
-            <UIcon name="i-lucide-alert-triangle" class="w-5 h-5 text-destructive shrink-0 mt-0.5" />
+            <UIcon
+              name="i-lucide-alert-triangle"
+              class="w-5 h-5 text-destructive shrink-0 mt-0.5"
+            />
             <div>
               <h4 class="font-semibold text-destructive">No se puede enviar para validación</h4>
               <p class="text-sm text-destructive/80 mt-1">
                 Faltan
-                {{ documentosRequeridos?.filter((d) => d.obligatorio && !getDocumentoCargado(d.id)).length || 0 }}
+                {{
+                  documentosRequeridos?.filter((d) => d.obligatorio && !getDocumentoCargado(d.id))
+                    .length || 0
+                }}
                 documentos obligatorios por cargar.
               </p>
             </div>
@@ -274,6 +285,16 @@
         </UCard>
       </div>
     </div>
+
+    <!-- Modal de captura de código de firma digital -->
+    <FirmaDigitalCaptura
+      :open="showCapturaModal"
+      :loading="enviando"
+      :error-message="capturaError"
+      @update:open="showCapturaModal = $event"
+      @validar="handleValidarCodigo"
+      @cancel="handleCancelarCaptura"
+    />
   </div>
 </template>
 
@@ -282,6 +303,7 @@ import { onMounted } from "vue";
 import { useRoute } from "vue-router";
 import { useResumenSolicitud } from "~/composables/solicitud/useResumenSolicitud";
 import { formatCurrencyIntl } from "~~/shared/utils/formatters";
+import FirmaDigitalCaptura from "~/components/dash/FirmaDigitalCaptura.vue";
 
 definePageMeta({
   layout: "dashboard",
@@ -295,6 +317,8 @@ const {
   loadingSolicitud,
   errorSolicitud,
   enviando,
+  showCapturaModal,
+  capturaError,
   todosDocumentosCompletos,
   getDocumentoCargado,
   cargarSolicitud,
@@ -302,6 +326,8 @@ const {
   handleBack,
   handleEdit,
   handleEnviarValidacion,
+  handleValidarCodigo,
+  handleCancelarCaptura,
   documentosCargados,
   documentosRequeridos
 } = useResumenSolicitud();

@@ -9,14 +9,15 @@ export default defineEventHandler(async (event: H3Event) => {
     const rolesRaw = await prisma.roles.findMany({
       where: { activo: true },
       orderBy: { orden: "asc" },
-      select: { id: true, nombre: true, descripcion: true }
+      select: { id: true, nombre: true, descripcion: true, etiqueta: true }
     });
 
     // Convertir BigInt a string para serialización JSON
     const roles = rolesRaw.map((r) => ({
       id: Number(r.id),
       nombre: r.nombre,
-      descripcion: r.descripcion
+      descripcion: r.descripcion,
+      etiqueta: r.etiqueta
     }));
 
     return CustomResponse.success(roles, "Roles de firmantes obtenidos exitosamente.");
