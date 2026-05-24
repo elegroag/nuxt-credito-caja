@@ -12,10 +12,10 @@
           Volver a Detalles
         </UButton>
         <div>
-          <h1 class="text-2xl font-bold text-gray-900">
+          <h1 class="text-2xl font-bold text-gray-900 dark:text-white">
             Registro de Acciones
           </h1>
-          <p class="text-sm text-gray-500">
+          <p class="text-sm text-gray-500 dark:text-gray-400">
             Gestionar estado y notificaciones de la solicitud
           </p>
         </div>
@@ -31,32 +31,30 @@
         name="lucide:loader-2"
         class="w-10 h-10 animate-spin text-primary"
       />
-      <p class="text-gray-500">
+      <p class="text-gray-500 dark:text-gray-400">
         Cargando información...
       </p>
     </div>
 
     <!-- Error State -->
-    <div
+    <UAlert
       v-else-if="error"
-      class="bg-red-50 border border-red-200 text-red-700 p-6 rounded-lg text-center"
+      color="destructive"
+      variant="subtle"
+      icon="i-lucide-triangle-alert"
+      :title="error"
     >
-      <Icon
-        name="lucide:alert-circle"
-        class="w-8 h-8 mx-auto mb-2 text-red-500"
-      />
-      <h3 class="font-bold mb-1">
-        Error al cargar la información
-      </h3>
-      <p>{{ error }}</p>
-      <UButton
-        class="mt-4"
-        variant="outline"
-        @click="cargarSolicitud"
-      >
-        Reintentar
-      </UButton>
-    </div>
+      <template #footer>
+        <UButton
+          size="sm"
+          variant="outline"
+          color="neutral"
+          @click="cargarSolicitud"
+        >
+          Reintentar
+        </UButton>
+      </template>
+    </UAlert>
 
     <!-- Formulario -->
     <div
@@ -65,24 +63,26 @@
     >
       <!-- Información de la Solicitud -->
       <UCard>
-        <h2 class="text-lg font-semibold mb-4 flex items-center gap-2">
-          <FileText class="h-5 w-5" />
-          Información de la Solicitud
-        </h2>
+        <template #header>
+          <h2 class="text-lg font-semibold flex items-center gap-2">
+            <FileText class="h-5 w-5" />
+            Información de la Solicitud
+          </h2>
+        </template>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div>
-            <label class="text-sm font-medium text-gray-500">
+            <p class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">
               Número de Solicitud
-            </label>
-            <p class="text-lg font-semibold">
+            </p>
+            <p class="text-lg font-semibold mt-1">
               {{ solicitud.numero_solicitud || "-" }}
             </p>
           </div>
           <div>
-            <label class="text-sm font-medium text-gray-500">
+            <p class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">
               Estado Actual
-            </label>
-            <div class="flex items-center gap-2 mt-1">
+            </p>
+            <div class="mt-1">
               <Badge
                 v-if="estadoActualInfo"
                 :style="{ backgroundColor: estadoActualInfo.color }"
@@ -96,10 +96,10 @@
             </div>
           </div>
           <div>
-            <label class="text-sm font-medium text-gray-500">
+            <p class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">
               Solicitante
-            </label>
-            <p class="text-lg">
+            </p>
+            <p class="text-lg font-medium mt-1">
               {{
                 solicitud.solicitante?.nombres
                   + " "
@@ -112,117 +112,68 @@
 
       <!-- Formulario de Acción -->
       <UCard>
-        <h2 class="text-lg font-semibold mb-4 flex items-center gap-2">
-          <Settings class="h-5 w-5" />
-          Cambiar Estado de la Solicitud
-        </h2>
+        <template #header>
+          <h2 class="text-lg font-semibold flex items-center gap-2">
+            <Settings class="h-5 w-5" />
+            Cambiar Estado de la Solicitud
+          </h2>
+        </template>
 
         <form
           class="space-y-6"
           @submit.prevent="handleSubmit"
         >
-          <!-- Selector de Estado -->
-          <div>
-            <label
-              for="estado"
-              class="block text-sm font-medium text-gray-700 mb-2"
-            >
-              Nuevo Estado *
-            </label>
-            <select
-              id="estado"
+          <UFormField label="Nuevo Estado" required>
+            <USelect
               v-model="estadoSeleccionado"
-              class="select select-bordered w-full"
-              required
-            >
-              <option
-                value=""
-                disabled
-              >
-                Seleccione un estado
-              </option>
-              <option
-                v-for="estado in estados"
-                :key="estado.id"
-                :value="estado.id"
-              >
-                {{ estado.nombre }} - {{ estado.descripcion }}
-              </option>
-            </select>
-            <p class="text-xs text-gray-500 mt-1">
-              Seleccione el nuevo estado para esta solicitud
-            </p>
-          </div>
+              :items="estadosItems"
+              value-key="value"
+              label-key="label"
+              class="w-full"
+              placeholder="Seleccione un estado"
+            />
+          </UFormField>
 
           <!-- Vista Previa del Estado -->
-          <div
+          <UAlert
             v-if="estadoCambiado"
-            class="bg-blue-50 border border-blue-200 rounded-lg p-4"
+            color="primary"
+            variant="subtle"
+            icon="i-lucide-info"
+            title="Cambio de Estado"
           >
-            <div class="flex items-start gap-3">
-              <Icon
-                name="lucide:info"
-                class="h-5 w-5 text-blue-600 mt-0.5"
-              />
-              <div>
-                <h3 class="font-medium text-blue-900">
-                  Cambio de Estado
-                </h3>
-                <p class="text-sm text-blue-700 mt-1">
-                  La solicitud pasará de
-                  <strong>{{
-                    estadoActualInfo?.nombre || solicitud.estado
-                  }}</strong>
-                  a
-                  <strong>{{ getNombreEstado(estadoSeleccionado) }}</strong>
-                </p>
-              </div>
-            </div>
-          </div>
+            <template #description>
+              La solicitud pasará de
+              <strong>{{ estadoActualInfo?.nombre || solicitud.estado }}</strong>
+              a
+              <strong>{{ getNombreEstado(estadoSeleccionado) }}</strong>
+            </template>
+          </UAlert>
 
           <!-- Notificación al Solicitante -->
-          <div>
-            <label
-              for="notificacion"
-              class="block text-sm font-medium text-gray-700 mb-2"
-            >
-              Mensaje de Notificación
-            </label>
-            <textarea
-              id="notificacion"
+          <UFormField label="Mensaje de Notificación" hint="Opcional">
+            <UTextarea
               v-model="notificacion"
-              rows="4"
-              class="textarea textarea-bordered w-full"
+              :rows="4"
+              class="w-full"
               placeholder="Escriba un mensaje que será enviado al solicitante sobre este cambio de estado..."
             />
-            <p class="text-xs text-gray-500 mt-1">
-              Este mensaje será incluido en la notificación al solicitante
-              (opcional)
-            </p>
-          </div>
+          </UFormField>
 
           <!-- Advertencia -->
-          <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-            <div class="flex items-start gap-3">
-              <Icon
-                name="lucide:alert-triangle"
-                class="h-5 w-5 text-yellow-600 mt-0.5"
-              />
-              <div>
-                <h3 class="font-medium text-yellow-900">
-                  Importante
-                </h3>
-                <p class="text-sm text-yellow-700 mt-1">
-                  El cambio de estado actualizará el timeline de la solicitud y
-                  se registrará en el historial. Esta acción no se puede
-                  deshacer.
-                </p>
-              </div>
-            </div>
-          </div>
+          <UAlert
+            color="neutral"
+            variant="subtle"
+            icon="i-lucide-alert-triangle"
+            title="Importante"
+          >
+            <template #description>
+              El cambio de estado actualizará el timeline de la solicitud y se registrará en el historial. Esta acción no se puede deshacer.
+            </template>
+          </UAlert>
 
           <!-- Botones de Acción -->
-          <div class="flex flex-wrap gap-3 pt-4">
+          <div class="flex flex-wrap gap-3 pt-2">
             <UButton
               type="submit"
               variant="soft"
@@ -256,25 +207,27 @@
 
       <!-- Timeline Reciente -->
       <UCard v-if="solicitud.timeline && solicitud.timeline.length > 0">
-        <h2 class="text-lg font-semibold mb-4 flex items-center gap-2">
-          <History class="h-5 w-5" />
-          Historial Reciente
-        </h2>
+        <template #header>
+          <h2 class="text-lg font-semibold flex items-center gap-2">
+            <History class="h-5 w-5" />
+            Historial Reciente
+          </h2>
+        </template>
         <div class="space-y-3">
           <div
             v-for="(item, index) in solicitud.timeline.slice(0, 5)"
             :key="index"
-            class="flex items-start gap-3 pb-3 border-b last:border-b-0"
+            class="flex items-start gap-3 pb-3 border-b border-gray-100 dark:border-gray-800 last:border-b-0 last:pb-0"
           >
-            <div class="shrink-0 w-2 h-2 rounded-full bg-blue-500 mt-2" />
+            <div class="shrink-0 w-2 h-2 rounded-full bg-primary mt-2" />
             <div class="flex-1">
-              <p class="font-medium text-gray-900">
+              <p class="font-medium text-gray-900 dark:text-white">
                 {{ item.estado }}
               </p>
-              <p class="text-sm text-gray-600">
+              <p class="text-sm text-gray-600 dark:text-gray-400">
                 {{ item.detalle }}
               </p>
-              <p class="text-xs text-gray-400 mt-1">
+              <p class="text-xs text-gray-400 dark:text-gray-500 mt-1">
                 {{ new Date(item.fecha).toLocaleString("es-CO") }}
               </p>
             </div>
@@ -307,6 +260,14 @@ const {
   getNombreEstado,
   volverADetalle
 } = useAccionesSolicitud();
+
+// Items para USelect (formato {label, value})
+const estadosItems = computed(() =>
+  estados.value.map((e) => ({
+    label: `${e.nombre}${e.descripcion ? ` - ${e.descripcion}` : ""}`,
+    value: e.id
+  }))
+);
 
 const handleSubmit = async () => {
   const confirmacion = confirm(

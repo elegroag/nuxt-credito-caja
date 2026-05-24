@@ -2,24 +2,18 @@
   <div class="min-h-[calc(100vh-4rem)]">
     <div class="container mx-auto py-8 px-4 max-w-7xl">
       <!-- Header -->
-      <div class="mb-6">
-        <UPageCard>
-          <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-            <div class="flex items-center gap-4">
-              <UButton variant="outline" color="neutral" @click="volver">
-                <UIcon name="i-lucide-chevron-left" class="w-4 h-4 mr-2" />
-                Volver
-              </UButton>
-              <div>
-                <h1 class="text-2xl font-bold text-foreground">Firma Digital de Solicitud</h1>
-                <p class="text-sm text-muted-foreground">
-                  Gestión de firmantes para la solicitud
-                  {{ solicitud?.numero_solicitud }}
-                </p>
-              </div>
-            </div>
-          </div>
-        </UPageCard>
+      <div class="mb-6 flex items-center gap-4">
+        <UButton variant="outline" color="neutral" @click="volver">
+          <UIcon name="i-lucide-chevron-left" class="w-4 h-4 mr-2" />
+          Volver
+        </UButton>
+        <div>
+          <h1 class="text-2xl font-bold text-foreground">Firma Digital de Solicitud</h1>
+          <p class="text-sm text-muted-foreground">
+            Gestión de firmantes para la solicitud
+            {{ solicitud?.numero_solicitud }}
+          </p>
+        </div>
       </div>
 
       <!-- Loading State -->
@@ -72,7 +66,7 @@
             <div class="space-y-2">
               <p class="text-sm font-medium text-muted-foreground">Estado</p>
               <UBadge :color="getEstadoColor(solicitud.estado)" variant="subtle">
-                {{ solicitud.estado }}
+                {{ getEstadoNombre(solicitud.estado) }}
               </UBadge>
             </div>
           </div>
@@ -127,6 +121,23 @@ const getEstadoColor = (
     RECHAZADO: "destructive"
   };
   return estadoColors[estado] || "muted";
+};
+
+// Mapeo de estado key -> nombre legible
+const ESTADO_NOMBRES: Record<string, string> = {
+  BORRADOR: "Borrador",
+  DOCUMENTOS_CARGADOS: "Documentos cargados",
+  POSTULADO: "Postulado",
+  ENVIADO_VALIDACION: "En validación",
+  EN_FIRMA: "En firma",
+  FIRMADO: "Firmado",
+  APROBADO: "Aprobado",
+  RECHAZADO: "Rechazado"
+};
+
+// Obtener nombre legible del estado
+const getEstadoNombre = (estado: string): string => {
+  return ESTADO_NOMBRES[estado] || estado;
 };
 
 // Estado

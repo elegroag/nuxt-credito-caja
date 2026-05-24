@@ -70,65 +70,85 @@
   </div>
 
   <!-- Formulario para Agregar Nuevo Firmante -->
-  <div class="border-t pt-6">
-    <h3 class="font-medium text-foreground mb-4 flex items-center gap-2">
-      <UIcon name="i-lucide-user-plus" class="w-4 h-4 text-primary" />
-      Agregar Nuevo Firmante
-    </h3>
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-      <div class="space-y-2">
-        <label class="text-sm font-medium text-foreground"> Nombre Completo * </label>
+  <UCard class="mt-4">
+    <template #header>
+      <h3 class="font-medium text-foreground flex items-center gap-2">
+        <UIcon name="i-lucide-user-plus" class="w-4 h-4 text-primary" />
+        Agregar Nuevo Firmante
+      </h3>
+    </template>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <UFormField label="Nombre Completo" required>
         <UInput
           v-model="nuevoFirmante.nombre_completo"
           placeholder="Nombre completo del firmante"
+          icon="i-lucide-user"
+          class="w-full"
         />
-      </div>
+      </UFormField>
 
-      <div class="space-y-2">
-        <label class="text-sm font-medium text-foreground"> Email * </label>
-        <UInput v-model="nuevoFirmante.email" type="email" placeholder="correo@ejemplo.com" />
-      </div>
+      <UFormField label="Email" required>
+        <UInput
+          v-model="nuevoFirmante.email"
+          type="email"
+          placeholder="correo@ejemplo.com"
+          icon="i-lucide-mail"
+          class="w-full"
+        />
+      </UFormField>
 
-      <div class="space-y-2">
-        <label class="text-sm font-medium text-foreground"> Tipo de Documento </label>
+      <UFormField label="Tipo de Documento">
         <USelectMenu
           v-model="nuevoFirmante.tipo_documento"
-          :items="getTiposDocumentoOptions() as any[]"
+          :items="tipoDocumentoOptions"
+          value-key="value"
+          label-key="label"
           placeholder="Seleccionar tipo"
-          by="value"
-          option-attribute="label"
-          value-attribute="value"
+          class="w-full"
         />
-      </div>
+      </UFormField>
 
-      <div class="space-y-2">
-        <label class="text-sm font-medium text-foreground"> Número de Documento * </label>
-        <UInput v-model="nuevoFirmante.numero_documento" placeholder="Número de documento" />
-      </div>
+      <UFormField label="Número de Documento" required>
+        <UInput
+          v-model="nuevoFirmante.numero_documento"
+          placeholder="Número de documento"
+          icon="i-lucide-hash"
+          class="w-full"
+        />
+      </UFormField>
 
-      <div class="space-y-2">
-        <label class="text-sm font-medium text-foreground"> Rol </label>
+      <UFormField label="Rol">
         <USelectMenu
           v-model="nuevoFirmante.rol"
-          :items="(rolOptions as any)"
+          :items="rolOptions"
+          value-key="value"
+          label-key="label"
           placeholder="Seleccionar rol"
-          by="value"
-          option-attribute="label"
-          value-attribute="value"
+          class="w-full"
         />
-      </div>
+      </UFormField>
 
-      <div class="space-y-2">
-        <label class="text-sm font-medium text-foreground"> Teléfono </label>
-        <UInput v-model="nuevoFirmante.telefono" type="tel" placeholder="Teléfono (opcional)" />
-      </div>
+      <UFormField label="Teléfono">
+        <UInput
+          v-model="nuevoFirmante.telefono"
+          type="tel"
+          placeholder="Teléfono (opcional)"
+          icon="i-lucide-phone"
+          class="w-full"
+        />
+      </UFormField>
     </div>
 
-    <UButton type="button" variant="outline" class="mt-4" @click="handleAgregarFirmante">
-      <UIcon name="i-lucide-user-plus" class="w-4 h-4 mr-2" />
-      Agregar Firmante
-    </UButton>
-  </div>
+    <template #footer>
+      <div class="flex justify-end">
+        <UButton type="button" variant="outline" @click="handleAgregarFirmante">
+          <UIcon name="i-lucide-user-plus" class="w-4 h-4 mr-2" />
+          Agregar Firmante
+        </UButton>
+      </div>
+    </template>
+  </UCard>
 
   <!-- Botón de Envío para Firma -->
   <div class="border-t mt-6 pt-6">
@@ -152,13 +172,11 @@
 
 <script setup lang="ts">
 import { ref, watch } from "#imports";
-import {
-  getTiposDocumentoOptions,
-  getDefaultTipoDocumento,
-  getTipoDocumentoLabel
-} from "~/lib/tipos_documento";
 import { useApi } from "~/composables/useApi";
 import { useSession } from "~/composables/useSession";
+import { getTipoDocumentoLabel, getDefaultTipoDocumento } from "~/lib/tipos_documento";
+import { useRolesFirmantes } from "~/composables/useRolesFirmantes";
+import { useTiposDocumento } from "~/composables/useTiposDocumento";
 
 interface Props {
   solicitudId: string;
@@ -176,14 +194,23 @@ const solicitudId = props.solicitudId;
 
 const { postJson } = useApi();
 const { ready } = useSession();
+const { cargarRolesFirmantes, rolesFirmantesOptions } = useRolesFirmantes();
+const { cargarTiposDocumento, tiposDocumentoOptions } = useTiposDocumento();
 
-// Opciones para el selector de rol
-const rolOptions: { label: string; value: string }[] = [
-  { label: "Solicitante", value: "Solicitante" },
-  { label: "Codeudor", value: "Codeudor" },
-  { label: "Empleador", value: "Empleador" },
-  { label: "Firmante", value: "Firmante" }
-];
+// Cargar roles y tipos de documento al montar
+onMounted(async () => {
+  try {
+    await Promise.all([cargarRolesFirmantes(), cargarTiposDocumento()]);
+  } catch (err) {
+    console.error("Error cargando datos:", err);
+  }
+});
+
+// Opciones para el selector de rol (desde API)
+const rolOptions = computed(() => rolesFirmantesOptions.value);
+
+// Opciones para el selector de tipo de documento (desde API)
+const tipoDocumentoOptions = computed(() => tiposDocumentoOptions.value ?? []);
 
 // Convertir props.firmantes a una referencia reactiva local
 const firmantes = ref<Firmante[]>([...props.firmantes]);
@@ -203,7 +230,7 @@ const nuevoFirmante = ref<Firmante>({
   nombre_completo: "",
   email: "",
   numero_documento: "",
-  tipo_documento: getDefaultTipoDocumento(), // Cédula de Ciudadanía
+  tipo_documento: "1", // Cédula de Ciudadanía
   rol: "Firmante",
   telefono: ""
 });
@@ -241,7 +268,7 @@ const agregarFirmante = () => {
     nombre_completo: "",
     email: "",
     numero_documento: "",
-    tipo_documento: getDefaultTipoDocumento(), // Cédula de Ciudadanía
+    tipo_documento: "1", // Cédula de Ciudadanía
     rol: "Firmante",
     telefono: ""
   };
