@@ -28,6 +28,7 @@ export const useResumenSolicitud = () => {
   const enviando = ref(false);
   const showCapturaModal = ref(false);
   const capturaError = ref<string | null>(null);
+  const tieneFirma = ref<boolean>(false);
 
   // Computed
   const todosDocumentosCompletos = computed(() => {
@@ -56,7 +57,7 @@ export const useResumenSolicitud = () => {
         success: boolean;
         data?: { tiene_firma: boolean };
         message?: string;
-      }>("/mercurio/firma_digital_keys", { auth: true });
+      }>("api/mercurio/firma_digital_keys", { auth: true });
 
       return {
         tiene_firma: response.success && response.data?.tiene_firma === true,
@@ -114,6 +115,7 @@ export const useResumenSolicitud = () => {
       if (firmaDigitalLocal.value === true) {
         // Verificar si el usuario tiene firma digital
         const verificacion = await verificarFirmaDigital();
+        tieneFirma.value = verificacion.tiene_firma || false;
 
         if (!verificacion.tiene_firma) {
           // Mostrar modal de captura de código
@@ -124,14 +126,14 @@ export const useResumenSolicitud = () => {
       }
 
       // Continuar con el flujo normal si no requiere firma local o si tiene firma
-      // await enviarSolicucion();
+      await enviarGenerarOficio();
     } catch (e: unknown) {
       console.error(e);
       errorSolicitud.value = (e as Error).message || "Error al procesar la solicitud.";
     }
   };
 
-  const enviarSolicucion = async () => {
+  const enviarGenerarOficio = async () => {
     if (!todosDocumentosCompletos.value || enviando.value) return;
 
     try {
@@ -155,8 +157,6 @@ export const useResumenSolicitud = () => {
         return;
       }
 
-      console.log("Estado cambiado a ENVIADO_VALIDACION:", estadoResponse);
-
       // Generar oficio PDF usando el endpoint existente
       const pdfResponse = await postJson<{
         success: boolean;
@@ -164,12 +164,12 @@ export const useResumenSolicitud = () => {
       }>(
         `/api/solicitudes/${solicitudId}/generar-pdf`,
         {
-          fecha_envio: new Date().toISOString()
+          fecha_envio: new Date().toISOString(),
+          firma_digital_local: firmaDigitalLocal.value === true,
+          tiene_firma: tieneFirma.value
         },
         { auth: true }
       );
-
-      console.log("Response generacion PDF:", pdfResponse);
 
       // Navegar a página de confirmación si el PDF se generó exitosamente
       if (pdfResponse.success) {
@@ -205,7 +205,7 @@ export const useResumenSolicitud = () => {
 
       if (response.success) {
         showCapturaModal.value = false;
-        await enviarSolicucion();
+        await enviarGenerarOficio();
       } else {
         capturaError.value = response.message || "Código inválido";
       }

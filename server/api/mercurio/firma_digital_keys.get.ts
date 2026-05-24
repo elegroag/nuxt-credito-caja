@@ -27,14 +27,15 @@ export default defineEventHandler(async (event: H3Event) => {
     }
 
     const datosApi = datosApiSisuwebService();
-    const data = (await datosApi.dataFirmaDigitalKeys({
+    const data = (await datosApi.tieneFirmaDigital({
       documento: prismaUser.numero_documento,
       coddoc: prismaUser.tipo_documento
     })) as FirmaDigitalKeys;
 
-    const tieneFirma = data?.tiene_firma || false;
-
-    return CustomResponse.success({ tieneFirma }, "Tipos de documento obtenidos exitosamente.");
+    return CustomResponse.success(
+      { tiene_firma: data?.tiene_firma || false },
+      "Datos obtenidos exitosamente."
+    );
   } catch (e: unknown) {
     const err = e as {
       statusCode?: number;

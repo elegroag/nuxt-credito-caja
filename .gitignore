@@ -43,3 +43,14 @@ payload-api-flask-pdf.json
 /.hermes
 /.github
 *.py
+.gemini
+.kiro
+.cursor
+.codex
+.claude
+.agents
+.trae
+.pi
+.trae-cn
+.opencode
+.CLAUDE.md

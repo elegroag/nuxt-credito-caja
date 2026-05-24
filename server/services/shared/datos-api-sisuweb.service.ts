@@ -118,13 +118,61 @@ const datosApiSisuwebService = () => {
     return responseApi.data || null;
   };
 
+  const tieneFirmaDigital = async (payload: Record<string, unknown>) => {
+    const responseApi = await api.postJson<Record<string, unknown>>(
+      "mercurio/tiene-firma-digital",
+      payload,
+      {
+        auth: true
+      }
+    );
+    if (!responseApi) {
+      throw createError({
+        statusCode: 500,
+        message: "Error al crear la solicitud de crédito"
+      });
+    }
+    if (!responseApi.success) {
+      throw createError({
+        statusCode: 500,
+        message: String(responseApi.error || "Error al crear la solicitud de crédito")
+      });
+    }
+    return responseApi.data || null;
+  };
+
+  const createFirmaDigital = async (payload: Record<string, unknown>) => {
+    const responseApi = await api.postJson<Record<string, unknown>>(
+      "mercurio/create-firma-digital-keys",
+      payload,
+      {
+        auth: true
+      }
+    );
+    if (!responseApi) {
+      throw createError({
+        statusCode: 500,
+        message: "Error al crear la solicitud de crédito"
+      });
+    }
+    if (!responseApi.success) {
+      throw createError({
+        statusCode: 500,
+        message: String(responseApi.error || "Error al crear la solicitud de crédito")
+      });
+    }
+    return responseApi.data || null;
+  };
+
   return {
     api,
     dataGeneral,
     tipoCreditos,
     crearSolicitudCredito,
     conyugeTrabajador,
-    dataFirmaDigitalKeys
+    tieneFirmaDigital,
+    dataFirmaDigitalKeys,
+    createFirmaDigital
   };
 };
 
