@@ -1,6 +1,10 @@
 import prisma from "~~/lib/prisma";
 import apiFirmaPlus from "../api-firmaplus";
 import documentoStorage from "../storage/documento-storage.service";
+import { loggerService } from "~~/server/utils/logger.service";
+import { useRuntimeConfig } from "#imports";
+
+const Log = loggerService();
 
 interface FirmanteData {
   orden: number
@@ -9,6 +13,7 @@ interface FirmanteData {
   numero_documento: string
   email: string
   rol: string
+  telefono?: string
 }
 
 interface IniciarFirmadoParams {
@@ -25,45 +30,40 @@ interface IniciarFirmadoResult {
   }
 }
 
-interface FirmanteApiFormat {
-  nombre: string
-  documento: string
-  email: string
-  rol: string
-  orden: number
+interface FirmaPlusSignerRequest {
+  Usuario: string
+  Clave: string
+  Nota: string
+  Firmantes: FirmaPlusFirmante[]
+  ArchivosPDF: FirmaPlusArchivo[]
+  ArchivosAdjuntos: FirmaPlusArchivo[]
 }
 
-interface SolicitudFirmaPayload {
-  documento: string
-  nombre_documento: string
-  descripcion: string
-  firmantes: FirmanteApiFormat[]
-  callback_url: string
-  fecha_expiracion: string
+interface FirmaPlusFirmante {
+  Identificacion: string
+  TipoIdentificacion: string
+  Nombre: string
+  Correo: string
+  NroCelular: string
+  Foto: string
+  FotoObligatoria: string
+  SolicitarAdjunto: string
+  ReconocimientoFacial: string
 }
 
-interface SolicitudWithFirmantes {
-  numero_solicitud: string
-  pdf_generado: {
-    url?: string
-    content?: string
-    path?: string
-    nombre?: string
-  } | null
-  firmantes_solicitud: FirmanteData[]
+interface FirmaPlusArchivo {
+  Nombre: string
+  Documento_base64: string
 }
 
-interface FirmaPlusResponse {
-  success?: boolean
-  transaccion_id?: string
-  urls_firma?: Record<string, string>
-  estado?: string
-  message?: string
-  data?: {
-    transaccion_id?: string
-    urls_firma?: Record<string, string>
-    estado?: string
+interface FirmaPlusSignerResponse {
+  Code: string
+  Data?: {
+    NroSolicitud?: string
+    Fecha?: string
+    Link?: string
   }
+  Message?: string
 }
 
 class ProcesoFirmadoAdm {
@@ -76,17 +76,27 @@ class ProcesoFirmadoAdm {
     try {
       const { solicitudId } = params;
 
-      // 1. Consultar la solicitud con firmantes
+      Log.info("ProcesoFirmadoAdm.iniciarFirmado: Iniciando proceso", { solicitudId });
+
+      const config = useRuntimeConfig();
+      const usuario = config.apiFIRMA.basic_user as string;
+      const clave = config.apiFIRMA.basic_password as string;
+
+      // 1. Consultar la solicitud con firmantes y PDF generado
       const solicitud = await prisma.solicitudes_credito.findUnique({
         where: { numero_solicitud: solicitudId },
         include: {
           firmantes_solicitud: {
             orderBy: { orden: "asc" }
-          }
+          },
+          pdfs_generados: true
         }
       });
 
+      Log.info("ProcesoFirmadoAdm.iniciarFirmado: Solicitud consultada", { solicitudId, found: !!solicitud });
+
       if (!solicitud) {
+        Log.warn("ProcesoFirmadoAdm.iniciarFirmado: Solicitud no encontrada", { solicitudId });
         return {
           success: false,
           message: "Solicitud no encontrada"
@@ -98,72 +108,91 @@ class ProcesoFirmadoAdm {
         !solicitud.firmantes_solicitud
         || solicitud.firmantes_solicitud.length === 0
       ) {
+        Log.warn("ProcesoFirmadoAdm.iniciarFirmado: Sin firmantes en solicitud", { solicitudId });
         return {
           success: false,
           message: "La solicitud no tiene firmantes asociados"
         };
       }
 
-      // 3. Validar que la solicitud tenga PDF generado
-      if (!solicitud.pdf_generado) {
+      Log.info("ProcesoFirmadoAdm.iniciarFirmado: Firmantes encontrados", { solicitudId, count: solicitud.firmantes_solicitud.length });
+
+      // 3. Validar que la solicitud tenga PDF generado (tabla pdfs_generados)
+      if (!solicitud.pdfs_generados) {
+        Log.warn("ProcesoFirmadoAdm.iniciarFirmado: Sin PDF generado en tabla pdfs_generados", { solicitudId });
         return {
           success: false,
           message: "La solicitud no tiene PDF generado"
         };
       }
 
-      // 4. Obtener el documento del storage
+      Log.info("ProcesoFirmadoAdm.iniciarFirmado: PDF encontrado", { solicitudId, pdfId: solicitud.pdfs_generados.id });
+
+      // 4. Obtener el documento del storage usando la información de pdfs_generados
       const documento = await documentoStorage.obtenerContenidoDesdePdfGenerado(
-        solicitud.pdf_generado as unknown as PdfGenerado
+        solicitud.pdfs_generados as unknown as PdfGenerado
       );
       if (!documento) {
+        Log.warn("ProcesoFirmadoAdm.iniciarFirmado: No se pudo obtener PDF del storage", { solicitudId });
         return {
           success: false,
           message: "No se pudo obtener el documento PDF del storage"
         };
       }
 
-      // 5. Preparar datos para FirmaPlus
-      const firmantes = this.prepararFirmantes(solicitud.firmantes_solicitud);
-      const solicitudFirma = this.prepararSolicitudFirma(
-        solicitud as SolicitudWithFirmantes,
+      Log.info("ProcesoFirmadoAdm.iniciarFirmado: Documento obtenido del storage", { solicitudId, docLength: documento?.length });
+
+      // 5. Construir payload para FirmaPlus endpoint /signer
+      const payload = this.construirPayloadFirmaPlus(
+        solicitud.numero_solicitud,
+        usuario,
+        clave,
+        solicitud.firmantes_solicitud,
         documento,
-        firmantes
+        solicitud.pdfs_generados.filename
       );
 
-      // 6. Llamar al servicio de FirmaPlus para iniciar el firmado
+      Log.info("ProcesoFirmadoAdm.iniciarFirmado: Payload construido", { solicitudId, payloadKeys: Object.keys(payload) });
+
+      // 6. Llamar al servicio de FirmaPlus endpoint /signer
       const api = apiFirmaPlus();
-      const respuesta = await api.postJson<FirmaPlusResponse>(
-        "generarsolicitud",
-        solicitudFirma as unknown as Record<string, unknown>,
+      Log.info("ProcesoFirmadoAdm.iniciarFirmado: Llamando a FirmaPlus API", { solicitudId, endpoint: "signer" });
+      const respuesta = await api.postJson<FirmaPlusSignerResponse>(
+        "signer",
+        payload as unknown as Record<string, unknown>,
         {
           auth: true
         }
       );
 
-      if (!respuesta.success) {
+      Log.info("ProcesoFirmadoAdm.iniciarFirmado: Respuesta FirmaPlus", { solicitudId, code: respuesta.Code, message: respuesta.Message });
+
+      if (respuesta.Code !== "1") {
+        Log.error("ProcesoFirmadoAdm.iniciarFirmado: Error de FirmaPlus", { solicitudId, code: respuesta.Code, message: respuesta.Message });
         return {
           success: false,
-          message: respuesta.message || "Error al iniciar solicitud de firmado"
+          message: respuesta.Message || "Error al iniciar solicitud de firmado"
         };
       }
 
-      // 7. Aquí se podría guardar la información del proceso de firmado en la base de datos
-      // Por ejemplo, crear una tabla proceso_firmado o actualizar un campo en la solicitud
+      Log.info("ProcesoFirmadoAdm.iniciarFirmado: Proceso completado exitosamente", {
+        solicitudId,
+        nroSolicitud: respuesta.Data?.NroSolicitud,
+        link: respuesta.Data?.Link
+      });
 
       return {
         success: true,
         message: "Proceso de firmado iniciado exitosamente",
         data: {
-          transaccion_id:
-            respuesta.data?.transaccion_id || solicitud.numero_solicitud,
+          transaccion_id: respuesta.Data?.NroSolicitud || solicitud.numero_solicitud,
           estado: "PENDIENTE_FIRMADO",
-          urls_firma: respuesta.data?.urls_firma
+          urls_firma: respuesta.Data?.Link ? { default: respuesta.Data.Link } : undefined
         }
       };
     } catch (error: unknown) {
       const err = error as Error;
-      console.error("Error al iniciar firmado:", error);
+      Log.error("ProcesoFirmadoAdm.iniciarFirmado: Error catch", { error: err?.message || "Unknown", stack: err?.stack });
       return {
         success: false,
         message: err?.message || "Error al iniciar proceso de firmado"
@@ -172,43 +201,39 @@ class ProcesoFirmadoAdm {
   }
 
   /**
-   * Prepara los firmantes en el formato esperado por FirmaPlus
+   * Construye el payload para el endpoint /signer de FirmaPlus
    */
-  private prepararFirmantes(firmantes: FirmanteData[]): FirmanteApiFormat[] {
-    return firmantes.map(f => ({
-      nombre: f.nombre_completo,
-      documento: f.numero_documento,
-      email: f.email,
-      rol: f.rol,
-      orden: f.orden
-    }));
-  }
-
-  /**
-   * Prepara la solicitud de firma en el formato esperado por FirmaPlus
-   */
-  private prepararSolicitudFirma(
-    solicitud: SolicitudWithFirmantes,
-    documento: string,
-    firmantes: FirmanteApiFormat[]
-  ): SolicitudFirmaPayload {
+  private construirPayloadFirmaPlus(
+    numeroSolicitud: string,
+    usuario: string,
+    clave: string,
+    firmantes: FirmanteData[],
+    documentoBase64: string,
+    filename: string
+  ): FirmaPlusSignerRequest {
     return {
-      documento: documento,
-      nombre_documento: `Solicitud_${solicitud.numero_solicitud}.pdf`,
-      descripcion: `Solicitud de crédito #${solicitud.numero_solicitud}`,
-      firmantes: firmantes,
-      callback_url: `${process.env.API_URL}/api/admin/solicitudes/${solicitud.numero_solicitud}/webhook-firmado`,
-      fecha_expiracion: this.calcularFechaExpiracion()
+      Usuario: usuario,
+      Clave: clave,
+      Nota: `Firma comfaca solicitud ${numeroSolicitud}`,
+      Firmantes: firmantes.map((f) => ({
+        Identificacion: f.numero_documento,
+        TipoIdentificacion: f.tipo === "1" ? "Cédula de ciudadania" : f.tipo,
+        Nombre: f.nombre_completo,
+        Correo: f.email,
+        NroCelular: f.telefono || "",
+        Foto: "1",
+        FotoObligatoria: "1",
+        SolicitarAdjunto: "0",
+        ReconocimientoFacial: "0"
+      })),
+      ArchivosPDF: [
+        {
+          Nombre: filename || `Solicitud_${numeroSolicitud}.pdf`,
+          Documento_base64: documentoBase64
+        }
+      ],
+      ArchivosAdjuntos: []
     };
-  }
-
-  /**
-   * Calcula la fecha de expiración del proceso de firmado (por defecto 7 días)
-   */
-  private calcularFechaExpiracion(): string {
-    const fecha = new Date();
-    fecha.setDate(fecha.getDate() + 7);
-    return fecha.toISOString();
   }
 
   /**
@@ -216,16 +241,21 @@ class ProcesoFirmadoAdm {
    */
   async consultarEstado(solicitudId: string): Promise<IniciarFirmadoResult> {
     try {
+      Log.info("ProcesoFirmadoAdm.consultarEstado: Consultando estado", { solicitudId });
+
       const api = apiFirmaPlus();
-      const respuesta = await api.getJson<FirmaPlusResponse>(
+      const respuesta = await api.getJson<FirmaPlusSignerResponse>(
         `consultarsolicitud/${solicitudId}`,
         { auth: true }
       );
 
-      if (!respuesta.success) {
+      Log.info("ProcesoFirmadoAdm.consultarEstado: Respuesta", { solicitudId, code: respuesta.Code, message: respuesta.Message });
+
+      if (respuesta.Code !== "1") {
+        Log.warn("ProcesoFirmadoAdm.consultarEstado: Error", { solicitudId, code: respuesta.Code, message: respuesta.Message });
         return {
           success: false,
-          message: respuesta.message || "Error al consultar estado de firmado"
+          message: respuesta.Message || "Error al consultar estado de firmado"
         };
       }
 
@@ -233,14 +263,14 @@ class ProcesoFirmadoAdm {
         success: true,
         message: "Estado consultado exitosamente",
         data: {
-          transaccion_id: respuesta.data?.transaccion_id || solicitudId,
-          estado: respuesta.data?.estado || "DESCONOCIDO",
-          urls_firma: respuesta.data?.urls_firma
+          transaccion_id: respuesta.Data?.NroSolicitud || solicitudId,
+          estado: respuesta.Data?.Link ? "PENDIENTE_FIRMADO" : "DESCONOCIDO",
+          urls_firma: respuesta.Data?.Link ? { default: respuesta.Data.Link } : undefined
         }
       };
     } catch (error: unknown) {
       const err = error as Error;
-      console.error("Error al consultar estado de firmado:", error);
+      Log.error("ProcesoFirmadoAdm.consultarEstado: Error catch", { solicitudId, error: err?.message || "Unknown" });
       return {
         success: false,
         message: err?.message || "Error al consultar estado de firmado"
@@ -253,19 +283,26 @@ class ProcesoFirmadoAdm {
    */
   async cancelarFirmado(solicitudId: string): Promise<IniciarFirmadoResult> {
     try {
+      Log.info("ProcesoFirmadoAdm.cancelarFirmado: Cancelando", { solicitudId });
+
       const api = apiFirmaPlus();
-      const respuesta = await api.putJson<FirmaPlusResponse>(
+      const respuesta = await api.putJson<FirmaPlusSignerResponse>(
         `cancelarsolicitud/${solicitudId}`,
         {},
         { auth: true }
       );
 
-      if (!respuesta.success) {
+      Log.info("ProcesoFirmadoAdm.cancelarFirmado: Respuesta", { solicitudId, code: respuesta.Code });
+
+      if (respuesta.Code !== "1") {
+        Log.warn("ProcesoFirmadoAdm.cancelarFirmado: Error", { solicitudId, code: respuesta.Code, message: respuesta.Message });
         return {
           success: false,
-          message: respuesta.message || "Error al cancelar proceso de firmado"
+          message: respuesta.Message || "Error al cancelar proceso de firmado"
         };
       }
+
+      Log.info("ProcesoFirmadoAdm.cancelarFirmado: Cancelado exitosamente", { solicitudId });
 
       return {
         success: true,
@@ -277,7 +314,7 @@ class ProcesoFirmadoAdm {
       };
     } catch (error: unknown) {
       const err = error as Error;
-      console.error("Error al cancelar firmado:", error);
+      Log.error("ProcesoFirmadoAdm.cancelarFirmado: Error catch", { solicitudId, error: err?.message || "Unknown" });
       return {
         success: false,
         message: err?.message || "Error al cancelar proceso de firmado"

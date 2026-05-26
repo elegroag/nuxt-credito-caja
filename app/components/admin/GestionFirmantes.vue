@@ -112,7 +112,8 @@
       <UFormField label="Número de Documento" required>
         <UInput
           v-model="nuevoFirmante.numero_documento"
-          placeholder="Número de documento"
+          type="number"
+          placeholder="Mínimo 6 dígitos"
           icon="i-lucide-hash"
           class="w-full"
         />
@@ -132,8 +133,8 @@
       <UFormField label="Teléfono">
         <UInput
           v-model="nuevoFirmante.telefono"
-          type="tel"
-          placeholder="Teléfono (opcional)"
+          type="number"
+          placeholder="3001234567"
           icon="i-lucide-phone"
           class="w-full"
         />
@@ -165,9 +166,90 @@
       {{ loadingFirmado ? "Enviando..." : "Enviar para Firma Digital" }}
     </UButton>
     <p class="text-sm text-muted-foreground mt-2">
-      Se enviará el documento a todos los firmantes registrados para su firma digital
+      Se enviará el documento a todos los firmantes registrados para su firma digital.
     </p>
   </div>
+
+  <!-- Modal de Error de Validación -->
+  <UModal
+    v-model:open="errorModalOpen"
+    title="Error de Validación"
+    icon="i-lucide-alert-circle"
+    class="max-w-md"
+  >
+    <template #body>
+      <UAlert color="destructive" variant="soft">
+        <template #icon>
+          <UIcon name="i-lucide-alert-circle" class="w-4 h-4" />
+        </template>
+        <template #description>
+          {{ errorModalMessage }}
+        </template>
+      </UAlert>
+    </template>
+    <template #footer>
+      <div class="flex justify-end">
+        <UButton color="primary" @click="errorModalOpen = false">
+          Entendido
+        </UButton>
+      </div>
+    </template>
+  </UModal>
+
+  <!-- Modal de Éxito -->
+  <UModal
+    v-model:open="successModalOpen"
+    title="Firmante Agregado"
+    icon="i-lucide-check-circle"
+    class="max-w-md"
+  >
+    <template #body>
+      <UAlert color="primary" variant="soft">
+        <template #icon>
+          <UIcon name="i-lucide-check-circle" class="w-4 h-4" />
+        </template>
+        <template #description>
+          {{ successModalMessage }}
+        </template>
+      </UAlert>
+    </template>
+    <template #footer>
+      <div class="flex justify-end">
+        <UButton color="primary" @click="successModalOpen = false">
+          Continuar
+        </UButton>
+      </div>
+    </template>
+  </UModal>
+
+  <!-- Modal de Confirmación para Envío de Firma -->
+  <UModal
+    v-model:open="confirmFirmaModalOpen"
+    title="Confirmar Envío para Firma Digital"
+    icon="i-lucide-help-circle"
+    class="max-w-md"
+  >
+    <template #body>
+      <UAlert color="primary" variant="soft">
+        <template #icon>
+          <UIcon name="i-lucide-help-circle" class="w-4 h-4" />
+        </template>
+        <template #description>
+          ¿Está seguro de enviar el documento para firma digital a {{ firmantes.length }} firmante(s)?
+        </template>
+      </UAlert>
+    </template>
+    <template #footer>
+      <div class="flex justify-end gap-3">
+        <UButton variant="outline" @click="confirmFirmaModalOpen = false">
+          Cancelar
+        </UButton>
+        <UButton color="primary" @click="confirmarEnvioFirma">
+          Confirmar
+        </UButton>
+      </div>
+    </template>
+  </UModal>
 </template>
 
 <script setup lang="ts">
@@ -197,7 +279,6 @@ const { ready } = useSession();
 const { cargarRolesFirmantes, rolesFirmantesOptions } = useRolesFirmantes();
 const { cargarTiposDocumento, tiposDocumentoOptions } = useTiposDocumento();
 
-// Cargar roles y tipos de documento al montar
 onMounted(async () => {
   try {
     await Promise.all([cargarRolesFirmantes(), cargarTiposDocumento()]);
@@ -206,16 +287,11 @@ onMounted(async () => {
   }
 });
 
-// Opciones para el selector de rol (desde API)
 const rolOptions = computed(() => rolesFirmantesOptions.value);
-
-// Opciones para el selector de tipo de documento (desde API)
 const tipoDocumentoOptions = computed(() => tiposDocumentoOptions.value ?? []);
 
-// Convertir props.firmantes a una referencia reactiva local
 const firmantes = ref<Firmante[]>([...props.firmantes]);
 
-// Watch para sincronizar cambios con el padre
 watch(
   () => props.firmantes,
   (newFirmantes) => {
@@ -224,23 +300,45 @@ watch(
   { deep: true }
 );
 
-// Gestión de firmantes
 const loadingFirmado = ref(false);
 const nuevoFirmante = ref<Firmante>({
   nombre_completo: "",
   email: "",
   numero_documento: "",
-  tipo_documento: "1", // Cédula de Ciudadanía
+  tipo_documento: "1",
   rol: "Firmante",
   telefono: ""
 });
 
+const errorModalOpen = ref(false);
+const errorModalMessage = ref("");
+const successModalOpen = ref(false);
+const successModalMessage = ref("");
+const confirmFirmaModalOpen = ref(false);
+
+const isValidEmail = (email: string | undefined) => {
+  if (!email) return false;
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+};
+
+const isValidPhone = (telefono: string | undefined) => {
+  if (!telefono) return true;
+  return /^3\d{9}$/.test(telefono);
+};
+
+const isValidDocument = (documento: string | undefined) => {
+  if (!documento) return false;
+  return /^\d{6,}$/.test(documento);
+};
+
 const handleAgregarFirmante = () => {
   const resultado = agregarFirmante();
   if (resultado.success) {
-    alert(resultado.message || "Firmante agregado exitosamente");
+    successModalMessage.value = resultado.message || "Firmante agregado exitosamente";
+    successModalOpen.value = true;
   } else {
-    alert(resultado.message || "Error al agregar firmante");
+    errorModalMessage.value = resultado.message || "Error al agregar firmante";
+    errorModalOpen.value = true;
   }
 };
 
@@ -248,7 +346,6 @@ const eliminarFirmante = (index: number) => {
   firmantes.value.splice(index, 1);
 };
 
-// Gestión de firmantes
 const agregarFirmante = () => {
   if (
     !nuevoFirmante.value.nombre_completo ||
@@ -257,31 +354,50 @@ const agregarFirmante = () => {
   ) {
     return {
       success: false,
-      message: "Debe completar todos los campos requeridos del firmante"
+      message: "Debe completar todos los campos requeridos del firmante."
+    };
+  }
+
+  if (!isValidEmail(nuevoFirmante.value.email)) {
+    return {
+      success: false,
+      message: "El correo electrónico no es válido."
+    };
+  }
+
+  if (!isValidDocument(nuevoFirmante.value.numero_documento)) {
+    return {
+      success: false,
+      message: "El número de documento debe tener mínimo 6 dígitos."
+    };
+  }
+
+  if (!isValidPhone(nuevoFirmante.value.telefono)) {
+    return {
+      success: false,
+      message: "El teléfono debe ser un número móvil válido (inicia con 3 y tiene 10 dígitos)."
     };
   }
 
   firmantes.value.push({ ...nuevoFirmante.value });
 
-  // Resetear formulario
   nuevoFirmante.value = {
     nombre_completo: "",
     email: "",
     numero_documento: "",
-    tipo_documento: "1", // Cédula de Ciudadanía
+    tipo_documento: "1",
     rol: "Firmante",
     telefono: ""
   };
 
-  return { success: true, message: "Firmante agregado exitosamente" };
+  return { success: true, message: "Firmante agregado exitosamente." };
 };
 
-// Iniciar proceso de firmado
 const iniciarProcesoDeFirmado = async () => {
   if (firmantes.value.length === 0) {
     return {
       success: false,
-      message: "Debe tener al menos un firmante para iniciar el proceso"
+      message: "Debe tener al menos un firmante para iniciar el proceso."
     };
   }
 
@@ -293,19 +409,19 @@ const iniciarProcesoDeFirmado = async () => {
       success: boolean;
       message: string;
       data?: unknown;
-    }>(`/api/solicitudes/${solicitudId}/iniciar-firmado`, {}, { auth: true });
+    }>(`/api/admin/solicitudes/${solicitudId}/iniciar-firmado`, { firmantes: firmantes.value }, { auth: true });
 
     if (response.success) {
       return {
         success: true,
-        message: response.message || "Documento enviado para firma digital exitosamente"
+        message: response.message || "Documento enviado para firma digital exitosamente."
       };
     } else {
-      throw new Error(response.message || "Error al iniciar proceso de firmado");
+      throw new Error(response.message || "Error al iniciar proceso de firmado.");
     }
   } catch (e: unknown) {
     console.error("Error al iniciar proceso de firmado:", e);
-    const message = e instanceof Error ? e.message : "Error al iniciar el proceso de firmado";
+    const message = e instanceof Error ? e.message : "Error al iniciar el proceso de firmado.";
     return {
       success: false,
       message
@@ -315,19 +431,21 @@ const iniciarProcesoDeFirmado = async () => {
   }
 };
 
-const handleIniciarFirmado = async () => {
-  const confirmacion = confirm(
-    `¿Está seguro de enviar el documento para firma digital a ${firmantes.value.length} firmante(s)?`
-  );
+const handleIniciarFirmado = () => {
+  confirmFirmaModalOpen.value = true;
+};
 
-  if (!confirmacion) return;
+const confirmarEnvioFirma = async () => {
+  confirmFirmaModalOpen.value = false;
 
   const resultado = await iniciarProcesoDeFirmado();
 
   if (resultado.success) {
-    alert(resultado.message || "Documento enviado para firma digital exitosamente");
+    successModalMessage.value = resultado.message || "Documento enviado para firma digital exitosamente.";
+    successModalOpen.value = true;
   } else {
-    alert(resultado.message || "Error al iniciar el proceso de firmado");
+    errorModalMessage.value = resultado.message || "Error al iniciar el proceso de firmado.";
+    errorModalOpen.value = true;
   }
 };
 </script>

@@ -4,6 +4,7 @@ import { useApi } from "~/composables/useApi";
 interface RolFirmante {
   id: number;
   nombre: string;
+  etiqueta: string;
   descripcion: string | null;
 }
 
@@ -46,7 +47,7 @@ export const useRolesFirmantes = () => {
   const rolesFirmantesOptions = computed(() => {
     if (!rolesFirmantesCache.value) return [];
     return rolesFirmantesCache.value.map((rol) => ({
-      label: rol.nombre,
+      label: rol.etiqueta,
       value: String(rol.id)
     }));
   });
