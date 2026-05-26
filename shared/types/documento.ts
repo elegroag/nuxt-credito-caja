@@ -26,3 +26,36 @@ export interface Firmante {
   rol?: string;
   telefono?: string;
 }
+
+export interface FirmanteDb {
+  id: string;
+  solicitud_id: string;
+  orden: number;
+  tipo: string;
+  nombre_completo: string;
+  numero_documento: string;
+  email: string;
+  rol: string;
+  telefono?: string;
+  created_at: string | null;
+  updated_at: string | null;
+  _pending?: true;
+}
+
+export interface NuevoFirmante {
+  tipo: string;
+  nombre_completo: string;
+  email: string;
+  numero_documento: string;
+  rol: string;
+  telefono?: string;
+}
+
+export interface NuevoFirmante {
+  tipo: string;
+  nombre_completo: string;
+  email: string;
+  numero_documento: string;
+  rol: string;
+  telefono?: string;
+}

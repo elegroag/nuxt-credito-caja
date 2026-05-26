@@ -84,9 +84,11 @@ export const useApi = () => {
 
   const deleteJson = async <T>(
     path: string,
+    body: unknown,
     opts?: ApiRequestOptions
   ) => {
     const headers: Record<string, string> = {
+      "content-type": "application/json",
       ...(opts?.headers || {})
     };
 
@@ -96,6 +98,7 @@ export const useApi = () => {
 
     return await $fetch<T>(urlFor(path), {
       method: "DELETE",
+      body: body as BodyInit,
       headers
     });
   };

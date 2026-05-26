@@ -97,6 +97,7 @@ import { useRoute, useRouter } from "vue-router";
 import GestionFirmantes from "@/components/admin/GestionFirmantes.vue";
 import { useApi } from "~/composables/useApi";
 import { useSession } from "~/composables/useSession";
+import type { FirmanteDb } from "~~/shared/types/documento";
 
 const route = useRoute();
 const router = useRouter();
@@ -142,7 +143,7 @@ const getEstadoNombre = (estado: string): string => {
 
 // Estado
 const solicitud = ref<SolicitudCredito | null>(null);
-const firmantes = ref<Firmante[]>([]);
+const firmantes = ref<FirmanteDb[]>([]);
 const loading = ref(true);
 const error = ref<string | null>(null);
 
@@ -163,13 +164,6 @@ const cargarSolicitud = async () => {
 
     if (response.success) {
       solicitud.value = response.data;
-
-      // Inicializar firmantes
-      if (response.data.firmantes && Array.isArray(response.data.firmantes)) {
-        firmantes.value = [...response.data.firmantes];
-      } else {
-        firmantes.value = [];
-      }
     } else {
       throw new Error("No se pudo cargar la solicitud");
     }
@@ -183,14 +177,32 @@ const cargarSolicitud = async () => {
   }
 };
 
+// Cargar firmantes de la solicitud
+const cargarFirmantes = async () => {
+  try {
+    await ready;
+    const response = await getJson<{
+      success: boolean;
+      data: FirmanteDb[];
+    }>(`/api/admin/solicitudes/${solicitudId.value}/firmantes`, { auth: true });
+
+    if (response.success) {
+      firmantes.value = response.data;
+    }
+  } catch (e: unknown) {
+    console.error("Error al cargar firmantes:", e);
+  }
+};
+
 // Volver a la página anterior
 const volver = () => {
   router.go(-1);
 };
 
 // Cargar datos al montar el componente
-onMounted(() => {
-  cargarSolicitud();
+onMounted(async () => {
+  await cargarSolicitud();
+  await cargarFirmantes();
 });
 
 definePageMeta({

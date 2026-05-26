@@ -8,19 +8,30 @@
       <div
         v-for="(firmante, index) in firmantes"
         :key="index"
-        class="flex items-start justify-between gap-4 p-4 bg-card rounded-xl border border-border shadow-sm"
+        class="flex items-start justify-between gap-4 p-4 bg-card rounded-xl border shadow-sm"
+        :class="firmante._pending ? 'border-warning/50 bg-warning/5' : 'border-border'"
       >
         <div class="flex items-start gap-3 flex-1 min-w-0">
           <div
-            class="mt-0.5 h-9 w-9 rounded-full bg-primary/10 flex items-center justify-center border border-primary/20 shrink-0"
+            class="mt-0.5 h-9 w-9 rounded-full flex items-center justify-center border shrink-0"
+            :class="firmante._pending ? 'bg-warning/10 border-warning/20' : 'bg-primary/10 border-primary/20'"
           >
-            <UIcon name="i-lucide-user" class="w-4 h-4 text-primary" />
+            <UIcon
+              :name="firmante._pending ? 'i-lucide-clock' : 'i-lucide-user'"
+              class="w-4 h-4"
+              :class="firmante._pending ? 'text-warning' : 'text-primary'"
+            />
           </div>
           <div class="min-w-0 flex-1">
             <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
-              <p class="font-semibold text-foreground truncate">
-                {{ firmante.nombre_completo }}
-              </p>
+              <div class="flex items-center gap-2">
+                <p class="font-semibold text-foreground truncate">
+                  {{ firmante.nombre_completo }}
+                </p>
+                <UBadge v-if="firmante._pending" color="secondary" variant="subtle" size="xs">
+                  Pendiente
+                </UBadge>
+              </div>
               <UBadge v-if="firmante.rol" color="secondary" variant="subtle" size="xs">
                 {{ firmante.rol }}
               </UBadge>
@@ -29,7 +40,7 @@
               <div class="flex items-center gap-2">
                 <UIcon name="i-lucide-check-circle" class="w-4 h-4" />
                 <span class="truncate">
-                  {{ getTipoDocumentoLabel(firmante.tipo_documento || getDefaultTipoDocumento()) }}:
+                  {{ getTipoDocumentoLabel(firmante.tipo || getDefaultTipoDocumento()) }}:
                   {{ firmante.numero_documento }}
                 </span>
               </div>
@@ -100,7 +111,7 @@
 
       <UFormField label="Tipo de Documento">
         <USelectMenu
-          v-model="nuevoFirmante.tipo_documento"
+          v-model="nuevoFirmante.tipo"
           :items="tipoDocumentoOptions"
           value-key="value"
           label-key="label"
@@ -259,10 +270,11 @@ import { useSession } from "~/composables/useSession";
 import { getTipoDocumentoLabel, getDefaultTipoDocumento } from "~/lib/tipos_documento";
 import { useRolesFirmantes } from "~/composables/useRolesFirmantes";
 import { useTiposDocumento } from "~/composables/useTiposDocumento";
+import type { FirmanteDb, NuevoFirmante } from "~~/shared/types/documento";
 
 interface Props {
   solicitudId: string;
-  firmantes: Firmante[];
+  firmantes: FirmanteDb[];
 }
 
 const _emit = defineEmits<{
@@ -274,7 +286,7 @@ const _emit = defineEmits<{
 const props = defineProps<Props>();
 const solicitudId = props.solicitudId;
 
-const { postJson } = useApi();
+const { postJson, deleteJson } = useApi();
 const { ready } = useSession();
 const { cargarRolesFirmantes, rolesFirmantesOptions } = useRolesFirmantes();
 const { cargarTiposDocumento, tiposDocumentoOptions } = useTiposDocumento();
@@ -290,7 +302,7 @@ onMounted(async () => {
 const rolOptions = computed(() => rolesFirmantesOptions.value);
 const tipoDocumentoOptions = computed(() => tiposDocumentoOptions.value ?? []);
 
-const firmantes = ref<Firmante[]>([...props.firmantes]);
+const firmantes = ref<FirmanteDb[]>([...props.firmantes]);
 
 watch(
   () => props.firmantes,
@@ -301,11 +313,11 @@ watch(
 );
 
 const loadingFirmado = ref(false);
-const nuevoFirmante = ref<Firmante>({
+const nuevoFirmante = ref<NuevoFirmante>({
+  tipo: "1",
   nombre_completo: "",
   email: "",
   numero_documento: "",
-  tipo_documento: "1",
   rol: "Firmante",
   telefono: ""
 });
@@ -342,8 +354,27 @@ const handleAgregarFirmante = () => {
   }
 };
 
-const eliminarFirmante = (index: number) => {
-  firmantes.value.splice(index, 1);
+const eliminarFirmante = async (index: number) => {
+  const firmante = firmantes.value[index];
+  if (!firmante?.id) return;
+
+  if (firmante._pending) {
+    firmantes.value.splice(index, 1);
+    return;
+  }
+
+  try {
+    await ready;
+    const response = await deleteJson<{
+      success: boolean;
+      message?: string;
+    }>(`/api/admin/solicitudes/${solicitudId}/firmantes`, { firmanteId: firmante.id }, { auth: true });
+    if (response.success) {
+      firmantes.value.splice(index, 1);
+    }
+  } catch (err) {
+    console.error("Error al eliminar firmante:", err);
+  }
 };
 
 const agregarFirmante = () => {
@@ -379,13 +410,27 @@ const agregarFirmante = () => {
     };
   }
 
-  firmantes.value.push({ ...nuevoFirmante.value });
+  const nuevo: FirmanteDb = {
+    _pending: true,
+    id: `pending_${Date.now()}`,
+    solicitud_id: solicitudId,
+    orden: 0,
+    tipo: nuevoFirmante.value.tipo,
+    nombre_completo: nuevoFirmante.value.nombre_completo,
+    email: nuevoFirmante.value.email,
+    numero_documento: nuevoFirmante.value.numero_documento,
+    rol: nuevoFirmante.value.rol,
+    telefono: nuevoFirmante.value.telefono,
+    created_at: null,
+    updated_at: null
+  };
+  firmantes.value.push(nuevo);
 
   nuevoFirmante.value = {
+    tipo: "1",
     nombre_completo: "",
     email: "",
     numero_documento: "",
-    tipo_documento: "1",
     rol: "Firmante",
     telefono: ""
   };
