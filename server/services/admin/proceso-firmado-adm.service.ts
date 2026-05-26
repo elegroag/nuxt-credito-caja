@@ -13,7 +13,8 @@ interface FirmanteData {
   numero_documento: string
   email: string
   rol: string
-  telefono?: string
+  telefono?: string | null
+  codigo_pais?: string | null
 }
 
 interface IniciarFirmadoParams {
@@ -29,6 +30,19 @@ interface IniciarFirmadoResult {
     urls_firma?: Record<string, string>
   }
 }
+
+const formatPhoneForFirmaPlus = (phone: string | number | null | undefined, codigoPais: string | null | undefined): string => {
+  if (!phone) return "";
+  const str = String(phone).replace(/\D/g, "");
+  const pais = codigoPais || "57";
+  if (str.length === 10 && str.startsWith("3")) {
+    return pais + str;
+  }
+  if (str.length === 9 && str.startsWith("3")) {
+    return pais + str;
+  }
+  return str;
+};
 
 interface FirmaPlusSignerRequest {
   Usuario: string
@@ -220,7 +234,7 @@ class ProcesoFirmadoAdm {
         TipoIdentificacion: f.tipo === "1" ? "Cédula de ciudadania" : f.tipo,
         Nombre: f.nombre_completo,
         Correo: f.email,
-        NroCelular: f.telefono || "",
+        NroCelular: formatPhoneForFirmaPlus(f.telefono, f.codigo_pais),
         Foto: "1",
         FotoObligatoria: "1",
         SolicitarAdjunto: "0",

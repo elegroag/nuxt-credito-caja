@@ -3,6 +3,7 @@
  * Maneja la lógica de filtros, paginación y operaciones CRUD
  */
 import type { SolicitudAdmin, FiltrosSolicitudes, EstadosCount, OpcionesFiltro } from "~~/shared/types/admin-solicitudes";
+import { formatCurrency, formatDate } from "#shared/utils/formatters";
 
 export const useAdminSolicitudes = () => {
   const { getJson, putJson, deleteJson } = useApi();
@@ -225,8 +226,60 @@ export const useAdminSolicitudes = () => {
   /**
    * Exporta las solicitudes a CSV
    */
-  const exportarCSV = async () => {
-    // pendiente
+  const exportarCSV = () => {
+    if (solicitudes.value.length === 0) {
+      return;
+    }
+
+    const headers = [
+      "Número de Solicitud",
+      "Fecha de Creación",
+      "Estado",
+      "Valor Solicitado",
+      "Plazo (Meses)",
+      "Nombre Completo",
+      "Tipo de Documento",
+      "Número de Documento",
+      "Email",
+      "Teléfono"
+    ];
+
+    const rows = solicitudes.value.map((s) => {
+      const solicitante = s.solicitante;
+      return [
+        s.numero_solicitud || "",
+        formatDate(s.created_at),
+        s.estado || "",
+        s.valor_solicitud ? formatCurrency(s.valor_solicitud) : "",
+        s.plazo_meses?.toString() || "",
+        solicitante ? `${solicitante.nombres} ${solicitante.apellidos}` : "",
+        solicitante?.tipo_documento || "",
+        solicitante?.numero_documento || "",
+        solicitante?.email || "",
+        solicitante?.telefono_movil || ""
+      ];
+    });
+
+    const csvContent = [
+      headers.join(","),
+      ...rows.map((row) =>
+        row.map((cell) => {
+          const escaped = String(cell).replace(/"/g, '""');
+          return `"${escaped}"`;
+        }).join(",")
+      )
+    ].join("\n");
+
+    const BOM = "\uFEFF";
+    const blob = new Blob([BOM + csvContent], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `solicitudes_${new Date().toISOString().split("T")[0]}.csv`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
   };
 
   /**

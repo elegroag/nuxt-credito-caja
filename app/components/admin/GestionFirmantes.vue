@@ -141,14 +141,24 @@
         />
       </UFormField>
 
-      <UFormField label="Teléfono">
-        <UInput
-          v-model="nuevoFirmante.telefono"
-          type="number"
-          placeholder="3001234567"
-          icon="i-lucide-phone"
-          class="w-full"
-        />
+      <UFormField label="Teléfono" class="flex-1">
+        <div class="flex gap-2">
+          <USelectMenu
+            v-model="nuevoFirmante.codigo_pais"
+            :items="paisOptions"
+            value-key="value"
+            label-key="label"
+            placeholder="Código"
+            class="w-28 shrink-0"
+          />
+          <UInput
+            v-model="nuevoFirmante.telefono"
+            type="number"
+            placeholder="3001234567"
+            icon="i-lucide-phone"
+            class="w-full"
+          />
+        </div>
       </UFormField>
     </div>
 
@@ -210,9 +220,10 @@
   <!-- Modal de Éxito -->
   <UModal
     v-model:open="successModalOpen"
-    title="Firmante Agregado"
+    title="Envío Exitoso"
     icon="i-lucide-check-circle"
     class="max-w-md"
+    :dismissible="false"
   >
     <template #body>
       <UAlert color="primary" variant="soft">
@@ -226,8 +237,8 @@
     </template>
     <template #footer>
       <div class="flex justify-end">
-        <UButton color="primary" @click="successModalOpen = false">
-          Continuar
+        <UButton color="primary" @click="handleSuccessModalAccept">
+          Aceptar
         </UButton>
       </div>
     </template>
@@ -265,6 +276,7 @@
 
 <script setup lang="ts">
 import { ref, watch } from "#imports";
+import { navigateTo } from "#app";
 import { useApi } from "~/composables/useApi";
 import { useSession } from "~/composables/useSession";
 import { getTipoDocumentoLabel, getDefaultTipoDocumento } from "~/lib/tipos_documento";
@@ -319,8 +331,17 @@ const nuevoFirmante = ref<NuevoFirmante>({
   email: "",
   numero_documento: "",
   rol: "Firmante",
-  telefono: ""
+  telefono: "",
+  codigo_pais: "57"
 });
+
+const paisOptions = [
+  { value: "57", label: "+57 Colombia" },
+  { value: "54", label: "+54 Argentina" },
+  { value: "52", label: "+52 México" },
+  { value: "1", label: "+1 USA" },
+  { value: "34", label: "+34 España" }
+];
 
 const errorModalOpen = ref(false);
 const errorModalMessage = ref("");
@@ -492,5 +513,10 @@ const confirmarEnvioFirma = async () => {
     errorModalMessage.value = resultado.message || "Error al iniciar el proceso de firmado.";
     errorModalOpen.value = true;
   }
+};
+
+const handleSuccessModalAccept = () => {
+  successModalOpen.value = false;
+  navigateTo("/admin/solicitudes");
 };
 </script>

@@ -48,11 +48,11 @@
         >
           <div class="grid grid-cols-2 gap-4">
             <div class="space-y-2">
-              <label class="text-sm font-medium text-foreground">Documento</label>
+              <label class="text-sm font-medium text-foreground p-2">Documento</label>
               <select
                 v-model="formData.tipo_documento"
                 required
-                class="w-full px-4 py-3 bg-muted/50 rounded-xl border-0 text-foreground text-sm focus:ring-2 focus:ring-primary/20 focus:bg-card transition-all"
+                class="w-full pl-11 pr-4 py-3 bg-muted/50 rounded-xl border-0 text-foreground text-sm focus:ring-2 focus:ring-primary/20 focus:bg-card transition-all"
               >
                 <option
                   value=""
@@ -70,35 +70,35 @@
               </select>
             </div>
             <div class="space-y-2">
-              <label class="text-sm font-medium text-foreground">Número</label>
+              <label class="text-sm font-medium text-foreground p-2">Identificación</label>
               <input
                 v-model="formData.numero_documento"
-                type="text"
+                type="number"
                 placeholder="123456789"
                 required
-                class="w-full px-4 py-3 bg-muted/50 rounded-xl border-0 text-foreground placeholder:text-muted-foreground focus:ring-2 focus:ring-primary/20 focus:bg-card transition-all"
+                class="w-full pl-11 pr-4 py-3 bg-muted/50 rounded-xl border-0 text-foreground placeholder:text-muted-foreground focus:ring-2 focus:ring-primary/20 focus:bg-card transition-all [&::-webkit-inner-spin-button]:appearance-none"
               >
             </div>
           </div>
           <div class="grid grid-cols-2 gap-4">
             <div class="space-y-2">
-              <label class="text-sm font-medium text-foreground">Nombres</label>
+              <label class="text-sm font-medium text-foreground p-2">Nombres</label>
               <input
                 v-model="formData.nombres"
                 type="text"
                 placeholder="Juan"
                 required
-                class="w-full px-4 py-3 bg-muted/50 rounded-xl border-0 text-foreground placeholder:text-muted-foreground focus:ring-2 focus:ring-primary/20 focus:bg-card transition-all"
+                class="w-full pl-11 pr-4 py-3 bg-muted/50 rounded-xl border-0 text-foreground placeholder:text-muted-foreground focus:ring-2 focus:ring-primary/20 focus:bg-card transition-all"
               >
             </div>
             <div class="space-y-2">
-              <label class="text-sm font-medium text-foreground">Apellidos</label>
+              <label class="text-sm font-medium text-foreground p-2">Apellidos</label>
               <input
                 v-model="formData.apellidos"
                 type="text"
                 placeholder="Pérez"
                 required
-                class="w-full px-4 py-3 bg-muted/50 rounded-xl border-0 text-foreground placeholder:text-muted-foreground focus:ring-2 focus:ring-primary/20 focus:bg-card transition-all"
+                class="w-full pl-11 pr-4 py-3 bg-muted/50 rounded-xl border-0 text-foreground placeholder:text-muted-foreground focus:ring-2 focus:ring-primary/20 focus:bg-card transition-all"
               >
             </div>
           </div>
@@ -169,25 +169,25 @@
           </div>
           <div class="grid grid-cols-2 gap-4">
             <div class="space-y-2">
-              <label class="text-sm font-medium text-foreground">Contraseña</label>
+              <label class="text-sm font-medium text-foreground p-2">Contraseña</label>
               <input
                 v-model="formData.password"
                 type="password"
                 placeholder="Mín. 8 caracteres"
                 required
                 minlength="8"
-                class="w-full px-4 py-3 bg-muted/50 rounded-xl border-0 text-foreground placeholder:text-muted-foreground focus:ring-2 focus:ring-primary/20 focus:bg-card transition-all"
+                class="w-full pl-11 pr-4 py-3 bg-muted/50 rounded-xl border-0 text-foreground placeholder:text-muted-foreground focus:ring-2 focus:ring-primary/20 focus:bg-card transition-all"
               >
             </div>
             <div class="space-y-2">
-              <label class="text-sm font-medium text-foreground">Confirmar</label>
+              <label class="text-sm font-medium text-foreground p-2">Confirmar</label>
               <input
                 v-model="formData.confirmar_password"
                 type="password"
                 placeholder="Repite"
                 required
                 minlength="8"
-                class="w-full px-4 py-3 bg-muted/50 rounded-xl border-0 text-foreground placeholder:text-muted-foreground focus:ring-2 focus:ring-primary/20 focus:bg-card transition-all"
+                class="w-full pl-11 pr-4 py-3 bg-muted/50 rounded-xl border-0 text-foreground placeholder:text-muted-foreground focus:ring-2 focus:ring-primary/20 focus:bg-card transition-all"
               >
             </div>
           </div>

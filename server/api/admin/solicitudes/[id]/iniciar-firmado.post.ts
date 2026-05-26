@@ -8,12 +8,15 @@ import { loggerService } from "~~/server/utils/logger.service";
 const Log = loggerService();
 
 interface FirmanteInput {
+  id: string;
   orden: number;
-  tipo_documento: string;
+  tipo: string;
   nombre_completo: string;
   numero_documento: string;
   email: string;
   rol: string;
+  telefono?: string;
+  codigo_pais?: string;
 }
 
 interface IniciarFirmadoBody {
@@ -49,6 +52,18 @@ export default defineEventHandler(async (event: H3Event) => {
       );
     }
 
+    const firmantesConOrden = firmantesData.map((f, index) => ({
+      id: f.id,
+      orden: f.orden || index + 1,
+      tipo: f.tipo || "1",
+      nombre_completo: f.nombre_completo,
+      numero_documento: String(f.numero_documento),
+      email: f.email,
+      rol: f.rol,
+      telefono: f.telefono || null,
+      codigo_pais: f.codigo_pais || "57"
+    }));
+
     Log.info("iniciar-firmado: Eliminando firmantes existentes", { solicitudId: id });
     await prisma.firmantes_solicitud.deleteMany({
       where: { solicitud_id: id }
@@ -56,26 +71,29 @@ export default defineEventHandler(async (event: H3Event) => {
 
     Log.info("iniciar-firmado: Creando firmantes en BD", {
       solicitudId: id,
-      count: firmantesData.length,
-      firmantes: firmantesData.map((f, index) => ({
-        orden: f.orden ?? index + 1,
-        tipo: f.tipo_documento ?? "1",
+      count: firmantesConOrden.length,
+      firmantes: firmantesConOrden.map((f) => ({
+        orden: f.orden,
+        tipo: f.tipo,
         nombre_completo: f.nombre_completo,
-        numero_documento: String(f.numero_documento),
+        numero_documento: f.numero_documento,
         email: f.email,
-        rol: f.rol
+        rol: f.rol,
+        telefono: f.telefono,
+        codigo_pais: f.codigo_pais
       }))
     });
-
     await prisma.firmantes_solicitud.createMany({
-      data: firmantesData.map((f, index) => ({
+      data: firmantesConOrden.map((f) => ({
         solicitud_id: id,
-        orden: f.orden ?? index + 1,
-        tipo: f.tipo_documento ?? "1",
+        orden: f.orden,
+        tipo: f.tipo,
         nombre_completo: f.nombre_completo,
-        numero_documento: String(f.numero_documento),
+        numero_documento: f.numero_documento,
         email: f.email,
-        rol: f.rol
+        rol: f.rol,
+        telefono: f.telefono ? String(f.telefono) : null,
+        codigo_pais: f.codigo_pais
       }))
     });
 
@@ -92,6 +110,28 @@ export default defineEventHandler(async (event: H3Event) => {
       setResponseStatus(event, 400);
       return CustomResponse.error(resultado.message, "Error al iniciar firmado");
     }
+
+    Log.info("iniciar-firmado: Actualizando estado a PENDIENTE_FIRMADO", { solicitudId: id });
+    const session = await getUserSession(event).catch(() => null);
+    const username = session?.user?.username || "system";
+
+    await prisma.solicitudes_credito.update({
+      where: { numero_solicitud: id },
+      data: {
+        estado: "PENDIENTE_FIRMADO",
+        updated_at: new Date()
+      }
+    });
+
+    await prisma.solicitud_timeline.create({
+      data: {
+        solicitud_id: id,
+        estado: "PENDIENTE_FIRMADO",
+        fecha: new Date(),
+        observacion: `Solicitud enviada para firma digital. Transaction ID: ${resultado.data?.transaccion_id || "N/A"}`,
+        usuario_username: username
+      }
+    });
 
     Log.info("iniciar-firmado: Proceso completado exitosamente", {
       solicitudId: id,

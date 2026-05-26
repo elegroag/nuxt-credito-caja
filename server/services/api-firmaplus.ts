@@ -1,5 +1,8 @@
 import { useRuntimeConfig } from "#imports";
 import { ofetch } from "ofetch";
+import { loggerService } from "~~/server/utils/logger.service";
+
+const Log = loggerService();
 
 interface TokenResponse {
   success?: boolean
@@ -13,6 +16,68 @@ interface FetchError {
   message?: string
   response?: { status?: number }
 }
+
+interface FirmaPlusSignerResponse {
+  Code: string
+  Data?: {
+    NroSolicitud?: string
+    Fecha?: string
+    Link?: string
+  }
+  Message?: string
+}
+
+const getMockResponse = (path: string, body?: Record<string, unknown>): FirmaPlusSignerResponse => {
+  const timestamp = Date.now();
+  const now = new Date();
+  const fechaFormateada = `${String(now.getDate()).padStart(2, "0")}/${String(now.getMonth() + 1).padStart(2, "0")}/${now.getFullYear()} ${String(now.getHours()).padStart(2, "0")}:${String(now.getMinutes()).padStart(2, "0")}:${String(now.getSeconds()).padStart(2, "0")}`;
+
+  if (path === "signer") {
+    const firmantes = body?.Firmantes as Array<{ Identificacion?: string; Nombre?: string }> | undefined;
+    Log.info("FirmaPlus MOCK (dev): signer", {
+      nota: body?.Nota,
+      firmantesCount: firmantes?.length ?? 0,
+      firmantes: firmantes?.map((f) => ({ identificacion: f.Identificacion, nombre: f.Nombre })) ?? []
+    });
+    return {
+      Code: "1",
+      Data: {
+        NroSolicitud: `MOCK-${timestamp}`,
+        Fecha: fechaFormateada,
+        Link: `http://localhost/FirmaPlus/mock-${timestamp}`
+      },
+      Message: "Documentos y registros guardados. [MOCK]"
+    };
+  }
+
+  if (path.startsWith("consultarsolicitud")) {
+    const solicitudId = path.split("/").pop();
+    Log.info("FirmaPlus MOCK (dev): consultarsolicitud", { solicitudId });
+    return {
+      Code: "1",
+      Data: {
+        NroSolicitud: solicitudId || `MOCK-${timestamp}`,
+        Fecha: fechaFormateada,
+        Link: `http://localhost/FirmaPlus/mock-${timestamp}`
+      },
+      Message: "Solicitud consultada exitosamente. [MOCK]"
+    };
+  }
+
+  if (path === "cancelarsolicitud") {
+    Log.info("FirmaPlus MOCK (dev): cancelarsolicitud", { body });
+    return {
+      Code: "1",
+      Message: "Solicitud cancelada exitosamente. [MOCK]"
+    };
+  }
+
+  Log.warn("FirmaPlus MOCK (dev): endpoint no reconhecido", { path });
+  return {
+    Code: "0",
+    Message: "Endpoint no reconocido. [MOCK]"
+  };
+};
 
 const apiFirmaPlus = () => {
   const config = useRuntimeConfig();
@@ -87,6 +152,10 @@ const apiFirmaPlus = () => {
       headers?: Record<string, string>
     }
   ) => {
+    if (env === "dev") {
+      return getMockResponse(path) as T;
+    }
+
     const headers: Record<string, string> = {
       ...(opts?.headers || {})
     };
@@ -120,20 +189,25 @@ const apiFirmaPlus = () => {
       headers?: Record<string, string>
     }
   ) => {
+    if (env === "dev") {
+      return getMockResponse(path, body) as T;
+    }
+
     const headers: Record<string, string> = {
       ...(opts?.headers || {})
     };
-    const token = await getToken();
-
-    if (typeof token !== "string") {
-      throw createError({
-        statusCode: 401,
-        message: "Bad token no valid",
-        data: token
-      });
-    }
 
     if (opts?.auth) {
+      const token = await getToken();
+
+      if (typeof token !== "string") {
+        throw createError({
+          statusCode: 401,
+          message: "Bad token no valid",
+          data: token
+        });
+      }
+
       Object.assign(headers, authHeader(token as string));
     }
 
@@ -155,6 +229,10 @@ const apiFirmaPlus = () => {
       headers?: Record<string, string>
     }
   ) => {
+    if (env === "dev") {
+      return getMockResponse(path, body) as T;
+    }
+
     const headers: Record<string, string> = {
       ...(opts?.headers || {})
     };

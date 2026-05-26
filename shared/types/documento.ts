@@ -25,6 +25,7 @@ export interface Firmante {
   tipo_documento?: string;
   rol?: string;
   telefono?: string;
+  codigo_pais?: string;
 }
 
 export interface FirmanteDb {
@@ -37,6 +38,7 @@ export interface FirmanteDb {
   email: string;
   rol: string;
   telefono?: string;
+  codigo_pais?: string;
   created_at: string | null;
   updated_at: string | null;
   _pending?: true;
@@ -49,13 +51,5 @@ export interface NuevoFirmante {
   numero_documento: string;
   rol: string;
   telefono?: string;
-}
-
-export interface NuevoFirmante {
-  tipo: string;
-  nombre_completo: string;
-  email: string;
-  numero_documento: string;
-  rol: string;
-  telefono?: string;
+  codigo_pais?: string;
 }

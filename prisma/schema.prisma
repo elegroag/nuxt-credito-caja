@@ -86,6 +86,8 @@ model firmantes_solicitud {
   rol                 String              @db.VarChar(100)
   created_at          DateTime?           @db.Timestamp(0)
   updated_at          DateTime?           @db.Timestamp(0)
+  telefono            String?             @db.VarChar(20)
+  codigo_pais         String?             @db.VarChar(5)
   solicitudes_credito solicitudes_credito @relation(fields: [solicitud_id], references: [numero_solicitud], onDelete: Cascade, onUpdate: NoAction, map: "firmantes_solicitud_solicitud_id_foreign")
 
   @@unique([solicitud_id, orden], map: "unique_firmante_solicitud")
@@ -183,7 +185,6 @@ model personal_access_tokens {
 model roles {
   id          BigInt    @id @default(autoincrement()) @db.UnsignedBigInt
   nombre      String    @unique(map: "roles_nombre_unique") @db.VarChar(50)
-  etiqueta    String?   @db.VarChar(45)
   descripcion String?   @db.VarChar(255)
   permisos    Json?
   color       String    @default("#6B7280") @db.VarChar(7)
@@ -191,6 +192,7 @@ model roles {
   activo      Boolean   @default(true)
   created_at  DateTime? @db.Timestamp(0)
   updated_at  DateTime? @db.Timestamp(0)
+  etiqueta    String?   @db.VarChar(45)
 
   @@index([activo], map: "roles_activo_index")
   @@index([nombre], map: "roles_nombre_index")
@@ -399,9 +401,9 @@ model users {
   updated_at             DateTime?                @db.Timestamp(0)
   pin_verification       String?                  @db.VarChar(4)
   documentos_postulantes documentos_postulantes[]
+  notifications          notifications[]
   solicitud_timeline     solicitud_timeline[]
   solicitudes_credito    solicitudes_credito[]
-  notifications          notifications[]
 
   @@index([disabled], map: "users_disabled_index")
   @@index([email], map: "users_email_index")
@@ -430,8 +432,8 @@ enum solicitud_solicitante_genero {
 }
 
 enum rol_en_solicitud {
-  T // Trabajador
-  S // Solicitante
-  C // Codeudor
-  E // Empleador
+  T
+  S
+  C
+  E
 }
