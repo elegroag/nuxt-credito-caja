@@ -150,6 +150,7 @@ export default defineNuxtConfig({
       ]
     },
     build: {
+      sourcemap: env.NODE_ENV == "development",
       modulePreload: {
         polyfill: false
       }

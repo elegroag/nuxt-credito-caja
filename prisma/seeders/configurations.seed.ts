@@ -164,5 +164,22 @@ export const configurations = [
     required: true,
     created_at: "2026-02-25 02:06:11.0",
     updated_at: "2026-02-25 02:06:11.0"
+  },
+  {
+    clave: "form_contact",
+    valor: JSON.stringify({
+      email: "creditos@comfaca.com",
+      telefono: "1234567",
+      extension: "1020",
+      ciudad: "Florencia Cáqueta",
+      horarios: "Lunes a Viernes 8:00 AM - 5:00 PM"
+    }),
+    descripcion: "Configuración de contacto del formulario de crédito",
+    tipo: "json",
+    categoria: "contacto",
+    editable: true,
+    required: false,
+    created_at: "2026-02-25 02:06:11.0",
+    updated_at: "2026-02-25 02:06:11.0"
   }
 ];

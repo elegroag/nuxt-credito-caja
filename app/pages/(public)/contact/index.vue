@@ -5,6 +5,29 @@ definePageMeta({
   layout: "public"
 });
 
+// Cargar config de contacto desde el backend
+const contactConfig = useState<{
+  email?: string;
+  telefono?: string;
+  extension?: string;
+  ciudad?: string;
+  horarios?: string;
+} | null>("contact-config", () => null);
+
+onMounted(async () => {
+  try {
+    const data = await $fetch<{
+      success: boolean;
+      data: { clave: string; valor: string; tipo: string; descripcion: string } | null;
+    }>("/api/public/configurations/form_contact");
+    if (data?.data?.valor) {
+      contactConfig.value = JSON.parse(data.data.valor);
+    }
+  } catch (e) {
+    console.error("Error cargando config de contacto:", e);
+  }
+});
+
 const formSchema = z.object({
   name: z.string().min(2, "Nombre muy corto"),
   email: z.string().email("Email inválido"),
@@ -29,7 +52,7 @@ const focusedField = ref<string | null>(null);
 const validateField = (field: keyof typeof form.value) => {
   const result = formSchema.safeParse({ ...form.value });
   if (!result.success) {
-    const fieldError = result.error.issues.find(e => e.path[0] === field);
+    const fieldError = result.error.issues.find((e) => e.path[0] === field);
     if (fieldError) {
       errors.value[field] = fieldError.message;
     } else {
@@ -53,34 +76,39 @@ const submitForm = async () => {
   }
 
   loading.value = true;
-  await new Promise(resolve => setTimeout(resolve, 1500));
+  await new Promise((resolve) => setTimeout(resolve, 1500));
   loading.value = false;
   submitted.value = true;
 };
 
-const contactInfo = [
-  {
-    icon: "i-lucide-mail",
-    label: "Email",
-    value: "info@comfaca.com",
-    href: "mailto:info@comfaca.com",
-    description: "Respondemos en 24h"
-  },
-  {
-    icon: "i-lucide-phone",
-    label: "Teléfono",
-    value: "+57 300 123 4567",
-    href: "tel:+573001234567",
-    description: "Lun - Vie 8am - 5pm"
-  },
-  {
-    icon: "i-lucide-map-pin",
-    label: "Oficina",
-    value: "Florencia, Caquetá",
-    href: "#",
-    description: "Colombia"
-  }
-];
+const contactInfo = computed(() => {
+  const cfg = contactConfig.value;
+  return [
+    {
+      icon: "i-lucide-mail",
+      label: "Email",
+      value: cfg?.email ?? "info@comfaca.com",
+      href: `mailto:${cfg?.email ?? "info@comfaca.com"}`,
+      description: "Respondemos en 24h"
+    },
+    {
+      icon: "i-lucide-phone",
+      label: "Teléfono",
+      value: cfg?.telefono
+        ? `${cfg.telefono}${cfg.extension ? ` ext. ${cfg.extension}` : ""}`
+        : "+57 300 123 4567",
+      href: `tel:${cfg?.telefono ?? "+573001234567"}`,
+      description: cfg?.horarios ?? "Lun - Vie 8am - 5pm"
+    },
+    {
+      icon: "i-lucide-map-pin",
+      label: "Oficina",
+      value: cfg?.ciudad ?? "Florencia, Caquetá",
+      href: "#",
+      description: "Colombia"
+    }
+  ];
+});
 
 const socialLinks = [
   { icon: "i-lucide-facebook", label: "Facebook", href: "#" },
@@ -94,20 +122,14 @@ const socialLinks = [
   <section class="min-h-screen bg-background">
     <!-- Hero Header -->
     <div class="relative overflow-hidden">
-      <div
-        class="absolute inset-0 bg-linear-to-br from-primary/5 via-transparent to-accent/5"
-      />
-      <div
-        class="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-12 text-center"
-      >
-        <h1
-          class="text-4xl sm:text-5xl lg:text-6xl font-bold text-foreground tracking-tight"
-        >
+      <div class="absolute inset-0 bg-linear-to-br from-primary/5 via-transparent to-accent/5" />
+      <div class="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-12 text-center">
+        <h1 class="text-4xl sm:text-5xl lg:text-6xl font-bold text-foreground tracking-tight">
           Contáctanos
         </h1>
         <p class="mt-4 text-lg text-muted-foreground max-w-2xl mx-auto">
-          Estamos aquí para ayudarte. Completa el formulario y te responderemos
-          en menos de 24 horas.
+          Estamos aquí para ayudarte. Completa el formulario y te responderemos en menos de 24
+          horas.
         </p>
       </div>
     </div>
@@ -124,10 +146,7 @@ const socialLinks = [
           <div
             class="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-colors"
           >
-            <UIcon
-              :name="info.icon"
-              class="w-5 h-5 text-primary"
-            />
+            <UIcon :name="info.icon" class="w-5 h-5 text-primary" />
           </div>
           <p class="text-sm text-muted-foreground">{{ info.label }}</p>
           <p class="text-foreground font-medium mt-1">{{ info.value }}</p>
@@ -139,21 +158,13 @@ const socialLinks = [
 
       <!-- Form Section -->
       <div class="relative">
-        <div
-          v-if="submitted"
-          class="bg-card rounded-3xl p-12 text-center"
-        >
+        <div v-if="submitted" class="bg-card rounded-3xl p-12 text-center">
           <div
             class="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6"
           >
-            <UIcon
-              name="i-lucide-check"
-              class="w-10 h-10 text-primary"
-            />
+            <UIcon name="i-lucide-check" class="w-10 h-10 text-primary" />
           </div>
-          <h2 class="text-2xl font-semibold text-foreground mb-2">
-            ¡Mensaje enviado!
-          </h2>
+          <h2 class="text-2xl font-semibold text-foreground mb-2">¡Mensaje enviado!</h2>
           <p class="text-muted-foreground mb-6">
             Gracias por contactarnos. Te responderemos pronto.
           </p>
@@ -175,11 +186,7 @@ const socialLinks = [
           </UButton>
         </div>
 
-        <form
-          v-else
-          class="bg-card rounded-3xl p-8 sm:p-12"
-          @submit.prevent="submitForm"
-        >
+        <form v-else class="bg-card rounded-3xl p-8 sm:p-12" @submit.prevent="submitForm">
           <div class="grid sm:grid-cols-2 gap-6 mb-6">
             <!-- Name -->
             <div class="relative">
@@ -199,12 +206,9 @@ const socialLinks = [
                   :class="{ 'ring-2 ring-red-500/20': errors.name }"
                   @blur="validateField('name')"
                   @focus="focusedField = 'name'"
-                >
+                />
               </div>
-              <p
-                v-if="errors.name"
-                class="mt-1 text-xs text-red-500"
-              >
+              <p v-if="errors.name" class="mt-1 text-xs text-red-500">
                 {{ errors.name }}
               </p>
             </div>
@@ -227,12 +231,9 @@ const socialLinks = [
                   :class="{ 'ring-2 ring-red-500/20': errors.email }"
                   @blur="validateField('email')"
                   @focus="focusedField = 'email'"
-                >
+                />
               </div>
-              <p
-                v-if="errors.email"
-                class="mt-1 text-xs text-red-500"
-              >
+              <p v-if="errors.email" class="mt-1 text-xs text-red-500">
                 {{ errors.email }}
               </p>
             </div>
@@ -251,7 +252,7 @@ const socialLinks = [
                   placeholder="+57 300 123 4567"
                   class="w-full pl-11 pr-4 py-3 bg-muted/50 rounded-xl border-0 text-foreground placeholder:text-muted-foreground focus:ring-2 focus:ring-primary/20 focus:bg-card transition-all"
                   @focus="focusedField = 'phone'"
-                >
+                />
               </div>
             </div>
 
@@ -273,12 +274,9 @@ const socialLinks = [
                   :class="{ 'ring-2 ring-red-500/20': errors.subject }"
                   @blur="validateField('subject')"
                   @focus="focusedField = 'subject'"
-                >
+                />
               </div>
-              <p
-                v-if="errors.subject"
-                class="mt-1 text-xs text-red-500"
-              >
+              <p v-if="errors.subject" class="mt-1 text-xs text-red-500">
                 {{ errors.subject }}
               </p>
             </div>
@@ -298,10 +296,7 @@ const socialLinks = [
               @blur="validateField('message')"
               @focus="focusedField = 'message'"
             />
-            <p
-              v-if="errors.message"
-              class="mt-1 text-xs text-red-500"
-            >
+            <p v-if="errors.message" class="mt-1 text-xs text-red-500">
               {{ errors.message }}
             </p>
           </div>
@@ -316,11 +311,7 @@ const socialLinks = [
               class="w-full sm:w-auto px-8"
             >
               <template #leading>
-                <UIcon
-                  v-if="!loading"
-                  name="i-lucide-send"
-                  class="w-4 h-4"
-                />
+                <UIcon v-if="!loading" name="i-lucide-send" class="w-4 h-4" />
               </template>
               Enviar mensaje
             </UButton>
@@ -333,9 +324,7 @@ const socialLinks = [
 
       <!-- Social Links -->
       <div class="mt-12 text-center">
-        <p class="text-sm text-muted-foreground mb-4">
-          Síguenos en redes
-        </p>
+        <p class="text-sm text-muted-foreground mb-4">Síguenos en redes</p>
         <div class="flex justify-center gap-3">
           <a
             v-for="social in socialLinks"
@@ -344,10 +333,7 @@ const socialLinks = [
             class="w-10 h-10 rounded-full bg-muted/50 flex items-center justify-center hover:bg-primary/10 hover:text-primary transition-all"
             :aria-label="social.label"
           >
-            <UIcon
-              :name="social.icon"
-              class="w-4 h-4"
-            />
+            <UIcon :name="social.icon" class="w-4 h-4" />
           </a>
         </div>
       </div>

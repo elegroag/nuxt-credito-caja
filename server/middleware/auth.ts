@@ -7,6 +7,10 @@ const PUBLIC_ROUTES: string[] = [
   "/api/health"
 ];
 
+const PUBLIC_PREFIXES = [
+  "/api/public/"
+];
+
 export default defineEventHandler(async (event) => {
   const url = getRequestURL(event);
   const path = url.pathname;
@@ -22,6 +26,7 @@ export default defineEventHandler(async (event) => {
 
   // Permite rutas públicas sin autenticación
   if (PUBLIC_ROUTES.includes(path)) return;
+  if (PUBLIC_PREFIXES.some(prefix => path.startsWith(prefix))) return;
 
   const session = await getUserSession(event).catch(() => null);
 

@@ -1,15 +1,14 @@
-import { defineEventHandler, getQuery } from "h3";
+import { defineEventHandler, getRouterParam } from "h3";
 import prisma from "~~/lib/prisma";
 
 export default defineEventHandler(async (event) => {
-  const query = getQuery(event);
-  const clave = query.clave as string | undefined;
+  const clave = getRouterParam(event, "clave");
 
   if (!clave) {
-    return {
-      success: false,
-      error: "Parámetro 'clave' es requerido"
-    };
+    throw createError({
+      statusCode: 400,
+      message: "Parámetro 'clave' es requerido"
+    });
   }
 
   const config = await prisma.configurations.findUnique({

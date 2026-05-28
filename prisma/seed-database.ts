@@ -61,6 +61,8 @@ async function _resetSolicitudesTables() {
 async function seedConfigurations() {
   console.log("Seeding configurations...");
 
+  await prisma.configurations.deleteMany({});
+
   const countConfig = await prisma.configurations.count();
   if (countConfig == 0) {
     const configData = configurations.map((config) => {
@@ -242,12 +244,8 @@ async function seedPersonalAccessTokens() {
     const tokensData = personalAccessTokens.map((token) => {
       return {
         ...token,
-        last_used_at: token.last_used_at
-          ? new Date(token.last_used_at).toISOString()
-          : null,
-        expires_at: token.expires_at
-          ? new Date(token.expires_at).toISOString()
-          : null,
+        last_used_at: token.last_used_at ? new Date(token.last_used_at).toISOString() : null,
+        expires_at: token.expires_at ? new Date(token.expires_at).toISOString() : null,
         created_at: new Date(token.created_at).toISOString(),
         updated_at: new Date(token.updated_at).toISOString()
       };
@@ -269,9 +267,7 @@ async function _seedNotifications() {
     const notificationsData = notifications.map((notification) => {
       return {
         ...notification,
-        read_at: notification.read_at
-          ? new Date(notification.read_at).toISOString()
-          : null,
+        read_at: notification.read_at ? new Date(notification.read_at).toISOString() : null,
         created_at: new Date(notification.created_at).toISOString(),
         updated_at: new Date(notification.updated_at).toISOString()
       };
@@ -416,9 +412,7 @@ async function seedSolicitudDocumentos() {
     const documentosData = solicitudDocumentos.map((documento) => {
       return {
         ...documento,
-        deleted_at: documento.deleted_at
-          ? new Date(documento.deleted_at).toISOString()
-          : null,
+        deleted_at: documento.deleted_at ? new Date(documento.deleted_at).toISOString() : null,
         created_at: new Date(documento.created_at).toISOString(),
         updated_at: new Date(documento.updated_at).toISOString()
       };
