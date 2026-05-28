@@ -31,6 +31,7 @@ onMounted(async () => {
 const formSchema = z.object({
   name: z.string().min(2, "Nombre muy corto"),
   email: z.string().email("Email inválido"),
+  identification: z.string().min(5, "Número de identificación inválido"),
   phone: z.string().optional(),
   subject: z.string().min(3, "Asunto requerido"),
   message: z.string().min(10, "Mensaje muy corto")
@@ -39,6 +40,7 @@ const formSchema = z.object({
 const form = ref({
   name: "",
   email: "",
+  identification: "",
   phone: "",
   subject: "",
   message: ""
@@ -76,9 +78,25 @@ const submitForm = async () => {
   }
 
   loading.value = true;
-  await new Promise((resolve) => setTimeout(resolve, 1500));
-  loading.value = false;
-  submitted.value = true;
+  try {
+    await $fetch("/api/public/contact/send-email", {
+      method: "POST",
+      body: {
+        name: form.value.name,
+        email: form.value.email,
+        identification: form.value.identification,
+        phone: form.value.phone || undefined,
+        subject: form.value.subject,
+        message: form.value.message
+      }
+    });
+    submitted.value = true;
+  } catch (e) {
+    console.error("Error enviando formulario:", e);
+    errors.value["_form"] = "Error al enviar el mensaje. Intenta nuevamente.";
+  } finally {
+    loading.value = false;
+  }
 };
 
 const contactInfo = computed(() => {
@@ -176,6 +194,7 @@ const socialLinks = [
               form = {
                 name: '',
                 email: '',
+                identification: '',
                 phone: '',
                 subject: '',
                 message: ''
@@ -210,6 +229,31 @@ const socialLinks = [
               </div>
               <p v-if="errors.name" class="mt-1 text-xs text-red-500">
                 {{ errors.name }}
+              </p>
+            </div>
+
+            <!-- Identification -->
+            <div class="relative">
+              <label class="block text-sm font-medium text-foreground mb-2">
+                No. de Identificación <span class="text-primary">*</span>
+              </label>
+              <div class="relative">
+                <UIcon
+                  name="i-lucide-id-card"
+                  class="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground"
+                />
+                <input
+                  v-model="form.identification"
+                  type="text"
+                  placeholder="Número de identificación"
+                  class="w-full pl-11 pr-4 py-3 bg-muted/50 rounded-xl border-0 text-foreground placeholder:text-muted-foreground focus:ring-2 focus:ring-primary/20 focus:bg-card transition-all"
+                  :class="{ 'ring-2 ring-red-500/20': errors.identification }"
+                  @blur="validateField('identification')"
+                  @focus="focusedField = 'identification'"
+                />
+              </div>
+              <p v-if="errors.identification" class="mt-1 text-xs text-red-500">
+                {{ errors.identification }}
               </p>
             </div>
 
