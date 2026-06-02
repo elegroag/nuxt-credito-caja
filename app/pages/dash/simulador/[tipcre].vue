@@ -258,22 +258,22 @@
             </template>
           </UFormField>
 
-          <div class="grid gap-4 sm:grid-cols-2">
-            <!-- Plazo -->
-            <UFormField
-              label="Plazo (meses)"
-              :hint="`Máx: ${lineaSeleccionada?.numcuo || 'N/A'} meses`"
-            >
-              <UInput
-                v-model.number="plazoMeses"
-                type="number"
-                step="1"
-                min="1"
-                :max="lineaSeleccionada?.numcuo || 999"
-                :disabled="lineaSeleccionada?.estado !== 'A'"
-              />
-            </UFormField>
+          <!-- Plazo -->
+          <UFormField
+            label="Plazo (meses)"
+            :hint="`Máx: ${lineaSeleccionada?.numcuo || 'N/A'} meses`"
+          >
+            <UInput
+              v-model.number="plazoMeses"
+              type="number"
+              step="1"
+              min="1"
+              :max="lineaSeleccionada?.numcuo || 999"
+              :disabled="lineaSeleccionada?.estado !== 'A'"
+            />
+          </UFormField>
 
+          <div class="grid gap-4 sm:grid-cols-2">
             <!-- Tipo de tasa -->
             <UFormField label="Tipo de tasa">
               <URadioGroup
@@ -284,40 +284,40 @@
                 ]"
               />
             </UFormField>
-          </div>
 
-          <!-- Tasa -->
-          <UFormField
-            :label="
-              tipoTasa === 'anual'
-                ? 'Tasa efectiva anual (EA %)'
-                : 'Tasa mensual (%)'
-            "
-            :hint="
-              trabajador?.codigo_categoria && lineaSeleccionada?.categorias
-                ? 'Tasa por categoría aplicada'
-                : ''
-            "
-          >
-            <UInput
-              v-model.number="tasaInput"
-              type="number"
-              step="0.1"
-              min="0"
-              :readonly="
-                !!(
-                  trabajador?.codigo_categoria && lineaSeleccionada?.categorias
-                )
+            <!-- Tasa -->
+            <UFormField
+              :label="
+                tipoTasa === 'anual'
+                  ? 'Tasa efectiva anual (EA %)'
+                  : 'Tasa mensual (%)'
               "
-              :placeholder="
-                trabajador?.codigo_categoria
-                  ? `Tasa cat. ${trabajador.codigo_categoria}`
+              :hint="
+                trabajador?.codigo_categoria && lineaSeleccionada?.categorias
+                  ? 'Tasa por categoría aplicada'
                   : ''
               "
-            />
-          </UFormField>
+            >
+              <UInput
+                v-model.number="tasaInput"
+                type="number"
+                step="0.1"
+                min="0"
+                :readonly="
+                  !!(
+                    trabajador?.codigo_categoria && lineaSeleccionada?.categorias
+                  )
+                "
+                :placeholder="
+                  trabajador?.codigo_categoria
+                    ? `Tasa cat. ${trabajador.codigo_categoria}`
+                    : ''
+                "
+              />
+            </UFormField>
+          </div>
 
-          <div class="grid gap-4 sm:grid-cols-2">
+          <div class="grid gap-4 md:grid-cols-2">
             <!-- Ingresos -->
             <UFormField
               label="Ingresos mensuales"
@@ -348,6 +348,27 @@
               </template>
             </UFormField>
 
+            <!-- Seguridad social (8% del salario bruto) -->
+            <UFormField
+              label="Seguridad social"
+              description="8% del salario bruto"
+            >
+              <UInput
+                :model-value="seguridadSocialSan"
+                type="text"
+                inputmode="numeric"
+                disabled
+                :placeholder="fmt(0)"
+              />
+              <template #help>
+                <p class="text-xs text-muted-foreground">
+                  {{ fmt(seguridadSocialSan) }} se descuentan del bruto
+                </p>
+              </template>
+            </UFormField>
+          </div>
+
+          <div class="grid gap-4 sm:grid-cols-2">
             <!-- Descuentos -->
             <UFormField
               label="Descuentos mensuales"
@@ -360,20 +381,20 @@
                 min="0"
               />
             </UFormField>
-          </div>
 
-          <!-- Max endeudamiento -->
-          <UFormField
-            label="Máximo endeudamiento"
-            description="Por ley 50% de capacidad"
-          >
-            <UInput
-              v-model.number="maxEndeudamientoPct"
-              type="number"
-              min="0"
-              max="100"
-            />
-          </UFormField>
+            <!-- Max endeudamiento -->
+            <UFormField
+              label="Máximo endeudamiento"
+              description="Por ley 50% de capacidad"
+            >
+              <UInput
+                v-model.number="maxEndeudamientoPct"
+                type="number"
+                min="0"
+                max="100"
+              />
+            </UFormField>
+          </div>
         </div>
       </UPageCard>
 
@@ -571,6 +592,7 @@ const {
   tasaEASan,
   tasaMensualSan,
   ingresosSan,
+  seguridadSocialSan,
   descuentosSan,
   tasaMensual,
   cuotaMensual,

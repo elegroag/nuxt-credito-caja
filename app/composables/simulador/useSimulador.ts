@@ -45,6 +45,10 @@ export function useSimulador() {
     // Ingresos netos aproximados para cálculos internos si fuera necesario
     return ingresosBrutosSan.value * 0.92;
   });
+  // Deducción de ley por seguridad social (8% del salario bruto: 4% salud + 4% pensión)
+  const seguridadSocialSan = computed(() =>
+    Math.round(ingresosBrutosSan.value * 0.08)
+  );
   const maxEndeudamientoSan = computed(() => {
     const v = _num(maxEndeudamientoPct.value);
     return Math.min(100, Math.max(0, v));
@@ -179,6 +183,7 @@ export function useSimulador() {
     tasaMensualSan,
     ingresosSan,
     ingresosBrutosSan,
+    seguridadSocialSan,
     descuentosSan,
     maxEndeudamientoSan,
     tasaMensual,

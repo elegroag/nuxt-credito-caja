@@ -28,6 +28,10 @@ export function useSimuladorCore() {
 
   const calcularIngresosSan = (ingresosBrutos: number) => ingresosBrutos * 0.92;
 
+  // Deducción de ley por seguridad social (8% del salario bruto: 4% salud + 4% pensión)
+  const calcularSeguridadSocialSan = (ingresosBrutos: number) =>
+    Math.round(ingresosBrutos * 0.08);
+
   const calcularCapacidadPagoMaxima = (ingresosBrutos: number, maxEndeudamientoPct: number) => {
     const bruto = calcularIngresosBrutosSan(ingresosBrutos);
     const maxEnd = calcularMaxEndeudamientoSan(maxEndeudamientoPct);
@@ -117,6 +121,7 @@ export function useSimuladorCore() {
     calcularDescuentosSan,
     calcularMaxEndeudamientoSan,
     calcularIngresosSan,
+    calcularSeguridadSocialSan,
     calcularCapacidadPagoMaxima,
     calcularTasaMensual,
     calcularCuotaMensual,

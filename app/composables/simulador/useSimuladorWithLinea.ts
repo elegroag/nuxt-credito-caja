@@ -51,6 +51,7 @@ export function useSimuladorWithLinea(lineaCredito?: Ref<LineaCreditoData | null
     calcularIngresosBrutosSan,
     calcularDescuentosSan,
     calcularIngresosSan,
+    calcularSeguridadSocialSan,
     convertirAnualAMensual,
     convertirMensualAAnual
   } = useSimuladorCore();
@@ -85,6 +86,7 @@ export function useSimuladorWithLinea(lineaCredito?: Ref<LineaCreditoData | null
   const ingresosBrutosSan = computed(() => calcularIngresosBrutosSan(ingresosMensuales.value));
   const descuentosSan = computed(() => calcularDescuentosSan(descuentosMensuales.value));
   const ingresosSan = computed(() => calcularIngresosSan(ingresosBrutosSan.value));
+  const seguridadSocialSan = computed(() => calcularSeguridadSocialSan(ingresosBrutosSan.value));
 
   const tasaMensual = computed(() =>
     calcularTasaMensual(tasaEASan.value, tasaMensualSan.value, tipoTasa.value)
@@ -175,6 +177,7 @@ export function useSimuladorWithLinea(lineaCredito?: Ref<LineaCreditoData | null
     tasaMensualSan,
     ingresosSan,
     ingresosBrutosSan,
+    seguridadSocialSan,
     descuentosSan,
     tasaMensual,
     cuotaMensual,
