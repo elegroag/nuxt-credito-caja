@@ -55,14 +55,14 @@ export function useSimulador() {
   });
 
   // Cálculos financieros
+  // La tasa mensual usada en el cálculo se deriva SIEMPRE de la tasa anual
+  // con la fórmula compuesta (1 + EA)^(1/12) - 1. Esto garantiza que
+  // `cuotaMensual`, `totalPagar` e `intereses` sean estables al alternar
+  // entre tasa anual y mensual en el formulario. La selección "Mensual" del
+  // radio sólo afecta al input; el cálculo financiero se mantiene invariante.
   const tasaMensual = computed(() => {
-    if (tipoTasa.value === "mensual") {
-      // Si el usuario selecciona tasa mensual, usar directamente ese valor
-      return tasaMensualSan.value / 100;
-    }
-    // Si es tasa anual, convertir a mensual
     const ea = tasaEASan.value / 100;
-    if (ea <= 0) return 0;
+    if (!Number.isFinite(ea) || ea <= 0) return 0;
     return Math.pow(1 + ea, 1 / 12) - 1;
   });
 

@@ -204,25 +204,9 @@ export const useSimuladorConLineaPage = () => {
       // Establecer descuentos mensuales por defecto en 0
       descuentosMensuales.value = 0;
 
-      // Establecer tasa según categoría del trabajador
-      if (
-        trabajador.value?.codigo_categoria
-        && lineaSeleccionada.value?.categorias
-      ) {
-        const categoriaTrabajador = String(
-          trabajador.value.codigo_categoria
-        ).toLowerCase();
-        const categoriaLinea = lineaSeleccionada.value.categorias.find(
-          (cat: Record<string, unknown>) =>
-            cat
-            && cat.codcat
-            && String(cat.codcat).toLowerCase() === categoriaTrabajador
-        );
-
-        if (categoriaLinea && (categoriaLinea as Record<string, unknown>).facfin) {
-          tasaEfectivaAnual.value = parseFloat(String((categoriaLinea as Record<string, unknown>).facfin));
-        }
-      }
+      // La tasa según categoría del trabajador se asigna reactivamente
+      // desde el watch sobre `categoriaTrabajadorAplicada` (más abajo), para
+      // cubrir el caso en que el trabajador se hidrate después de este método.
 
       // Validar convenio automáticamente si tiene datos del trabajador
       if (trabajador.value?.empresa?.nit && trabajador.value?.cedula) {
@@ -238,6 +222,38 @@ export const useSimuladorConLineaPage = () => {
       loading.value = false;
     }
   };
+
+  // Resuelve la categoría del trabajador dentro de las categorías de la línea.
+  // Devuelve { codcat, facfin } si hay match, o null si no hay match o no hay datos.
+  const categoriaTrabajadorAplicada = computed<
+    { codcat: string, facfin: number | string } | null
+  >(() => {
+    // El campo del trabajador es `codcat`; se conserva fallback a
+    // `codigo_categoria` para datos antiguos que aún usen el nombre previo.
+    const codcatTrabajador
+      = trabajador.value?.codcat ?? trabajador.value?.codigo_categoria;
+    const categorias = lineaSeleccionada.value?.categorias;
+    if (!codcatTrabajador || !Array.isArray(categorias) || categorias.length === 0) {
+      return null;
+    }
+    const target = String(codcatTrabajador).toLowerCase();
+    const match = categorias.find(
+      (cat: Record<string, unknown>) =>
+        cat
+        && cat.codcat
+        && String(cat.codcat).toLowerCase() === target
+    );
+    if (!match) return null;
+    return {
+      codcat: String((match as Record<string, unknown>).codcat),
+      facfin: (match as Record<string, unknown>).facfin as number | string
+    };
+  });
+
+  // Código de categoría del trabajador (con fallback al nombre previo `codigo_categoria`).
+  const trabajadorCodcat = computed<string | null>(
+    () => trabajador.value?.codcat ?? trabajador.value?.codigo_categoria ?? null
+  );
 
   // Computed para manejar el v-model del input de monto de forma segura
   const montoInputModel = computed({
@@ -301,6 +317,49 @@ export const useSimuladorConLineaPage = () => {
       }
     },
     { immediate: true }
+  );
+
+  // Watch para forzar la tasa según la categoría del trabajador.
+  // Se re-evalúa cada vez que cambia `categoriaTrabajadorAplicada`
+  // (incluso cuando el trabajador se hidrata desde localStorage después del mount).
+  watch(
+    () => categoriaTrabajadorAplicada.value,
+    (categoria) => {
+      if (categoria && categoria.facfin !== undefined && categoria.facfin !== null) {
+        const nuevaTasa = parseFloat(String(categoria.facfin));
+        if (Number.isFinite(nuevaTasa) && nuevaTasa !== tasaEfectivaAnual.value) {
+          tasaEfectivaAnual.value = nuevaTasa;
+        }
+      }
+    },
+    { immediate: true }
+  );
+
+  // Watch para aplicar la conversión correcta al cambiar entre tasa anual y mensual.
+  // Usa `(newValue, oldValue)` para detectar la dirección del cambio.
+  // Esto reemplaza al handler `@update:model-value` del radio, que corría
+  // DESPUÉS de v-model y nunca veía el valor anterior.
+  watch(
+    () => tipoTasa.value,
+    (nuevoTipo, viejoTipo) => {
+      if (nuevoTipo === viejoTipo) return;
+
+      if (viejoTipo === "anual" && nuevoTipo === "mensual") {
+        // Anual → Mensual: calcular la tasa mensual a partir de la anual actual
+        const nuevaTasaMensual
+          = Math.round((tasaEASan.value / 12) * 10000) / 10000;
+        tasaMensualInput.value = nuevaTasaMensual;
+      } else if (viejoTipo === "mensual" && nuevoTipo === "anual") {
+        // Mensual → Anual: preferir la tasa representativa de la categoría
+        const cat = categoriaTrabajadorAplicada.value;
+        if (cat && cat.facfin !== undefined && cat.facfin !== null) {
+          const facfinNum = parseFloat(String(cat.facfin));
+          if (Number.isFinite(facfinNum)) {
+            tasaEfectivaAnual.value = facfinNum;
+          }
+        }
+      }
+    }
   );
 
   // Watch para validar convenio cuando el trabajador esté disponible
@@ -388,6 +447,8 @@ export const useSimuladorConLineaPage = () => {
     tasaInput,
     montoInput,
     montoInputModel,
+    categoriaTrabajadorAplicada,
+    trabajadorCodcat,
     validarMonto,
     navigateToLineas,
     cargarLineaCredito,

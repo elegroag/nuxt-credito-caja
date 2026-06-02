@@ -38,12 +38,15 @@ export function useSimuladorCore() {
     return (bruto * maxEnd / 100) - (bruto * 0.08);
   };
 
-  const calcularTasaMensual = (tasaEASan: number, tasaMensualSan: number, tipoTasa: "anual" | "mensual") => {
-    if (tipoTasa === "mensual") {
-      return tasaMensualSan / 100;
-    }
+  // La tasa mensual usada para los cálculos (cuota, total, intereses) se deriva
+  // SIEMPRE de la tasa anual con la fórmula compuesta (1 + EA)^(1/12) - 1.
+  // Esto garantiza que `cuotaMensual`, `totalPagar` e `intereses` sean estables
+  // independientemente del `tipoTasa` seleccionado en el formulario. La
+  // selección "Mensual" del radio sólo afecta al input (que muestra una
+  // conversión simple /12) pero no al cálculo financiero.
+  const calcularTasaMensual = (tasaEASan: number, _tasaMensualSan?: number, _tipoTasa?: "anual" | "mensual") => {
     const ea = tasaEASan / 100;
-    if (ea <= 0) return 0;
+    if (!Number.isFinite(ea) || ea <= 0) return 0;
     return Math.pow(1 + ea, 1 / 12) - 1;
   };
 
@@ -83,17 +86,15 @@ export function useSimuladorCore() {
     return cuotaMensual <= capacidadDisponible;
   };
 
-  // Funciones de conversión de tasas
+  // Funciones de conversión de tasas (división simple por 12, 4 decimales)
   const convertirAnualAMensual = (tasaEA: number) => {
-    const ea = tasaEA / 100;
-    if (ea <= 0) return 0;
-    return (Math.pow(1 + ea, 1 / 12) - 1) * 100;
+    if (!Number.isFinite(tasaEA) || tasaEA <= 0) return 0;
+    return Math.round((tasaEA / 12) * 10000) / 10000;
   };
 
   const convertirMensualAAnual = (tasaMensual: number) => {
-    const tm = tasaMensual / 100;
-    if (tm <= 0) return 0;
-    return (Math.pow(1 + tm, 12) - 1) * 100;
+    if (!Number.isFinite(tasaMensual) || tasaMensual <= 0) return 0;
+    return Math.round(tasaMensual * 12 * 10000) / 10000;
   };
 
   // Funciones de formateo

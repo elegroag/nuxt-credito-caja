@@ -112,16 +112,30 @@ export function useSimuladorWithLinea(lineaCredito?: Ref<LineaCreditoData | null
   const margen = computed(() => calcularMargen(capacidadDisponible.value, cuotaMensual.value));
   const apto = computed(() => calcularApto(cuotaMensual.value, capacidadDisponible.value));
 
-  // Función para cambiar el tipo de tasa con conversión
-  const cambiarTipoTasa = (nuevoTipo: "anual" | "mensual") => {
+  // Función para cambiar el tipo de tasa con conversión.
+  // Si se pasa `categoriaAplicada`, al volver a "Anual" se restaura la tasa
+  // representativa (facfin) de la categoría en lugar de hacer la conversión inversa.
+  const cambiarTipoTasa = (
+    nuevoTipo: "anual" | "mensual",
+    categoriaAplicada?: { codcat: string, facfin: number | string } | null
+  ) => {
     if (nuevoTipo === tipoTasa.value) return;
 
     if (tipoTasa.value === "anual" && nuevoTipo === "mensual") {
-      // Convertir de anual a mensual
+      // Anual → Mensual: calcular la tasa mensual a partir de la anual actual
       const tasaMensualConvertida = convertirAnualAMensual(tasaEASan.value);
       tasaMensualInput.value = parseFloat(tasaMensualConvertida.toFixed(2));
     } else if (tipoTasa.value === "mensual" && nuevoTipo === "anual") {
-      // Convertir de mensual a anual
+      // Mensual → Anual: preferir la tasa representativa de la categoría del trabajador
+      if (categoriaAplicada && categoriaAplicada.facfin !== undefined && categoriaAplicada.facfin !== null) {
+        const facfinNum = parseFloat(String(categoriaAplicada.facfin));
+        if (Number.isFinite(facfinNum)) {
+          tasaEfectivaAnual.value = facfinNum;
+          tipoTasa.value = nuevoTipo;
+          return;
+        }
+      }
+      // Sin categoría aplicable: convertir de vuelta desde la mensual
       const tasaAnualConvertida = convertirMensualAAnual(tasaMensualSan.value);
       tasaEfectivaAnual.value = parseFloat(tasaAnualConvertida.toFixed(2));
     }
