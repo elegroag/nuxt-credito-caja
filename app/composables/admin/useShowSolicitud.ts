@@ -241,6 +241,11 @@ export function useShowSolicitud() {
       descripcion: "En proceso de revisión por asesores"
     },
     {
+      id: "APROBADA",
+      nombre: "Aprobada",
+      descripcion: "Crédito aprobado"
+    },
+    {
       id: "PENDIENTE_FIRMADO",
       nombre: "Pendiente de firmado",
       descripcion: "Esperando firma digital del documento"
@@ -254,11 +259,6 @@ export function useShowSolicitud() {
       id: "ENVIADO_PENDIENTE_APROBACION",
       nombre: "Enviado (pendiente de aprobación)",
       descripcion: "Solicitud en evaluación final"
-    },
-    {
-      id: "APROBADO",
-      nombre: "Aprobado",
-      descripcion: "Crédito aprobado"
     },
     {
       id: "DESEMBOLSADO",

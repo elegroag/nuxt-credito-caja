@@ -130,7 +130,8 @@ export function useAdminDashboard() {
         })) ?? [];
 
       const convenios = data?.convenios;
-      stats.value.conveniosActivos = convenios?.activos ?? 0;
+      // Backend devuelve `activos` como string (Prisma: String(count)); normalizar a number
+      stats.value.conveniosActivos = Number(convenios?.activos ?? 0) || 0;
       stats.value.topEmpresas
         = convenios?.topEmpresas?.map(e => ({
           nombre: e.razon_social,
@@ -140,8 +141,12 @@ export function useAdminDashboard() {
 
       const usuarios = data?.usuarios;
       if (usuarios) {
+        // `trabajadores` viene como string desde porRol[].count; normalizar
+        const parsedTrabajadores = Number(usuarios.trabajadores ?? 0);
         stats.value.trabajadoresRegistrados
-          = usuarios.trabajadores ?? stats.value.trabajadoresRegistrados;
+          = Number.isFinite(parsedTrabajadores) && parsedTrabajadores > 0
+            ? parsedTrabajadores
+            : stats.value.trabajadoresRegistrados;
         stats.value.usuariosPorRol
           = usuarios.porRol?.map(r => ({
             rol: r.role,

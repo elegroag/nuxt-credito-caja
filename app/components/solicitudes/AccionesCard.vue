@@ -8,7 +8,10 @@
     </template>
 
     <div class="flex flex-wrap gap-3">
-      <NuxtLink :to="`/dash/solicitud/documentos/${solicitudId}`">
+      <NuxtLink
+        v-if="mostrarGestionarDocumentos"
+        :to="`/dash/solicitud/documentos/${solicitudId}`"
+      >
         <UButton
           variant="outline"
           class="gap-2 border-blue-200 text-blue-700 hover:bg-blue-50 dark:border-blue-800 dark:text-blue-400 dark:hover:bg-blue-900/20"
@@ -67,6 +70,7 @@ import SectionCard from "./SectionCard.vue";
 interface Props {
   solicitudId: string
   mostrarEnviar: boolean
+  mostrarGestionarDocumentos: boolean
   tienePdf: boolean
 }
 

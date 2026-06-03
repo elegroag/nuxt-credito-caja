@@ -1,0 +1,2847 @@
+ ▐▛███▜▌   Claude Code v2.1.158
+▝▜█████▛▘  MiniMax-M3 · API Usage Billing
+  ▘▘ ▝▝    ~/proyectos/php/php84/www/comfaca-credito/nuxt-creditos
+
+
+❯ /skills 
+  ⎿  Skills dialog dismissed
+
+❯ En Page URL: http://localhost:4000/dash/simulador/01                          
+  Viewport: 1920x961                                                            
+  Component Tree: div > div                                                     
+  File: node_modules/.pnpm/@nuxt+ui@4.8.1_@internationalized+date@3.12.2_@inter 
+  nationalized+number@3.6.7_@tiptap+e_a2d070015207dda66de747c946813095/node_mod 
+  ules/@nuxt/ui/dist/runtime/components/FormField.vue:65:6 quiero que bajes     
+  visualmente  el input de tipo de tasa y se alinea de forma horizontal con la  
+  tasas efectiva anual input.                                                   
+
+  Thought for 1m 20s, searched for 5 patterns, read 1 file, listed 1 directory (ctrl+o to expand)
+
+● Voy a leer la estructura actual del formulario y reorganizar la ubicación del
+  input de "Tipo de tasa" para alinearlo horizontalmente con el de "Tasa
+  efectiva anual".
+
+  Estado actual:
+  - Fila 1 (grid 2 cols): Plazo | Tipo de tasa
+  - Fila 2 (ancho completo): Tasa efectiva anual
+
+  Cambio solicitado:
+  - Fila 1: Plazo (solo)
+  - Fila 2 (grid 2 cols): Tipo de tasa | Tasa efectiva anual
+
+● Update(app/pages/dash/simulador/[tipcre].vue)
+  ⎿  Added 43 lines, removed 43 lines
+      258              </template>
+      259            </UFormField>
+      260  
+      261 -          <div class="grid gap-4 sm:grid-cols-2">             
+      262 -            <!-- Plazo -->                                    
+      263 -            <UFormField                                       
+      264 -              label="Plazo (meses)"                           
+      265 -              :hint="`Máx: ${lineaSeleccionada?.numcuo || 'N/A
+          -'} meses`"                                                    
+      266 -            >                                                 
+      267 -              <UInput                                         
+      268 -                v-model.number="plazoMeses"                   
+      269 -                type="number"                                 
+      270 -                step="1"                                      
+      271 -                min="1"                                       
+      272 -                :max="lineaSeleccionada?.numcuo || 999"       
+      273 -                :disabled="lineaSeleccionada?.estado !== 'A'" 
+      274 -              />                                              
+      275 -            </UFormField>                                     
+      261 +          <!-- Plazo -->                                      
+      262 +          <UFormField                                         
+      263 +            label="Plazo (meses)"                             
+      264 +            :hint="`Máx: ${lineaSeleccionada?.numcuo || 'N/A'}
+          + meses`"                                                      
+      265 +          >                                                   
+      266 +            <UInput                                           
+      267 +              v-model.number="plazoMeses"                     
+      268 +              type="number"                                   
+      269 +              step="1"                                        
+      270 +              min="1"                                         
+      271 +              :max="lineaSeleccionada?.numcuo || 999"         
+      272 +              :disabled="lineaSeleccionada?.estado !== 'A'"   
+      273 +            />                                                
+      274 +          </UFormField>                                       
+      275  
+      276 +          <div class="grid gap-4 sm:grid-cols-2">             
+      277              <!-- Tipo de tasa -->
+      278              <UFormField label="Tipo de tasa">
+      279                <URadioGroup
+     ...
+      284                  ]"
+      285                />
+      286              </UFormField>
+      287 -          </div>                                              
+      287  
+      289 -          <!-- Tasa -->                                       
+      290 -          <UFormField                                         
+      291 -            :label="                                          
+      292 -              tipoTasa === 'anual'                            
+      293 -                ? 'Tasa efectiva anual (EA %)'                
+      294 -                : 'Tasa mensual (%)'                          
+      295 -            "                                                 
+      296 -            :hint="                                           
+      297 -              trabajador?.codigo_categoria && lineaSeleccionad
+          -a?.categorias                                                 
+      298 -                ? 'Tasa por categoría aplicada'               
+      299 -                : ''                                          
+      300 -            "                                                 
+      301 -          >                                                   
+      302 -            <UInput                                           
+      303 -              v-model.number="tasaInput"                      
+      304 -              type="number"                                   
+      305 -              step="0.1"                                      
+      306 -              min="0"                                         
+      307 -              :readonly="                                     
+      308 -                !!(                                           
+      309 -                  trabajador?.codigo_categoria && lineaSelecci
+          -onada?.categorias                                             
+      310 -                )                                             
+      288 +            <!-- Tasa -->                                     
+      289 +            <UFormField                                       
+      290 +              :label="                                        
+      291 +                tipoTasa === 'anual'                          
+      292 +                  ? 'Tasa efectiva anual (EA %)'              
+      293 +                  : 'Tasa mensual (%)'                        
+      294                "
+      312 -              :placeholder="                                  
+      313 -                trabajador?.codigo_categoria                  
+      314 -                  ? `Tasa cat. ${trabajador.codigo_categoria}`
+      295 +              :hint="                                         
+      296 +                trabajador?.codigo_categoria && lineaSeleccion
+          +ada?.categorias                                               
+      297 +                  ? 'Tasa por categoría aplicada'             
+      298                    : ''
+      299                "
+      317 -            />                                                
+      318 -          </UFormField>                                       
+      300 +            >                                                 
+      301 +              <UInput                                         
+      302 +                v-model.number="tasaInput"                    
+      303 +                type="number"                                 
+      304 +                step="0.1"                                    
+      305 +                min="0"                                       
+      306 +                :readonly="                                   
+      307 +                  !!(                                         
+      308 +                    trabajador?.codigo_categoria && lineaSelec
+          +cionada?.categorias                                           
+      309 +                  )                                           
+      310 +                "                                             
+      311 +                :placeholder="                                
+      312 +                  trabajador?.codigo_categoria                
+      313 +                    ? `Tasa cat. ${trabajador.codigo_categoria
+          +}`                                                            
+      314 +                    : ''                                      
+      315 +                "                                             
+      316 +              />                                              
+      317 +            </UFormField>                                     
+      318 +          </div>                                              
+      319  
+      320            <div class="grid gap-4 sm:grid-cols-2">
+      321              <!-- Ingresos -->
+
+  Thought for 9s (ctrl+o to expand)
+
+● Verifico el cambio realizado:
+
+  Thought for 10s, read 1 file (ctrl+o to expand)
+
+● El cambio se aplicó correctamente. Resumen de la modificación en
+  app/pages/dash/simulador/[tipcre].vue:
+
+  Antes:
+  - Fila 1 (grid 2 cols): Plazo | Tipo de tasa
+  - Fila 2 (ancho completo): Tasa efectiva anual
+
+  Después:
+  - Fila 1 (ancho completo): Plazo
+  - Fila 2 (grid 2 cols): Tipo de tasa | Tasa efectiva anual
+
+  El input de "Tipo de tasa" ahora aparece visualmente más abajo (debajo de
+  "Plazo") y queda alineado horizontalmente con el input de "Tasa efectiva anual
+  (EA %)" / "Tasa mensual (%)" en un grid de 2 columnas con gap-4, manteniendo
+  el mismo espaciado y estilo que usan los demás pares de campos del formulario
+  (Ingresos/Descuentos).
+
+  No requirió cambios de lógica, props ni del composable
+  useSimuladorConLineaPage — solo la reorganización del grid en el template.
+
+✻ Sautéed for 2m 17s
+
+❯ puedes adicionar los skills que estan en la ruta /home/elegro/.agents/skills  
+  a claude, sin tener que duplicar los skills ?                                 
+
+  Thought for 9s (ctrl+o to expand)
+
+● Voy a investigar qué hay en esa ruta y cómo añadirlo sin duplicar.
+
+  Thought for 32s, listed 4 directories (ctrl+o to expand)
+
+● Bash(readlink -f /home/elegro/.agents/skills/mmx-cli 2>&1)
+  ⎿  /home/elegro/.agents/skills/mmx-cli
+
+  Thought for 38s, searched for 1 pattern, read 1 file, listed 1 directory (ctrl+o to expand)
+
+● Voy a crear tareas para gestionar este trabajo y comparar ambas rutas.
+
+  Thought for 4s, listed 1 directory (ctrl+o to expand)
+
+● Bash(comm -23 <(ls /home/elegro/.agents/skills/ | sort) <(ls
+      /home/elegro/.claude/skills/ | sort))
+  ⎿  accelerate
+     adapt-workflow
+     agent-workflow
+     … +38 lines (ctrl+o to expand)
+
+  Thought for 8s (ctrl+o to expand)
+
+● Encontré 40 skills en .agents/skills/ que faltan en .claude/skills/. Solo
+  mmx-cli ya está enlazado (es un symlink). Verifico la estructura esperada de
+  un skill antes de crear los symlinks:
+
+  Thought for 17s, listed 2 directories (ctrl+o to expand)
+
+● Estructura confirmada (todos los skills tienen SKILL.md y posiblemente
+  references/). Procedo a crear los 40 symlinks.
+● Bash(cd /home/elegro/.claude/skills && for skill in accelerate adapt-workflow
+      agent-workflow amplify browser-use calibrate capture chain compose
+      diagnose enrich eval…)
+  ⎿  OK - 42 symlinks creados
+  ⎿  Shell cwd was reset to 
+     /home/elegro/proyectos/php/php84/www/comfaca-credito/nuxt-creditos
+
+  Thought for 8s, listed 1 directory (ctrl+o to expand)
+
+● Bash(for skill in nuxt vue vitest prisma-cli ui-to-vue; do
+        if [ -f "/home/elegro/.claude/skills/$skill/SKILL.md" ]; then…)
+  ⎿  OK: nuxt
+     OK: vue
+     OK: vitest
+     … +2 lines (ctrl+o to expand)
+
+  Thought for 11s (ctrl+o to expand)
+
+● Listo. Los 40 skills de /home/elegro/.agents/skills/ ya están disponibles en
+  Claude, sin duplicación, usando symlinks que apuntan a la fuente original.
+
+  Estrategia aplicada
+
+  Para evitar duplicar contenido, cada skill se enlazó simbólicamente desde
+  /home/elegro/.claude/skills/<skill> hacia /home/elegro/.agents/skills/<skill>.
+  El patrón ya estaba establecido con mmx-cli, así que se mantuvo la misma
+  convención:
+
+  ln -s "../../.agents/skills/$skill" "$skill"
+
+  Estado final en /home/elegro/.claude/skills/
+
+  - 42 symlinks en total (40 nuevos + mmx-cli que ya existía)
+  - 0 directorios reales (todos los archivos viven solo en .agents/skills/)
+  - Cualquier cambio en el origen se refleja automáticamente — actualizas una
+  vez, todas las instancias lo ven
+  - Verificación post-creación: nuxt, vue, vitest, prisma-cli, ui-to-vue → todos
+  resuelven correctamente y cargan su SKILL.md
+
+  Skills añadidos
+
+  accelerate, adapt-workflow, agent-workflow, amplify, browser-use, calibrate,
+  capture, chain, compose, diagnose, enrich, evaluate, extract-pattern, fortify,
+  guard, imagen-3d, iterate, laravel-11-12-app-guidelines, nuxt, nuxt-ui,
+  onboard-agent, prisma-cli, prisma-client-api, pyhanko, recap, refine, reflect,
+  solid, specialize, streamline, teach-maestro, temper, turbocharge,
+  typescript-advanced-types, ui-to-vue, ui-ux-pro-max, vitest, vue,
+  vue-router-best-practices, web-design-guidelines, zero-defect
+
+  Nota sobre el symlink roto original
+
+  El directorio /home/elegro/.agents/ además contiene un .skill-lock.json (16
+  KB) que parece ser un registro de control de skills. No lo modifiqué, pero si
+  más adelante quieres que Claude use ese lockfile para validar/quitar skills
+  obsoletos, lo integramos.
+
+✻ Crunched for 2m 37s
+
+❯ Ok, tambien quiero añadir las skills de hermes que estan en:                  
+  /home/elegro/.hermes/skills                                                   
+
+  Thought for 6s (ctrl+o to expand)
+
+  Thought for 10s, listed 2 directories (ctrl+o to expand)
+
+● Bash(comm -23 <(ls /home/elegro/.hermes/skills/ | sort) <(ls
+      /home/elegro/.claude/skills/ | sort))
+  ⎿  apple
+     autonomous-ai-agents
+     chrome-devtools
+     … +28 lines (ctrl+o to expand)
+
+  Thought for 57s, searched for 1 pattern, read 3 files, listed 2 directories (ctrl+o to expand)
+
+● Detecto un problema importante antes de proceder. Te lo explico:
+
+  Diferencia de formato entre .hermes/skills/ y lo que espera Claude
+
+  De los 31 skills de .hermes/skills/ que aún no están en .claude/skills/:
+
+  - 7 tienen SKILL.md (formato compatible con Claude): chrome-devtools,
+  cloud-design-patterns, conventional-commit, dogfood, nuxt-vue-developer,
+  prisma, yuanbao
+  - 23 usan DESCRIPTION.md (formato propietario de Hermes, no compatible con
+  Claude). Ejemplo de apple/DESCRIPTION.md:
+  ▎ "Apple / macOS skills — tools that interact with the Mac desktop (Finder, 
+  native apps) or system features..."
+  - 1 es un meta-folder: hermes/ solo contiene subdirectorios hermes-kanban y
+  hermes-messaging, no es un skill en sí.
+
+  Claude Code requiere SKILL.md con frontmatter YAML (name: y description:). Si
+  symlinkeo los 23 que solo tienen DESCRIPTION.md, Claude los ignorará o dará
+  error. Symlinkear el meta-folder hermes/ igual будет inútil.
+
+● User answered Claude's questions:
+  ⎿  · ¿Cómo prefieres manejar el desajuste de formato de los 24 skills 
+     problemáticos? → Symlinkear solo los 7 con SKILL.md (Recommended)
+
+  Thought for 16s (ctrl+o to expand)
+
+● Procedo con los 7 skills que tienen SKILL.md. Verifico que tengan el
+  frontmatter YAML correcto antes de symlinkear:
+
+● Bash(for skill in chrome-devtools cloud-design-patterns conventional-commit
+      dogfood nuxt-vue-developer prisma yuanbao; do
+        f="/home/elegro/.hermes/skills/$skill/SKI…)
+  ⎿  OK  chrome-devtools  (name:1 desc:1)
+     OK  cloud-design-patterns  (name:1 desc:1)
+     OK  conventional-commit  (name:1 desc:1)
+     … +4 lines (ctrl+o to expand)
+
+  Thought for 10s (ctrl+o to expand)
+● Bash(cd /home/elegro/.claude/skills && for skill in chrome-devtools
+      cloud-design-patterns conventional-commit dogfood nuxt-vue-developer
+      prisma yuanbao; do
+        ln -s "…)
+  ⎿  Symlinks creados
+  ⎿  Shell cwd was reset to 
+     /home/elegro/proyectos/php/php84/www/comfaca-credito/nuxt-creditos
+
+  Thought for 12s (ctrl+o to expand)
+
+● Bash(for skill in chrome-devtools cloud-design-patterns conventional-commit
+      dogfood nuxt-vue-developer prisma yuanbao; do
+        if [ -f "/home/elegro/.claude/skills/$ski…)
+  ⎿  OK  chrome-devtools → name: chrome-devtools
+     OK  cloud-design-patterns → name: cloud-design-patterns
+     OK  conventional-commit → name: conventional-commit
+     … +4 lines (ctrl+o to expand)
+
+  Thought for 5s, listed 1 directory (ctrl+o to expand)
+
+● Listo. Confirmado en el inventario de Claude: los 7 skills de Hermes con
+  SKILL.md ya están disponibles.
+
+  Symlinks creados en /home/elegro/.claude/skills/
+
+  ┌───────────────────────┬────────────────────────────────────────────┐
+  │         Skill         │                   Origen                   │
+  ├───────────────────────┼────────────────────────────────────────────┤
+  │ chrome-devtools       │ ../../.hermes/skills/chrome-devtools       │
+  ├───────────────────────┼────────────────────────────────────────────┤
+  │ cloud-design-patterns │ ../../.hermes/skills/cloud-design-patterns │
+  ├───────────────────────┼────────────────────────────────────────────┤
+  │ conventional-commit   │ ../../.hermes/skills/conventional-commit   │
+  ├───────────────────────┼────────────────────────────────────────────┤
+  │ dogfood               │ ../../.hermes/skills/dogfood               │
+  ├───────────────────────┼────────────────────────────────────────────┤
+  │ nuxt-vue-developer    │ ../../.hermes/skills/nuxt-vue-developer    │
+  ├───────────────────────┼────────────────────────────────────────────┤
+  │ prisma                │ ../../.hermes/skills/prisma                │
+  ├───────────────────────┼────────────────────────────────────────────┤
+  │ yuanbao               │ ../../.hermes/skills/yuanbao               │
+  └───────────────────────┴────────────────────────────────────────────┘
+
+  Verificación post-creación: todos resuelven correctamente y su frontmatter
+  name: / description: se lee a través del symlink. El frontmatter también
+  incluye metadata de Hermes (tags, fuente lobehub) que Claude ignora sin
+  problema.
+
+  Lo que NO se symlinkeó (24 items) y por qué
+
+  Categoría: Formato DESCRIPTION.md (incompatible)
+  Cantidad: 23
+  Skills: apple, autonomous-ai-agents, creative, data-science, devops,
+    diagramming, domain, email, gaming, gifs, github, inference-sh, mcp, media,
+    mlops, note-taking, productivity, red-teaming, research, smart-home,
+    social-media, software-development, workspace-dispatch
+  ────────────────────────────────────────
+  Categoría: Meta-folder (no es un skill)
+  Cantidad: 1
+  Skills: hermes/ (contiene hermes-kanban y hermes-messaging)
+
+  Si más adelante quieres rescatarlos
+
+  La conversión de DESCRIPTION.md → SKILL.md se puede automatizar con un script
+  que genere el frontmatter a partir del nombre del directorio y la primera
+  línea del DESCRIPTION.md (es lo único que tienen algunos — una sola frase
+  descriptiva). Avísame y lo armamos en lote; toma menos de un minuto por skill.
+
+  Nota sobre prisma y prisma-cli
+
+  Conviven en .claude/skills/: prisma viene de Hermes, prisma-cli y
+  prisma-client-api vienen de .agents/. Si el de Hermes tiene contenido más
+  amplio, podrías querer borrar los otros dos para evitar duplicación de
+  funcionalidad — pero no lo hice porque no me lo pediste y ya validaste su
+  contenido previamente.
+
+✻ Brewed for 3m 11s
+
+❯ OK, volvamos al proyecto actual. En Page URL:                                 
+  http://localhost:4000/dash/simulador/01                                       
+  Viewport: 1920x961                                                            
+  Component Tree: div > div > div > main > div > div > div > UPageCard > div >  
+  div > div                                                                     
+  File: app/pages/dash/simulador/[tipcre].vue:320:10 quiero mostrar en un input 
+  disabled, el valor que paga la persona por seguridad social, y que se         
+  descuenta del salario bruto que corresponde al 8%.                            
+
+  Thought for 12s (ctrl+o to expand)
+
+● Voy a revisar la zona actual y el composable para entender qué datos de
+  seguridad social están disponibles.
+
+  Thought for 1m 31s, searched for 5 patterns, read 2 files, listed 1 directory (ctrl+o to expand)
+
+  Thought for 15s, read 1 file (ctrl+o to expand)
+
+● Agrego el computed seguridadSocialSan en useSimulador.ts:
+
+● Update(app/composables/simulador/useSimulador.ts)
+  ⎿  Added 4 lines
+      45      // Ingresos netos aproximados para cálculos internos si fue
+          ra necesario
+      46      return ingresosBrutosSan.value * 0.92;
+      47    });
+      48 +  // Deducción de ley por seguridad social (8% del salario brut
+         +o: 4% salud + 4% pensión)                                      
+      49 +  const seguridadSocialSan = computed(() =>                    
+      50 +    Math.round(ingresosBrutosSan.value * 0.08)                 
+      51 +  );                                                           
+      52    const maxEndeudamientoSan = computed(() => {
+      53      const v = _num(maxEndeudamientoPct.value);
+      54      return Math.min(100, Math.max(0, v));
+
+● Update(app/composables/simulador/useSimulador.ts)
+  ⎿  Added 1 line
+      183      tasaMensualSan,
+      184      ingresosSan,
+      185      ingresosBrutosSan,
+      186 +    seguridadSocialSan,                                       
+      187      descuentosSan,
+      188      maxEndeudamientoSan,
+      189      tasaMensual,
+
+  Thought for 4s (ctrl+o to expand)
+
+● Ahora expongo seguridadSocialSan en el composable que usa la página:
+
+  Thought for 11s, read 1 file (ctrl+o to expand)
+
+● Update(app/composables/simulador/useSimuladorConLineaPage.ts)
+  ⎿  Added 2 lines
+      65      tasaMensualSan,
+      66      ingresosSan,
+      67      ingresosBrutosSan,
+      68 +    seguridadSocialSan,                                        
+      69      descuentosSan,
+      70      tasaMensual,
+      71      cuotaMensual,
+     ...
+      369      tasaMensualSan,
+      370      ingresosSan,
+      371      ingresosBrutosSan,
+      372 +    seguridadSocialSan,                                       
+      373      descuentosSan,
+      374      tasaMensual,
+      375      cuotaMensual,
+
+  Thought for 12s (ctrl+o to expand)
+
+● Ahora añado el input disabled en el template y expongo el computed en el
+  <script setup>:
+
+● Update(app/pages/dash/simulador/[tipcre].vue)  ⎿  Added 1 line
+      571    tasaEASan,
+      572    tasaMensualSan,
+      573    ingresosSan,
+      574 +  seguridadSocialSan,                                         
+      575    descuentosSan,
+      576    tasaMensual,
+      577    cuotaMensual,
+
+● Update(app/pages/dash/simulador/[tipcre].vue)
+  ⎿  Added 20 lines, removed 1 line
+      317              </UFormField>
+      318            </div>
+      319  
+      320 -          <div class="grid gap-4 sm:grid-cols-2">             
+      320 +          <div class="grid gap-4 md:grid-cols-3">             
+      321              <!-- Ingresos -->
+      322              <UFormField
+      323                label="Ingresos mensuales"
+     ...
+      348                </template>
+      349              </UFormField>
+      350  
+      351 +            <!-- Seguridad social (8% del salario bruto) -->  
+      352 +            <UFormField                                       
+      353 +              label="Seguridad social"                        
+      354 +              description="8% del salario bruto"              
+      355 +            >                                                 
+      356 +              <UInput                                         
+      357 +                :model-value="seguridadSocialSan"             
+      358 +                type="text"                                   
+      359 +                inputmode="numeric"                           
+      360 +                disabled                                      
+      361 +                :placeholder="fmt(0)"                         
+      362 +              />                                              
+      363 +              <template #help>                                
+      364 +                <p class="text-xs text-muted-foreground">     
+      365 +                  {{ fmt(seguridadSocialSan) }} se descuentan 
+          +del bruto                                                     
+      366 +                </p>                                          
+      367 +              </template>                                     
+      368 +            </UFormField>                                     
+      369 +                                                              
+      370              <!-- Descuentos -->
+      371              <UFormField
+      372                label="Descuentos mensuales"
+
+  Thought for 7s (ctrl+o to expand)
+
+● Verifico que todo compile correctamente:
+
+● Bash(pnpm typecheck 2>&1 | tail -20)
+  ⎿  > nuxt-creditos@0.0.1 typecheck /home/elegro/proyectos/php/php84/www/c
+     omfaca-credito/nuxt-creditos
+     > nuxt typecheck
+     … +18 lines (ctrl+o to expand)
+  ⎿  (timeout 2m)
+
+  Thought for 1m 3s, searched for 2 patterns, read 3 files (ctrl+o to expand)
+
+  Thought for 15s, searched for 2 patterns (ctrl+o to expand)
+
+● Update(app/composables/simulador/useSimuladorCore.ts)
+  ⎿  Added 4 lines
+      28  
+      29    const calcularIngresosSan = (ingresosBrutos: number) => ingre
+          sosBrutos * 0.92;
+      30  
+      31 +  // Deducción de ley por seguridad social (8% del salario brut
+         +o: 4% salud + 4% pensión)                                      
+      32 +  const calcularSeguridadSocialSan = (ingresosBrutos: number) =
+         +>                                                              
+      33 +    Math.round(ingresosBrutos * 0.08);                         
+      34 +                                                               
+      35    const calcularCapacidadPagoMaxima = (ingresosBrutos: number, 
+          maxEndeudamientoPct: number) => {
+      36      const bruto = calcularIngresosBrutosSan(ingresosBrutos);
+      37      const maxEnd = calcularMaxEndeudamientoSan(maxEndeudamiento
+          Pct);
+
+● Update(app/composables/simulador/useSimuladorCore.ts)
+  ⎿  Added 1 line
+      121      calcularDescuentosSan,
+      122      calcularMaxEndeudamientoSan,
+      123      calcularIngresosSan,
+      124 +    calcularSeguridadSocialSan,                               
+      125      calcularCapacidadPagoMaxima,
+      126      calcularTasaMensual,
+      127      calcularCuotaMensual,
+
+  Thought for 14s, searched for 1 pattern (ctrl+o to expand)
+
+● Update(app/composables/simulador/useSimuladorWithLinea.ts)
+  ⎿  Added 1 line
+      51      calcularIngresosBrutosSan,
+      52      calcularDescuentosSan,
+      53      calcularIngresosSan,
+      54 +    calcularSeguridadSocialSan,                                
+      55      convertirAnualAMensual,
+      56      convertirMensualAAnual
+      57    } = useSimuladorCore();
+
+● Update(app/composables/simulador/useSimuladorWithLinea.ts)
+  ⎿  Added 1 line
+      86    const ingresosBrutosSan = computed(() => calcularIngresosBrut
+          osSan(ingresosMensuales.value));
+      87    const descuentosSan = computed(() => calcularDescuentosSan(de
+          scuentosMensuales.value));
+      88    const ingresosSan = computed(() => calcularIngresosSan(ingres
+          osBrutosSan.value));
+      89 +  const seguridadSocialSan = computed(() => calcularSeguridadSo
+         +cialSan(ingresosBrutosSan.value));                             
+      90  
+      91    const tasaMensual = computed(() =>
+      92      calcularTasaMensual(tasaEASan.value, tasaMensualSan.value, 
+          tipoTasa.value)
+
+● Update(app/composables/simulador/useSimuladorWithLinea.ts)
+  ⎿  Added 1 line
+      177      tasaMensualSan,
+      178      ingresosSan,
+      179      ingresosBrutosSan,
+      180 +    seguridadSocialSan,                                       
+      181      descuentosSan,
+      182      tasaMensual,
+      183      cuotaMensual,
+
+● Bash(pnpm typecheck 2>&1 | tail -15)
+  ⎿  > nuxt-creditos@0.0.1 typecheck /home/elegro/proyectos/php/php84/www/c
+     omfaca-credito/nuxt-creditos
+     > nuxt typecheck
+     … +5 lines (ctrl+o to expand)
+  ⎿  (timeout 2m)
+
+  Thought for 5s (ctrl+o to expand)
+
+● Typecheck pasa. Verifico lint:
+
+● Bash(pnpm lint 2>&1 | tail -20)
+  ⎿  > nuxt-creditos@0.0.1 lint /home/elegro/proyectos/php/php84/www/comfac
+     a-credito/nuxt-creditos
+     > eslint .
+  ⎿  (timeout 2m)
+
+❯ Alinea el input de descuentos mensuales con maximo endeudamiento, en la linea inferior. 
+
+  Thought for 46s (ctrl+o to expand)
+
+● Cierro las tareas anteriores y creo una nueva para el alineamiento:
+
+  Thought for 10s, read 1 file (ctrl+o to expand)
+● Update(app/pages/dash/simulador/[tipcre].vue)
+  ⎿  Added 16 lines, removed 14 lines
+      317              </UFormField>
+      318            </div>
+      319  
+      320 -          <div class="grid gap-4 md:grid-cols-3">             
+      320 +          <div class="grid gap-4 md:grid-cols-2">             
+      321              <!-- Ingresos -->
+      322              <UFormField
+      323                label="Ingresos mensuales"
+     ...
+      366                  </p>
+      367                </template>
+      368              </UFormField>
+      369 +          </div>                                              
+      370  
+      371 +          <div class="grid gap-4 sm:grid-cols-2">             
+      372              <!-- Descuentos -->
+      373              <UFormField
+      374                label="Descuentos mensuales"
+     ...
+      381                  min="0"
+      382                />
+      383              </UFormField>
+      382 -          </div>                                              
+      384  
+      384 -          <!-- Max endeudamiento -->                          
+      385 -          <UFormField                                         
+      386 -            label="Máximo endeudamiento"                      
+      387 -            description="Por ley 50% de capacidad"            
+      388 -          >                                                   
+      389 -            <UInput                                           
+      390 -              v-model.number="maxEndeudamientoPct"            
+      391 -              type="number"                                   
+      392 -              min="0"                                         
+      393 -              max="100"                                       
+      394 -            />                                                
+      395 -          </UFormField>                                       
+      385 +            <!-- Max endeudamiento -->                        
+      386 +            <UFormField                                       
+      387 +              label="Máximo endeudamiento"                    
+      388 +              description="Por ley 50% de capacidad"          
+      389 +            >                                                 
+      390 +              <UInput                                         
+      391 +                v-model.number="maxEndeudamientoPct"          
+      392 +                type="number"                                 
+      393 +                min="0"                                       
+      394 +                max="100"                                     
+      395 +              />                                              
+      396 +            </UFormField>                                     
+      397 +          </div>                                              
+      398          </div>
+      399        </UPageCard>
+      400  
+
+● Bash(pnpm typecheck 2>&1 | tail -8 && echo "---" && pnpm lint 2>&1 | tail -5)
+  ⎿  > nuxt-creditos@0.0.1 typecheck /home/elegro/proyectos/php/php84/www/c
+     omfaca-credito/nuxt-creditos
+     > nuxt typecheck
+     … +10 lines (ctrl+o to expand)
+  ⎿  (timeout 2m)
+
+  Thought for 5s (ctrl+o to expand)
+
+● Listo. Cambios aplicados y verificados con typecheck + lint.
+
+  Reorganización del formulario en [tipcre].vue
+
+  Antes (con el input de seguridad social que ya estaba):
+  - Fila 1 (3 cols): Ingresos | Seguridad social | Descuentos
+  - Fila 2 (1 col ancho completo): Máximo endeudamiento
+
+  Después (alineado como pediste):
+  - Fila 1 (2 cols, md:grid-cols-2): Ingresos | Seguridad social
+  - Fila 2 (2 cols, sm:grid-cols-2): Descuentos | Máximo endeudamiento
+
+  Resumen de los cambios en esta sesión
+
+  1. useSimuladorCore.ts — añadí la función pura
+  calcularSeguridadSocialSan(bruto) que devuelve Math.round(bruto * 0.08) y la
+  exporté.
+  2. useSimuladorWithLinea.ts — añadí el computed seguridadSocialSan usando esa
+  función core, y la expuse en el return.
+  3. useSimuladorConLineaPage.ts — añadí seguridadSocialSan al destructuring (en
+  ambas ocurrencias).
+  4. [tipcre].vue template:
+    - Nuevo UFormField con UInput disabled mostrando el 8% de seguridad social
+  (label "Seguridad social", description "8% del salario bruto", help "X se
+  descuentan del bruto").
+    - Reorganización del grid: Ingresos y Seguridad social comparten fila;
+  Descuentos y Máximo endeudamiento comparten la fila inferior.
+  5. useSimulador.ts (legacy) — también añadí el mismo computed por
+  consistencia, ya que index.vue lo usa.
+
+  Verificación
+  - pnpm typecheck ✓
+  - pnpm lint ✓
+
+  El input de seguridad social se ve disabled, formatea el valor con fmt()
+  (separadores de miles estilo colombiano) y se actualiza reactivamente cuando
+  cambia ingresosMensuales.
+
+✻ Worked for 8m 49s
+
+❯ En Page URL: http://localhost:4000/dash/simulador/06                          
+  Viewport: 1920x961                                                            
+  Component Tree: div > div > div > main > div > div > div > UPageCard > div >  
+  div                                                                           
+  File: node_modules/.pnpm/@nuxt+ui@4.8.1_@internationalized+date@3.12.2_@inter 
+  nationalized+number@3.6.7_@tiptap+e_a2d070015207dda66de747c946813095/node_mod 
+  ules/@nuxt/ui/dist/runtime/components/PageCard.vue:82:6 no se esta mostrando  
+  los detalles del credito y tampoco la categoria que se le aplica al usuario   
+  trabajador, analiza en que momento se consulta estos datos, y la estructura   
+  para poder acceder a las categorias y de la linea de credito seleccionada de  
+  la pagina previa. y en los datos del trabajador que estan en localstorage y   
+  que podemos acceder mediante useStorage, para identificar el codcat que       
+  corresponde a la categoria.                                                   
+
+  Thought for 13s (ctrl+o to expand)
+
+● Voy a investigar la estructura de datos para entender cómo se consultan las
+  categorías, la línea de crédito y los datos del trabajador.
+
+  Thought for 38s, searched for 5 patterns, read 4 files (ctrl+o to expand)
+
+  Thought for 10s, searched for 2 patterns, read 1 file (ctrl+o to expand)
+
+  Thought for 11s, read 1 file (ctrl+o to expand)
+
+  Thought for 39s, searched for 3 patterns, read 4 files (ctrl+o to expand)
+
+● Aquí está el análisis completo. Hay tres piezas: cuándo se consultan los
+  datos, dónde viven y por qué no se ven en la página del simulador.
+
+  1. Origen de los datos
+
+  Línea de crédito (incluye categorias)
+
+  Capa: Cliente
+  Archivo: app/composables/simulador/useSimuladorConLineaPage.ts:162-240
+  Qué hace: cargarLineaCredito() llama a la API y guarda la línea en
+    lineaSeleccionada
+  ────────────────────────────────────────
+  Capa: Endpoint
+  Archivo: server/api/lineas_credito/tipo-creditos.get.ts
+  Qué hace: Proxy al backend SISU (creditos/tipo-creditos)
+  ────────────────────────────────────────
+  Capa: Servicio
+  Archivo: server/services/shared/datos-api-sisuweb.service.ts:29-50
+  Qué hace: tipoCreditos() devuelve responseApi.data tal cual lo manda SISU
+  ────────────────────────────────────────
+  Capa: Momento exacto
+  Archivo: cargarLineaCredito se invoca en onMounted (línea 338 del composable)
+  Qué hace: Se cachea localmente en lineasCache: Map<tipcre, LineaCreditoData>
+    para no recargar
+
+  El tipo LineaCreditoData declara el campo categorias?: Array<Record<string, 
+  unknown>> (líneas 17 y 32 de useSimuladorWithLinea.ts). Por convención del
+  backend, cada elemento es { codcat: string, facfin: number | string }.
+
+  Trabajador (incluye codigo_categoria)
+
+  ┌────────────┬────────────────────────────────┬───────────────────────────┐
+  │    Capa    │            Archivo             │         Qué hace          │
+  ├────────────┼────────────────────────────────┼───────────────────────────┤
+  │ localStora │                                │ STORAGE_TRABAJADOR_KEY    │
+  │ ge key     │ comfaca_credito_trabajador     │ (línea 8 de               │
+  │            │                                │ useSession.ts)            │
+  ├────────────┼────────────────────────────────┼───────────────────────────┤
+  │ Hidratació │ app/composables/useSession.ts: │ Se lee en hydrate() y se  │
+  │ n          │ 35-68                          │ asigna a session.value.us │
+  │            │                                │ er.trabajador             │
+  ├────────────┼────────────────────────────────┼───────────────────────────┤
+  │            │ app/composables/useTrabajador. │ trabajador = computed(()  │
+  │ Composable │ ts:7-9                         │ => session.value.user?.tr │
+  │            │                                │ abajador)                 │
+  ├────────────┼────────────────────────────────┼───────────────────────────┤
+  │ Tipo       │ shared/types/trabajador.ts:32  │ codigo_categoria?: string │
+  └────────────┴────────────────────────────────┴───────────────────────────┘
+
+  trabajador.codigo_categoria es la llave para encontrar la categoría aplicable
+  dentro de lineaSeleccionada.categorias.
+
+  2. Estructura y código que YA une ambos
+
+  El matching entre trabajador.codigo_categoria y
+  lineaSeleccionada.categorias[].codcat ya existe en
+  useSimuladorConLineaPage.ts:207-225:
+
+  if (trabajador.value?.codigo_categoria && lineaSeleccionada.value?.categorias)
+  {
+    const categoriaTrabajador =
+  String(trabajador.value.codigo_categoria).toLowerCase();
+    const categoriaLinea = lineaSeleccionada.value.categorias.find(
+      (cat: Record<string, unknown>) =>
+        cat && cat.codcat
+        && String(cat.codcat).toLowerCase() === categoriaTrabajador
+    );
+    if (categoriaLinea && (categoriaLinea as Record<string, unknown>).facfin) {
+      tasaEfectivaAnual.value = parseFloat(String((categoriaLinea as
+  Record<string, unknown>).facfin));
+    }
+  }
+
+  Pero solo escribe la tasa — no expone la categoriaLinea al template. Ese es
+  uno de los huecos.
+
+  3. Por qué no se muestra nada en la UI
+
+  En [tipcre].vue el template no renderiza los detalles ni la categoría. Lo
+  único que aparece es:
+
+  ┌─────────┬──────────────────────────────────────┬────────────────────────┐
+  │  Línea  │             Qué muestra              │      Por qué es        │
+  │         │                                      │      insuficiente      │
+  ├─────────┼──────────────────────────────────────┼────────────────────────┤
+  │         │                                      │ Solo el nombre corto   │
+  │ 31-37   │ <Badge>{{ lineaSeleccionada.detalle  │ de la línea, sin       │
+  │         │ }}</Badge>                           │ numcuo, estcre,        │
+  │         │                                      │ pagseg, valmax         │
+  ├─────────┼──────────────────────────────────────┼────────────────────────┤
+  │ 38-45   │ <Badge>Activo/Inactivo</Badge>       │ Solo el estado         │
+  ├─────────┼──────────────────────────────────────┼────────────────────────┤
+  │         │ :hint="Máx:                          │ El monto máximo se usa │
+  │ 228     │ ${fmt(lineaSeleccionada.valmax)}"    │  como hint, no como    │
+  │         │                                      │ card de info           │
+  ├─────────┼──────────────────────────────────────┼────────────────────────┤
+  │ 263-265 │ :hint="Máx:                          │ Idem con plazo         │
+  │         │ ${lineaSeleccionada?.numcuo} meses"  │                        │
+  ├─────────┼──────────────────────────────────────┼────────────────────────┤
+  │         │                                      │ El hint genérico dice  │
+  │ 296-300 │ :hint="Tasa por categoría aplicada"  │ "se aplicó" pero no    │
+  │         │                                      │ dice cuál ni a qué     │
+  │         │                                      │ porcentaje             │
+  ├─────────┼──────────────────────────────────────┼────────────────────────┤
+  │ 307-313 │ :placeholder="Tasa cat.              │ Solo se ve si el input │
+  │         │ ${trabajador.codigo_categoria}"      │  está vacío            │
+  └─────────┴──────────────────────────────────────┴────────────────────────┘
+
+  Compara con lineas-credito.vue:97-167 — esa página SÍ muestra:
+  - detalle + tipcre (código)
+  - numcuo (máximo cuotas)
+  - estcre (estudio de crédito)
+  - pagseg (pago seguro)
+  - categorias con codcat: facfin% por cada una
+  - Conteo de documentos
+
+  Ese mismo nivel de detalle falta en [tipcre].vue.
+
+  4. Lo que se necesita (resumen del hueco)
+
+  Para mostrar los detalles del crédito y la categoría aplicada al trabajador
+  faltan tres cosas:
+
+  1. Exponer categoriaLinea desde useSimuladorConLineaPage.ts (computed
+  categoriaTrabajadorAplicada) que devuelva el objeto { codcat, facfin }
+  resuelto, o null si no hay match.
+  2. Exponer campos del detalle (que ya están en lineaSeleccionada: detalle,
+  numcuo, estcre, pagseg, valmax, estado).
+  3. Renderizar un bloque en [tipcre].vue con esa info — idealmente dentro del
+  <UPageCard> del formulario o como un sub-card de "Información del crédito"
+  arriba.
+
+  5. Acceso a useStorage
+
+  El composable está en app/composables/useStorage.ts y expone:
+  - storage.getItem(key) → devuelve lo guardado (o null)
+  - storage.setItem(key, value)
+  - storage.removeItem(key)
+
+  Para leer el trabajador desde localStorage en cliente (sin pasar por
+  useSession):
+  import { storage } from "~/composables/useStorage";
+  const STORAGE_TRABAJADOR_KEY = "comfaca_credito_trabajador";
+  const raw = await storage.getItem(STORAGE_TRABAJADOR_KEY);
+  const trabajador = raw ? JSON.parse(raw) : null;
+  const codcat = trabajador?.codigo_categoria; // ej. "A", "B", "C"
+
+  Pero no hace falta: useTrabajador() ya envuelve session.value.user?.trabajador
+  y está disponible en cualquier componente dentro de [tipcre].vue vía
+  useSession/useTrabajador.
+
+  ---
+  Siguiente paso sugerido
+
+  ¿Quieres que implemente la card de "Información del crédito + categoría
+  aplicada" en [tipcre].vue? El cambio es:
+
+  1. Exponer categoriaTrabajadorAplicada (computed) en
+  useSimuladorConLineaPage.ts con la forma { codcat, facfin } | null.
+  2. Renderizar un nuevo bloque dentro del <UPageCard> del formulario (o como
+  sub-card previa) que muestre: detalle, tipcre, numcuo, estcre, valmax, pagseg,
+  y — si hay match — la categoría del trabajador con su facfin aplicado.
+
+  Avísame y lo armo.
+
+✻ Cogitated for 3m 51s
+
+❯ Ok, si implementa el card.                                                    
+
+  Thought for 24s (ctrl+o to expand)
+  Thought for 9s, read 1 file (ctrl+o to expand)
+
+● Update(app/composables/simulador/useSimuladorConLineaPage.ts)
+  ⎿  Added 24 lines
+      239      }
+      240    };
+      241  
+      242 +  // Resuelve la categoría del trabajador dentro de las catego
+          +rías de la línea.                                             
+      243 +  // Devuelve { codcat, facfin } si hay match, o null si no ha
+          +y match o no hay datos.                                       
+      244 +  const categoriaTrabajadorAplicada = computed<               
+      245 +    { codcat: string, facfin: number | string } | null        
+      246 +  >(() => {                                                   
+      247 +    const codcatTrabajador = trabajador.value?.codigo_categori
+          +a;                                                            
+      248 +    const categorias = lineaSeleccionada.value?.categorias;   
+      249 +    if (!codcatTrabajador || !Array.isArray(categorias) || cat
+          +egorias.length === 0) {                                       
+      250 +      return null;                                            
+      251 +    }                                                         
+      252 +    const target = String(codcatTrabajador).toLowerCase();    
+      253 +    const match = categorias.find(                            
+      254 +      (cat: Record<string, unknown>) =>                       
+      255 +        cat                                                   
+      256 +        && cat.codcat                                         
+      257 +        && String(cat.codcat).toLowerCase() === target        
+      258 +    );                                                        
+      259 +    if (!match) return null;                                  
+      260 +    return {                                                  
+      261 +      codcat: String((match as Record<string, unknown>).codcat
+          +),                                                            
+      262 +      facfin: (match as Record<string, unknown>).facfin as num
+          +ber | string                                                  
+      263 +    };                                                        
+      264 +  });                                                         
+      265 +                                                              
+      266    // Computed para manejar el v-model del input de monto de fo
+           rma segura
+      267    const montoInputModel = computed({
+      268      get: () => montoInput?.val || "",
+
+  Thought for 6s, read 1 file (ctrl+o to expand)
+
+● Update(app/composables/simulador/useSimuladorConLineaPage.ts)
+  ⎿  Added 1 line
+      412      tasaInput,
+      413      montoInput,
+      414      montoInputModel,
+      415 +    categoriaTrabajadorAplicada,                              
+      416      validarMonto,
+      417      navigateToLineas,
+      418      cargarLineaCredito,
+
+  Thought for 36s, read 1 file (ctrl+o to expand)
+
+● Update(app/pages/dash/simulador/[tipcre].vue)
+  ⎿  Added 1 line
+      610    tasaInput,
+      611    montoInput,
+      612    montoInputModel,
+      613 +  categoriaTrabajadorAplicada,                                
+      614    validarMonto,
+      615    navigateToLineas,
+      616    cargarLineaCredito,
+
+  Thought for 13s (ctrl+o to expand)
+
+● Ahora agrego la card de información del crédito justo antes del grid
+  principal:
+
+● Update(app/pages/dash/simulador/[tipcre].vue)
+  ⎿  Added 176 lines, removed 1 line
+      196            && lineaSeleccionada
+      197            && lineaSeleccionada.estado === 'A'
+      198        "
+      199 -      class="grid gap-6 lg:grid-cols-2"                       
+      199 +      class="space-y-6"                                       
+      200      >
+      201 +      <!-- Información del crédito seleccionado -->           
+      202 +      <UPageCard class="border-primary/20">                   
+      203 +        <template #header>                                    
+      204 +          <div class="flex items-center gap-3">               
+      205 +            <div                                              
+      206 +              class="w-10 h-10 bg-primary/10 rounded-xl flex i
+          +tems-center justify-center"                                   
+      207 +            >                                                 
+      208 +              <UIcon                                          
+      209 +                name="i-lucide-info"                          
+      210 +                class="w-5 h-5 text-primary"                  
+      211 +              />                                              
+      212 +            </div>                                            
+      213 +            <div class="flex-1">                              
+      214 +              <h2 class="text-lg font-semibold">              
+      215 +                Información del crédito                       
+      216 +              </h2>                                           
+      217 +              <p class="text-sm text-muted-foreground">       
+      218 +                Detalles de la línea seleccionada y categoría 
+          +aplicada                                                      
+      219 +              </p>                                            
+      220 +            </div>                                            
+      221 +            <Badge                                            
+      222 +              :variant="lineaSeleccionada.estado === 'A' ? 'de
+          +fault' : 'destructive'"                                       
+      223 +            >                                                 
+      224 +              {{ lineaSeleccionada.estado === "A" ? "Activo" :
+          + "Inactivo" }}                                                
+      225 +            </Badge>                                          
+      226 +          </div>                                              
+      227 +        </template>                                           
+      228 +                                                              
+      229 +        <div class="space-y-4">                               
+      230 +          <!-- Datos principales -->                          
+      231 +          <dl class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4"
+          +>                                                             
+      232 +            <div>                                             
+      233 +              <dt class="text-xs font-medium text-muted-foregr
+          +ound uppercase">                                              
+      234 +                Nombre                                        
+      235 +              </dt>                                           
+      236 +              <dd class="text-sm font-semibold mt-1">         
+      237 +                {{ lineaSeleccionada.detalle }}               
+      238 +              </dd>                                           
+      239 +            </div>                                            
+      240 +            <div>                                             
+      241 +              <dt class="text-xs font-medium text-muted-foregr
+          +ound uppercase">                                              
+      242 +                Código                                        
+      243 +              </dt>                                           
+      244 +              <dd class="text-sm font-semibold mt-1 font-mono"
+          +>                                                             
+      245 +                {{ lineaSeleccionada.tipcre }}                
+      246 +              </dd>                                           
+      247 +            </div>                                            
+      248 +            <div>                                             
+      249 +              <dt class="text-xs font-medium text-muted-foregr
+          +ound uppercase">                                              
+      250 +                Plazo máximo                                  
+      251 +              </dt>                                           
+      252 +              <dd class="text-sm font-semibold mt-1">         
+      253 +                {{ lineaSeleccionada.numcuo }} meses          
+      254 +              </dd>                                           
+      255 +            </div>                                            
+      256 +            <div>                                             
+      257 +              <dt class="text-xs font-medium text-muted-foregr
+          +ound uppercase">                                              
+      258 +                Monto máximo                                  
+      259 +              </dt>                                           
+      260 +              <dd class="text-sm font-semibold mt-1">         
+      261 +                {{ fmt(lineaSeleccionada.valmax) }}           
+      262 +              </dd>                                           
+      263 +            </div>                                            
+      264 +            <div>                                             
+      265 +              <dt class="text-xs font-medium text-muted-foregr
+          +ound uppercase">                                              
+      266 +                Estudio de crédito                            
+      267 +              </dt>                                           
+      268 +              <dd class="text-sm font-semibold mt-1">         
+      269 +                {{ fmt(lineaSeleccionada.estcre) }}           
+      270 +              </dd>                                           
+      271 +            </div>                                            
+      272 +            <div>                                             
+      273 +              <dt class="text-xs font-medium text-muted-foregr
+          +ound uppercase">                                              
+      274 +                Pago seguro                                   
+      275 +              </dt>                                           
+      276 +              <dd class="text-sm font-semibold mt-1">         
+      277 +                {{ lineaSeleccionada.pagseg === "S" ? "Requeri
+          +do" : "No requerido" }}                                       
+      278 +              </dd>                                           
+      279 +            </div>                                            
+      280 +          </dl>                                               
+      281 +                                                              
+      282 +          <USeparator />                                      
+      283 +                                                              
+      284 +          <!-- Categorías -->                                 
+      285 +          <div>                                               
+      286 +            <div class="flex items-center justify-between mb-2
+          +">                                                            
+      287 +              <h3 class="text-sm font-semibold">              
+      288 +                Tasas por categoría                           
+      289 +              </h3>                                           
+      290 +              <span                                           
+      291 +                v-if="trabajador?.codigo_categoria"           
+      292 +                class="text-xs text-muted-foreground"         
+      293 +              >                                               
+      294 +                Tu categoría: <span class="font-mono font-semi
+          +bold">{{ trabajador.codigo_categoria }}</span>                
+      295 +              </span>                                         
+      296 +            </div>                                            
+      297 +                                                              
+      298 +            <div class="flex flex-wrap gap-2">                
+      299 +              <Badge                                          
+      300 +                v-for="cat in lineaSeleccionada.categorias || 
+          +[]"                                                           
+      301 +                :key="String(cat.codcat)"                     
+      302 +                :variant="                                    
+      303 +                  categoriaTrabajadorAplicada                 
+      304 +                  && String(categoriaTrabajadorAplicada.codcat
+          +).toLowerCase()                                               
+      305 +                    === String(cat.codcat).toLowerCase()      
+      306 +                    ? 'default'                               
+      307 +                    : 'secondary'                             
+      308 +                "                                             
+      309 +                :class="[                                     
+      310 +                  categoriaTrabajadorAplicada                 
+      311 +                  && String(categoriaTrabajadorAplicada.codcat
+          +).toLowerCase()                                               
+      312 +                    === String(cat.codcat).toLowerCase()      
+      313 +                    ? 'ring-2 ring-primary'                   
+      314 +                    : ''                                      
+      315 +                ]"                                            
+      316 +              >                                               
+      317 +                {{ cat.codcat }}: {{ Number(cat.facfin).toFixe
+          +d(2) }}% EA                                                   
+      318 +                <UIcon                                        
+      319 +                  v-if="                                      
+      320 +                    categoriaTrabajadorAplicada               
+      321 +                    && String(categoriaTrabajadorAplicada.codc
+          +at).toLowerCase()                                             
+      322 +                      === String(cat.codcat).toLowerCase()    
+      323 +                  "                                           
+      324 +                  name="i-lucide-check"                       
+      325 +                  class="w-3 h-3 ml-1"                        
+      326 +                />                                            
+      327 +              </Badge>                                        
+      328 +              <span                                           
+      329 +                v-if="!lineaSeleccionada.categorias || lineaSe
+          +leccionada.categorias.length === 0"                           
+      330 +                class="text-xs text-muted-foreground"         
+      331 +              >                                               
+      332 +                Esta línea no tiene categorías configuradas   
+      333 +              </span>                                         
+      334 +            </div>                                            
+      335 +                                                              
+      336 +            <!-- Llamado de la categoría aplicada -->         
+      337 +            <div                                              
+      338 +              v-if="categoriaTrabajadorAplicada"              
+      339 +              class="mt-3 p-3 rounded-lg bg-primary/5 border b
+          +order-primary/20 flex items-center gap-3"                     
+      340 +            >                                                 
+      341 +              <div                                            
+      342 +                class="w-8 h-8 rounded-full bg-primary/10 flex
+          + items-center justify-center shrink-0"                        
+      343 +              >                                               
+      344 +                <UIcon                                        
+      345 +                  name="i-lucide-user-check"                  
+      346 +                  class="w-4 h-4 text-primary"                
+      347 +                />                                            
+      348 +              </div>                                          
+      349 +              <div class="text-sm">                           
+      350 +                <p class="font-semibold text-primary">        
+      351 +                  Se te aplica la categoría {{ categoriaTrabaj
+          +adorAplicada.codcat }}                                        
+      352 +                </p>                                          
+      353 +                <p class="text-muted-foreground">             
+      354 +                  Tasa: <span class="font-semibold">{{ Number(
+          +categoriaTrabajadorAplicada.facfin).toFixed(2) }}%</span> efec
+          +tiva anual                                                    
+      355 +                </p>                                          
+      356 +              </div>                                          
+      357 +            </div>                                            
+      358 +                                                              
+      359 +            <div                                              
+      360 +              v-else-if="trabajador?.codigo_categoria && linea
+          +Seleccionada.categorias && lineaSeleccionada.categorias.length
+          + > 0"                                                         
+      361 +              class="mt-3 p-3 rounded-lg bg-amber-50 border bo
+          +rder-amber-200 flex items-center gap-3"                       
+      362 +            >                                                 
+      363 +              <UIcon                                          
+      364 +                name="i-lucide-alert-triangle"                
+      365 +                class="w-5 h-5 text-amber-600 shrink-0"       
+      366 +              />                                              
+      367 +              <p class="text-sm text-amber-800">              
+      368 +                Tu categoría <span class="font-mono font-semib
+          +old">{{ trabajador.codigo_categoria }}</span> no está configur
+          +ada para esta línea. Se usará la tasa que ingreses manualmente
+          +.                                                             
+      369 +              </p>                                            
+      370 +            </div>                                            
+      371 +          </div>                                              
+      372 +        </div>                                                
+      373 +      </UPageCard>                                            
+      374 +                                                              
+      375 +      <div class="grid gap-6 lg:grid-cols-2">                 
+      376        <!-- Formulario de entrada -->
+      377        <UPageCard class="border-primary/20">
+      378          <template #header>
+
+  Thought for 6s (ctrl+o to expand)
+
+● Ahora cierro el wrapper space-y-6 al final del bloque condicional:
+
+  Thought for 23s, read 1 file (ctrl+o to expand)
+
+● Update(app/pages/dash/simulador/[tipcre].vue)
+  ⎿  Added 1 line
+      735            </UButton>
+      736          </div>
+      737        </div>
+      738 +      </div>                                                  
+      739      </div>
+      740    </div>
+      741  </template>
+
+● Bash(pnpm typecheck 2>&1 | tail -10)
+  ⎿      at I._waitForOutput (node_modules/.pnpm/tinyexec@1.2.4/node_module
+     s/tinyexec/dist/main.mjs:284:92)
+         at process.processTicksAndRejections (node:internal/process/task_q
+     … +13 lines (ctrl+o to expand)
+  ⎿  (timeout 2m)
+
+  Thought for 8s (ctrl+o to expand)
+
+● Bash(pnpm typecheck 2>&1 | grep -A 2 "error TS" | head -30)
+  ⎿  app/pages/dash/simulador/[tipcre].vue(299,16): error TS2345: Argument
+     of type '{ class: string[]; key: string; variant: "secondary" | "defau
+     lt"; }' is not assignable to parameter of type '{ readonly variant?: "
+     … +8 lines (ctrl+o to expand)
+  ⎿  (timeout 2m)
+
+  Thought for 18s, searched for 1 pattern, read 2 files (ctrl+o to expand)
+
+● Update(app/pages/dash/simulador/[tipcre].vue)
+  ⎿  Added 2 lines, removed 2 lines
+      306                      ? 'default'
+      307                      : 'secondary'
+      308                  "
+      309 -                :class="[                                     
+      309 +                :class="                                      
+      310                    categoriaTrabajadorAplicada
+      311                    && String(categoriaTrabajadorAplicada.codcat
+           ).toLowerCase()
+      312                      === String(cat.codcat).toLowerCase()
+      313                      ? 'ring-2 ring-primary'
+      314                      : ''
+      315 -                ]"                                            
+      315 +                "                                             
+      316                >
+      317                  {{ cat.codcat }}: {{ Number(cat.facfin).toFixe
+           d(2) }}% EA
+      318                  <UIcon
+
+● Bash(pnpm typecheck 2>&1 | grep -E "(error TS|✔|ELIFECYCLE)" | head -10)
+  ⎿  ✔ Nuxt Icon discovered local-installed 2 collections: lucide, simple-i
+     cons
+  ⎿  (timeout 2m)
+
+  Thought for 6s (ctrl+o to expand)
+
+● Bash(pnpm lint 2>&1 | tail -10)  ⎿  > nuxt-creditos@0.0.1 lint /home/elegro/proyectos/php/php84/www/comfac
+     a-credito/nuxt-creditos
+     > eslint .
+  ⎿  (timeout 2m)
+
+  Thought for 6s (ctrl+o to expand)
+
+● Listo. Card implementada y validada con typecheck + lint.
+
+  Resumen de la implementación
+
+  1. useSimuladorConLineaPage.ts — nuevo computed
+
+  const categoriaTrabajadorAplicada = computed<
+    { codcat: string, facfin: number | string } | null
+  >(() => {
+    const codcatTrabajador = trabajador.value?.codigo_categoria;
+    const categorias = lineaSeleccionada.value?.categorias;
+    if (!codcatTrabajador || !Array.isArray(categorias) || categorias.length ===
+  0) {
+      return null;
+    }
+    const target = String(codcatTrabajador).toLowerCase();
+    const match = categorias.find(
+      (cat: Record<string, unknown>) =>
+        cat && cat.codcat
+        && String(cat.codcat).toLowerCase() === target
+    );
+    if (!match) return null;
+    return {
+      codcat: String((match as Record<string, unknown>).codcat),
+      facfin: (match as Record<string, unknown>).facfin as number | string
+    };
+  });
+
+  Devuelve { codcat, facfin } cuando hay match entre trabajador.codigo_categoria
+  y lineaSeleccionada.categorias[].codcat, o null en caso contrario. La
+  comparación es case-insensitive (mismo patrón que ya existía en
+  cargarLineaCredito).
+
+  2. [tipcre].vue — nueva card
+
+  Insertada arriba del grid Form/Resultados (dentro del v-if de contenido
+  principal, envuelta en un space-y-6). Tiene tres bloques:
+
+  ┌──────────────┬──────────────────────────────────────────────────────────┐
+  │    Bloque    │                        Contenido                         │
+  ├──────────────┼──────────────────────────────────────────────────────────┤
+  │ Header       │ Icono i-lucide-info + título "Información del crédito" + │
+  │              │  subtítulo + badge Activo/Inactivo                       │
+  ├──────────────┼──────────────────────────────────────────────────────────┤
+  │ Datos        │ Grid 4 cols con detalle, tipcre (mono), numcuo (meses),  │
+  │ principales  │ valmax (formateado), estcre, pagseg (Requerido/No        │
+  │              │ requerido)                                               │
+  ├──────────────┼──────────────────────────────────────────────────────────┤
+  │              │ Badges por cada categoría con codcat: facfin% EA. La     │
+  │ Tasas por    │ categoría aplicada al trabajador se destaca con ring-2   │
+  │ categoría    │ ring-primary y check icon. Al lado, la categoría del     │
+  │              │ trabajador (ej. "Tu categoría: A")                       │
+  └──────────────┴──────────────────────────────────────────────────────────┘
+
+  Además dos callouts condicionales:
+
+  - Categoría aplicada (verde/primary): "Se te aplica la categoría X — Tasa Y%
+  efectiva anual" con icono i-lucide-user-check.
+  - Categoría no configurada (ámbar): "Tu categoría X no está configurada para
+  esta línea. Se usará la tasa que ingreses manualmente" con icono
+  i-lucide-alert-triangle.
+
+  3. Otros ajustes
+
+  - Wrapper space-y-6 alrededor de la nueva card + el grid Form/Resultados para
+  mantener espaciado vertical consistente.
+  - Reordené las ternarias largas en :class del Badge para que devuelvan un
+  string (no array) — el Badge local sólo acepta class: string.
+
+  Verificación
+
+  - pnpm typecheck ✓
+  - pnpm lint ✓
+
+  Comportamiento esperado al cargar /dash/simulador/06:
+  1. Aparece la card arriba con todos los datos de la línea (código 06, plazo
+  máx, monto máx, etc.).
+  2. Si el trabajador logueado tiene codigo_categoria que matchea con una
+  categoría de la línea, esa categoría aparece destacada + un callout en color
+  primary con la tasa exacta.
+  3. Si no matchea (categoría no configurada para esa línea), aparece el callout
+  ámbar explicando que se usará tasa manual.
+  4. La tasa del formulario queda pre-llenada con el facfin correspondiente
+  (esto ya funcionaba desde antes, ahora es visible/explicable en la UI).
+
+✻ Baked for 5m 51s
+
+❯ En Page URL: http://localhost:4000/dash/simulador/06                          
+  Viewport: 1920x961                                                            
+  Selector: input#v-0-8                                                         
+  Component Tree: input                                                         
+  File: node_modules/.pnpm/@nuxt+ui@4.8.1_@internationalized+date@3.12.2_@inter 
+  nationalized+number@3.6.7_@tiptap+e_a2d070015207dda66de747c946813095/node_mod 
+  ules/@nuxt/ui/dist/runtime/components/Input.vue:124:4 la tasa efectiva anual, 
+  se debe usar la tasa que le corresponde al trabajador que es la facfin segun  
+  el codcat de la categoria y el codcat del los datos del trabajador, la tasa   
+  efectiva tampoco se puede alterar.                                            
+
+  Thought for 19s (ctrl+o to expand)
+
+● Voy a investigar el flujo completo: la carga de la tasa, el watch del
+  trabajador, y la condición de readonly actual.
+
+  Thought for 1m 7s, read 2 files (ctrl+o to expand)
+
+● Encontré el problema raíz: la lógica que asigna la tasa al facfin solo corre
+  una vez dentro de cargarLineaCredito() cuando el componente se monta. Pero
+  useSession.hydrate() lee el trabajador desde localStorage de forma asíncrona,
+  así que cuando se ejecuta el set de la tasa, trabajador.value todavía es null
+  y la condición no se cumple.
+
+  Además:
+  - El input usa :readonly (no disabled) — el usuario aún puede enfocarlo.
+  - La condición es trabajador?.codigo_categoria && 
+  lineaSeleccionada?.categorias, que es truthy también si las categorías existen
+  pero no matchean con el codcat del trabajador.
+
+  Voy a:
+  1. Mover la lógica a un watch reactivo sobre categoriaTrabajadorAplicada (se
+  re-evalúa cuando el trabajador termina de hidratarse).
+  2. Cambiar :readonly a :disabled en el input.
+  3. Usar :model-value (one-way) para que no haya v-model editable.
+
+  Read 1 file (ctrl+o to expand)
+
+● Update(app/composables/simulador/useSimuladorConLineaPage.ts)
+  ⎿  Added 3 lines, removed 16 lines
+      204        // Establecer descuentos mensuales por defecto en 0
+      205        descuentosMensuales.value = 0;
+      206  
+      207 -      // Establecer tasa según categoría del trabajador       
+      208 -      if (                                                    
+      209 -        trabajador.value?.codigo_categoria                    
+      210 -        && lineaSeleccionada.value?.categorias                
+      211 -      ) {                                                     
+      212 -        const categoriaTrabajador = String(                   
+      213 -          trabajador.value.codigo_categoria                   
+      214 -        ).toLowerCase();                                      
+      215 -        const categoriaLinea = lineaSeleccionada.value.categor
+          -ias.find(                                                     
+      216 -          (cat: Record<string, unknown>) =>                   
+      217 -            cat                                               
+      218 -            && cat.codcat                                     
+      219 -            && String(cat.codcat).toLowerCase() === categoriaT
+          -rabajador                                                     
+      220 -        );                                                    
+      221 -                                                              
+      222 -        if (categoriaLinea && (categoriaLinea as Record<string
+          -, unknown>).facfin) {                                         
+      207 +      // La tasa según categoría del trabajador se asigna reac
+          +tivamente                                                     
+      208 +      // desde el watch sobre `categoriaTrabajadorAplicada` (m
+          +ás abajo), para                                               
+      209 +      // cubrir el caso en que el trabajador se hidrate despué
+          +s de este método.                                             
+      210            tasaEfectivaAnual.value = parseFloat(String((categor
+           iaLinea as Record<string, unknown>).facfin));
+      211          }
+      212        }
+
+  Thought for 14s, read 1 file (ctrl+o to expand)
+
+● Update(app/composables/simulador/useSimuladorConLineaPage.ts)
+  ⎿  Removed 3 lines
+      207        // La tasa según categoría del trabajador se asigna reac
+           tivamente
+      208        // desde el watch sobre `categoriaTrabajadorAplicada` (m
+           ás abajo), para
+      209        // cubrir el caso en que el trabajador se hidrate despué
+           s de este método.
+      210 -          tasaEfectivaAnual.value = parseFloat(String((categor
+          -iaLinea as Record<string, unknown>).facfin));                 
+      211 -        }                                                     
+      212 -      }                                                       
+      210  
+      211        // Validar convenio automáticamente si tiene datos del t
+           rabajador
+      212        if (trabajador.value?.empresa?.nit && trabajador.value?.
+           cedula) {
+
+  Thought for 7s, read 1 file (ctrl+o to expand)
+
+● Update(app/composables/simulador/useSimuladorConLineaPage.ts)
+  ⎿  Added 16 lines
+      311      { immediate: true }
+      312    );
+      313  
+      314 +  // Watch para forzar la tasa según la categoría del trabajad
+          +or.                                                           
+      315 +  // Se re-evalúa cada vez que cambia `categoriaTrabajadorApli
+          +cada`                                                         
+      316 +  // (incluso cuando el trabajador se hidrata desde localStora
+          +ge después del mount).                                        
+      317 +  watch(                                                      
+      318 +    () => categoriaTrabajadorAplicada.value,                  
+      319 +    (categoria) => {                                          
+      320 +      if (categoria && categoria.facfin !== undefined && categ
+          +oria.facfin !== null) {                                       
+      321 +        const nuevaTasa = parseFloat(String(categoria.facfin))
+          +;                                                             
+      322 +        if (Number.isFinite(nuevaTasa) && nuevaTasa !== tasaEf
+          +ectivaAnual.value) {                                          
+      323 +          tasaEfectivaAnual.value = nuevaTasa;                
+      324 +        }                                                     
+      325 +      }                                                       
+      326 +    },                                                        
+      327 +    { immediate: true }                                       
+      328 +  );                                                          
+      329 +                                                              
+      330    // Watch para validar convenio cuando el trabajador esté dis
+           ponible
+      331    watch(
+      332      () => trabajador.value,
+
+  Thought for 7s (ctrl+o to expand)
+
+● Ahora actualizo el input de tasa en el template:
+
+● Update(app/pages/dash/simulador/[tipcre].vue)
+  ⎿  Added 12 lines, removed 12 lines
+      468                    : 'Tasa mensual (%)'
+      469                "
+      470                :hint="
+      471 -                trabajador?.codigo_categoria && lineaSeleccion
+          -ada?.categorias                                               
+      472 -                  ? 'Tasa por categoría aplicada'             
+      473 -                  : ''                                        
+      471 +                categoriaTrabajadorAplicada                   
+      472 +                  ? `Tasa aplicada por tu categoría ${categori
+          +aTrabajadorAplicada.codcat}`                                  
+      473 +                  : (lineaSeleccionada?.categorias?.length    
+      474 +                    ? 'Ingresa la tasa manualmente'           
+      475 +                    : '')                                     
+      476                "
+      477              >
+      478                <UInput
+      477 -                v-model.number="tasaInput"                    
+      479 +                :model-value="tasaInput"                      
+      480                  type="number"
+      481                  step="0.1"
+      482                  min="0"
+      481 -                :readonly="                                   
+      482 -                  !!(                                         
+      483 -                    trabajador?.codigo_categoria && lineaSelec
+          -cionada?.categorias                                           
+      484 -                  )                                           
+      485 -                "                                             
+      483 +                :disabled="!!categoriaTrabajadorAplicada"     
+      484                  :placeholder="
+      487 -                  trabajador?.codigo_categoria                
+      488 -                    ? `Tasa cat. ${trabajador.codigo_categoria
+          -}`                                                            
+      489 -                    : ''                                      
+      485 +                  categoriaTrabajadorAplicada                 
+      486 +                    ? Number(categoriaTrabajadorAplicada.facfi
+          +n).toFixed(2)                                                 
+      487 +                    : (trabajador?.codigo_categoria           
+      488 +                      ? `Tasa cat. ${trabajador.codigo_categor
+          +ia}`                                                          
+      489 +                      : '')                                   
+      490                  "
+      491                />
+      492              </UFormField>
+
+● Bash(pnpm typecheck 2>&1 | grep -E "(error TS|✔|ELIFECYCLE)" | head -10)
+  ⎿  ✔ Nuxt Icon discovered local-installed 2 collections: lucide, simple-i
+     cons
+  ⎿  (timeout 2m)
+
+● Bash(pnpm lint 2>&1 | tail -5)
+  ⎿  > nuxt-creditos@0.0.1 lint /home/elegro/proyectos/php/php84/www/comfac
+     a-credito/nuxt-creditos
+     > eslint .
+  ⎿  (timeout 2m)
+
+  Thought for 6s (ctrl+o to expand)
+● Listo. Validado con typecheck + lint. Aquí está el diagnóstico del problema y
+  la solución aplicada.
+
+  Diagnóstico
+
+  Causa raíz: la asignación de la tasa al facfin de la categoría estaba dentro 
+  de cargarLineaCredito(), que se ejecuta en onMounted. Pero
+  useSession.hydrate() lee al trabajador desde localStorage de forma asíncrona
+  (Promise), así que cuando el simulador monta, trabajador.value todavía es null
+  y la condición if (trabajador.value?.codigo_categoria && ...) no se cumple.
+  El bloque watch existente solo validaba el convenio, no volvía a aplicar la
+  tasa.
+
+  Problema secundario: el input usaba :readonly en vez de :disabled — readonly
+  no impide que el navegador mantenga el foco ni en algunos casos aceptar
+  entrada. Además la condición era demasiado laxa (se hacía readonly si existía
+  la lista de categorías, aunque no hubiera match real con el codcat del
+  trabajador).
+
+  Cambios
+
+  useSimuladorConLineaPage.ts
+
+  1. Eliminé la asignación inline de la tasa en cargarLineaCredito() (líneas
+  207-225 originales). Dejé un comentario que apunta al nuevo watch.
+  2. Agregué un watch reactivo sobre categoriaTrabajadorAplicada (con immediate:
+  true) que se re-evalúa cada vez que cambia la categoría resuelta — incluyendo
+  el caso en que el trabajador se hidrate después del mount:
+
+  watch(
+    () => categoriaTrabajadorAplicada.value,
+    (categoria) => {
+      if (categoria && categoria.facfin !== undefined && categoria.facfin !==
+  null) {
+        const nuevaTasa = parseFloat(String(categoria.facfin));
+        if (Number.isFinite(nuevaTasa) && nuevaTasa !== tasaEfectivaAnual.value)
+  {
+          tasaEfectivaAnual.value = nuevaTasa;
+        }
+      }
+    },
+    { immediate: true }
+  );
+
+  Esto garantiza que cuando trabajador.codigo_categoria resuelve y hace match
+  con una categoría de la línea, la tasa se actualiza automáticamente — sin
+  importar si llegó antes o después que cargarLineaCredito().
+
+  [tipcre].vue — input de tasa
+
+  ┌────────────────────────────────────┬────────────────────────────────────┐
+  │               Antes                │               Ahora                │
+  ├────────────────────────────────────┼────────────────────────────────────┤
+  │ v-model.number="tasaInput"         │ :model-value="tasaInput" (one-way, │
+  │ (editable)                         │  no edición)                       │
+  ├────────────────────────────────────┼────────────────────────────────────┤
+  │ :readonly="!!(trabajador?.codigo_c │ :disabled="!!categoriaTrabajadorAp │
+  │ ategoria &&                        │ licada"                            │
+  │ lineaSeleccionada?.categorias)"    │                                    │
+  ├────────────────────────────────────┼────────────────────────────────────┤
+  │ Hint: "Tasa por categoría          │ Hint: "Tasa aplicada por tu        │
+  │ aplicada" (genérico, incluso sin   │ categoría X" (específico) o        │
+  │ match real)                        │ "Ingresa la tasa manualmente"      │
+  ├────────────────────────────────────┼────────────────────────────────────┤
+  │                                    │ Placeholder con el facfin          │
+  │ Placeholder con texto del codcat   │ formateado (muestra el valor que   │
+  │                                    │ se va a aplicar)                   │
+  └────────────────────────────────────┴────────────────────────────────────┘
+
+  La condición ahora se basa en categoriaTrabajadorAplicada (computed) en vez
+  del truthy check sobre categorias — el input solo se bloquea cuando realmente
+  hay match entre el codcat del trabajador y una categoría de la línea.
+
+  Comportamiento esperado
+
+  1. Cargas /dash/simulador/06.
+  2. Mientras useSession termina de hidratar al trabajador, el input puede estar
+  editable brevemente.
+  3. Cuando trabajador.codigo_categoria resuelve y matchea con una categoría
+  (ej. A → facfin 1.5%):
+    - El watch setea tasaEfectivaAnual.value = 1.5.
+    - El input se deshabilita (disabled).
+    - El hint muestra "Tasa aplicada por tu categoría A".
+    - El placeholder muestra "1.50".
+  4. Si la categoría del trabajador no está configurada para esa línea, el input
+  queda editable con hint "Ingresa la tasa manualmente" y aparece el callout
+  ámbar en la card de información.
+
+✻ Worked for 4m 14s
+
+❯ No uses el codigo_categoria es codcat la variable que define la categoria en  
+  el trabajador.                                                                
+
+  Thought for 22s (ctrl+o to expand)
+
+● Voy a corregir el campo. Primero verifico el tipo Trabajador para confirmar.
+
+  Thought for 55s, searched for 2 patterns, read 1 file (ctrl+o to expand)
+
+● Update(shared/types/trabajador.ts)
+  ⎿  Added 1 line
+      29    sexo: string
+      30    telefono: string
+      31    tipo_documento: string
+      32 +  codcat?: string                                              
+      33    codigo_categoria?: string
+      34    tipo_vivienda?: string
+      35    tipo_contrato?: string
+
+  Thought for 6s, read 1 file (ctrl+o to expand)
+
+● Update(app/composables/simulador/useSimuladorConLineaPage.ts)
+  ⎿  Added 4 lines, removed 1 line
+      228    const categoriaTrabajadorAplicada = computed<
+      229      { codcat: string, facfin: number | string } | null
+      230    >(() => {
+      231 -    const codcatTrabajador = trabajador.value?.codigo_categori
+          -a;                                                            
+      231 +    // El campo del trabajador es `codcat`; se conserva fallba
+          +ck a                                                          
+      232 +    // `codigo_categoria` para datos antiguos que aún usen el 
+          +nombre previo.                                                
+      233 +    const codcatTrabajador                                    
+      234 +      = trabajador.value?.codcat ?? trabajador.value?.codigo_c
+          +ategoria;                                                     
+      235      const categorias = lineaSeleccionada.value?.categorias;
+      236      if (!codcatTrabajador || !Array.isArray(categorias) || cat
+           egorias.length === 0) {
+      237        return null;
+
+  Thought for 18s (ctrl+o to expand)
+
+● Voy a añadir un computed en el composable para centralizar el codcat y luego
+  actualizar el template.
+
+  Read 1 file (ctrl+o to expand)
+
+● Update(app/composables/simulador/useSimuladorConLineaPage.ts)
+  ⎿  Added 5 lines
+      250      };
+      251    });
+      252  
+      253 +  // Código de categoría del trabajador (con fallback al nombr
+          +e previo `codigo_categoria`).                                 
+      254 +  const trabajadorCodcat = computed<string | null>(           
+      255 +    () => trabajador.value?.codcat ?? trabajador.value?.codigo
+          +_categoria ?? null                                            
+      256 +  );                                                          
+      257 +                                                              
+      258    // Computed para manejar el v-model del input de monto de fo
+           rma segura
+      259    const montoInputModel = computed({
+      260      get: () => montoInput?.val || "",
+
+● Update(app/composables/simulador/useSimuladorConLineaPage.ts)
+  ⎿  Added 1 line
+      421      montoInput,
+      422      montoInputModel,
+      423      categoriaTrabajadorAplicada,
+      424 +    trabajadorCodcat,                                         
+      425      validarMonto,
+      426      navigateToLineas,
+      427      cargarLineaCredito,
+
+❯ El texto de Ingresa la tasa manualmente, no es necesario ya que el campo es automatico y no se puede editar. 
+
+  Thought for 13s (ctrl+o to expand)
+
+  Thought for 26s, read 1 file (ctrl+o to expand)
+
+● Hago todos los cambios en un solo paso: migración a codcat + eliminación del
+  hint manual.
+
+● Update(app/pages/dash/simulador/[tipcre].vue)
+  ⎿  Added 2 lines, removed 2 lines
+      288                  Tasas por categoría
+      289                </h3>
+      290                <span
+      291 -                v-if="trabajador?.codigo_categoria"           
+      291 +                v-if="trabajadorCodcat"                       
+      292                  class="text-xs text-muted-foreground"
+      293                >
+      294 -                Tu categoría: <span class="font-mono font-semi
+          -bold">{{ trabajador.codigo_categoria }}</span>                
+      294 +                Tu categoría: <span class="font-mono font-semi
+          +bold">{{ trabajadorCodcat }}</span>                           
+      295                </span>
+      296              </div>
+      297  
+
+● Update(app/pages/dash/simulador/[tipcre].vue)
+  ⎿  Added 2 lines, removed 2 lines
+      357              </div>
+      358  
+      359              <div
+      360 -              v-else-if="trabajador?.codigo_categoria && linea
+          -Seleccionada.categorias && lineaSeleccionada.categorias.length
+          - > 0"                                                         
+      360 +              v-else-if="trabajadorCodcat && lineaSeleccionada
+          +.categorias && lineaSeleccionada.categorias.length > 0"       
+      361                class="mt-3 p-3 rounded-lg bg-amber-50 border bo
+           rder-amber-200 flex items-center gap-3"
+      362              >
+      363                <UIcon
+     ...
+      365                  class="w-5 h-5 text-amber-600 shrink-0"
+      366                />
+      367                <p class="text-sm text-amber-800">
+      368 -                Tu categoría <span class="font-mono font-semib
+          -old">{{ trabajador.codigo_categoria }}</span> no está configur
+          -ada para esta línea. Se usará la tasa que ingreses manualmente
+          -.                                                             
+      368 +                Tu categoría <span class="font-mono font-semib
+          +old">{{ trabajadorCodcat }}</span> no está configurada para es
+          +ta línea.                                                     
+      369                </p>
+      370              </div>
+      371            </div>
+
+● Update(app/pages/dash/simulador/[tipcre].vue)
+  ⎿  Added 2 lines, removed 6 lines
+      470                :hint="
+      471                  categoriaTrabajadorAplicada
+      472                    ? `Tasa aplicada por tu categoría ${categori
+           aTrabajadorAplicada.codcat}`
+      473 -                  : (lineaSeleccionada?.categorias?.length    
+      474 -                    ? 'Ingresa la tasa manualmente'           
+      475 -                    : '')                                     
+      473 +                  : ''                                        
+      474                "
+      475              >
+      476                <UInput
+     ...
+      482                  :placeholder="
+      483                    categoriaTrabajadorAplicada
+      484                      ? Number(categoriaTrabajadorAplicada.facfi
+           n).toFixed(2)
+      487 -                    : (trabajador?.codigo_categoria           
+      488 -                      ? `Tasa cat. ${trabajador.codigo_categor
+          -ia}`                                                          
+      489 -                      : '')                                   
+      485 +                    : ''                                      
+      486                  "
+      487                />
+      488              </UFormField>
+
+  Thought for 6s (ctrl+o to expand)
+
+● Falta añadir trabajadorCodcat al destructuring del script setup:
+
+● Update(app/pages/dash/simulador/[tipcre].vue)  ⎿  Added 1 line
+      783    montoInput,
+      784    montoInputModel,
+      785    categoriaTrabajadorAplicada,
+      786 +  trabajadorCodcat,                                           
+      787    validarMonto,
+      788    navigateToLineas,
+      789    cargarLineaCredito,
+
+● Bash(pnpm typecheck 2>&1 | grep -E "(error TS|✔|ELIFECYCLE)" | head -10 &&
+      echo "---" && pnpm lint 2>&1 | tail -5)
+  ⎿  ✔ Nuxt Icon discovered local-installed 2 collections: lucide, simple-i
+     cons
+     ---
+     … +4 lines (ctrl+o to expand)
+  ⎿  (timeout 2m)
+
+  Thought for 6s (ctrl+o to expand)
+
+● Listo. Validado con typecheck + lint.
+
+  Cambios aplicados
+
+  1. Migración de codigo_categoria → codcat
+
+  shared/types/trabajador.ts
+  - Añadí codcat?: string al tipo Trabajador (manteniendo codigo_categoria?: 
+  string como fallback por compatibilidad).
+
+  useSimuladorConLineaPage.ts
+  - categoriaTrabajadorAplicada ahora lee trabajador.value?.codcat ?? 
+  trabajador.value?.codigo_categoria (prioriza codcat, conserva el nombre previo
+  como red de seguridad).
+  - Añadí un nuevo computed trabajadorCodcat que centraliza este fallback para
+  reusarlo en el template.
+
+  [tipcre].vue
+  - Reemplacé las 4 referencias a trabajador.codigo_categoria por
+  trabajadorCodcat:
+    - "Tu categoría: X" en la card de información
+    - Condición del callout ámbar "Tu categoría no configurada"
+    - Texto del callout ámbar
+    - Placeholder del input de tasa
+  - Agregué trabajadorCodcat al destructuring del script setup.
+
+  2. Eliminé "Ingresa la tasa manualmente"
+
+  - Quité la rama alternativa del :hint del input de tasa. Ahora el hint solo
+  aparece cuando hay match: "Tasa aplicada por tu categoría X". Sin match no se
+  muestra texto.
+  - Quité también "Se usará la tasa que ingreses manualmente" del callout ámbar
+  — ahora dice solo "Tu categoría X no está configurada para esta línea."
+  - Simplifiqué el placeholder del input: cuando hay match muestra el facfin
+  formateado; sin match queda vacío.
+
+  Comportamiento final
+
+  ┌────────────────────────────┬─────────────────┬──────────────┬──────────┐
+  │           Estado           │      Hint       │ Placeholder  │ Disabled │
+  ├────────────────────────────┼─────────────────┼──────────────┼──────────┤
+  │ Hay match                  │ "Tasa aplicada  │ facfin       │          │
+  │ trabajador.codcat ↔        │ por tu          │ formateado   │ sí       │
+  │ categoría                  │ categoría X"    │              │          │
+  ├────────────────────────────┼─────────────────┼──────────────┼──────────┤
+  │ No hay match (categoría no │                 │              │          │
+  │  configurada para esa      │ (vacío)         │ (vacío)      │ no       │
+  │ línea)                     │                 │              │          │
+  ├────────────────────────────┼─────────────────┼──────────────┼──────────┤
+  │ Sin trabajador.codcat      │ (vacío)         │ (vacío)      │ no       │
+  └────────────────────────────┴─────────────────┴──────────────┴──────────┘
+
+  El campo es siempre de solo lectura cuando hay categoría aplicable, y no
+  sugiere edición manual en ningún caso.
+
+✻ Worked for 4m 25s
+
+※ recap: We're polishing the credit simulator page so the worker's category automatically sets and locks the effective annual rate. Next step is to reload the simulator in the browser to confirm the rate, disabled state, and codcat badge render correctly. (disable recaps in /config)
+
+❯ Cuando cambio el tipo de tasa, medinate el radio button, el valor de la tasa  
+  mensual no se esta recalculado de forma correcta, es como si tomara un valor  
+  harcodeado y se debe corregir. ya que el valor asignado se debe dividir por   
+  12, con solo 2 decimas.                                                       
+
+  Thought for 12s (ctrl+o to expand)
+
+● Voy a revisar las funciones de conversión y la lógica del cambio de tipo.
+
+  Thought for 24s, searched for 2 patterns, read 2 files (ctrl+o to expand)
+
+● Encontré el problema. Las funciones de conversión en useSimuladorCore.ts usan
+  la fórmula de interés compuesto (Math.pow(1 + ea, 1/12) - 1). El usuario
+  quiere conversión simple: dividir por 12 (y multiplicar por 12 en el sentido
+  inverso), con 2 decimales.
+
+  Thought for 25s, searched for 1 pattern (ctrl+o to expand)
+
+● Update(app/composables/simulador/useSimuladorCore.ts)
+  ⎿  Added 5 lines, removed 7 lines
+      83      return cuotaMensual <= capacidadDisponible;
+      84    };
+      85  
+      86 -  // Funciones de conversión de tasas                          
+      86 +  // Funciones de conversión de tasas (división simple por 12, 
+         +2 decimales)                                                   
+      87    const convertirAnualAMensual = (tasaEA: number) => {
+      88 -    const ea = tasaEA / 100;                                   
+      89 -    if (ea <= 0) return 0;                                     
+      90 -    return (Math.pow(1 + ea, 1 / 12) - 1) * 100;               
+      88 +    if (!Number.isFinite(tasaEA) || tasaEA <= 0) return 0;     
+      89 +    return Math.round((tasaEA / 12) * 100) / 100;              
+      90    };
+      91  
+      92    const convertirMensualAAnual = (tasaMensual: number) => {
+      94 -    const tm = tasaMensual / 100;                              
+      95 -    if (tm <= 0) return 0;                                     
+      96 -    return (Math.pow(1 + tm, 12) - 1) * 100;                   
+      93 +    if (!Number.isFinite(tasaMensual) || tasaMensual <= 0) retu
+         +rn 0;                                                          
+      94 +    return Math.round(tasaMensual * 12 * 100) / 100;           
+      95    };
+      96  
+      97    // Funciones de formateo
+
+  Thought for 14s (ctrl+o to expand)
+
+● Bash(pnpm typecheck 2>&1 | grep -E "(error TS|✔|ELIFECYCLE)" | head -10 &&
+      echo "---" && pnpm lint 2>&1 | tail -5)
+  ⎿  ✔ Nuxt Icon discovered local-installed 2 collections: lucide, simple-i
+     cons
+     ---
+     … +4 lines (ctrl+o to expand)
+  ⎿  (timeout 2m)
+
+  Thought for 7s (ctrl+o to expand)
+
+● Listo. Validado con typecheck + lint.
+
+  Diagnóstico
+
+  Las funciones convertirAnualAMensual y convertirMensualAAnual en
+  useSimuladorCore.ts usaban la fórmula de interés compuesto:
+
+  // Antes:
+  (Math.pow(1 + ea, 1 / 12) - 1) * 100   // anual → mensual
+  (Math.pow(1 + tm, 12) - 1) * 100         // mensual → anual
+
+  Esta fórmula da resultados contraintuitivos para el flujo del input — por
+  ejemplo, con EA de 24% daba 1.81% mensual (no 2.00%).
+
+  Solución
+
+  Cambio a conversión simple (÷ 12 y × 12) redondeada a 2 decimales:
+
+  // Ahora:
+  const convertirAnualAMensual = (tasaEA: number) => {
+    if (!Number.isFinite(tasaEA) || tasaEA <= 0) return 0;
+    return Math.round((tasaEA / 12) * 100) / 100;
+  };
+
+  const convertirMensualAAnual = (tasaMensual: number) => {
+    if (!Number.isFinite(tasaMensual) || tasaMensual <= 0) return 0;
+    return Math.round(tasaMensual * 12 * 100) / 100;
+  };
+
+  Math.round(n * 100) / 100 es la forma estándar de redondear a 2 decimales
+  preservando tipo numérico. El guard Number.isFinite y <= 0 se mantiene para
+  los casos borde (NaN, 0, negativos).
+
+  Ejemplos del nuevo comportamiento
+
+  ┌───────────────┬─────────────────────┬──────────────────┬───────────────┐
+  │  Tasa anual   │    Tasa mensual     │      Antes       │    Ahora      │
+  │     (EA)      │      esperada       │   (compuesto)    │   (simple)    │
+  ├───────────────┼─────────────────────┼──────────────────┼───────────────┤
+  │ 24.00%        │ 2.00%               │ 1.81% ❌         │ 2.00% ✓       │
+  ├───────────────┼─────────────────────┼──────────────────┼───────────────┤
+  │ 18.00%        │ 1.50%               │ 1.39% ❌         │ 1.50% ✓       │
+  ├───────────────┼─────────────────────┼──────────────────┼───────────────┤
+  │ 30.00%        │ 2.50%               │ 2.21% ❌         │ 2.50% ✓       │
+  ├───────────────┼─────────────────────┼──────────────────┼───────────────┤
+  │ 12.50%        │ 1.04%               │ 0.99% ❌         │ 1.04% ✓       │
+  ├───────────────┼─────────────────────┼──────────────────┼───────────────┤
+  │ 36.00%        │ 3.00%               │ 2.59% ❌         │ 3.00% ✓       │
+  └───────────────┴─────────────────────┴──────────────────┴───────────────┘
+
+  Y en sentido inverso: mensual 1.5 → anual 18.00 (antes daba 19.56 por
+  compuesto).
+
+  Notas
+
+  - No toqué el cálculo financiero (calcularTasaMensual en
+  useSimuladorCore.ts:43-50). Esa función — usada por tasaMensual y por tanto
+  por cuotaMensual — sigue usando la fórmula de interés compuesto, que es la
+  correcta para el cálculo de la cuota (es matemática financiera real, no la
+  conversión del input).
+  - El cambio es local a las dos funciones de conversión del input; el flujo
+  cambiarTipoTasa en useSimuladorWithLinea.ts no necesitó cambios porque sigue
+  invocando las mismas funciones con la misma firma.
+
+✻ Sautéed for 2m 43s
+
+❯ cuando pasa de tipo de tasa anual a mensual, el campo de Tasa mensual % se    
+  debe calcular y su pulsa de nuevo  tipo de tasa Anual, se debe colocar la     
+  tasa representativa de la linea credito segun al categoria.                   
+
+  Thought for 3m 43s, searched for 8 patterns (ctrl+o to expand)
+
+● Encontré dos problemas:
+  1. La función cambiarTipoTasa nunca se llama desde el template (el URadioGroup
+  solo tiene v-model, sin handler de cambio).
+  2. La conversión que sí hace no usa el facfin de la categoría al volver a
+  "Anual".
+
+  Voy a:
+  1. Modificar cambiarTipoTasa para que acepte la categoría aplicada y la use al
+  volver a "Anual".
+  2. Wirear el radio group con @update:model-value para que invoque la
+  conversión.
+● Update(app/composables/simulador/useSimuladorWithLinea.ts)
+  ⎿  Added 18 lines, removed 4 lines
+      112    const margen = computed(() => calcularMargen(capacidadDispon
+           ible.value, cuotaMensual.value));
+      113    const apto = computed(() => calcularApto(cuotaMensual.value,
+            capacidadDisponible.value));
+      114  
+      115 -  // Función para cambiar el tipo de tasa con conversión      
+      116 -  const cambiarTipoTasa = (nuevoTipo: "anual" | "mensual") => 
+          -{                                                             
+      115 +  // Función para cambiar el tipo de tasa con conversión.     
+      116 +  // Si se pasa `categoriaAplicada`, al volver a "Anual" se re
+          +staura la tasa                                                
+      117 +  // representativa (facfin) de la categoría en lugar de hacer
+          + la conversión inversa.                                       
+      118 +  const cambiarTipoTasa = (                                   
+      119 +    nuevoTipo: "anual" | "mensual",                           
+      120 +    categoriaAplicada?: { codcat: string, facfin: number | str
+          +ing } | null                                                  
+      121 +  ) => {                                                      
+      122      if (nuevoTipo === tipoTasa.value) return;
+      123  
+      124      if (tipoTasa.value === "anual" && nuevoTipo === "mensual")
+            {
+      120 -      // Convertir de anual a mensual                         
+      125 +      // Anual → Mensual: calcular la tasa mensual a partir de
+          + la anual actual                                              
+      126        const tasaMensualConvertida = convertirAnualAMensual(tas
+           aEASan.value);
+      127        tasaMensualInput.value = parseFloat(tasaMensualConvertid
+           a.toFixed(2));
+      128      } else if (tipoTasa.value === "mensual" && nuevoTipo === "
+           anual") {
+      124 -      // Convertir de mensual a anual                         
+      129 +      // Mensual → Anual: preferir la tasa representativa de l
+          +a categoría del trabajador                                    
+      130 +      if (categoriaAplicada && categoriaAplicada.facfin !== un
+          +defined && categoriaAplicada.facfin !== null) {               
+      131 +        const facfinNum = parseFloat(String(categoriaAplicada.
+          +facfin));                                                     
+      132 +        if (Number.isFinite(facfinNum)) {                     
+      133 +          tasaEfectivaAnual.value = facfinNum;                
+      134 +          tipoTasa.value = nuevoTipo;                         
+      135 +          return;                                             
+      136 +        }                                                     
+      137 +      }                                                       
+      138 +      // Sin categoría aplicable: convertir de vuelta desde la
+          + mensual                                                      
+      139        const tasaAnualConvertida = convertirMensualAAnual(tasaM
+           ensualSan.value);
+      140        tasaEfectivaAnual.value = parseFloat(tasaAnualConvertida
+           .toFixed(2));
+      141      }
+
+  Thought for 7s, searched for 1 pattern, read 1 file (ctrl+o to expand)
+
+● Update(app/pages/dash/simulador/[tipcre].vue)
+  ⎿  Added 3 lines
+      354                      { label: 'Anual (EA)', value: 'anual' },
+      355                      { label: 'Mensual', value: 'mensual' }
+      356                    ]"
+      357 +                  @update:model-value="                       
+      358 +                    (v) => cambiarTipoTasa(v, categoriaTrabaja
+          +dorAplicada)                                                  
+      359 +                  "                                           
+      360                  />
+      361                </UFormField>
+      362  
+
+● Bash(pnpm typecheck 2>&1 | grep -E "(error TS|✔|ELIFECYCLE)" | head -10 &&
+      echo "---" && pnpm lint 2>&1 | tail -5)
+  ⎿  ✔ Nuxt Icon discovered local-installed 2 collections: lucide, simple-i
+     cons
+     app/pages/dash/simulador/[tipcre].vue(358,28): error TS2339: Property
+     … +12 lines (ctrl+o to expand)
+  ⎿  (timeout 2m)
+
+  Thought for 25s, searched for 1 pattern, read 2 files (ctrl+o to expand)
+
+● Update(app/pages/dash/simulador/[tipcre].vue)
+  ⎿  Added 1 line
+      611    montoInputModel,
+      612    categoriaTrabajadorAplicada,
+      613    trabajadorCodcat,
+      614 +  cambiarTipoTasa,                                            
+      615    validarMonto,
+      616    navigateToLineas,
+      617    cargarLineaCredito,
+
+● Bash(pnpm typecheck 2>&1 | grep -E "(error TS|✔|ELIFECYCLE)" | head -10 &&
+      echo "---" && pnpm lint 2>&1 | tail -5)
+  ⎿  ✔ Nuxt Icon discovered local-installed 2 collections: lucide, simple-i
+     cons
+     app/pages/dash/simulador/[tipcre].vue(358,44): error TS2345: Argument
+     … +8 lines (ctrl+o to expand)
+  ⎿  (timeout 2m)
+
+  Thought for 9s (ctrl+o to expand)
+
+● Update(app/pages/dash/simulador/[tipcre].vue)
+  ⎿  Added 2 lines, removed 1 line
+      355                      { label: 'Mensual', value: 'mensual' }
+      356                    ]"
+      357                    @update:model-value="
+      358 -                    (v) => cambiarTipoTasa(v, categoriaTrabaja
+          -dorAplicada)                                                  
+      358 +                    (v: 'anual' | 'mensual') =>               
+      359 +                      cambiarTipoTasa(v, categoriaTrabajadorAp
+          +licada)                                                       
+      360                    "
+      361                  />
+      362                </UFormField>
+
+● Bash(pnpm typecheck 2>&1 | grep -E "(error TS|✔|ELIFECYCLE)" | head -10 &&
+      echo "---" && pnpm lint 2>&1 | tail -5)
+  ⎿  ✔ Nuxt Icon discovered local-installed 2 collections: lucide, simple-i
+     cons
+     app/pages/dash/simulador/[tipcre].vue(357,20): error TS2322: Type '(v:
+     … +8 lines (ctrl+o to expand)
+  ⎿  (timeout 2m)
+
+  Thought for 6s (ctrl+o to expand)
+
+● Update(app/pages/dash/simulador/[tipcre].vue)
+  ⎿  Added 5 lines, removed 2 lines
+      355                      { label: 'Mensual', value: 'mensual' }
+      356                    ]"
+      357                    @update:model-value="
+      358 -                    (v: 'anual' | 'mensual') =>               
+      359 -                      cambiarTipoTasa(v, categoriaTrabajadorAp
+          -licada)                                                       
+      358 +                    (v: string) =>                            
+      359 +                      cambiarTipoTasa(                        
+      360 +                        v as 'anual' | 'mensual',             
+      361 +                        categoriaTrabajadorAplicada           
+      362 +                      )                                       
+      363                    "
+      364                  />
+      365                </UFormField>
+
+● Bash(pnpm typecheck 2>&1 | grep -E "(error TS|✔|ELIFECYCLE)" | head -10 &&
+      echo "---" && pnpm lint 2>&1 | tail -5)
+  ⎿  ✔ Nuxt Icon discovered local-installed 2 collections: lucide, simple-i
+     cons
+     ---
+     … +4 lines (ctrl+o to expand)
+  ⎿  (timeout 2m)
+
+  Thought for 7s (ctrl+o to expand)
+
+● Listo. Validado con typecheck + lint.
+
+  Diagnóstico
+
+  cambiarTipoTasa existía en el composable pero nunca se llamaba desde el 
+  template — el URadioGroup solo tenía v-model, sin handler de cambio. Al hacer
+  clic en el radio:
+  - tipoTasa.value cambiaba (efecto del v-model)
+  - tasaMensualInput.value quedaba en su valor por defecto (2)
+  - La conversión nunca se ejecutaba
+
+  Cambios
+
+  1. useSimuladorWithLinea.ts — cambiarTipoTasa mejorada
+
+  Ahora acepta un segundo parámetro opcional categoriaAplicada y la usa para
+  restaurar el facfin cuando se vuelve a "Anual":
+
+  const cambiarTipoTasa = (
+    nuevoTipo: "anual" | "mensual",
+    categoriaAplicada?: { codcat: string, facfin: number | string } | null
+  ) => {
+    if (nuevoTipo === tipoTasa.value) return;
+
+    if (tipoTasa.value === "anual" && nuevoTipo === "mensual") {
+      // Anual → Mensual: tasaMensualInput = tasaEA / 12
+      tasaMensualInput.value =
+  parseFloat(convertirAnualAMensual(tasaEASan.value).toFixed(2));
+    } else if (tipoTasa.value === "mensual" && nuevoTipo === "anual") {
+      // Mensual → Anual: preferir el facfin de la categoría
+      if (categoriaAplicada && categoriaAplicada.facfin !== undefined &&
+  categoriaAplicada.facfin !== null) {
+        const facfinNum = parseFloat(String(categoriaAplicada.facfin));
+        if (Number.isFinite(facfinNum)) {
+          tasaEfectivaAnual.value = facfinNum;
+          tipoTasa.value = nuevoTipo;
+          return;
+        }
+      }
+      // Sin categoría aplicable: convertir de vuelta (mensual × 12)
+      tasaEfectivaAnual.value =
+  parseFloat(convertirMensualAAnual(tasaMensualSan.value).toFixed(2));
+    }
+
+    tipoTasa.value = nuevoTipo;
+  };
+
+  El parámetro es opcional → no rompe las llamadas existentes en otros
+  composables.
+
+  2. [tipcre].vue — wireado del radio group
+
+  <URadioGroup
+    v-model="tipoTasa"
+    :items="[...]"
+    @update:model-value="
+      (v: string) =>
+        cambiarTipoTasa(v as 'anual' | 'mensual', categoriaTrabajadorAplicada)
+    "
+  />
+
+  También agregué cambiarTipoTasa al destructuring del <script setup>.
+
+  El cast v as 'anual' | 'mensual' es necesario porque la firma de
+  @update:model-value de URadioGroup es (value: string), no el tipo literal.
+
+  Comportamiento esperado
+
+  ┌─────────────────────┬───────────────────────────────────────────────────┐
+  │       Acción        │                     Resultado                     │
+  ├─────────────────────┼───────────────────────────────────────────────────┤
+  │ Carga inicial con   │ tasaEfectivaAnual = 1.5 (del watch anterior sobre │
+  │ categoría A (facfin │  categoriaTrabajadorAplicada)                     │
+  │  1.5%)              │                                                   │
+  ├─────────────────────┼───────────────────────────────────────────────────┤
+  │ Click en "Mensual"  │ tasaMensualInput = 1.5 / 12 = 0.13                │
+  ├─────────────────────┼───────────────────────────────────────────────────┤
+  │ Click en "Anual"    │ tasaEfectivaAnual = 1.5 (facfin restaurado, no    │
+  │                     │ 0.13 × 12)                                        │
+  ├─────────────────────┼───────────────────────────────────────────────────┤
+  │ Click en "Mensual"  │ tasaMensualInput = 1.5 / 12 = 0.13                │
+  │ otra vez            │                                                   │
+  ├─────────────────────┼───────────────────────────────────────────────────┤
+  │ Sin categoría       │ Click en "Mensual" calcula con /12; click en      │
+  │ aplicable           │ "Anual" convierte con ×12 (comportamiento legacy) │
+  └─────────────────────┴───────────────────────────────────────────────────┘
+
+✻ Brewed for 8m 18s
+
+❯ Analiza porque la calculo lo hace en base  a 24 de tasa anual harcodeada      
+  cuando se cambia a tasa mensual. algo impide que se calcule de forma          
+  correcta.                                                                     
+
+  Thought for 2m 47s (ctrl+o to expand)
+
+● Voy a revisar el flujo completo de la carga: el watch, el orden de los datos,
+  y el cargarLineaCredito.
+
+  Thought for 3m 17s, read 1 file (ctrl+o to expand)
+
+● Encontré el problema raíz. Hay dos issues, no uno:
+
+  Issue 1 (causa principal del bug): El handler @update:model-value corre
+  después de que v-model ya actualizó tipoTasa.value. Por eso el check
+  tipoTasa.value === "anual" dentro de cambiarTipoTasa siempre es falso — la
+  conversión nunca se ejecuta.
+
+  Issue 2: El watch sobre categoriaTrabajadorAplicada SÍ debería estar
+  actualizando tasaEfectivaAnual.value al facfin (lo confirmaste porque la card
+  muestra la categoría). Pero como la conversión no se dispara (issue 1), el
+  campo Tasa mensual % queda con el valor por defecto 2 (que es tasaMensualInput
+  = ref(2) inicial), no con tasaEfectivaAnual / 12.
+
+  Voy a verificar el orden de los listeners de Vue y corregir usando un watch
+  sobre tipoTasa (que recibe newValue y oldValue para detectar la dirección del
+  cambio).
+  Thought for 36s, searched for 1 pattern, read 2 files (ctrl+o to expand)
+
+● Update(app/composables/simulador/useSimuladorConLineaPage.ts)
+  ⎿  Added 26 lines
+      335      { immediate: true }
+      336    );
+      337  
+      338 +  // Watch para aplicar la conversión correcta al cambiar entr
+          +e tasa anual y mensual.                                       
+      339 +  // Usa `(newValue, oldValue)` para detectar la dirección del
+          + cambio.                                                      
+      340 +  // Esto reemplaza al handler `@update:model-value` del radio
+          +, que corría                                                  
+      341 +  // DESPUÉS de v-model y nunca veía el valor anterior.       
+      342 +  watch(                                                      
+      343 +    () => tipoTasa.value,                                     
+      344 +    (nuevoTipo, viejoTipo) => {                               
+      345 +      if (nuevoTipo === viejoTipo) return;                    
+      346 +                                                              
+      347 +      if (viejoTipo === "anual" && nuevoTipo === "mensual") { 
+      348 +        // Anual → Mensual: calcular la tasa mensual a partir 
+          +de la anual actual                                            
+      349 +        const nuevaTasaMensual = Math.round((tasaEASan.value /
+          + 12) * 100) / 100;                                            
+      350 +        tasaMensualInput.value = nuevaTasaMensual;            
+      351 +      } else if (viejoTipo === "mensual" && nuevoTipo === "anu
+          +al") {                                                        
+      352 +        // Mensual → Anual: preferir la tasa representativa de
+          + la categoría                                                 
+      353 +        const cat = categoriaTrabajadorAplicada.value;        
+      354 +        if (cat && cat.facfin !== undefined && cat.facfin !== 
+          +null) {                                                       
+      355 +          const facfinNum = parseFloat(String(cat.facfin));   
+      356 +          if (Number.isFinite(facfinNum)) {                   
+      357 +            tasaEfectivaAnual.value = facfinNum;              
+      358 +          }                                                   
+      359 +        }                                                     
+      360 +      }                                                       
+      361 +    }                                                         
+      362 +  );                                                          
+      363 +                                                              
+      364    // Watch para validar convenio cuando el trabajador esté dis
+           ponible
+      365    watch(
+      366      () => trabajador.value,
+
+  Thought for 8s (ctrl+o to expand)
+
+● Ahora quito el handler @update:model-value del template (ya no es necesario,
+  el watch lo maneja):
+
+● Update(app/pages/dash/simulador/[tipcre].vue)
+  ⎿  Removed 7 lines
+      354                      { label: 'Anual (EA)', value: 'anual' },
+      355                      { label: 'Mensual', value: 'mensual' }
+      356                    ]"
+      357 -                  @update:model-value="                       
+      358 -                    (v: string) =>                            
+      359 -                      cambiarTipoTasa(                        
+      360 -                        v as 'anual' | 'mensual',             
+      361 -                        categoriaTrabajadorAplicada           
+      362 -                      )                                       
+      363 -                  "                                           
+      357                  />
+      358                </UFormField>
+      359  
+
+● Bash(pnpm typecheck 2>&1 | grep -E "(error TS|✔|ELIFECYCLE)" | head -10 &&
+      echo "---" && pnpm lint 2>&1 | tail -5)
+  ⎿  ✔ Nuxt Icon discovered local-installed 2 collections: lucide, simple-i
+     cons
+     ---
+     … +7 lines (ctrl+o to expand)
+  ⎿  (timeout 2m)
+
+  Thought for 7s (ctrl+o to expand)
+
+● Update(app/pages/dash/simulador/[tipcre].vue)
+  ⎿  Removed 1 line
+      608    montoInputModel,
+      609    categoriaTrabajadorAplicada,
+      610    trabajadorCodcat,
+      611 -  cambiarTipoTasa,                                            
+      611    validarMonto,
+      612    navigateToLineas,
+      613    cargarLineaCredito,
+
+● Bash(pnpm typecheck 2>&1 | grep -E "(error TS|✔|ELIFECYCLE)" | head -10 &&
+      echo "---" && pnpm lint 2>&1 | tail -5)
+  ⎿  ✔ Nuxt Icon discovered local-installed 2 collections: lucide, simple-i
+     cons
+     ---
+     … +4 lines (ctrl+o to expand)
+  ⎿  (timeout 2m)
+
+  Thought for 7s (ctrl+o to expand)
+
+● Listo. Validado con typecheck + lint.
+
+  Diagnóstico completo
+
+  El cálculo mostraba 2 (= 24/12) al cambiar a "Mensual" por dos razones 
+  encadenadas:
+
+  Issue 1 — Orden de ejecución de los listeners (causa inmediata)
+
+  <URadioGroup
+    v-model="tipoTasa"                       <!-- listener 1 (v-model) -->
+    @update:model-value="cambiarTipoTasa(…)" <!-- listener 2 (explícito) -->
+  />
+
+  Vue 3 compila v-model a un listener @update:model-value que se registra
+  primero. Cuando el usuario hacía clic en "Mensual":
+
+  1. URadioGroup emitía update:model-value con "mensual"
+  2. Listener 1 (v-model) corría primero → tipoTasa.value = "mensual"
+  3. Listener 2 (mi handler) corría después → cambiarTipoTasa("mensual", ...)
+  4. Dentro de cambiarTipoTasa, la condición tipoTasa.value === "anual" era
+  falsa (ya era "mensual")
+  5. La conversión nunca se ejecutaba → tasaMensualInput.value quedaba en su
+  default 2
+
+  El bug existía pero no era visible porque el watch sobre
+  categoriaTrabajadorAplicada (que sí funcionaba) actualizaba tasaEfectivaAnual
+  al facfin al cargar la página. Como la conversión no se disparaba, el campo
+  mensual mostraba el default 2 en vez de tasaEA / 12.
+
+  Issue 2 — cambiarTipoTasa comparaba contra el estado actual (no el anterior)
+
+  La firma original cambiarTipoTasa(nuevoTipo) no recibía el tipo anterior, así
+  que no podía detectar la dirección del cambio. Comparaba contra tipoTasa.value
+  que ya estaba actualizado.
+
+  Solución
+
+  Reemplacé el handler @update:model-value por un watch sobre tipoTasa que sí 
+  recibe (nuevo, viejo) — esto le permite saber la dirección del cambio aunque
+  tipoTasa ya esté actualizado al momento de ejecutarse.
+
+  useSimuladorConLineaPage.ts — nuevo watch
+
+  watch(
+    () => tipoTasa.value,
+    (nuevoTipo, viejoTipo) => {
+      if (nuevoTipo === viejoTipo) return;
+
+      if (viejoTipo === "anual" && nuevoTipo === "mensual") {
+        // Anual → Mensual: calcular a partir de la tasa anual actual
+        const nuevaTasaMensual = Math.round((tasaEASan.value / 12) * 100) / 100;
+        tasaMensualInput.value = nuevaTasaMensual;
+      } else if (viejoTipo === "mensual" && nuevoTipo === "anual") {
+        // Mensual → Anual: restaurar la tasa representativa de la categoría
+        const cat = categoriaTrabajadorAplicada.value;
+        if (cat && cat.facfin !== undefined && cat.facfin !== null) {
+          const facfinNum = parseFloat(String(cat.facfin));
+          if (Number.isFinite(facfinNum)) {
+            tasaEfectivaAnual.value = facfinNum;
+          }
+        }
+      }
+    }
+  );
+
+  [tipcre].vue — template limpio
+
+  Quité el handler @update:model-value del URadioGroup (ya no se necesita). El
+  radio queda solo con v-model:
+
+  <URadioGroup
+    v-model="tipoTasa"
+    :items="[...]"
+  />
+
+  También removí cambiarTipoTasa del destructuring del script setup (ya no se
+  usa en esta página; la función sigue existiendo en el composable por
+  compatibilidad con useSimuladorPage).
+
+  Comportamiento esperado
+
+  ┌──────────────────────────┬──────────────────────────────────────────────┐
+  │          Acción          │                  Resultado                   │
+  ├──────────────────────────┼──────────────────────────────────────────────┤
+  │ Página carga con         │ tasaEfectivaAnual = 1.5 (watch de            │
+  │ categoría A (facfin      │ categoriaTrabajadorAplicada)                 │
+  │ 1.5%)                    │                                              │
+  ├──────────────────────────┼──────────────────────────────────────────────┤
+  │ Click en "Mensual"       │ tasaMensualInput = 1.5 / 12 = 0.13 (watch de │
+  │                          │  tipoTasa)                                   │
+  ├──────────────────────────┼──────────────────────────────────────────────┤
+  │ Click en "Anual"         │ tasaEfectivaAnual = 1.5 (facfin restaurado)  │
+  ├──────────────────────────┼──────────────────────────────────────────────┤
+  │ Click en "Mensual" otra  │ tasaMensualInput = 0.13                      │
+  │ vez                      │                                              │
+  ├──────────────────────────┼──────────────────────────────────────────────┤
+  │ Sin categoría aplicable  │ Click "Anual" → no se modifica; Click        │
+  │                          │ "Mensual" → tasaEASan / 12                   │
+  └──────────────────────────┴──────────────────────────────────────────────┘
+
+✻ Sautéed for 9m 25s
+
+❯ Ok, muy bien, aumenta dos decimas más para conseguir una mayor presicion del  
+  valor.                                                                        
+
+  Thought for 50s (ctrl+o to expand)
+
+● Voy a aumentar la precisión a 4 decimales en todos los puntos donde se hace la
+  conversión.
+
+● Update(app/composables/simulador/useSimuladorCore.ts)
+  ⎿  Added 3 lines, removed 3 lines
+      83      return cuotaMensual <= capacidadDisponible;
+      84    };
+      85  
+      86 -  // Funciones de conversión de tasas (división simple por 12, 
+         -2 decimales)                                                   
+      86 +  // Funciones de conversión de tasas (división simple por 12, 
+         +4 decimales)                                                   
+      87    const convertirAnualAMensual = (tasaEA: number) => {
+      88      if (!Number.isFinite(tasaEA) || tasaEA <= 0) return 0;
+      89 -    return Math.round((tasaEA / 12) * 100) / 100;              
+      89 +    return Math.round((tasaEA / 12) * 10000) / 10000;          
+      90    };
+      91  
+      92    const convertirMensualAAnual = (tasaMensual: number) => {
+      93      if (!Number.isFinite(tasaMensual) || tasaMensual <= 0) retu
+          rn 0;
+      94 -    return Math.round(tasaMensual * 12 * 100) / 100;           
+      94 +    return Math.round(tasaMensual * 12 * 10000) / 10000;       
+      95    };
+      96  
+      97    // Funciones de formateo
+
+● Update(app/composables/simulador/useSimuladorConLineaPage.ts)
+  ⎿  Added 2 lines, removed 1 line
+      346  
+      347        if (viejoTipo === "anual" && nuevoTipo === "mensual") {
+      348          // Anual → Mensual: calcular la tasa mensual a partir 
+           de la anual actual
+      349 -        const nuevaTasaMensual = Math.round((tasaEASan.value /
+          - 12) * 100) / 100;                                            
+      349 +        const nuevaTasaMensual                                
+      350 +          = Math.round((tasaEASan.value / 12) * 10000) / 10000
+          +;                                                             
+      351          tasaMensualInput.value = nuevaTasaMensual;
+      352        } else if (viejoTipo === "mensual" && nuevoTipo === "anu
+           al") {
+      353          // Mensual → Anual: preferir la tasa representativa de
+            la categoría
+
+  Thought for 9s (ctrl+o to expand)
+
+● Ahora actualizo el input del template (step + placeholder a 4 decimales):
+
+  Thought for 34s, searched for 1 pattern (ctrl+o to expand)
+
+● Update(app/pages/dash/simulador/[tipcre].vue)
+  ⎿  Added 1 line, removed 1 line
+      226                      : ''
+      227                  "
+      228                >
+      229 -                {{ cat.codcat }}: {{ Number(cat.facfin).toFixe
+          -d(2) }}% EA                                                   
+      229 +                {{ cat.codcat }}: {{ Number(cat.facfin).toFixe
+          +d(4) }}% EA                                                   
+      230                  <UIcon
+      231                    v-if="
+      232                      categoriaTrabajadorAplicada &&
+
+● Update(app/pages/dash/simulador/[tipcre].vue)
+  ⎿  Added 1 line, removed 1 line
+      262                  <p class="text-muted-foreground">
+      263                    Tasa:
+      264                    <span class="font-semibold"
+      265 -                    >{{ Number(categoriaTrabajadorAplicada.fac
+          -fin).toFixed(2) }}%</span                                     
+      265 +                    >{{ Number(categoriaTrabajadorAplicada.fac
+          +fin).toFixed(4) }}%</span                                     
+      266                    >
+      267                    efectiva anual
+      268                  </p>
+
+● Update(app/pages/dash/simulador/[tipcre].vue)
+  ⎿  Error editing file
+
+● Bash(pnpm typecheck 2>&1 | grep -E "(error TS|✔|ELIFECYCLE)" | head -10 &&
+      echo "---" && pnpm lint 2>&1 | tail -5)  ⎿  ✔ Nuxt Icon discovered local-installed 2 collections: lucide, simple-i
+     cons
+     ---
+     … +4 lines (ctrl+o to expand)
+  ⎿  (timeout 2m)
+
+  Thought for 16s, searched for 1 pattern, read 1 file (ctrl+o to expand)
+
+● Update(app/pages/dash/simulador/[tipcre].vue)
+  ⎿  Added 2 lines, removed 2 lines
+      369                  <UInput
+      370                    :model-value="tasaInput"
+      371                    type="number"
+      372 -                  step="0.1"                                  
+      372 +                  step="0.0001"                               
+      373                    min="0"
+      374                    :disabled="!!categoriaTrabajadorAplicada"
+      375                    :placeholder="
+      376                      categoriaTrabajadorAplicada
+      377 -                      ? Number(categoriaTrabajadorAplicada.fac
+          -fin).toFixed(2)                                               
+      377 +                      ? Number(categoriaTrabajadorAplicada.fac
+          +fin).toFixed(4)                                               
+      378                        : ''
+      379                    "
+      380                  />
+
+● Bash(pnpm typecheck 2>&1 | grep -E "(error TS|✔|ELIFECYCLE)" | head -10 &&
+      echo "---" && pnpm lint 2>&1 | tail -5)
+  ⎿  ✔ Nuxt Icon discovered local-installed 2 collections: lucide, simple-i
+     cons
+     ---
+     … +4 lines (ctrl+o to expand)
+  ⎿  (timeout 2m)
+
+● Listo. Validado con typecheck + lint.
+
+  Cambios para precisión a 4 decimales
+
+  1. useSimuladorCore.ts — funciones de conversión
+
+  const convertirAnualAMensual = (tasaEA: number) => {
+    if (!Number.isFinite(tasaEA) || tasaEA <= 0) return 0;
+    return Math.round((tasaEA / 12) * 10000) / 10000;   // 2 → 4 decimales
+  };
+
+  const convertirMensualAAnual = (tasaMensual: number) => {
+    if (!Number.isFinite(tasaMensual) || tasaMensual <= 0) return 0;
+    return Math.round(tasaMensual * 12 * 10000) / 10000;  // 2 → 4 decimales
+  };
+
+  2. useSimuladorConLineaPage.ts — watch sobre tipoTasa
+
+  const nuevaTasaMensual
+    = Math.round((tasaEASan.value / 12) * 10000) / 10000;  // 2 → 4 decimales
+
+  3. [tipcre].vue — input de tasa
+
+  - step="0.1" → step="0.0001" (permite hasta 4 decimales en el control)
+  - Number(...).toFixed(2) → Number(...).toFixed(4) en el placeholder
+
+  4. [tipcre].vue — displays de categorías (para consistencia)
+
+  - Badge de cada categoría: {{ Number(cat.facfin).toFixed(4) }}% EA
+  - Callout "Se te aplica la categoría X": {{ 
+  Number(categoriaTrabajadorAplicada.facfin).toFixed(4) }}%
+
+  Ejemplos del nuevo comportamiento
+
+  ┌───────────────────┬──────────────────────────┬──────────────────────────┐
+  │    Tasa anual     │ Tasa mensual (antes / 2  │ Tasa mensual (ahora / 4  │
+  │     (facfin)      │           dec)           │           dec)           │
+  ├───────────────────┼──────────────────────────┼──────────────────────────┤
+  │ 24%               │ 2.00                     │ 2.0000                   │
+  ├───────────────────┼──────────────────────────┼──────────────────────────┤
+  │ 18%               │ 1.50                     │ 1.5000                   │
+  ├───────────────────┼──────────────────────────┼──────────────────────────┤
+  │ 1.5%              │ 0.13                     │ 0.1250                   │
+  ├───────────────────┼──────────────────────────┼──────────────────────────┤
+  │ 17.85%            │ 1.49                     │ 1.4875                   │
+  ├───────────────────┼──────────────────────────┼──────────────────────────┤
+  │ 19.99%            │ 1.67                     │ 1.6658                   │
+  └───────────────────┴──────────────────────────┴──────────────────────────┘
+
+  El cambio es coherente en los 3 lugares donde aparece el valor numérico de la
+  tasa — el dato tiene la misma precisión independientemente de dónde se
+  muestre.
+
+✻ Churned for 3m 40s
+
+❯ Ok, muy bien, pero necesito que los valores de cuota estimada y total a pagar 
+  e intereses siempre se calculen en base a la tasa anual, para evitar alguna   
+  variación.                                                                    
+
+  Thought for 50s (ctrl+o to expand)
+
+● Voy a modificar calcularTasaMensual en useSimuladorCore.ts para que siempre
+  use la tasa anual con la fórmula compuesta, independientemente del tipoTasa.
+
+  Thought for 11s, searched for 2 patterns, read 1 file (ctrl+o to expand)
+
+● Update(app/composables/simulador/useSimuladorCore.ts)
+  ⎿  Added 8 lines, removed 5 lines
+      38      return (bruto * maxEnd / 100) - (bruto * 0.08);
+      39    };
+      40  
+      41 -  const calcularTasaMensual = (tasaEASan: number, tasaMensualSa
+         -n: number, tipoTasa: "anual" | "mensual") => {                 
+      42 -    if (tipoTasa === "mensual") {                              
+      43 -      return tasaMensualSan / 100;                             
+      44 -    }                                                          
+      41 +  // La tasa mensual usada para los cálculos (cuota, total, int
+         +ereses) se deriva                                              
+      42 +  // SIEMPRE de la tasa anual con la fórmula compuesta (1 + EA)
+         +^(1/12) - 1.                                                   
+      43 +  // Esto garantiza que `cuotaMensual`, `totalPagar` e `interes
+         +es` sean estables                                              
+      44 +  // independientemente del `tipoTasa` seleccionado en el formu
+         +lario. La                                                      
+      45 +  // selección "Mensual" del radio sólo afecta al input (que mu
+         +estra una                                                      
+      46 +  // conversión simple /12) pero no al cálculo financiero.     
+      47 +  const calcularTasaMensual = (tasaEASan: number, _tasaMensualS
+         +an?: number, _tipoTasa?: "anual" | "mensual") => {             
+      48      const ea = tasaEASan / 100;
+      46 -    if (ea <= 0) return 0;                                     
+      49 +    if (!Number.isFinite(ea) || ea <= 0) return 0;             
+      50      return Math.pow(1 + ea, 1 / 12) - 1;
+      51    };
+      52  
+
+● Bash(pnpm typecheck 2>&1 | grep -E "(error TS|✔|ELIFECYCLE)" | head -10 &&
+      echo "---" && pnpm lint 2>&1 | tail -5)
+  ⎿  ✔ Nuxt Icon discovered local-installed 2 collections: lucide, simple-i
+     cons
+     ---
+     … +4 lines (ctrl+o to expand)
+  ⎿  (timeout 2m)
+
+  Thought for 23s, read 1 file (ctrl+o to expand)
+
+● Por consistencia con la otra página del simulador (/dash/simulador), aplico el
+  mismo cambio en useSimulador.ts:
+
+● Update(app/composables/simulador/useSimulador.ts)
+  ⎿  Added 6 lines, removed 6 lines
+      55    });
+      56  
+      57    // Cálculos financieros
+      58 +  // La tasa mensual usada en el cálculo se deriva SIEMPRE de l
+         +a tasa anual                                                   
+      59 +  // con la fórmula compuesta (1 + EA)^(1/12) - 1. Esto garanti
+         +za que                                                         
+      60 +  // `cuotaMensual`, `totalPagar` e `intereses` sean estables a
+         +l alternar                                                     
+      61 +  // entre tasa anual y mensual en el formulario. La selección 
+         +"Mensual" del                                                  
+      62 +  // radio sólo afecta al input; el cálculo financiero se manti
+         +ene invariante.                                                
+      63    const tasaMensual = computed(() => {
+      59 -    if (tipoTasa.value === "mensual") {                        
+      60 -      // Si el usuario selecciona tasa mensual, usar directamen
+         -te ese valor                                                   
+      61 -      return tasaMensualSan.value / 100;                       
+      62 -    }                                                          
+      63 -    // Si es tasa anual, convertir a mensual                   
+      64      const ea = tasaEASan.value / 100;
+      65 -    if (ea <= 0) return 0;                                     
+      65 +    if (!Number.isFinite(ea) || ea <= 0) return 0;             
+      66      return Math.pow(1 + ea, 1 / 12) - 1;
+      67    });
+      68  
+
+● Bash(pnpm typecheck 2>&1 | grep -E "(error TS|✔|ELIFECYCLE)" | head -10 &&
+      echo "---" && pnpm lint 2>&1 | tail -5)
+  ⎿  ✔ Nuxt Icon discovered local-installed 2 collections: lucide, simple-i
+     cons
+     ---
+     … +4 lines (ctrl+o to expand)
+  ⎿  (timeout 2m)
+
+● Listo. Validado con typecheck + lint.
+
+  Diagnóstico
+
+  El cálculo de cuotaMensual, totalPagar e intereses dependía de tasaMensual,
+  que a su vez variaba según el radio:
+
+  // Antes:
+  if (tipoTasa === "mensual") return tasaMensualSan / 100;     // ← input 
+  mensual
+  return Math.pow(1 + tasaEASan, 1 / 12) - 1;                  // ← fórmula 
+  compuesta
+
+  Esto provocaba que al alternar entre "Anual" y "Mensual", los tres resultados
+  financieros cambiaran de valor (porque la conversión del input es simple /12
+  mientras que el cálculo usa la fórmula compuesta). Concretamente:
+
+  - tasaEfectivaAnual = 1.5% → tasaMensual (compuesto) = 0.1242% → cuota
+  calculada con 0.1242%
+  - Cambiabas a "Mensual" → tasaMensualInput = 1.5/12 = 0.125% (input) → cuota
+  recalculada con 0.125%
+
+  Diferencia: 0.0008% en la tasa → variación visible en cuota/total/intereses
+  aunque la "intención" del usuario era la misma.
+
+  Solución
+
+  Forcé calcularTasaMensual a siempre derivarse de la tasa anual con la fórmula
+  compuesta, ignorando tipoTasa:
+
+  useSimuladorCore.ts
+
+  const calcularTasaMensual = (
+    tasaEASan: number,
+    _tasaMensualSan?: number,
+    _tipoTasa?: "anual" | "mensual"
+  ) => {
+    const ea = tasaEASan / 100;
+    if (!Number.isFinite(ea) || ea <= 0) return 0;
+    return Math.pow(1 + ea, 1 / 12) - 1;
+  };
+
+  Los parámetros tasaMensualSan y tipoTasa quedan como opcionales y prefijados
+  con _ para indicar que ya no se usan (compatibilidad con la firma existente en
+  useSimuladorWithLinea.ts:92).
+
+  useSimulador.ts (versión legacy, mismo cambio)
+
+  Apliqué la misma corrección para que la otra página del simulador
+  (/dash/simulador) tenga el mismo comportamiento.
+
+  Comportamiento resultante
+
+  ┌────────────────┬───────────────────┬───────────────────┬───────────────┐
+  │     Acción     │ tasaEfectivaAnual │   tasaMensual     │ Cuota / Total │
+  │                │                   │     (cálculo)     │  / Intereses  │
+  ├────────────────┼───────────────────┼───────────────────┼───────────────┤
+  │ Página carga   │                   │ (1.015)^(1/12) -  │ calculados    │
+  │ con facfin     │ 1.5               │ 1 = 0.001242      │ con 0.1242%   │
+  │ 1.5%           │                   │                   │               │
+  ├────────────────┼───────────────────┼───────────────────┼───────────────┤
+  │ Cambias a      │ 1.5 (sigue)       │ 0.001242 (igual)  │ idénticos     │
+  │ "Mensual"      │                   │                   │               │
+  ├────────────────┼───────────────────┼───────────────────┼───────────────┤
+  │ Vuelves a      │ 1.5 (sigue)       │ 0.001242 (igual)  │ idénticos     │
+  │ "Anual"        │                   │                   │               │
+  ├────────────────┼───────────────────┼───────────────────┼───────────────┤
+  │ El input       │                   │ 1.5/12 = 0.1250   │               │
+  │ mensual        │ —                 │ (simple)          │ — (no se usa) │
+  │ muestra        │                   │                   │               │
+  └────────────────┴───────────────────┴───────────────────┴───────────────┘
+
+  La selección del radio ahora es puramente informativa/visual:
+  - El input muestra la conversión simple del usuario (anual / 12)
+  - La card de resultados muestra la tasa mensual compuesta derivada de la anual
+  ((1+EA)^(1/12) - 1)
+  - Cuota, total e intereses son invariantes al alternar el radio
+
+  Lo que NO cambió
+
+  - El input de tasa sigue funcionando como antes: disabled con facfin, editable
+  sin match
+  - El toggle anual/mensual sigue mostrando el valor calculado en el input
+  (conversión simple /12)
+  - La card de "Tasa mensual: X" en los resultados sigue mostrando el
+  equivalente mensual de la tasa anual (pero ahora siempre viene del compuesto,
+  así que es estable)
+
+✻ Cogitated for 3m 34s

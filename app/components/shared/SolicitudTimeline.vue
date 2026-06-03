@@ -166,7 +166,7 @@ const getTiempoEstimado = (estadoId: string): string => {
     PENDIENTE_FIRMADO: "2-3 días hábiles",
     FIRMADO: "1-2 días hábiles",
     ENVIADO_PENDIENTE_APROBACION: "3-5 días hábiles",
-    APROBADO: "1-2 días hábiles",
+    APROBADA: "1-2 días hábiles",
     DESEMBOLSADO: "Inmediato"
   };
 

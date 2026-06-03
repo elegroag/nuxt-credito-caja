@@ -35,6 +35,16 @@ interface EstadoSolicitud {
   color: string
 }
 
+// Estados terminales/rechazados: NO cuentan como "solicitudes activas".
+// Una solicitud activa es toda aquella que sigue en el flujo de validación/aprobación
+// (POSTULADO → DOCUMENTOS_CARGADOS → ENVIADO_VALIDACION → ... → APROBADA).
+const ESTADOS_NO_ACTIVOS = [
+  "RECHAZADA",
+  "DESESTIMADA",
+  "CANCELADA",
+  "DESISTE"
+] as const
+
 interface _PorEstadoResult {
   estado: string
   nombre: string
@@ -52,13 +62,15 @@ const statsAdminDashboard = (_event: H3Event) => {
 
     const activas = await prisma.solicitudes_credito.count({
       where: {
-        estado: "ACTIVA"
+        estado: {
+          notIn: [...ESTADOS_NO_ACTIVOS]
+        }
       }
     });
 
     const pendientesFirma = await prisma.solicitudes_credito.count({
       where: {
-        estado: "PENDIENTE_FIRMA"
+        estado: "PENDIENTE_FIRMADO"
       }
     });
 

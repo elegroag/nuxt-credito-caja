@@ -81,6 +81,12 @@
             solicitud.estado === 'DOCUMENTOS_CARGADOS'
               || solicitud.estado === 'POSTULADO'
           "
+          :mostrar-gestionar-documentos="
+            solicitud.estado === 'POSTULADO'
+              || solicitud.estado === 'DOCUMENTOS_CARGADOS'
+              || solicitud.estado === 'DESESTIMADA'
+              || solicitud.estado === 'DESISTE'
+          "
           :tiene-pdf="tienePdf"
           @descargar-pdf="descargarPdf"
           @eliminar="mostrarModalEliminar = true"

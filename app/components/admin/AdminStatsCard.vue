@@ -127,7 +127,11 @@ const progressBarClass = computed(() => currentVariant.value.progress);
 const formattedValue = computed(() => {
   if (props.format === "text") return props.value;
 
-  const numValue = typeof props.value === "number" ? props.value : 0;
+  // Acepta number o string numérica (la API a veces devuelve BigInt/Prisma como string)
+  const parsed = typeof props.value === "number"
+    ? props.value
+    : Number(props.value);
+  const numValue = Number.isFinite(parsed) ? parsed : 0;
 
   switch (props.format) {
     case "currency":

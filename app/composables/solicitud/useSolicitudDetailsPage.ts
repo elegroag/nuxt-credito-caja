@@ -64,6 +64,11 @@ export const useSolicitudDetailsPage = () => {
       descripcion: "Solicitud enviada para validación por asesores"
     },
     {
+      id: "APROBADA",
+      nombre: "Aprobada",
+      descripcion: "Solicitud aprobada por el comité de crédito"
+    },
+    {
       id: "PENDIENTE_FIRMADO",
       nombre: "Pendiente de Firma",
       descripcion: "La solicitud está lista para ser firmada electrónicamente"

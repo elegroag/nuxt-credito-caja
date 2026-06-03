@@ -121,17 +121,43 @@
 
         <form
           class="space-y-6"
-          @submit.prevent="handleSubmit"
+          @submit.prevent="solicitarConfirmacion"
         >
           <UFormField label="Nuevo Estado" required>
-            <USelect
-              v-model="estadoSeleccionado"
-              :items="estadosItems"
-              value-key="value"
-              label-key="label"
-              class="w-full"
-              placeholder="Seleccione un estado"
-            />
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              <UButton
+                type="button"
+                color="primary"
+                :variant="estadoSeleccionado === 'APROBADA' ? 'solid' : 'outline'"
+                class="gap-2 justify-center"
+                @click="estadoSeleccionado = 'APROBADA'"
+              >
+                <CheckCircle class="h-4 w-4" />
+                Aprobar
+              </UButton>
+
+              <UButton
+                type="button"
+                color="accent"
+                :variant="estadoSeleccionado === 'DESESTIMADA' ? 'solid' : 'outline'"
+                class="gap-2 justify-center"
+                @click="estadoSeleccionado = 'DESESTIMADA'"
+              >
+                <AlertTriangle class="h-4 w-4" />
+                Desestimar
+              </UButton>
+
+              <UButton
+                type="button"
+                color="destructive"
+                :variant="estadoSeleccionado === 'RECHAZADA' ? 'solid' : 'outline'"
+                class="gap-2 justify-center"
+                @click="estadoSeleccionado = 'RECHAZADA'"
+              >
+                <XCircle class="h-4 w-4" />
+                Rechazar
+              </UButton>
+            </div>
           </UFormField>
 
           <!-- Vista Previa del Estado -->
@@ -175,31 +201,30 @@
           <!-- Botones de Acción -->
           <div class="flex flex-wrap gap-3 pt-2">
             <UButton
-              type="submit"
-              variant="soft"
+              type="button"
+              size="lg"
+              color="primary"
+              variant="solid"
               :disabled="loadingAccion || !estadoCambiado"
-              class="gap-2"
+              :class="[
+                'gap-2 px-6 shadow-lg shadow-primary/30',
+                'hover:shadow-xl hover:shadow-primary/40 hover:scale-[1.02]',
+                'transition-all duration-200',
+                !estadoCambiado && 'opacity-50'
+              ]"
+              @click="solicitarConfirmacion"
             >
               <Icon
                 v-if="loadingAccion"
                 name="lucide:loader-2"
-                class="h-4 w-4 animate-spin"
+                class="h-5 w-5 animate-spin"
               />
               <Icon
                 v-else
-                name="lucide:save"
-                class="h-4 w-4"
+                name="lucide:check-circle-2"
+                class="h-5 w-5"
               />
               {{ loadingAccion ? "Guardando..." : "Registrar Acción" }}
-            </UButton>
-
-            <UButton
-              type="button"
-              variant="outline"
-              :disabled="loadingAccion"
-              @click="volverADetalle()"
-            >
-              Cancelar
             </UButton>
           </div>
         </form>
@@ -235,18 +260,131 @@
         </div>
       </UCard>
     </div>
+
+    <!-- Modal de Confirmación -->
+    <UModal
+      v-model:open="modalConfirmAbierto"
+      :ui="{ footer: 'justify-end' }"
+      :prevent-close="loadingAccion"
+    >
+      <template #header>
+        <span class="flex items-center gap-2">
+          <Icon
+            name="lucide:circle-alert"
+            class="h-5 w-5 text-primary"
+          />
+          Confirmar cambio de estado
+        </span>
+      </template>
+
+      <template #body>
+        <div class="space-y-3">
+          <p class="text-sm text-muted-foreground">
+            Está a punto de modificar el estado de la solicitud
+            <strong class="text-foreground">{{ solicitud?.numero_solicitud }}</strong>.
+            Esta acción no se puede deshacer y se enviará una notificación al solicitante.
+          </p>
+
+          <div class="rounded-lg border border-border bg-muted/30 p-4 space-y-2 text-sm">
+            <div class="flex items-center justify-between gap-2">
+              <span class="text-muted-foreground">Estado actual</span>
+              <Badge
+                v-if="estadoActualInfo"
+                :style="{ backgroundColor: estadoActualInfo.color }"
+                class="text-white"
+              >
+                {{ estadoActualInfo.nombre }}
+              </Badge>
+              <Badge v-else>{{ solicitud?.estado }}</Badge>
+            </div>
+            <div class="flex items-center justify-between gap-2">
+              <span class="text-muted-foreground">Nuevo estado</span>
+              <Badge>{{ getNombreEstado(estadoSeleccionado) }}</Badge>
+            </div>
+          </div>
+
+          <div
+            v-if="notificacion"
+            class="rounded-lg border border-border p-4 space-y-1"
+          >
+            <p class="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+              Mensaje para el solicitante
+            </p>
+            <p class="text-sm whitespace-pre-wrap">
+              {{ notificacion }}
+            </p>
+          </div>
+        </div>
+      </template>
+
+      <template #footer="{ close }">
+        <UButton
+          color="neutral"
+          variant="outline"
+          :disabled="loadingAccion"
+          @click="close"
+        >
+          Cancelar
+        </UButton>
+        <UButton
+          color="primary"
+          :loading="loadingAccion"
+          :disabled="loadingAccion"
+          @click="confirmarAccion"
+        >
+          <Icon
+            v-if="!loadingAccion"
+            name="lucide:check-circle-2"
+            class="h-4 w-4 mr-1"
+          />
+          {{ loadingAccion ? "Guardando..." : "Sí, registrar" }}
+        </UButton>
+      </template>
+    </UModal>
+
+    <!-- Modal de Error -->
+    <UModal
+      v-model:open="modalErrorAbierto"
+      :ui="{ footer: 'justify-end' }"
+    >
+      <template #header>
+        <span class="flex items-center gap-2 text-destructive">
+          <Icon
+            name="lucide:triangle-alert"
+            class="h-5 w-5"
+          />
+          Error al cambiar el estado
+        </span>
+      </template>
+
+      <template #body>
+        <p class="text-sm text-muted-foreground">
+          {{ mensajeError || "Ocurrió un error inesperado al intentar cambiar el estado de la solicitud." }}
+        </p>
+      </template>
+
+      <template #footer="{ close }">
+        <UButton
+          color="neutral"
+          variant="outline"
+          @click="close"
+        >
+          Cerrar
+        </UButton>
+      </template>
+    </UModal>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ChevronLeft, FileText, Settings, History } from "@lucide/vue";
+import { ref } from "vue";
+import { ChevronLeft, FileText, Settings, History, CheckCircle, AlertTriangle, XCircle } from "@lucide/vue";
 
 import Badge from "@/components/shared/Badge.vue";
 import { useAccionesSolicitud } from "~/composables/admin/useAccionesSolicitud";
 
 const {
   solicitud,
-  estados,
   loading,
   loadingEstados,
   loadingAccion,
@@ -261,28 +399,28 @@ const {
   volverADetalle
 } = useAccionesSolicitud();
 
-// Items para USelect (formato {label, value})
-const estadosItems = computed(() =>
-  estados.value.map((e) => ({
-    label: `${e.nombre}${e.descripcion ? ` - ${e.descripcion}` : ""}`,
-    value: e.id
-  }))
-);
+// Estado de los modales
+const modalConfirmAbierto = ref(false);
+const modalErrorAbierto = ref(false);
+const mensajeError = ref<string>("");
 
-const handleSubmit = async () => {
-  const confirmacion = confirm(
-    `¿Está seguro de cambiar el estado de la solicitud a "${getNombreEstado(estadoSeleccionado.value)}"?`
-  );
+// Abre la modal de confirmación
+const solicitarConfirmacion = () => {
+  if (!estadoCambiado.value || loadingAccion.value) return;
+  modalConfirmAbierto.value = true;
+};
 
-  if (!confirmacion) return;
-
+// Ejecuta la acción después de confirmar
+const confirmarAccion = async () => {
   const resultado = await registrarAccion();
 
   if (resultado.success) {
-    alert(resultado.message || "Estado actualizado exitosamente");
+    modalConfirmAbierto.value = false;
     volverADetalle();
   } else {
-    alert(resultado.message || "Error al actualizar el estado");
+    modalConfirmAbierto.value = false;
+    mensajeError.value = resultado.message || "Error al actualizar el estado";
+    modalErrorAbierto.value = true;
   }
 };
 

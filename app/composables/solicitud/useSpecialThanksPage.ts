@@ -50,6 +50,11 @@ export const useSpecialThanksPage = () => {
       descripcion: "Enviado para validación de asesores"
     },
     {
+      id: "APROBADA",
+      nombre: "Aprobada",
+      descripcion: "Solicitud aprobada y lista para desembolso"
+    },
+    {
       id: "PENDIENTE_FIRMADO",
       nombre: "Pendiente de firmado",
       descripcion: "Solicitud en proceso de firmado"
@@ -58,11 +63,6 @@ export const useSpecialThanksPage = () => {
       id: "ENVIADO_PENDIENTE_APROBACION",
       nombre: "Enviado para aprobación",
       descripcion: "Solicitud enviada y pendiente de aprobación"
-    },
-    {
-      id: "APROBADO",
-      nombre: "Aprobado",
-      descripcion: "Solicitud aprobada y lista para desembolso"
     }
   ]);
 
