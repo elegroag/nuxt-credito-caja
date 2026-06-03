@@ -46,11 +46,16 @@
         disabled
       />
     </FormField>
-    <FormField label="Nombramiento / Pagador">
-      <UInput v-model="form.informacion_laboral.nombramiento_o_pagador" />
+    <FormField label="Nombre del pagador">
+      <UInput v-model="form.informacion_laboral.nombre_pagador" disabled />
     </FormField>
     <FormField label="Tiempo servicio">
-      <UInput v-model.number="form.informacion_laboral.tiempo_servicio" type="number" min="0" disabled />
+      <UInput
+        v-model.number="form.informacion_laboral.tiempo_servicio"
+        type="number"
+        min="0"
+        disabled
+      />
     </FormField>
     <FormField label="Unidad">
       <CustomSelect

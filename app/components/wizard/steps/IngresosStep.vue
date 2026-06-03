@@ -16,9 +16,19 @@
         }"
       />
     </FormField>
+    <FormField label="¿Recibe subsidio de transporte?">
+      <URadioGroup
+        v-model="recibeSubsidio"
+        :items="[
+          { label: 'Sí', value: true },
+          { label: 'No', value: false }
+        ]"
+      />
+    </FormField>
     <FormField label="Subsidio transporte">
       <UInputNumber
         v-model="formData.ingresos_descuentos.subsidio_transporte"
+        :disabled="!recibeSubsidio"
         :format-options="{
           style: 'currency',
           currency: 'COP',
@@ -190,7 +200,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, watch, onMounted } from "vue";
+import { computed, watch, onMounted, ref } from "vue";
 import { RefreshCw } from "@lucide/vue";
 import FormField from "~/components/shared/FormField.vue";
 
@@ -210,6 +220,19 @@ const emit = defineEmits<{
 const formData = computed({
   get: () => props.form,
   set: (value) => emit("update:form", value)
+});
+
+// Estado independiente del radio: se inicializa desde el formulario
+// pero permite alternar libremente. Solo escribe al formulario cuando
+// el usuario marca "No" (fuerza el valor a 0).
+const recibeSubsidio = ref<boolean>(
+  (formData.value.ingresos_descuentos.subsidio_transporte ?? 0) > 0
+);
+
+watch(recibeSubsidio, (recibe) => {
+  if (!recibe) {
+    formData.value.ingresos_descuentos.subsidio_transporte = 0;
+  }
 });
 
 const { autocalcularIngresos: calc } = useSolicitudCreditoForm();

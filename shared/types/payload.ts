@@ -27,7 +27,7 @@ export interface InformacionLaboral {
   cargo?: string;
   fecha_ingreso?: string;
   tipo_contrato?: string;
-  nombramiento_o_pagador?: string;
+  nombre_pagador?: string;
   tiempo_servicio?: number;
   tiempo_servicio_unidad?: TiempoServicioUnidad;
 }

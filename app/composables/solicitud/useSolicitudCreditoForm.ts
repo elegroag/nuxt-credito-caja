@@ -73,7 +73,7 @@ const createInitialSolicitudCreditoForm = (): SolicitudCreditoPayload => ({
     cargo: "",
     fecha_ingreso: "",
     tipo_contrato: "",
-    nombramiento_o_pagador: "",
+    nombre_pagador: "",
     tiempo_servicio: 0,
     tiempo_servicio_unidad: "meses"
   },

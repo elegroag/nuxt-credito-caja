@@ -176,7 +176,7 @@ const pdfPayloadService = () => {
         empresa_direccion: (informacionLaboral.empresa_direccion as string) || "",
         empresa_razon_social:
           sol?.razon_social || (informacionLaboral.empresa_razon_social as string) || "",
-        nombramiento_o_pagador: informacionLaboral.nombramiento_o_pagador ?? null,
+        nombre_pagador: informacionLaboral.nombre_pagador ?? null,
         tiempo_servicio_unidad: (informacionLaboral.tiempo_servicio_unidad as string) || "meses"
       },
       economica: {

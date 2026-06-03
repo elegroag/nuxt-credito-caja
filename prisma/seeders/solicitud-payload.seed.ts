@@ -13,7 +13,7 @@ export const solicitudPayload = [
       empresa_telefono: "6084366300",
       empresa_direccion: "CR 11 10 34 BRR LA COOPERATIVA",
       empresa_razon_social: "CAJA DE COMPENSACION FAMILIAR DEL CAQUETA",
-      nombramiento_o_pagador: null,
+      nombre_pagador: null,
       tiempo_servicio_unidad: "meses"
     },
     ingresos_descuentos: {
