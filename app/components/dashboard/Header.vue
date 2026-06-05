@@ -28,7 +28,7 @@
         />
         <span
           class="text-sm font-medium text-muted-foreground hover:text-foreground cursor-pointer"
-          @click="navigateTo('/')"
+          @click="navigateTo('/dash')"
         >
           Comfaca Crédito
         </span>
@@ -47,8 +47,20 @@
       </span>
       <UColorModeButton />
 
-      <!-- Campana de notificaciones -->
-      <NotificationBell />
+      <!-- Botón de notificaciones: navega a la página dedicada de notificaciones. -->
+      <UButton
+        variant="ghost"
+        size="sm"
+        type="button"
+        class="relative h-9 w-9 rounded-full border border-border/50 p-0"
+        @click="navigateTo('/dash/notify')"
+      >
+        <div
+          class="flex h-8 w-8 items-center justify-center rounded-full text-foreground transition-colors hover:bg-primary/20"
+        >
+          <UIcon name="i-lucide-bell" class="h-4 w-4" />
+        </div>
+      </UButton>
 
       <div class="relative">
         <UButton
@@ -98,18 +110,13 @@
     </template>
 
     <template #body>
-      <UNavigationMenu
-        :items="mobileMenuItems"
-        orientation="vertical"
-        class="-mx-2.5"
-      />
+      <UNavigationMenu :items="mobileMenuItems" orientation="vertical" class="-mx-2.5" />
     </template>
   </UHeader>
 </template>
 
 <script setup lang="ts">
 import type { NavigationMenuItem } from "@nuxt/ui";
-import NotificationBell from "@/components/notifications/NotificationBell.vue";
 import { useDashboardLayout } from "~/composables/layout/useDashboardLayout";
 
 const { session, sidebarOpen, sidebarCollapsed, userMenuOpen, sectionTitle, logout, _abbr } =

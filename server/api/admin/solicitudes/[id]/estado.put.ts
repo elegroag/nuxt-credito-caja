@@ -20,6 +20,15 @@ const MENSAJE_POR_ESTADO: Record<string, string> = {
   DESISTE: "Has desistido de continuar con tu solicitud de crédito."
 };
 
+// Títulos legibles por estado (campo `titulo` de la notificación)
+const TITULO_POR_ESTADO: Record<string, string> = {
+  APROBADA: "Solicitud aprobada",
+  DESESTIMADA: "Solicitud desestimada",
+  RECHAZADA: "Solicitud rechazada",
+  CANCELADA: "Solicitud cancelada",
+  DESISTE: "Has desistido de la solicitud"
+};
+
 export default defineEventHandler(async (event: H3Event) => {
   try {
     const id = getRouterParam(event, "id");
@@ -82,6 +91,7 @@ export default defineEventHandler(async (event: H3Event) => {
         owner_username: solicitud.owner_username,
         type: "solicitud.estado.actualizado",
         data: {
+          titulo: TITULO_POR_ESTADO[payload.estado] || "Actualización de tu solicitud",
           solicitud_id: id,
           estado_anterior: estadoAnterior,
           estado_nuevo: payload.estado,

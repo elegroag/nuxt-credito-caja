@@ -15,6 +15,7 @@ export interface SolicitudResumen {
   detalle_modalidad: string | null
   valor_solicitud: number | string | null
   estado: string
+  fecha_radicado: string | null
   created_at: string
 }
 

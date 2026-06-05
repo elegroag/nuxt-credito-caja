@@ -102,7 +102,7 @@
         </div>
 
         <p class="text-sm text-muted-foreground mb-4">
-          Solicitud registrada el {{ fmtDate(s.created_at) }}.
+          Solicitud registrada el {{ fmtDate(s.fecha_radicado) }}.
         </p>
 
         <div class="space-y-3 rounded-xl bg-muted/50 p-4 mb-4">

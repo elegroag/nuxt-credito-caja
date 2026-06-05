@@ -21,10 +21,10 @@
       <div class="flex items-start justify-between gap-2">
         <div class="flex-1">
           <h4 class="text-sm font-semibold text-foreground mb-1">
-            {{ notification.data.titulo }}
+            {{ notification.data.titulo || getFallbackTitle(notification) }}
           </h4>
           <p class="text-sm text-muted-foreground line-clamp-2">
-            {{ notification.data.mensaje }}
+            {{ notification.data.mensaje || notification.data.estado_nuevo_nombre || "" }}
           </p>
         </div>
 
@@ -67,7 +67,11 @@
 
 <script setup lang="ts">
 import { useRouter } from "vue-router";
-import { useNotifications } from "~/composables/useNotifications";
+import {
+  formatRelativeTime,
+  getNotificationIcon,
+  getNotificationColor
+} from "~/composables/notifications/notificationFormat";
 
 interface NotificationData {
   titulo: string;
@@ -96,7 +100,6 @@ const emit = defineEmits<{
 }>();
 
 const router = useRouter();
-const { formatRelativeTime, getNotificationIcon, getNotificationColor } = useNotifications();
 
 const handleClick = () => {
   if (!props.notification.read_at) {
@@ -111,5 +114,30 @@ const handleDelete = () => {
   if (confirm("¿Estás seguro de que deseas eliminar esta notificación?")) {
     emit("delete", props.notification.id);
   }
+};
+
+// Fallback para notificaciones que no incluyen `titulo` en su `data`
+// (ej. registros legacy o de otros flujos del sistema).
+const getFallbackTitle = (n: Notification): string => {
+  const data = n.data as Record<string, unknown>;
+  const estadoNombre = typeof data.estado_nuevo_nombre === "string"
+    ? data.estado_nuevo_nombre
+    : null;
+  if (estadoNombre) return estadoNombre;
+
+  // Mapeo de tipos conocidos a títulos legibles
+  const titlesByType: Record<string, string> = {
+    firma_completada: "Firma completada",
+    firma_rechazada: "Firma rechazada",
+    firma_expirada: "Firma expirada",
+    solicitud_aprobada: "Solicitud aprobada",
+    solicitud_rechazada: "Solicitud rechazada",
+    documento_requerido: "Documento requerido",
+    estado_actualizado: "Estado actualizado",
+    solicitud_estado_actualizado: "Estado de tu solicitud actualizado",
+    comentario_nuevo: "Nuevo comentario",
+    recordatorio: "Recordatorio"
+  };
+  return titlesByType[n.type] || "Notificación";
 };
 </script>
