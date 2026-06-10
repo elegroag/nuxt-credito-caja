@@ -87,6 +87,36 @@ export default defineNuxtConfig({
       url_pro: env.API_FLASKPDF_URL_PRO || "",
       url_dev: env.API_FLASKPDF_URL_DEV || ""
     },
+    mail: {
+      env: env.MAIL_ENV || "dev",
+      // Gmail: smtp.gmail.com:465 (SSL) o :587 (STARTTLS). Por defecto :465.
+      host: env.MAIL_HOST || "smtp.gmail.com",
+      port: Number(env.MAIL_PORT) || 465,
+      secure: env.MAIL_SECURE ? env.MAIL_SECURE === "true" : true,
+      user: env.MAIL_USER || "",
+      pass: env.MAIL_PASSWORD || "",
+      from_name: env.MAIL_FROM_NAME || "Comfaca Créditos",
+      from_address: env.MAIL_FROM_ADDRESS || env.MAIL_USER || "",
+      // Desactivar verificación TLS solo para diagnóstico. NUNCA activar en pro.
+      reject_unauthorized: env.MAIL_REJECT_UNAUTHORIZED
+        ? env.MAIL_REJECT_UNAUTHORIZED === "true"
+        : true
+    },
+    sftp: {
+      env: env.SFTP_ENV || "dev",
+      host: env.SFTP_HOST || "",
+      port: Number(env.SFTP_PORT) || 22,
+      username: env.SFTP_USER || "",
+      password: env.SFTP_PASSWORD || "",
+      // Si se quiere autenticación por clave privada, en lugar de password
+      // poblar SFTP_PRIVATE_KEY_BASE64 (contenido codificado en base64).
+      private_key_base64: env.SFTP_PRIVATE_KEY_BASE64 || "",
+      passphrase: env.SFTP_PASSPHRASE || "",
+      // Ruta base remota; los métodos del servicio reciben rutas relativas a esta.
+      base_path: env.SFTP_BASE_PATH || "/",
+      // Timeout en milisegundos para conectar y para operaciones.
+      ready_timeout: Number(env.SFTP_READY_TIMEOUT_MS) || 20000
+    },
     backendBaseUrl: env.NUXT_BACKEND_BASE_URL + ":" + env.NUXT_BACKEND_BASE_PORT,
     jwtSecret: env.NUXT_JWT_SECRET || ""
   },
