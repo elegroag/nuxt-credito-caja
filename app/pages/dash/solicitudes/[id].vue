@@ -77,10 +77,7 @@
         <!-- Acciones -->
         <AccionesCard
           :solicitud-id="solicitud.numero_solicitud"
-          :mostrar-enviar="
-            solicitud.estado === 'DOCUMENTOS_CARGADOS'
-              || solicitud.estado === 'POSTULADO'
-          "
+          :mostrar-enviar="solicitud.estado === 'DOCUMENTOS_CARGADOS'"
           :mostrar-gestionar-documentos="
             solicitud.estado === 'POSTULADO'
               || solicitud.estado === 'DOCUMENTOS_CARGADOS'

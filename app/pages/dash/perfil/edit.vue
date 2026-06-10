@@ -78,7 +78,7 @@
               hint="No modificable"
             >
               <UInput
-                v-model="perfil.tipo_documento"
+                :model-value="tipoDocumentoLabel"
                 readonly
                 icon="i-lucide-id-card"
                 color="neutral"
@@ -214,6 +214,7 @@
 
 <script setup lang="ts">
 import { usePerfil } from "~/composables/perfil/usePerfil";
+import { useParametrosDetalles } from "~/composables/useParametrosDetalles";
 
 const {
   perfil,
@@ -227,10 +228,22 @@ const {
   resetPasswordForm
 } = usePerfil();
 
+const {
+  buscarTipoIdentificacion
+} = useParametrosDetalles();
+
 const iniciales = computed(() => {
   const n = perfil.value?.nombres?.[0] ?? "";
   const a = perfil.value?.apellidos?.[0] ?? "";
   return `${n}${a}`.toUpperCase() || "U";
+});
+
+// Descripción legible del código de tipo de documento que viene del backend.
+const tipoDocumentoLabel = computed(() => {
+  const code = perfil.value?.tipo_documento || "";
+  if (!code) return "-";
+  const label = buscarTipoIdentificacion(code);
+  return label === code ? code : label;
 });
 
 const cancelarCambios = async () => {
@@ -241,9 +254,5 @@ const cancelarCambios = async () => {
 definePageMeta({
   layout: "dashboard",
   middleware: ["auth"]
-});
-
-onMounted(() => {
-  recargarPerfil();
 });
 </script>

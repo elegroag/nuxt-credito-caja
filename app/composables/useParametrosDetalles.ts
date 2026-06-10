@@ -20,23 +20,43 @@ export function useParametrosDetalles() {
     error.value = "";
 
     try {
-      // Cargar parámetros principales y estados en paralelo
-      const [parametrosRes, estadosRes] = await Promise.all([
+      // Cargar parámetros principales, estados y los params-perfil en paralelo.
+      // El endpoint /api/parametros/params-perfil entrega el catálogo liviano
+      // de tipos_documento desde SISUweb (datos-generales). Las ciudades
+      // siguen llegando en /api/lineas_credito/parametros junto con los demás
+      // catálogos que el wizard y la vista de detalle de solicitud necesitan.
+      const [parametrosRes, estadosRes, paramsPerfilRes] = await Promise.all([
         getJson<ParametrosResponse>("/api/lineas_credito/parametros", {
           auth: true
         }),
         getJson<{ data: EstadoSolicitudData[] }>("/api/solicitudes/estados-solicitud", {
+          auth: true
+        }),
+        getJson<{ data: unknown }>("/api/parametros/params-perfil", {
           auth: true
         })
       ]);
 
       // Extraer datos de la respuesta existente
       const datosParametros = parametrosRes.data;
+      const paramsPerfil = paramsPerfilRes.data as {
+        tipos_documento?: Array<{ coddoc: string; detdoc: string }>;
+      } | null;
+
+      // Mapear a la estructura esperada usando los nombres reales de la API.
+      // Para tipos_identificacion priorizamos el catálogo del endpoint dedicado
+      // (más liviano) y caemos al payload de lineas_credito si está vacío.
+      // El cast a unknown es necesario porque el endpoint dedicado expone solo
+      // los campos básicos (coddoc/detdoc) en su tipado, pero estructuralmente
+      // llegan los objetos completos desde SISUweb.
+      const tiposIdentificacion = (paramsPerfil?.tipos_documento?.length
+        ? [...paramsPerfil.tipos_documento]
+        : [...(datosParametros.codigos_tipo_documento || [])]) as unknown as readonly CodigoTipoDocumento[];
 
       // Mapear a la estructura esperada usando los nombres reales de la API
       parametrosCache.value = {
-        tipos_identificacion: [...(datosParametros.codigos_tipo_documento || [])],
-        ciudades: [],
+        tipos_identificacion: tiposIdentificacion,
+        ciudades: [...(datosParametros.ciudades || [])] as unknown as readonly Ciudades[],
         cargos: [...(datosParametros.ocupaciones || [])],
         tipos_vivienda: [...(datosParametros.tipo_vivienda || [])],
         tipos_contrato: [...(datosParametros.tipo_contrato || [])],

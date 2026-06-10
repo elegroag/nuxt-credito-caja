@@ -84,7 +84,7 @@
 
           <UFormField label="Tipo de documento">
             <UInput
-              v-model="perfil.tipo_documento"
+              :model-value="tipoDocumentoLabel"
               readonly
               icon="i-lucide-id-card"
               color="neutral"
@@ -138,33 +138,35 @@
             />
           </UFormField>
 
-          <UFormField label="Teléfono">
-            <UInput
-              v-model="perfil.phone"
-              type="tel"
-              readonly
-              icon="i-lucide-phone"
-              color="neutral"
-              variant="subtle"
-              class="w-full"
-            />
-          </UFormField>
-        </div>
-      </template>
-    </UPageCard>
+            <UFormField label="Teléfono">
+              <UInput
+                v-model="perfil.phone"
+                type="tel"
+                readonly
+                icon="i-lucide-phone"
+                color="neutral"
+                variant="subtle"
+                class="w-full"
+              />
+            </UFormField>
+          </div>
+        </template>
+      </UPageCard>
   </div>
 </template>
 
 <script setup lang="ts">
 import { usePerfil } from "~/composables/perfil/usePerfil";
+import { useParametrosDetalles } from "~/composables/useParametrosDetalles";
 
 const {
   perfil,
   loading,
   success,
-  error,
-  recargarPerfil
+  error
 } = usePerfil();
+
+const { buscarTipoIdentificacion } = useParametrosDetalles();
 
 const iniciales = computed(() => {
   const n = perfil.value?.nombres?.[0] ?? "";
@@ -172,12 +174,17 @@ const iniciales = computed(() => {
   return `${n}${a}`.toUpperCase() || "U";
 });
 
+// Muestra la descripción legible del código que la API expone.
+// Si no hay match, cae al código crudo para que el usuario no vea "-".
+const tipoDocumentoLabel = computed(() => {
+  const code = perfil.value?.tipo_documento || "";
+  if (!code) return "-";
+  const label = buscarTipoIdentificacion(code);
+  return label === code ? code : label;
+});
+
 definePageMeta({
   layout: "dashboard",
   middleware: ["auth"]
-});
-
-onMounted(() => {
-  recargarPerfil();
 });
 </script>
