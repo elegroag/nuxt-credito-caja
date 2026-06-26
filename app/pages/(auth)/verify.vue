@@ -45,21 +45,34 @@
             {{ successMessage }}
           </div>
 
-          <div class="flex justify-center gap-2 sm:gap-3">
-            <UInput
+          <div
+            class="flex justify-center gap-2 sm:gap-3"
+            role="group"
+            aria-label="Código de verificación"
+          >
+            <input
               v-for="i in pinLength"
               :key="i"
-              :ref="(el) => setDigitRef(el as Element, i - 1)"
+              :ref="(el) => setDigitRef(el as Element | null, i - 1)"
               v-model="digits[i - 1]"
+              type="text"
               inputmode="numeric"
+              pattern="[0-9]*"
+              autocomplete="one-time-code"
               maxlength="1"
-              size="xl"
               :disabled="loading"
-              class="h-14 w-12 sm:w-14 text-center text-lg font-semibold bg-muted/50 rounded-xl border-0 focus:ring-2 focus:ring-primary/20 focus:bg-card transition-all"
-              @input="onDigitInput(i - 1)"
-              @keydown.backspace="onBackspace(i - 1)"
-            />
+              :aria-label="`Dígito ${i} de ${pinLength}`"
+              class="h-14 w-12 sm:w-14 rounded-xl border-0 bg-muted/50 text-center text-xl font-semibold text-foreground transition-all focus:bg-card focus:outline-none focus:ring-2 focus:ring-primary/20 disabled:cursor-not-allowed disabled:opacity-50"
+              @input="onDigitInput(i - 1, $event)"
+              @keydown="onDigitKeydown($event, i - 1)"
+              @paste="onPaste($event, i - 1)"
+              @focus="onDigitFocus"
+            >
           </div>
+
+          <p class="text-center text-xs text-muted-foreground">
+            Puedes pegar el código completo desde tu correo.
+          </p>
 
           <div class="flex gap-3">
             <UButton
@@ -154,7 +167,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from "vue";
+import { ref, watch, onMounted } from "vue";
 import { useVerify } from "~/composables/auth/useVerify";
 
 definePageMeta({
@@ -180,8 +193,12 @@ const {
   pinLength,
   isComplete,
   setDigitRef,
+  focusIndex,
   onDigitInput,
-  onBackspace,
+  onDigitKeydown,
+  onPaste,
+  onDigitFocus,
+  registerCompleteHandler,
   reset,
   initialize,
   verifyCode,
@@ -199,13 +216,21 @@ watch(error, (newVal) => {
 initialize(coddoc, documento);
 
 const handleSubmit = async (): Promise<void> => {
+  if (loading.value || !isComplete.value) return;
+
   try {
     await verifyCode();
     await navigateTo("/dash");
   } catch {
-    // El error ya se maneja en el composable
+    await focusIndex(0);
   }
 };
+
+registerCompleteHandler(handleSubmit);
+
+onMounted(() => {
+  void focusIndex(0);
+});
 
 const handleResend = async (): Promise<void> => {
   try {

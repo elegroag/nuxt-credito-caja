@@ -1,4 +1,5 @@
 import { ref, computed, nextTick, readonly, onUnmounted } from "#imports";
+import type { ComponentPublicInstance } from "vue";
 import { useApi } from "~/composables/useApi";
 import { useSession } from "~/composables/useSession";
 import { storage } from "~/composables/useStorage";
@@ -46,6 +47,19 @@ export function useVerify() {
   );
 
   let countdownTimer: ReturnType<typeof setInterval> | null = null;
+  let completeHandler: (() => Promise<void>) | null = null;
+
+  const resolveInputEl = (
+    el: Element | ComponentPublicInstance | null
+  ): HTMLInputElement | null => {
+    if (!el) return null;
+    if (el instanceof HTMLInputElement) return el;
+    if ("$el" in el && el.$el instanceof HTMLElement) {
+      const input = el.$el.querySelector("input");
+      if (input instanceof HTMLInputElement) return input;
+    }
+    return null;
+  };
 
   const clearCountdownTimer = () => {
     if (countdownTimer) {
@@ -105,13 +119,16 @@ export function useVerify() {
     return `${visible}***@${domainName.slice(0, 1)}***${tld}`;
   };
 
-  const setDigitRef = (el: Element | null, index: number): void => {
-    inputRefs.value[index] = el instanceof HTMLInputElement ? el : null;
+  const setDigitRef = (el: Element | ComponentPublicInstance | null, index: number): void => {
+    inputRefs.value[index] = resolveInputEl(el);
   };
 
   const focusIndex = async (index: number): Promise<void> => {
     await nextTick();
-    inputRefs.value[index]?.focus();
+    const input = inputRefs.value[index];
+    if (!input) return;
+    input.focus();
+    input.select();
   };
 
   const normalizeDigit = (value: string): string => {
@@ -119,18 +136,94 @@ export function useVerify() {
     return v.slice(-1);
   };
 
-  const onDigitInput = async (index: number): Promise<void> => {
-    digits.value[index] = normalizeDigit(digits.value[index] || "");
-
-    if (digits.value[index] && index < PIN_LENGTH - 1) {
-      await focusIndex(index + 1);
+  const notifyIfComplete = async (): Promise<void> => {
+    if (loading.value || !digits.value.every(d => d.length === 1)) return;
+    if (completeHandler) {
+      await completeHandler();
     }
   };
 
-  const onBackspace = async (index: number): Promise<void> => {
-    if (digits.value[index]) return;
-    if (index === 0) return;
-    await focusIndex(index - 1);
+  const fillDigitsFromString = async (value: string, startIndex = 0): Promise<void> => {
+    const chars = value.replace(/\D/g, "").split("");
+    if (!chars.length) return;
+
+    for (let offset = 0; offset < chars.length; offset++) {
+      const index = startIndex + offset;
+      if (index >= PIN_LENGTH) break;
+      digits.value[index] = chars[offset]!;
+    }
+
+    const nextEmpty = digits.value.findIndex(d => !d);
+    await focusIndex(nextEmpty === -1 ? PIN_LENGTH - 1 : nextEmpty);
+    await notifyIfComplete();
+  };
+
+  const onDigitInput = async (index: number, event?: Event): Promise<void> => {
+    const target = event?.target as HTMLInputElement | undefined;
+    const rawValue = target?.value ?? digits.value[index] ?? "";
+    const normalized = normalizeDigit(rawValue);
+
+    digits.value[index] = normalized;
+    if (target && target.value !== normalized) {
+      target.value = normalized;
+    }
+
+    if (normalized && index < PIN_LENGTH - 1) {
+      await focusIndex(index + 1);
+      return;
+    }
+
+    await notifyIfComplete();
+  };
+
+  const onDigitKeydown = async (
+    event: KeyboardEvent,
+    index: number
+  ): Promise<void> => {
+    if (event.key === "Backspace") {
+      if (digits.value[index]) {
+        digits.value[index] = "";
+        return;
+      }
+      if (index > 0) {
+        event.preventDefault();
+        digits.value[index - 1] = "";
+        await focusIndex(index - 1);
+      }
+      return;
+    }
+
+    if (event.key === "ArrowLeft" && index > 0) {
+      event.preventDefault();
+      await focusIndex(index - 1);
+      return;
+    }
+
+    if (event.key === "ArrowRight" && index < PIN_LENGTH - 1) {
+      event.preventDefault();
+      await focusIndex(index + 1);
+      return;
+    }
+
+    if (event.key === "Enter" && isComplete.value) {
+      event.preventDefault();
+      await notifyIfComplete();
+    }
+  };
+
+  const onPaste = async (event: ClipboardEvent, startIndex: number): Promise<void> => {
+    event.preventDefault();
+    const pasted = event.clipboardData?.getData("text") || "";
+    await fillDigitsFromString(pasted, startIndex);
+  };
+
+  const onDigitFocus = (event: FocusEvent): void => {
+    const input = event.target as HTMLInputElement | null;
+    input?.select();
+  };
+
+  const registerCompleteHandler = (handler: () => Promise<void>): void => {
+    completeHandler = handler;
   };
 
   const reset = async (): Promise<void> => {
@@ -294,7 +387,10 @@ export function useVerify() {
     setDigitRef,
     focusIndex,
     onDigitInput,
-    onBackspace,
+    onDigitKeydown,
+    onPaste,
+    onDigitFocus,
+    registerCompleteHandler,
     reset,
     initialize,
     verifyCode,
