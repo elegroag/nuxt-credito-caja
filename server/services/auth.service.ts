@@ -524,7 +524,12 @@ const authService = () => {
       {
         auth: true
       }
-    );
+    ).catch((emailErr: unknown) => {
+      console.warn(
+        "[auth.register] No se pudo enviar el email de bienvenida:",
+        (emailErr as Error)?.message ?? emailErr
+      );
+    });
 
     const token = await createToken(userForToken);
 
