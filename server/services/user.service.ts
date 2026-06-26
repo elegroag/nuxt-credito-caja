@@ -52,11 +52,52 @@ const userService = () => {
     return serializeUser(user);
   };
 
+  const findByDocumento = async (tipoDocumento: string, numeroDocumento: string) => {
+    return serializeUser(await prisma.users.findFirst({
+      where: {
+        tipo_documento: tipoDocumento,
+        numero_documento: numeroDocumento
+      }
+    }));
+  };
+
+  const markPinVerified = async (userId: number) => {
+    return serializeUser(await prisma.users.update({
+      where: {
+        id: userId
+      },
+      data: {
+        email_verified_at: new Date(),
+        pin_verification: null,
+        remember_token: null
+      }
+    }));
+  };
+
+  const updatePinVerification = async (
+    userId: number,
+    pin: string,
+    pinSentAt: number
+  ) => {
+    return serializeUser(await prisma.users.update({
+      where: {
+        id: userId
+      },
+      data: {
+        pin_verification: pin,
+        remember_token: `pin_sent:${pinSentAt}`
+      }
+    }));
+  };
+
   return {
     findByUsername,
     updateLastLogin,
     createUserTrabajador,
-    findById
+    findById,
+    findByDocumento,
+    markPinVerified,
+    updatePinVerification
   };
 };
 

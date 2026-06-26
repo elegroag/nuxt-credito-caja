@@ -99,14 +99,56 @@ const smtpMailerService = (overrideConfig?: Partial<MailConfig>) => {
   const fixedOverride = overrideConfig;
 
   /**
-   * Resuelve la configuración SMTP desde runtimeConfig.
-   * Lanza si faltan credenciales obligatorias.
-   * Acepta overrideConfig para testing o para multi-cuenta.
+   * Resuelve la configuración SMTP desde runtimeConfig con fallback a process.env.
+   * Nuxt fija runtimeConfig al arrancar; si .env cambió después, process.env
+   * suele tener los valores actualizados sin reiniciar.
    */
   const getConfig = (): MailConfig => {
-    const mail: MailConfig = fixedOverride
-      ? (fixedOverride as MailConfig)
-      : (useRuntimeConfig().mail as MailConfig);
+    if (fixedOverride) {
+      const mail = fixedOverride as MailConfig;
+      if (!mail.host) {
+        throw createError({
+          statusCode: 500,
+          statusMessage: "MAIL_HOST no está configurado en runtimeConfig"
+        });
+      }
+      if (!mail.user || !mail.pass) {
+        throw createError({
+          statusCode: 500,
+          statusMessage: "MAIL_USER y MAIL_PASSWORD son obligatorios para enviar correos"
+        });
+      }
+      return mail;
+    }
+
+    const runtimeMail = useRuntimeConfig().mail as MailConfig;
+    const user = String(runtimeMail.user || process.env.MAIL_USER || "").trim();
+    const pass = String(runtimeMail.pass || process.env.MAIL_PASSWORD || "")
+      .replace(/\s/g, "");
+
+    const mail: MailConfig = {
+      env: runtimeMail.env || process.env.MAIL_ENV || "dev",
+      host: runtimeMail.host || process.env.MAIL_HOST || "smtp.gmail.com",
+      port: Number(runtimeMail.port || process.env.MAIL_PORT) || 465,
+      secure:
+        runtimeMail.secure
+        ?? (process.env.MAIL_SECURE ? process.env.MAIL_SECURE === "true" : true),
+      user,
+      pass,
+      from_name:
+        runtimeMail.from_name
+        || process.env.MAIL_FROM_NAME
+        || "Comfaca Créditos",
+      from_address:
+        runtimeMail.from_address
+        || process.env.MAIL_FROM_ADDRESS
+        || user,
+      reject_unauthorized:
+        runtimeMail.reject_unauthorized
+        ?? (process.env.MAIL_REJECT_UNAUTHORIZED
+          ? process.env.MAIL_REJECT_UNAUTHORIZED === "true"
+          : true)
+    };
 
     if (!mail.host) {
       throw createError({

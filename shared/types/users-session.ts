@@ -42,6 +42,17 @@ export interface RecoveryPayload {
   phone: string
 }
 
+export interface VerifyCodePayload {
+  codigo: string
+  coddoc: string
+  documento: string
+}
+
+export interface ResendCodePayload {
+  coddoc: string
+  documento: string
+}
+
 export interface JwtPayload {
   sub: number
   email: string
