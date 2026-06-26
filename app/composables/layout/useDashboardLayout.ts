@@ -7,6 +7,7 @@ import {
   Home,
   Calculator,
   FilePlus,
+  FileText,
   Share2,
   User,
   Users,
@@ -94,6 +95,14 @@ export function useDashboardLayout() {
       to: "/admin/configuraciones",
       abbr: _abbr("Configuraciones"),
       icon: Settings,
+      adminOnly: true,
+      category: "admin"
+    },
+    {
+      label: "CMS",
+      to: "/admin/contenido",
+      abbr: _abbr("CMS"),
+      icon: FileText,
       adminOnly: true,
       category: "admin"
     },

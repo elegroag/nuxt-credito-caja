@@ -18,6 +18,7 @@ import { solicitudesCredito } from "./seeders/solicitudes-credito.seed";
 import { tipoDocumentos } from "./seeders/tipo-documentos.seed";
 import { firmantesSolicitud } from "./seeders/firmantes-solicitud.seed";
 import { configurations } from "./seeders/configurations.seed";
+import { seedCmsContenido } from "./seeders/cms-contenido.seed";
 import bcrypt from "bcryptjs";
 
 async function main() {
@@ -44,6 +45,8 @@ async function main() {
   // await seedPdfsGenerados();
   await seedFirmantesSolicitud();
   await seedConfigurations();
+  const cmsCount = await seedCmsContenido(prisma);
+  console.log(`✅ CMS dinámico (${cmsCount} campos) seeded`);
 }
 
 async function _resetSolicitudesTables() {

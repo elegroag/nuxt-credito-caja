@@ -129,7 +129,6 @@ export default defineNuxtConfig({
   },
 
   routeRules: {
-    "/": { prerender: true },
     "/dash/**": { isr: false }
   },
   devServer: {
@@ -149,9 +148,9 @@ export default defineNuxtConfig({
       asyncContext: true
     },
     prerender: {
-      routes: ["/"],
-      ignore: ["/dashboard", "/dashboard/**"],
-      crawlLinks: true,
+      routes: [],
+      ignore: ["/dashboard", "/dashboard/**", "/admin/**", "/dash/**"],
+      crawlLinks: false,
       failOnError: false
     }
   },
