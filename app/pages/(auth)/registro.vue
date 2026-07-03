@@ -49,34 +49,33 @@
           <div class="grid grid-cols-2 gap-4">
             <div class="space-y-2">
               <label class="text-sm font-medium text-foreground p-2">Documento</label>
-              <select
+              <USelectMenu
                 v-model="formData.tipo_documento"
+                :items="tiposDocumento"
+                value-key="value"
+                label-key="label"
+                placeholder="Selecciona el tipo"
+                :search-input="false"
+                :ui="{
+                  base: 'pl-5 pr-4 py-3 bg-muted/50 rounded-xl border-0 text-foreground text-sm focus:ring-2 focus:ring-primary/20 focus:bg-card transition-all',
+                  trailing: 'pe-3'
+                }"
                 required
-                class="w-full pl-11 pr-4 py-3 bg-muted/50 rounded-xl border-0 text-foreground text-sm focus:ring-2 focus:ring-primary/20 focus:bg-card transition-all"
-              >
-                <option
-                  value=""
-                  disabled
-                >
-                  Tipo
-                </option>
-                <option
-                  v-for="tipo in tiposDocumento"
-                  :key="tipo.value"
-                  :value="tipo.value"
-                >
-                  {{ tipo.label }}
-                </option>
-              </select>
+                class="w-full"
+              />
             </div>
             <div class="space-y-2">
               <label class="text-sm font-medium text-foreground p-2">Identificación</label>
               <input
                 v-model="formData.numero_documento"
-                type="number"
+                type="text"
+                inputmode="numeric"
+                pattern="[0-9]*"
+                maxlength="16"
                 placeholder="123456789"
                 required
-                class="w-full pl-11 pr-4 py-3 bg-muted/50 rounded-xl border-0 text-foreground placeholder:text-muted-foreground focus:ring-2 focus:ring-primary/20 focus:bg-card transition-all [&::-webkit-inner-spin-button]:appearance-none"
+                class="w-full pl-5 pr-4 py-3 bg-muted/50 rounded-xl border-0 text-foreground placeholder:text-muted-foreground focus:ring-2 focus:ring-primary/20 focus:bg-card transition-all"
+                @input="formData.numero_documento = (($event.target as HTMLInputElement).value.replace(/\D/g, ''))"
               >
             </div>
           </div>
@@ -88,7 +87,7 @@
                 type="text"
                 placeholder="Juan"
                 required
-                class="w-full pl-11 pr-4 py-3 bg-muted/50 rounded-xl border-0 text-foreground placeholder:text-muted-foreground focus:ring-2 focus:ring-primary/20 focus:bg-card transition-all"
+                class="w-full pl-5 pr-4 py-3 bg-muted/50 rounded-xl border-0 text-foreground placeholder:text-muted-foreground focus:ring-2 focus:ring-primary/20 focus:bg-card transition-all"
               >
             </div>
             <div class="space-y-2">
@@ -98,7 +97,7 @@
                 type="text"
                 placeholder="Pérez"
                 required
-                class="w-full pl-11 pr-4 py-3 bg-muted/50 rounded-xl border-0 text-foreground placeholder:text-muted-foreground focus:ring-2 focus:ring-primary/20 focus:bg-card transition-all"
+                class="w-full pl-5 pr-4 py-3 bg-muted/50 rounded-xl border-0 text-foreground placeholder:text-muted-foreground focus:ring-2 focus:ring-primary/20 focus:bg-card transition-all"
               >
             </div>
           </div>
@@ -114,7 +113,7 @@
             <div class="relative">
               <UIcon
                 name="i-lucide-mail"
-                class="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground"
+                class="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none"
               />
               <input
                 v-model="formData.email"
@@ -130,14 +129,17 @@
             <div class="relative">
               <UIcon
                 name="i-lucide-phone"
-                class="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground"
+                class="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none"
               />
               <input
                 v-model="formData.telefono"
                 type="tel"
+                inputmode="numeric"
+                maxlength="10"
                 placeholder="3001234567"
                 required
                 class="w-full pl-11 pr-4 py-3 bg-muted/50 rounded-xl border-0 text-foreground placeholder:text-muted-foreground focus:ring-2 focus:ring-primary/20 focus:bg-card transition-all"
+                @input="formData.telefono = (($event.target as HTMLInputElement).value.replace(/\D/g, ''))"
               >
             </div>
           </div>
@@ -170,25 +172,62 @@
           <div class="grid grid-cols-2 gap-4">
             <div class="space-y-2">
               <label class="text-sm font-medium text-foreground p-2">Contraseña</label>
-              <input
-                v-model="formData.password"
-                type="password"
-                placeholder="Mín. 8 caracteres"
-                required
-                minlength="8"
-                class="w-full pl-11 pr-4 py-3 bg-muted/50 rounded-xl border-0 text-foreground placeholder:text-muted-foreground focus:ring-2 focus:ring-primary/20 focus:bg-card transition-all"
+              <div class="relative">
+                <input
+                  v-model="formData.password"
+                  :type="mostrarPassword ? 'text' : 'password'"
+                  placeholder="Mín. 8 caracteres"
+                  required
+                  minlength="8"
+                  class="w-full pl-5 pr-11 py-3 bg-muted/50 rounded-xl border-0 text-foreground placeholder:text-muted-foreground focus:ring-2 focus:ring-primary/20 focus:bg-card transition-all"
+                >
+                <button
+                  type="button"
+                  class="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-muted-foreground hover:text-foreground transition-colors"
+                  :aria-label="mostrarPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'"
+                  @click="mostrarPassword = !mostrarPassword"
+                >
+                  <UIcon
+                    :name="mostrarPassword ? 'i-lucide-eye-off' : 'i-lucide-eye'"
+                    class="w-4 h-4"
+                  />
+                </button>
+              </div>
+              <button
+                type="button"
+                class="text-xs text-primary hover:underline inline-flex items-center gap-1"
+                @click="sugerirPassword"
               >
+                <UIcon
+                  name="i-lucide-wand"
+                  class="w-3.5 h-3.5"
+                />
+                Sugerir contraseña segura
+              </button>
             </div>
             <div class="space-y-2">
               <label class="text-sm font-medium text-foreground p-2">Confirmar</label>
-              <input
-                v-model="formData.confirmar_password"
-                type="password"
-                placeholder="Repite"
-                required
-                minlength="8"
-                class="w-full pl-11 pr-4 py-3 bg-muted/50 rounded-xl border-0 text-foreground placeholder:text-muted-foreground focus:ring-2 focus:ring-primary/20 focus:bg-card transition-all"
-              >
+              <div class="relative">
+                <input
+                  v-model="formData.confirmar_password"
+                  :type="mostrarConfirmar ? 'text' : 'password'"
+                  placeholder="Repite"
+                  required
+                  minlength="8"
+                  class="w-full pl-5 pr-11 py-3 bg-muted/50 rounded-xl border-0 text-foreground placeholder:text-muted-foreground focus:ring-2 focus:ring-primary/20 focus:bg-card transition-all"
+                >
+                <button
+                  type="button"
+                  class="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-muted-foreground hover:text-foreground transition-colors"
+                  :aria-label="mostrarConfirmar ? 'Ocultar contraseña' : 'Mostrar contraseña'"
+                  @click="mostrarConfirmar = !mostrarConfirmar"
+                >
+                  <UIcon
+                    :name="mostrarConfirmar ? 'i-lucide-eye-off' : 'i-lucide-eye'"
+                    class="w-4 h-4"
+                  />
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -317,6 +356,8 @@ const {
 } = useRegistro();
 
 const isModalOpen = ref(false);
+const mostrarPassword = ref(false);
+const mostrarConfirmar = ref(false);
 
 watch(errorMsg, (newVal) => {
   if (newVal) {
@@ -324,12 +365,46 @@ watch(errorMsg, (newVal) => {
   }
 });
 
+const generarPasswordSegura = (longitud = 14): string => {
+  const mayusculas = "ABCDEFGHJKMNPQRSTUVWXYZ";
+  const minusculas = "abcdefghjkmnpqrstuvwxyz";
+  const numeros = "23456789";
+  const simbolos = "!@#$%&*?+-";
+  const todos = mayusculas + minusculas + numeros + simbolos;
+
+  const aleatorio = (charset: string): string =>
+    charset.charAt(Math.floor(Math.random() * charset.length));
+
+  const semilla: string[] = [
+    aleatorio(mayusculas),
+    aleatorio(minusculas),
+    aleatorio(numeros),
+    aleatorio(simbolos)
+  ];
+
+  for (let i = semilla.length; i < longitud; i++) {
+    semilla.push(aleatorio(todos));
+  }
+
+  for (let i = semilla.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [semilla[i], semilla[j]] = [semilla[j]!, semilla[i]!];
+  }
+
+  return semilla.join("");
+};
+
+const sugerirPassword = () => {
+  const nueva = generarPasswordSegura(14);
+  formData.value.password = nueva;
+  formData.value.confirmar_password = nueva;
+  mostrarPassword.value = true;
+  mostrarConfirmar.value = true;
+};
+
 const handleSubmit = async () => {
   if (pasoActual.value === 3) {
-    const success = await registrar();
-    if (success) {
-      await navigateTo("/");
-    }
+    await registrar();
   }
 };
 </script>

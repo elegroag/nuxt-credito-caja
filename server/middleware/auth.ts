@@ -4,6 +4,8 @@ const PUBLIC_ROUTES: string[] = [
   "/api/auth/recovery",
   "/api/auth/adviser",
   "/api/auth/verify",
+  "/api/auth/verify-code",
+  "/api/auth/resend-code",
   "/api/health"
 ];
 

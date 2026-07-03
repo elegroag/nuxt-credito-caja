@@ -8,7 +8,8 @@ export const AUTH_EXCLUDED_PAGES = [
   "/login",
   "/register",
   "/forgot-password",
-  "/reset-password"
+  "/reset-password",
+  "/verify"
 ] as const;
 
 // Páginas que siempre requieren autenticación

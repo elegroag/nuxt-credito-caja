@@ -1,6 +1,20 @@
 import { useRuntimeConfig } from "#imports";
+import { createError } from "h3";
 import { ofetch } from "ofetch";
 import { loggerService } from "~~/server/utils/logger.service";
+
+export interface ApiFirmaRuntimeConfig {
+  apiFIRMA: {
+    env: string
+    url_pro: string
+    url_dev: string
+    type_auth: string
+    basic_user: string
+    basic_password: string
+    client_id: string | null
+    password: string | null
+  }
+}
 
 const Log = loggerService();
 
@@ -79,8 +93,8 @@ const getMockResponse = (path: string, body?: Record<string, unknown>): FirmaPlu
   };
 };
 
-const apiFirmaPlus = () => {
-  const config = useRuntimeConfig();
+const apiFirmaPlus = (configOverride?: ApiFirmaRuntimeConfig) => {
+  const config = configOverride ?? useRuntimeConfig();
   const env = config.apiFIRMA.env;
   const baseUrl = {
     pro: config.apiFIRMA.url_pro,

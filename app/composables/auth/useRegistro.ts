@@ -11,6 +11,8 @@ interface RegistroResponseData {
     username?: string
     roles?: string[]
   }
+  access_token?: string
+  token_type?: string
 }
 
 export function useRegistro() {
@@ -126,6 +128,15 @@ export function useRegistro() {
           apellidos: formData.value.apellidos,
           roles: responseData?.user?.roles || ["user"]
         };
+
+        // Guardar token y usuario en storage con las claves que usa useSession
+        if (responseData?.access_token) {
+          await storage.setItem("comfaca_credito_access_token", responseData.access_token);
+          await storage.setItem(
+            "comfaca_credito_token_type",
+            responseData.token_type || "bearer"
+          );
+        }
         await storage.setItem("comfaca_credito_user", JSON.stringify(userData));
 
         const q = new URLSearchParams();

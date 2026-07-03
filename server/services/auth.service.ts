@@ -2,11 +2,14 @@ import type { H3Event } from "h3";
 import bcrypt from "bcryptjs";
 import userService from "./user.service";
 import apiSisuweb from "./api-sisuweb";
+import smtpMailerService from "~~/server/services/shared/smtp-mailer.service";
 import type {
   UserSession,
   LoginCredentials,
   RegisterPayload,
-  RecoveryPayload
+  RecoveryPayload,
+  VerifyCodePayload,
+  ResendCodePayload
 } from "~~/shared/types/users-session";
 import jwtManager from "~~/shared/utils/jwt";
 
@@ -140,7 +143,45 @@ const authService = () => {
   };
 
   const generateRandomPin = (): string => {
-    return Math.floor(1000 + Math.random() * 9999).toString();
+    return String(Math.floor(Math.random() * 10000)).padStart(4, "0");
+  };
+
+  const RESEND_COOLDOWN_MS = 30_000;
+
+  const getPinSentAt = (rememberToken: string | null | undefined): number | null => {
+    if (!rememberToken?.startsWith("pin_sent:")) return null;
+    const timestamp = Number(rememberToken.replace("pin_sent:", ""));
+    return Number.isFinite(timestamp) ? timestamp : null;
+  };
+
+  const sendVerificationEmail = async (email: string, pin: string, subject: string) => {
+    const mailer = smtpMailerService();
+    const body = `<html>
+      <head>
+          <title>${subject}</title>
+      </head>
+      <body>
+          <h1>${subject}</h1>
+          <p>Usa el siguiente código para verificar tu identidad en Comfaca Crédito.</p>
+          <p><strong>Código:</strong> ${pin}</p>
+          <p><strong>Fecha de envío:</strong> ${new Date().toLocaleString("es-CO")}</p>
+          <p><strong>Entorno:</strong> ${process.env.NODE_ENV}</p>
+          <hr>
+          <p><small>Este correo fue enviado automáticamente desde el sistema de Comfaca Crédito.</small></p>
+      </body>
+      </html>`;
+
+    await mailer.send({
+      to: email,
+      subject,
+      html: body,
+      text: `Tu código de verificación es: ${pin}`
+    }).catch((mailErr: unknown) => {
+      console.warn(
+        "[auth] No se pudo enviar el email de verificación:",
+        (mailErr as Error)?.message ?? mailErr
+      );
+    });
   };
 
   const createUserSession = (
@@ -467,6 +508,9 @@ const authService = () => {
     }
 
     const full_name = `${payload.nombres} ${payload.apellidos}`;
+    const pin = generateRandomPin();
+    const pinSentAt = Date.now();
+
     const userData = {
       username: payload.username,
       email: payload.email,
@@ -480,8 +524,9 @@ const authService = () => {
       nombres: payload.nombres,
       apellidos: payload.apellidos,
       last_login: new Date().toISOString(),
-      email_verified_at: new Date().toISOString(),
-      remember_token: null,
+      email_verified_at: null,
+      remember_token: `pin_sent:${pinSentAt}`,
+      pin_verification: pin,
       password_hash: bcrypt.hashSync(payload.password, 10)
     };
 
@@ -497,33 +542,10 @@ const authService = () => {
       numero_documento: user.numero_documento
     };
 
-    const pin = generateRandomPin();
-
-    const body = `<html>
-      <head>
-          <title>Gracias por registrarte en Comfaca Credito</title>
-      </head>
-      <body>
-          <h1>Gracias por registrarte en Comfaca Credito</h1>
-          <p>Gracias por registrarte en Comfaca Credito. Ahora puedes iniciar sesión con tu correo electrónico y contraseña.</p>
-          <p><strong>Fecha de envío:</strong> ${new Date().toLocaleString("es-CO")}</p>
-          <p><strong>Entorno:</strong> ${process.env.NODE_ENV}</p>
-          <p><strong>PIN:</strong> ${pin}</p>
-          <hr>
-          <p><small>Este correo fue enviado automáticamente desde el sistema de Comfaca Credito.</small></p>
-      </body>
-      </html>`;
-
-    await api.postJson<Record<string, unknown>>(
-      "/utils/sender-email",
-      {
-        body: body,
-        subject: "Gracias por registrarte en Comfaca Credito",
-        to: user.email
-      },
-      {
-        auth: true
-      }
+    await sendVerificationEmail(
+      user.email,
+      pin,
+      "Gracias por registrarte en Comfaca Credito"
     );
 
     const token = await createToken(userForToken);
@@ -537,6 +559,93 @@ const authService = () => {
     };
   };
 
+  const verifyCode = async (event: H3Event, payload: VerifyCodePayload) => {
+    const user = await userSrv.findByDocumento(payload.coddoc, payload.documento);
+
+    if (!user) {
+      throw createError({
+        statusCode: 404,
+        message: "Usuario no encontrado"
+      });
+    }
+
+    const normalizedCode = payload.codigo.replace(/\D/g, "").padStart(4, "0").slice(-4);
+    const storedPin = (user.pin_verification || "").padStart(4, "0");
+
+    if (!storedPin || storedPin !== normalizedCode) {
+      throw createError({
+        statusCode: 401,
+        message: "Código inválido o expirado"
+      });
+    }
+
+    const verifiedUser = await userSrv.markPinVerified(Number(user.id));
+
+    const userForToken: UserWithPassword = {
+      id: Number(verifiedUser.id),
+      username: verifiedUser.username,
+      email: verifiedUser.email || "",
+      full_name: verifiedUser.full_name || "",
+      password_hash: verifiedUser.password_hash,
+      roles: (verifiedUser.roles as string[]) || [],
+      numero_documento: verifiedUser.numero_documento
+    };
+
+    const userSession = createUserSession(userForToken, null, null);
+
+    await setUserSession(event, {
+      user: userSession,
+      loggedInAt: new Date()
+    });
+
+    const token = await createToken(userForToken);
+
+    return {
+      message: "Verificación exitosa",
+      user: verifiedUser,
+      access_token: token,
+      token_type: "bearer"
+    };
+  };
+
+  const resendCode = async (payload: ResendCodePayload) => {
+    const user = await userSrv.findByDocumento(payload.coddoc, payload.documento);
+
+    if (!user) {
+      throw createError({
+        statusCode: 404,
+        message: "Usuario no encontrado"
+      });
+    }
+
+    const lastSentAt = getPinSentAt(user.remember_token);
+    if (lastSentAt && Date.now() - lastSentAt < RESEND_COOLDOWN_MS) {
+      const remainingSeconds = Math.ceil(
+        (RESEND_COOLDOWN_MS - (Date.now() - lastSentAt)) / 1000
+      );
+      throw createError({
+        statusCode: 429,
+        message: `Debes esperar ${remainingSeconds} segundos antes de solicitar un nuevo código`
+      });
+    }
+
+    const pin = generateRandomPin();
+    const pinSentAt = Date.now();
+
+    await userSrv.updatePinVerification(Number(user.id), pin, pinSentAt);
+
+    await sendVerificationEmail(
+      user.email,
+      pin,
+      "Nuevo código de verificación - Comfaca Credito"
+    );
+
+    return {
+      message: "Código reenviado correctamente",
+      cooldown_seconds: RESEND_COOLDOWN_MS / 1000
+    };
+  };
+
   return {
     login,
     validateCredentials,
@@ -544,7 +653,9 @@ const authService = () => {
     verify,
     adviser,
     _recovery,
-    register
+    register,
+    verifyCode,
+    resendCode
   };
 };
 

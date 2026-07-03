@@ -1,24 +1,99 @@
 <script setup lang="ts">
 import { z } from "zod";
+import { useContenidoPagina } from "~/composables/public/useContenidoPagina";
 
 definePageMeta({
   layout: "public"
 });
 
-// Cargar config de contacto desde el backend
+interface SocialLink {
+  icono: string
+  label: string
+  href: string
+}
+
+interface ContactItem {
+  icono: string
+  label: string
+  valor: string
+  href: string
+  descripcion: string
+}
+
+const { field, fetchContent } = await useContenidoPagina("contacto");
+
+const parseList = (raw: string | undefined, fallback: unknown[]): unknown[] => {
+  if (!raw) return fallback;
+  try {
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? parsed : fallback;
+  } catch {
+    return fallback;
+  }
+};
+
+const hero = computed(() => ({
+  titulo: field("hero", "titulo")?.valor || "Contáctanos",
+  subtitulo:
+    field("hero", "subtitulo")?.valor ||
+    "Estamos aquí para ayudarte. Completa el formulario y te responderemos en menos de 24 horas."
+}));
+
+const contactInfo = computed<ContactItem[]>(() => {
+  const raw = field("contacto_info", "items")?.valor;
+  const parsed = parseList(raw, []) as ContactItem[];
+  if (parsed.length) return parsed;
+  return [
+    {
+      icono: "i-lucide-mail",
+      label: "Email",
+      valor: "info@comfaca.com",
+      href: "mailto:info@comfaca.com",
+      descripcion: "Respondemos en 24h"
+    },
+    {
+      icono: "i-lucide-phone",
+      label: "Teléfono",
+      valor: "+57 300 123 4567",
+      href: "tel:+573001234567",
+      descripcion: "Lun - Vie 8am - 5pm"
+    },
+    {
+      icono: "i-lucide-map-pin",
+      label: "Oficina",
+      valor: "Florencia, Caquetá",
+      href: "#",
+      descripcion: "Colombia"
+    }
+  ];
+});
+
+const socialLinks = computed<SocialLink[]>(() => {
+  const raw = field("redes", "items")?.valor;
+  const parsed = parseList(raw, []) as SocialLink[];
+  if (parsed.length) return parsed;
+  return [
+    { icono: "i-lucide-facebook", label: "Facebook", href: "#" },
+    { icono: "i-lucide-instagram", label: "Instagram", href: "#" },
+    { icono: "i-lucide-linkedin", label: "LinkedIn", href: "#" },
+    { icono: "i-lucide-message-circle", label: "WhatsApp", href: "#" }
+  ];
+});
+
+// Estado legacy para compatibilidad con `form_contact` (configuración)
 const contactConfig = useState<{
-  email?: string;
-  telefono?: string;
-  extension?: string;
-  ciudad?: string;
-  horarios?: string;
+  email?: string
+  telefono?: string
+  extension?: string
+  ciudad?: string
+  horarios?: string
 } | null>("contact-config", () => null);
 
 onMounted(async () => {
   try {
     const data = await $fetch<{
-      success: boolean;
-      data: { clave: string; valor: string; tipo: string; descripcion: string } | null;
+      success: boolean
+      data: { clave: string; valor: string; tipo: string; descripcion: string } | null
     }>("/api/public/configurations/form_contact");
     if (data?.data?.valor) {
       contactConfig.value = JSON.parse(data.data.valor);
@@ -51,19 +126,19 @@ const loading = ref(false);
 const submitted = ref(false);
 const focusedField = ref<string | null>(null);
 
-const validateField = (field: keyof typeof form.value) => {
+const validateField = (fieldName: keyof typeof form.value) => {
   const result = formSchema.safeParse({ ...form.value });
   if (!result.success) {
-    const fieldError = result.error.issues.find((e) => e.path[0] === field);
+    const fieldError = result.error.issues.find((e) => e.path[0] === fieldName);
     if (fieldError) {
-      errors.value[field] = fieldError.message;
+      errors.value[fieldName] = fieldError.message;
     } else {
       // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
-      delete errors.value[field];
+      delete errors.value[fieldName];
     }
   } else {
     // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
-    delete errors.value[field];
+    delete errors.value[fieldName];
   }
 };
 
@@ -99,41 +174,7 @@ const submitForm = async () => {
   }
 };
 
-const contactInfo = computed(() => {
-  const cfg = contactConfig.value;
-  return [
-    {
-      icon: "i-lucide-mail",
-      label: "Email",
-      value: cfg?.email ?? "info@comfaca.com",
-      href: `mailto:${cfg?.email ?? "info@comfaca.com"}`,
-      description: "Respondemos en 24h"
-    },
-    {
-      icon: "i-lucide-phone",
-      label: "Teléfono",
-      value: cfg?.telefono
-        ? `${cfg.telefono}${cfg.extension ? ` ext. ${cfg.extension}` : ""}`
-        : "+57 300 123 4567",
-      href: `tel:${cfg?.telefono ?? "+573001234567"}`,
-      description: cfg?.horarios ?? "Lun - Vie 8am - 5pm"
-    },
-    {
-      icon: "i-lucide-map-pin",
-      label: "Oficina",
-      value: cfg?.ciudad ?? "Florencia, Caquetá",
-      href: "#",
-      description: "Colombia"
-    }
-  ];
-});
-
-const socialLinks = [
-  { icon: "i-lucide-facebook", label: "Facebook", href: "#" },
-  { icon: "i-lucide-instagram", label: "Instagram", href: "#" },
-  { icon: "i-lucide-linkedin", label: "LinkedIn", href: "#" },
-  { icon: "i-lucide-message-circle", label: "WhatsApp", href: "#" }
-];
+await fetchContent();
 </script>
 
 <template>
@@ -143,11 +184,10 @@ const socialLinks = [
       <div class="absolute inset-0 bg-linear-to-br from-primary/5 via-transparent to-accent/5" />
       <div class="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-12 text-center">
         <h1 class="text-4xl sm:text-5xl lg:text-6xl font-bold text-foreground tracking-tight">
-          Contáctanos
+          {{ hero.titulo }}
         </h1>
         <p class="mt-4 text-lg text-muted-foreground max-w-2xl mx-auto">
-          Estamos aquí para ayudarte. Completa el formulario y te responderemos en menos de 24
-          horas.
+          {{ hero.subtitulo }}
         </p>
       </div>
     </div>
@@ -164,12 +204,12 @@ const socialLinks = [
           <div
             class="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-colors"
           >
-            <UIcon :name="info.icon" class="w-5 h-5 text-primary" />
+            <UIcon :name="info.icono" class="w-5 h-5 text-primary" />
           </div>
           <p class="text-sm text-muted-foreground">{{ info.label }}</p>
-          <p class="text-foreground font-medium mt-1">{{ info.value }}</p>
+          <p class="text-foreground font-medium mt-1">{{ info.valor }}</p>
           <p class="text-xs text-muted-foreground mt-2">
-            {{ info.description }}
+            {{ info.descripcion }}
           </p>
         </a>
       </div>
@@ -207,7 +247,6 @@ const socialLinks = [
 
         <form v-else class="bg-card rounded-3xl p-8 sm:p-12" @submit.prevent="submitForm">
           <div class="grid sm:grid-cols-2 gap-6 mb-6">
-            <!-- Name -->
             <div class="relative">
               <label class="block text-sm font-medium text-foreground mb-2">
                 Nombre <span class="text-primary">*</span>
@@ -232,7 +271,6 @@ const socialLinks = [
               </p>
             </div>
 
-            <!-- Identification -->
             <div class="relative">
               <label class="block text-sm font-medium text-foreground mb-2">
                 No. de Identificación <span class="text-primary">*</span>
@@ -257,7 +295,6 @@ const socialLinks = [
               </p>
             </div>
 
-            <!-- Email -->
             <div class="relative">
               <label class="block text-sm font-medium text-foreground mb-2">
                 Email <span class="text-primary">*</span>
@@ -282,7 +319,6 @@ const socialLinks = [
               </p>
             </div>
 
-            <!-- Phone -->
             <div class="relative">
               <label class="block text-sm font-medium text-foreground mb-2">Teléfono</label>
               <div class="relative">
@@ -300,7 +336,6 @@ const socialLinks = [
               </div>
             </div>
 
-            <!-- Subject -->
             <div class="relative">
               <label class="block text-sm font-medium text-foreground mb-2">
                 Asunto <span class="text-primary">*</span>
@@ -326,7 +361,6 @@ const socialLinks = [
             </div>
           </div>
 
-          <!-- Message -->
           <div class="relative mb-8">
             <label class="block text-sm font-medium text-foreground mb-2">
               Mensaje <span class="text-primary">*</span>
@@ -345,7 +379,6 @@ const socialLinks = [
             </p>
           </div>
 
-          <!-- Submit -->
           <div class="flex flex-col sm:flex-row items-center gap-4">
             <UButton
               type="submit"
@@ -377,7 +410,7 @@ const socialLinks = [
             class="w-10 h-10 rounded-full bg-muted/50 flex items-center justify-center hover:bg-primary/10 hover:text-primary transition-all"
             :aria-label="social.label"
           >
-            <UIcon :name="social.icon" class="w-4 h-4" />
+            <UIcon :name="social.icono" class="w-4 h-4" />
           </a>
         </div>
       </div>

@@ -1,86 +1,178 @@
 <script lang="ts" setup>
+import { useContenidoPagina } from "~/composables/public/useContenidoPagina";
+
 definePageMeta({
   layout: "public"
 });
 
-const products = [
+interface Product {
+  id: number
+  nombre: string
+  descripcion: string
+  monto: string
+  plazo: string
+  icono: string
+  color: string
+  destacado: boolean
+}
+
+interface Feature {
+  icono: string
+  titulo: string
+  descripcion: string
+}
+
+interface Cta {
+  titulo: string
+  descripcion: string
+  primary_label: string
+  primary_href: string
+  secondary_label: string
+  secondary_href: string
+}
+
+interface Hero {
+  titulo: string
+  subtitulo: string
+}
+
+const DEFAULT_PRODUCTS: Product[] = [
   {
     id: 1,
-    name: "Libre Inversión",
-    description:
-      "Haz realidad lo que tienes en mente. Sin restricciones de uso, libre destinación.",
-    icon: "i-lucide-sparkles",
+    nombre: "Libre Inversión",
+    descripcion: "Haz realidad lo que tienes en mente. Sin restricciones de uso, libre destinación.",
+    icono: "i-lucide-sparkles",
     color: "primary",
-    featured: true,
-    amount: "$1M - $50M",
-    term: "12 - 60 meses"
+    destacado: true,
+    monto: "$1M - $50M",
+    plazo: "12 - 60 meses"
   },
   {
     id: 2,
-    name: "Vivienda",
-    description:
-      "El hogar de tus sueños empieza aquí. Tasas preferenciales y plazos extendidos.",
-    icon: "i-lucide-home",
+    nombre: "Vivienda",
+    descripcion: "El hogar de tus sueños empieza aquí. Tasas preferenciales y plazos extendidos.",
+    icono: "i-lucide-home",
     color: "accent",
-    amount: "$50M - $500M",
-    term: "60 - 240 meses"
+    destacado: false,
+    monto: "$50M - $500M",
+    plazo: "60 - 240 meses"
   },
   {
     id: 3,
-    name: "Educación",
-    description:
-      "Invierte en tu futuro profesional. Financia tu educación o la de tu familia.",
-    icon: "i-lucide-graduation-cap",
+    nombre: "Educación",
+    descripcion: "Invierte en tu futuro profesional. Financia tu educación o la de tu familia.",
+    icono: "i-lucide-graduation-cap",
     color: "secondary",
-    amount: "$1M - $30M",
-    term: "12 - 48 meses"
+    destacado: false,
+    monto: "$1M - $30M",
+    plazo: "12 - 48 meses"
   },
   {
     id: 4,
-    name: "Turismo",
-    description:
-      "Escápate sin preocupaciones. Vive experiencias únicas en cualquier destino.",
-    icon: "i-lucide-plane",
+    nombre: "Turismo",
+    descripcion: "Escápate sin preocupaciones. Vive experiencias únicas en cualquier destino.",
+    icono: "i-lucide-plane",
     color: "primary",
-    amount: "$500K - $20M",
-    term: "6 - 24 meses"
+    destacado: false,
+    monto: "$500K - $20M",
+    plazo: "6 - 24 meses"
   },
   {
     id: 5,
-    name: "Vestuario",
-    description:
-      "Renueva tu estilo hoy mismo. Aprobación inmediata para tu guardarropa.",
-    icon: "i-lucide-shirt",
+    nombre: "Vestuario",
+    descripcion: "Renueva tu estilo hoy mismo. Aprobación inmediata para tu guardarropa.",
+    icono: "i-lucide-shirt",
     color: "accent",
-    amount: "$500K - $10M",
-    term: "3 - 18 meses"
+    destacado: false,
+    monto: "$500K - $10M",
+    plazo: "3 - 18 meses"
   },
   {
     id: 6,
-    name: "Personalizado",
-    description:
-      "Soluciones a tu medida. Cuéntanos qué necesitas y lo hacemos realidad.",
-    icon: "i-lucide-settings",
+    nombre: "Personalizado",
+    descripcion: "Soluciones a tu medida. Cuéntanos qué necesitas y lo hacemos realidad.",
+    icono: "i-lucide-settings",
     color: "muted",
-    amount: "A convenir",
-    term: "Flexible"
+    destacado: false,
+    monto: "A convenir",
+    plazo: "Flexible"
   }
 ];
 
-const features = [
-  {
-    icon: "i-lucide-zap",
-    title: "Aprobación rápida",
-    desc: "Respuesta en minutos"
-  },
-  {
-    icon: "i-lucide-shield-check",
-    title: "100% Seguro",
-    desc: "Tus datos protegidos"
-  },
-  { icon: "i-lucide-file-check", title: "Sin papeleo", desc: "Todo digital" },
-  { icon: "i-lucide-clock", title: "24/7", desc: "Solicita cuando quieras" }
-];
+const { state, field, fetchContent } = await useContenidoPagina("productos");
+const cmsError = computed(() => state.value.error);
+
+const parseList = (raw: string | undefined, fallback: unknown[]): unknown[] => {
+  if (!raw) return fallback;
+  try {
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? parsed : fallback;
+  } catch {
+    return fallback;
+  }
+};
+
+const mapProducts = (parsed: Array<Partial<Product>>): Product[] =>
+  parsed.map((p, index) => ({
+    id: index + 1,
+    nombre: p.nombre || "",
+    descripcion: p.descripcion || "",
+    monto: p.monto || "",
+    plazo: p.plazo || "",
+    icono: p.icono || "i-lucide-sparkles",
+    color: p.color || "primary",
+    destacado: Boolean(p.destacado)
+  }));
+
+const cmsProducts = computed(() => {
+  const raw = field("productos", "items")?.valor;
+  const parsed = parseList(raw, []) as Array<Partial<Product>>;
+  return parsed.length ? mapProducts(parsed) : [];
+});
+
+const products = computed<Product[]>(() =>
+  cmsProducts.value.length ? cmsProducts.value : DEFAULT_PRODUCTS
+);
+
+const usingFallbackProducts = computed(
+  () => cmsProducts.value.length === 0 && !cmsError.value
+);
+
+const hero = computed<Hero>(() => ({
+  titulo: field("hero", "titulo")?.valor || "Nuestros créditos",
+  subtitulo:
+    field("hero", "subtitulo")?.valor ||
+    "Soluciones financieras diseñadas para cada momento de tu vida. Encuentra el crédito perfecto para ti."
+}));
+
+const features = computed<Feature[]>(() => {
+  const raw = field("features", "items")?.valor;
+  const parsed = parseList(raw, []) as Feature[];
+  if (parsed.length) {
+    return parsed.map((f) => ({
+      icono: f.icono || "i-lucide-sparkles",
+      titulo: f.titulo || "",
+      descripcion: f.descripcion || ""
+    }));
+  }
+  return [
+    { icono: "i-lucide-zap", titulo: "Aprobación rápida", descripcion: "Respuesta en minutos" },
+    { icono: "i-lucide-shield-check", titulo: "100% Seguro", descripcion: "Tus datos protegidos" },
+    { icono: "i-lucide-file-check", titulo: "Sin papeleo", descripcion: "Todo digital" },
+    { icono: "i-lucide-clock", titulo: "24/7", descripcion: "Solicita cuando quieras" }
+  ];
+});
+
+const cta = computed<Cta>(() => ({
+  titulo: field("cta", "titulo")?.valor || "¿Necesitas ayuda para elegir?",
+  descripcion:
+    field("cta", "descripcion")?.valor ||
+    "Nuestros asesores te guiarán para encontrar la mejor opción según tus necesidades.",
+  primary_label: field("cta", "primary_label")?.valor || "Hablar con un asesor",
+  primary_href: field("cta", "primary_href")?.valor || "/contact",
+  secondary_label: field("cta", "secondary_label")?.valor || "Simular crédito",
+  secondary_href: field("cta", "secondary_href")?.valor || "/"
+}));
 
 const getColorClass = (color: string) => {
   const map: Record<string, string> = {
@@ -91,6 +183,8 @@ const getColorClass = (color: string) => {
   };
   return map[color] || map.primary;
 };
+
+await fetchContent();
 </script>
 
 <template>
@@ -104,31 +198,30 @@ const getColorClass = (color: string) => {
         <h1
           class="text-4xl sm:text-5xl lg:text-6xl font-bold text-foreground tracking-tight"
         >
-          Nuestros créditos
+          {{ hero.titulo }}
         </h1>
         <p
           class="mt-6 text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed"
         >
-          Soluciones financieras diseñadas para cada momento de tu vida.
-          Encuentra el crédito perfecto para ti.
+          {{ hero.subtitulo }}
         </p>
 
         <!-- Features -->
         <div class="pt-12 grid grid-cols-2 lg:grid-cols-4 gap-4">
           <div
             v-for="feature in features"
-            :key="feature.title"
+            :key="feature.titulo"
             class="bg-card rounded-2xl p-4 border border-border/50"
           >
             <UIcon
-              :name="feature.icon"
+              :name="feature.icono"
               class="w-5 h-5 text-primary mx-auto mb-2"
             />
             <p class="text-sm font-medium text-foreground">
-              {{ feature.title }}
+              {{ feature.titulo }}
             </p>
             <p class="text-xs text-muted-foreground">
-              {{ feature.desc }}
+              {{ feature.descripcion }}
             </p>
           </div>
         </div>
@@ -138,40 +231,53 @@ const getColorClass = (color: string) => {
     <!-- Products Grid -->
     <section class="pb-20 mt-16">
       <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+        <UAlert
+          v-if="cmsError"
+          color="destructive"
+          variant="subtle"
+          icon="i-lucide-triangle-alert"
+          :title="`No se pudo cargar el contenido dinámico: ${cmsError}`"
+          class="mb-4"
+        />
+        <UAlert
+          v-else-if="usingFallbackProducts"
+          color="neutral"
+          variant="subtle"
+          icon="i-lucide-info"
+          title="Mostrando productos por defecto"
+          description="El CMS aún no tiene productos publicados. Ejecuta pnpm db:seed o edítalos en /admin/contenido/productos."
+          class="mb-4"
+        />
         <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
           <div
             v-for="product in products"
             :key="product.id"
             class="group relative bg-card rounded-2xl p-6 transition-all duration-300 hover:shadow-lg hover:-translate-y-1 border border-border/50 hover:border-primary/20 cursor-pointer"
           >
-            <!-- Featured badge -->
             <div
-              v-if="product.featured"
+              v-if="product.destacado"
               class="absolute -top-3 left-6 px-3 py-1 bg-primary text-primary-foreground text-xs font-medium rounded-full"
             >
               Popular
             </div>
 
-            <!-- Icon -->
             <div
               class="w-12 h-12 rounded-xl flex items-center justify-center mb-4 transition-colors"
               :class="getColorClass(product.color)"
             >
               <UIcon
-                :name="product.icon"
+                :name="product.icono"
                 class="w-5 h-5"
               />
             </div>
 
-            <!-- Content -->
             <h3 class="text-lg font-semibold text-foreground mb-2">
-              {{ product.name }}
+              {{ product.nombre }}
             </h3>
             <p class="text-sm text-muted-foreground leading-relaxed mb-4">
-              {{ product.description }}
+              {{ product.descripcion }}
             </p>
 
-            <!-- Details -->
             <div
               class="flex items-center gap-4 text-xs text-muted-foreground mb-4"
             >
@@ -180,18 +286,17 @@ const getColorClass = (color: string) => {
                   name="i-lucide-banknote"
                   class="w-3.5 h-3.5"
                 />
-                <span>{{ product.amount }}</span>
+                <span>{{ product.monto }}</span>
               </div>
               <div class="flex items-center gap-1">
                 <UIcon
                   name="i-lucide-calendar"
                   class="w-3.5 h-3.5"
                 />
-                <span>{{ product.term }}</span>
+                <span>{{ product.plazo }}</span>
               </div>
             </div>
 
-            <!-- CTA -->
             <div class="flex items-center text-primary text-sm font-medium">
               <span>Solicitar</span>
               <UIcon
@@ -211,28 +316,27 @@ const getColorClass = (color: string) => {
           <h2
             class="text-2xl sm:text-3xl font-bold text-primary-foreground mb-4"
           >
-            ¿Necesitas ayuda para elegir?
+            {{ cta.titulo }}
           </h2>
           <p class="text-primary-foreground/80 mb-8 max-w-xl mx-auto">
-            Nuestros asesores te guiarán para encontrar la mejor opción según
-            tus necesidades.
+            {{ cta.descripcion }}
           </p>
           <div class="flex flex-col sm:flex-row gap-4 justify-center">
             <UButton
-              to="/contact"
+              :to="cta.primary_href"
               color="neutral"
               variant="solid"
               size="lg"
             >
-              Hablar con un asesor
+              {{ cta.primary_label }}
             </UButton>
             <UButton
-              to="/"
+              :to="cta.secondary_href"
               color="neutral"
               variant="outline"
               size="lg"
             >
-              Simular crédito
+              {{ cta.secondary_label }}
             </UButton>
           </div>
         </div>

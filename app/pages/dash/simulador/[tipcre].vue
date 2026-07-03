@@ -538,7 +538,7 @@
           <!-- Acciones -->
           <div class="flex flex-col sm:flex-row gap-3 pt-2">
             <UButton
-              v-if="lineaSeleccionada?.estado === 'A'"
+              v-if="lineaSeleccionada?.estado === 'A' && isElegible"
               color="primary"
               size="lg"
               class="flex-1"
@@ -547,6 +547,16 @@
             >
               Continuar solicitud
             </UButton>
+            <UButton
+              v-else-if="lineaSeleccionada?.estado === 'A' && !isElegible"
+              color="neutral"
+              variant="soft"
+              size="lg"
+              class="flex-1"
+              disabled
+            >
+              Requiere convenio empresarial
+            </UButton>
             <UButton v-else color="neutral" size="lg" class="flex-1" disabled>
               No disponible
             </UButton>
@@ -554,6 +564,13 @@
               Limpiar
             </UButton>
           </div>
+          <p
+            v-if="lineaSeleccionada?.estado === 'A' && !isElegible && convenioVerificado"
+            class="text-xs text-muted-foreground text-center sm:text-left"
+          >
+            Tu empresa no tiene convenio activo con COMFACA. Para continuar con la
+            solicitud de crédito, contacta a tu empleador o acércate a una sede.
+          </p>
         </div>
       </div>
     </div>
