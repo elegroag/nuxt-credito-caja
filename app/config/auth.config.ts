@@ -52,6 +52,10 @@ export const ROUTE_PERMISSIONS = {
   "/admin/solicitudes": ["administrator", "adviser"],
   "/admin/solicitudes/": ["administrator", "adviser"],
 
+  // Rutas de reportes (solo admin)
+  "/admin/reportes": ["administrator"],
+  "/admin/reportes/": ["administrator"],
+
   // Rutas de aplicaciones (todos los roles autenticados)
   "/admin/applications": ["administrator", "adviser", "user_trabajador", "user_empresa"],
   "/admin/applications/": ["administrator", "adviser", "user_trabajador", "user_empresa"]

@@ -101,7 +101,7 @@ export const modules = [
     key: "reports",
     title: "Reportes",
     route_name: "reports.index",
-    href: "/reports",
+    href: "/admin/reportes",
     icon: "BarChart3",
     section: "Reportes",
     ordering: 6,
