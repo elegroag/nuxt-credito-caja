@@ -14,7 +14,8 @@ import {
   List,
   Building,
   Bell,
-  Settings
+  Settings,
+  BarChart3
 } from "@lucide/vue";
 
 // Estado compartido (singleton)
@@ -71,6 +72,14 @@ export function useDashboardLayout() {
       abbr: _abbr("Solicitudes"),
       icon: List,
       requiredPermissions: ["solicitudes.view"],
+      category: "admin"
+    },
+    {
+      label: "Reportes",
+      to: "/admin/reportes",
+      abbr: _abbr("Reportes"),
+      icon: BarChart3,
+      adminOnly: true,
       category: "admin"
     },
     {
