@@ -1,1 +1,2 @@
 setups.@nuxt/test-utils="4.0.3"
+public-hoist-pattern[]=*sharp*

@@ -269,7 +269,7 @@ const inicio = [
         titulo_acento: "a un clic de distancia",
         descripcion:
           "Obtén el crédito que necesitas de forma rápida, segura y sin trámites físicos. Tu aliado financiero para hacer realidad tus proyectos.",
-        imagen: "",
+        imagen: "/api/public/storage/cms/inicio/slide-1.jpg",
         primary_label: "Ver opciones de crédito",
         primary_href: "/products",
         secondary_label: "Conoce el proceso",
@@ -283,7 +283,7 @@ const inicio = [
         titulo_acento: "de confianza",
         descripcion:
           "Más de 10 años ayudando a familias colombianas a cumplir sus sueños. Transparencia, rapidez y seguridad en cada crédito.",
-        imagen: "",
+        imagen: "/api/public/storage/cms/inicio/slide-2.jpg",
         primary_label: "Conócenos",
         primary_href: "/about",
         secondary_label: "Hablar con un asesor",
@@ -297,7 +297,7 @@ const inicio = [
         titulo_acento: "para cada momento",
         descripcion:
           "Libre inversión, vivienda, educación, turismo y más. Encuentra el crédito perfecto para ti y solicítalo 100% en línea.",
-        imagen: "",
+        imagen: "/api/public/storage/cms/inicio/slide-3.jpg",
         primary_label: "Ver productos",
         primary_href: "/products",
         secondary_label: "Simular crédito",

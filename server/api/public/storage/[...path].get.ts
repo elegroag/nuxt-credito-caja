@@ -38,7 +38,7 @@ export default defineEventHandler(async (event: H3Event) => {
     return { error: "Acceso denegado" };
   }
 
-  const base = resolve(process.env.STORAGE_UPLOADS_PATH || "storage/uploads/");
+  const base = resolve(process.env.STORAGE_UPLOADS_PATH || "storage/");
   const fullPath = normalize(join(base, root, ...rest));
 
   // Defensa contra path traversal: el archivo resuelto debe estar dentro de base/root

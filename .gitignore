@@ -27,7 +27,10 @@ logs
 /prisma/generated/
 /prisma/migrations/
 pnpm-lock.yaml
-/storage
+/storage/*
+!storage/cms/
+!storage/cms/inicio/
+!storage/cms/inicio/slide-*.jpg
 .vscode/
 .windsurf/
 .dist/
@@ -54,3 +57,4 @@ payload-api-flask-pdf.json
 .trae-cn
 .opencode
 CLAUDE.md
+storage/cms

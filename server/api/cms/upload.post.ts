@@ -97,7 +97,7 @@ export default defineEventHandler(async (event: H3Event) => {
     })();
 
     const filename = `${crypto.randomUUID()}.${ext}`;
-    const baseUploads = resolve(process.env.STORAGE_UPLOADS_PATH || "storage/uploads/");
+    const baseUploads = resolve(process.env.STORAGE_UPLOADS_PATH || "storage/");
     const targetDir = join(baseUploads, "cms", slug);
     await mkdir(targetDir, { recursive: true });
 
