@@ -26,7 +26,6 @@ logs
 /app/generated/prisma
 /prisma/generated/
 /prisma/migrations/
-pnpm-lock.yaml
 /storage/*
 !storage/cms/
 !storage/cms/inicio/
