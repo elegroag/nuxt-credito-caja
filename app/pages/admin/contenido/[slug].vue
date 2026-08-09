@@ -321,7 +321,7 @@ watch(
                 </label>
                 <UInput
                   v-model="item.valor"
-                  placeholder="/api/public/storage/cms/.../archivo.jpg"
+                  placeholder="/storage/cms/.../archivo.jpg"
                   size="sm"
                   class="flex-1"
                   @update:model-value="marcarDirty(seccion, idx)"

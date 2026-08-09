@@ -21,6 +21,7 @@ const createRecord = (overrides: Record<string, unknown> = {}) => ({
   numero_documento: "123456789",
   nombres: "Juan",
   apellidos: "Pérez",
+  razon_social: null,
   fecha_nacimiento: new Date("1990-01-01T00:00:00.000Z"),
   fecha_expedicion: new Date("2008-01-01T00:00:00.000Z"),
   genero: "M",
@@ -56,6 +57,21 @@ describe("mapSolicitanteReporteRow", () => {
     expect(row.fecha_radicado).toBe("2026-03-18T00:00:00.000Z");
     expect(row.empresa_sector).toBe("Servicios");
   });
+
+  it("usa razon_social como nombre para personas jurídicas", () => {
+    const row = mapSolicitanteReporteRow(createRecord({
+      tipo_persona: "juridica",
+      tipo_documento: "NIT",
+      numero_documento: "900123456",
+      nombres: null,
+      apellidos: null,
+      razon_social: "EMPRESA DEMO SAS"
+    }));
+
+    expect(row.nombres).toBe("EMPRESA DEMO SAS");
+    expect(row.apellidos).toBe("");
+    expect(row.tipo_persona).toBe("juridica");
+  });
 });
 
 describe("solicitantesReporteService.obtenerSolicitantesReporte", () => {
@@ -87,6 +103,7 @@ describe("solicitantesReporteService.obtenerSolicitantesReporte", () => {
     expect(rows).toHaveLength(1);
     expect(findManyMock).toHaveBeenCalledWith(
       expect.objectContaining({
+        skip: 0,
         take: 5000,
         where: expect.objectContaining({
           tipo_documento: "CC",
@@ -99,6 +116,46 @@ describe("solicitantesReporteService.obtenerSolicitantesReporte", () => {
               })
             })
           }
+        })
+      })
+    );
+  });
+
+  it("sigue escaneando lotes cuando el primero está lleno de duplicados", async () => {
+    const firstBatch = Array.from({ length: 5000 }, (_, index) =>
+      createRecord({
+        numero_documento: "111",
+        solicitud_id: `dup-${index}`
+      })
+    );
+
+    findManyMock
+      .mockResolvedValueOnce(firstBatch)
+      .mockResolvedValueOnce([
+        createRecord({ numero_documento: "222" })
+      ]);
+
+    const service = solicitantesReporteService();
+    const rows = await service.obtenerSolicitantesReporte({});
+
+    expect(rows.map(row => row.numero_documento)).toEqual(["111", "222"]);
+    expect(findManyMock).toHaveBeenCalledTimes(2);
+    expect(findManyMock).toHaveBeenNthCalledWith(
+      2,
+      expect.objectContaining({ skip: 5000 })
+    );
+  });
+
+  it("incluye razon_social en el select de la consulta", async () => {
+    findManyMock.mockResolvedValue([]);
+
+    const service = solicitantesReporteService();
+    await service.obtenerSolicitantesReporte({});
+
+    expect(findManyMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        select: expect.objectContaining({
+          razon_social: true
         })
       })
     );

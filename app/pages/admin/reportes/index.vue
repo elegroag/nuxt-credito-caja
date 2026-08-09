@@ -15,7 +15,9 @@ const {
   downloading,
   loadingArchivos,
   downloadingArchivo,
-  error,
+  previewError,
+  archivosError,
+  downloadError,
   filtros,
   previewRows,
   previewTotal,
@@ -92,6 +94,10 @@ const formatDateTime = (dateString: string) => {
   });
 };
 
+const clearDownloadError = () => {
+  downloadError.value = null;
+};
+
 onMounted(async () => {
   await Promise.all([cargarPreview(), cargarArchivosGuardados()]);
 });
@@ -126,6 +132,16 @@ onMounted(async () => {
       icon="i-lucide-info"
       title="Reporte de solicitantes"
       description="Cada generación o descarga consulta datos actuales en la base de datos. El archivo en storage/temp se actualiza automáticamente; no se sirven copias antiguas."
+    />
+
+    <UAlert
+      v-if="downloadError"
+      color="destructive"
+      variant="subtle"
+      icon="i-lucide-triangle-alert"
+      :title="downloadError"
+      close
+      @update:open="(open: boolean) => { if (!open) clearDownloadError() }"
     />
 
     <UPageCard :ui="{ container: 'sm:p-4' }">
@@ -243,6 +259,21 @@ onMounted(async () => {
         </p>
       </div>
 
+      <div v-else-if="archivosError" class="p-6">
+        <UAlert
+          color="destructive"
+          variant="subtle"
+          icon="i-lucide-triangle-alert"
+          :title="archivosError"
+        >
+          <template #footer>
+            <UButton size="sm" variant="outline" color="neutral" @click="cargarArchivosGuardados">
+              Reintentar
+            </UButton>
+          </template>
+        </UAlert>
+      </div>
+
       <div
         v-else-if="archivosGuardados.length === 0"
         class="flex flex-col items-center justify-center py-12 gap-2 text-muted-foreground"
@@ -312,8 +343,13 @@ onMounted(async () => {
         </p>
       </div>
 
-      <div v-else-if="error" class="p-6">
-        <UAlert color="destructive" variant="subtle" icon="i-lucide-triangle-alert" :title="error">
+      <div v-else-if="previewError" class="p-6">
+        <UAlert
+          color="destructive"
+          variant="subtle"
+          icon="i-lucide-triangle-alert"
+          :title="previewError"
+        >
           <template #footer>
             <UButton size="sm" variant="outline" color="neutral" @click="cargarPreview">
               Reintentar
@@ -347,7 +383,9 @@ onMounted(async () => {
         <template #solicitante-cell="{ row }">
           <div>
             <p class="text-sm font-medium text-foreground">
-              {{ row.original.nombres || "N/A" }} {{ row.original.apellidos }}
+              {{
+                [row.original.nombres, row.original.apellidos].filter(Boolean).join(" ") || "N/A"
+              }}
             </p>
             <p class="text-xs text-muted-foreground">
               {{ row.original.tipo_persona }}

@@ -27,9 +27,10 @@ logs
 /prisma/generated/
 /prisma/migrations/
 /storage/*
-!storage/cms/
-!storage/cms/inicio/
-!storage/cms/inicio/slide-*.jpg
+public/storage/*
+!public/storage/cms/
+!public/storage/cms/inicio/
+!public/storage/cms/inicio/slide-*.jpg
 .vscode/
 .windsurf/
 .dist/
@@ -56,4 +57,3 @@ payload-api-flask-pdf.json
 .trae-cn
 .opencode
 CLAUDE.md
-storage/cms

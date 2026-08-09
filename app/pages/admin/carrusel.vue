@@ -335,7 +335,7 @@ await cargar();
                 </UButton>
                 <UInput
                   v-model="slide.imagen"
-                  placeholder="/api/public/storage/cms/.../archivo.jpg"
+                  placeholder="/storage/cms/.../archivo.jpg"
                   size="sm"
                   class="flex-1 min-w-[200px]"
                 />

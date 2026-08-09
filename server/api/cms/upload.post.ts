@@ -97,14 +97,14 @@ export default defineEventHandler(async (event: H3Event) => {
     })();
 
     const filename = `${crypto.randomUUID()}.${ext}`;
-    const baseUploads = resolve(process.env.STORAGE_UPLOADS_PATH || "storage/");
+    const baseUploads = resolve("public/storage");
     const targetDir = join(baseUploads, "cms", slug);
     await mkdir(targetDir, { recursive: true });
 
     const fullPath = join(targetDir, filename);
     await writeFile(fullPath, file.data);
 
-    const publicUrl = `/api/public/storage/cms/${slug}/${filename}`;
+    const publicUrl = `/storage/cms/${slug}/${filename}`;
     return CustomResponse.success(
       {
         url: publicUrl,

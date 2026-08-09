@@ -21,7 +21,9 @@ export const useReporteSolicitantes = () => {
   const downloading = ref(false);
   const loadingArchivos = ref(false);
   const downloadingArchivo = ref<string | null>(null);
-  const error = ref<string | null>(null);
+  const previewError = ref<string | null>(null);
+  const archivosError = ref<string | null>(null);
+  const downloadError = ref<string | null>(null);
   const previewRows = ref<ReporteSolicitanteRow[]>([]);
   const previewTotal = ref(0);
   const archivosGuardados = ref<ReporteArchivoItem[]>([]);
@@ -45,7 +47,7 @@ export const useReporteSolicitantes = () => {
 
   const cargarPreview = async () => {
     loading.value = true;
-    error.value = null;
+    previewError.value = null;
 
     try {
       const query = buildQueryString();
@@ -63,7 +65,7 @@ export const useReporteSolicitantes = () => {
       previewTotal.value = response.data.total;
     } catch (err) {
       console.error("Error cargando vista previa del reporte:", err);
-      error.value = err instanceof Error ? err.message : "Error al cargar el reporte";
+      previewError.value = err instanceof Error ? err.message : "Error al cargar el reporte";
     } finally {
       loading.value = false;
     }
@@ -79,7 +81,7 @@ export const useReporteSolicitantes = () => {
     if (import.meta.server) return;
 
     downloading.value = true;
-    error.value = null;
+    downloadError.value = null;
 
     try {
       const query = buildQueryString();
@@ -106,7 +108,7 @@ export const useReporteSolicitantes = () => {
       await cargarArchivosGuardados();
     } catch (err) {
       console.error("Error descargando reporte de solicitantes:", err);
-      error.value = err instanceof Error ? err.message : "Error al descargar el reporte";
+      downloadError.value = err instanceof Error ? err.message : "Error al descargar el reporte";
     } finally {
       downloading.value = false;
     }
@@ -114,6 +116,7 @@ export const useReporteSolicitantes = () => {
 
   const cargarArchivosGuardados = async () => {
     loadingArchivos.value = true;
+    archivosError.value = null;
 
     try {
       const response = await api.getJson<ApiResponse<{ collection: ReporteArchivoItem[], total: number }>>(
@@ -128,7 +131,7 @@ export const useReporteSolicitantes = () => {
       archivosGuardados.value = response.data.collection;
     } catch (err) {
       console.error("Error cargando reportes guardados:", err);
-      error.value = err instanceof Error ? err.message : "Error al cargar reportes guardados";
+      archivosError.value = err instanceof Error ? err.message : "Error al cargar reportes guardados";
     } finally {
       loadingArchivos.value = false;
     }
@@ -138,7 +141,7 @@ export const useReporteSolicitantes = () => {
     if (import.meta.server) return;
 
     downloadingArchivo.value = _filename;
-    error.value = null;
+    downloadError.value = null;
 
     try {
       const query = buildQueryString();
@@ -166,7 +169,7 @@ export const useReporteSolicitantes = () => {
       await cargarArchivosGuardados();
     } catch (err) {
       console.error("Error regenerando reporte:", err);
-      error.value = err instanceof Error ? err.message : "Error al regenerar el reporte";
+      downloadError.value = err instanceof Error ? err.message : "Error al regenerar el reporte";
     } finally {
       downloadingArchivo.value = null;
     }
@@ -187,7 +190,9 @@ export const useReporteSolicitantes = () => {
     downloading,
     loadingArchivos,
     downloadingArchivo,
-    error,
+    previewError,
+    archivosError,
+    downloadError,
     filtros,
     previewRows,
     previewTotal,

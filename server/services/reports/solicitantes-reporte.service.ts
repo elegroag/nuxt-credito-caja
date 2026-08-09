@@ -23,6 +23,7 @@ interface SolicitanteReporteRecord {
   numero_documento: string
   nombres: string | null
   apellidos: string | null
+  razon_social: string | null
   fecha_nacimiento: Date | null
   fecha_expedicion: Date | null
   genero: string | null
@@ -64,9 +65,28 @@ const parseDateRange = (value: string, endOfDay = false): Date => {
   return Number.isNaN(date.getTime()) ? new Date(value) : date;
 };
 
+const resolveNombreSolicitante = (solicitante: SolicitanteReporteRecord): {
+  nombres: string
+  apellidos: string
+} => {
+  if (solicitante.tipo_persona === "juridica") {
+    return {
+      nombres: toStringValue(solicitante.razon_social) || toStringValue(solicitante.nombres),
+      apellidos: ""
+    };
+  }
+
+  return {
+    nombres: toStringValue(solicitante.nombres),
+    apellidos: toStringValue(solicitante.apellidos)
+  };
+};
+
 export const mapSolicitanteReporteRow = (
   solicitante: SolicitanteReporteRecord
 ): ReporteSolicitanteRow => {
+  const { nombres, apellidos } = resolveNombreSolicitante(solicitante);
+
   return {
     numero_solicitud: solicitante.solicitudes_credito.numero_solicitud || solicitante.solicitud_id,
     fecha_radicado: toIsoDate(solicitante.solicitudes_credito.fecha_radicado),
@@ -74,8 +94,8 @@ export const mapSolicitanteReporteRow = (
     tipo_persona: solicitante.tipo_persona,
     tipo_documento: solicitante.tipo_documento,
     numero_documento: solicitante.numero_documento,
-    nombres: toStringValue(solicitante.nombres),
-    apellidos: toStringValue(solicitante.apellidos),
+    nombres,
+    apellidos,
     fecha_nacimiento: toIsoDate(solicitante.fecha_nacimiento),
     fecha_expedicion: toIsoDate(solicitante.fecha_expedicion),
     genero: toStringValue(solicitante.genero),
@@ -131,59 +151,85 @@ const buildWhere = (
   return where;
 };
 
+const SOLICITANTE_REPORTE_SELECT = {
+  solicitud_id: true,
+  tipo_persona: true,
+  tipo_documento: true,
+  numero_documento: true,
+  nombres: true,
+  apellidos: true,
+  razon_social: true,
+  fecha_nacimiento: true,
+  fecha_expedicion: true,
+  genero: true,
+  estado_civil: true,
+  nivel_educativo: true,
+  profesion: true,
+  email: true,
+  telefono_fijo: true,
+  telefono_movil: true,
+  direccion: true,
+  barrio: true,
+  ciudad: true,
+  departamento: true,
+  salario: true,
+  antiguedad_meses: true,
+  tipo_contrato: true,
+  sector_economico: true,
+  solicitudes_credito: {
+    select: {
+      numero_solicitud: true,
+      fecha_radicado: true,
+      estado: true
+    }
+  }
+} as const;
+
+/** Máximo de filas crudas a escanear para completar el cupo de únicos. */
+const REPORTE_SOLICITANTES_MAX_SCAN = REPORTE_SOLICITANTES_MAX_ROWS * 5;
+
 const solicitantesReporteService = () => {
   const obtenerSolicitantesReporte = async (
     filtros: ReporteSolicitantesFiltros
   ): Promise<ReporteSolicitanteRow[]> => {
-    const solicitantes = await prisma.solicitud_solicitante.findMany({
-      where: buildWhere(filtros),
-      take: REPORTE_SOLICITANTES_MAX_ROWS,
-      orderBy: {
-        created_at: "desc"
-      },
-      select: {
-        solicitud_id: true,
-        tipo_persona: true,
-        tipo_documento: true,
-        numero_documento: true,
-        nombres: true,
-        apellidos: true,
-        fecha_nacimiento: true,
-        fecha_expedicion: true,
-        genero: true,
-        estado_civil: true,
-        nivel_educativo: true,
-        profesion: true,
-        email: true,
-        telefono_fijo: true,
-        telefono_movil: true,
-        direccion: true,
-        barrio: true,
-        ciudad: true,
-        departamento: true,
-        salario: true,
-        antiguedad_meses: true,
-        tipo_contrato: true,
-        sector_economico: true,
-        solicitudes_credito: {
-          select: {
-            numero_solicitud: true,
-            fecha_radicado: true,
-            estado: true
-          }
-        }
-      }
-    });
-
+    const where = buildWhere(filtros);
     const uniqueRows = new Map<string, ReporteSolicitanteRow>();
+    let skip = 0;
 
-    for (const solicitante of solicitantes as SolicitanteReporteRecord[]) {
-      if (!uniqueRows.has(solicitante.numero_documento)) {
+    while (
+      uniqueRows.size < REPORTE_SOLICITANTES_MAX_ROWS
+      && skip < REPORTE_SOLICITANTES_MAX_SCAN
+    ) {
+      const take = Math.min(
+        REPORTE_SOLICITANTES_MAX_ROWS,
+        REPORTE_SOLICITANTES_MAX_SCAN - skip
+      );
+
+      const batch = await prisma.solicitud_solicitante.findMany({
+        where,
+        skip,
+        take,
+        orderBy: {
+          created_at: "desc"
+        },
+        select: SOLICITANTE_REPORTE_SELECT
+      });
+
+      if (batch.length === 0) break;
+
+      for (const solicitante of batch as SolicitanteReporteRecord[]) {
+        if (uniqueRows.has(solicitante.numero_documento)) continue;
+
         uniqueRows.set(
           solicitante.numero_documento,
           mapSolicitanteReporteRow(solicitante)
         );
+
+        if (uniqueRows.size >= REPORTE_SOLICITANTES_MAX_ROWS) break;
       }
+
+      skip += batch.length;
+      if (batch.length < take) break;
     }
 
     return Array.from(uniqueRows.values());
