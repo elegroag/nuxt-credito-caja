@@ -11,7 +11,8 @@ const { loading, errors, form, handleSubmit, goBack } = useCreateUser();
 const opcionesRoles = [
   { label: "Administrador", value: "administrator" },
   { label: "Asesor", value: "adviser" },
-  { label: "Trabajador", value: "user_trabajador" }
+  { label: "Trabajador", value: "user_trabajador" },
+  { label: "Codeudor", value: "user_codeudor" }
 ];
 
 const opcionesEstado = [

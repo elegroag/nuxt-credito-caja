@@ -33,9 +33,26 @@ export const usePermissions = () => {
   const isTrabajador = computed(() => hasRole("user_trabajador"));
 
   /**
+     * Verifica si el usuario es codeudor
+     */
+  const isCodeudor = computed(() => hasRole("user_codeudor"));
+
+  /**
      * Verifica si el usuario es empresa
      */
   const isEmpresa = computed(() => hasRole("user_empresa"));
+
+  /**
+     * Puede crear solicitudes de crédito (requiere rol trabajador u otros creadores)
+     */
+  const canCreateSolicitud = computed(() => {
+    return (
+      isAdministrator.value
+      || isAdviser.value
+      || isTrabajador.value
+      || isEmpresa.value
+    );
+  });
 
   /**
      * Verifica si el usuario tiene un permiso específico
@@ -112,6 +129,7 @@ export const usePermissions = () => {
     if (isAdministrator.value) return "Administrador";
     if (isAdviser.value) return "Asesor";
     if (isTrabajador.value) return "Trabajador";
+    if (isCodeudor.value) return "Codeudor";
     if (isEmpresa.value) return "Empresa";
     return "Usuario";
   });
@@ -124,7 +142,9 @@ export const usePermissions = () => {
     isAdministrator,
     isAdviser,
     isTrabajador,
+    isCodeudor,
     isEmpresa,
+    canCreateSolicitud,
     canAccessAdmin,
     canManageFirmas,
     canViewFirmas,

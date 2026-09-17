@@ -141,6 +141,18 @@ async function resetUsersAndSolicitudes() {
 async function seedRoles() {
   console.log("Seeding roles...");
 
+  // Renombrar rol legacy codeudor -> user_codeudor si existe
+  await prisma.roles.updateMany({
+    where: { nombre: "codeudor" },
+    data: {
+      nombre: "user_codeudor",
+      etiqueta: "Codeudor",
+      descripcion:
+        "Codeudor externo que consulta responsabilidades contractuales y firma como garante",
+      updated_at: new Date().toISOString()
+    }
+  });
+
   const countRoles = await prisma.roles.count();
   if (countRoles == 0) {
     const rolesData = roles.map((role) => {

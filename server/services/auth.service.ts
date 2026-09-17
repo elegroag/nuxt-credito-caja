@@ -92,6 +92,11 @@ const authService = () => {
         "applications.edit",
         "applications.delete",
         "applications.view_own"
+      ],
+      user_codeudor: [
+        "applications.view_own",
+        "responsabilidades.view",
+        "firma_digital"
       ]
     };
 
@@ -195,6 +200,8 @@ const authService = () => {
       name: user.full_name || "",
       email: user.email || "",
       roles: user.roles as string[],
+      permissions: permissionsData(user.roles as string[]),
+      numero_documento: user.numero_documento || "",
       trabajador: trabajador || null,
       adviser: adviser || null
     };

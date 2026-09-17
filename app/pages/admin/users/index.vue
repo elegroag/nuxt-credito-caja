@@ -37,6 +37,7 @@ const opcionesRol = [
   { label: "Todos los roles", value: null },
   { label: "Administrador", value: "administrator" },
   { label: "Trabajador", value: "user_trabajador" },
+  { label: "Codeudor", value: "user_codeudor" },
   { label: "Empresa", value: "user_empresa" }
 ];
 const opcionesEstado = [

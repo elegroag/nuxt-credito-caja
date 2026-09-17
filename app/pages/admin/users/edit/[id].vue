@@ -182,6 +182,9 @@
                 <option value="user_trabajador">
                   Trabajador
                 </option>
+                <option value="user_codeudor">
+                  Codeudor
+                </option>
               </select>
               <p
                 v-if="errors.roles"

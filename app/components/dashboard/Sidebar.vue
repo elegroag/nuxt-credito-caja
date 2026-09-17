@@ -28,7 +28,10 @@
             :class="getMenuItemClasses(item.to)"
             :title="sidebarCollapsed ? item.label : undefined"
           >
-            <component :is="item.icon" class="h-5 w-5 shrink-0" />
+            <UIcon
+              :name="item.icon"
+              class="h-5 w-5 shrink-0"
+            />
             <span v-show="!sidebarCollapsed">{{ item.label }}</span>
           </NuxtLink>
         </div>
@@ -98,7 +101,10 @@
             :class="getMobileMenuItemClasses(item.to)"
             @click="sidebarOpen = false"
           >
-            <component :is="item.icon" class="h-5 w-5" />
+            <UIcon
+              :name="item.icon"
+              class="h-5 w-5"
+            />
             {{ item.label }}
           </NuxtLink>
         </div>

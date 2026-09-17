@@ -230,7 +230,9 @@ export function useAdminUsers() {
   const getRolLabel = (rol: string) => {
     const roles: Record<string, string> = {
       administrator: "Administrador",
+      adviser: "Asesor",
       user_trabajador: "Trabajador",
+      user_codeudor: "Codeudor",
       user_empresa: "Empresa"
     };
     return roles[rol] || rol;
@@ -244,7 +246,9 @@ export function useAdminUsers() {
       "solid" | "outline" | "soft" | "subtle"
     > = {
       administrator: "solid",
+      adviser: "outline",
       user_trabajador: "soft",
+      user_codeudor: "subtle",
       user_empresa: "outline"
     };
     return variants[rol] || "soft";

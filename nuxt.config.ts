@@ -48,7 +48,23 @@ export default defineNuxtConfig({
   icon: {
     clientBundle: {
       // Empaqueta iconos con nombre literal (p. ej. lucide:bell) para evitar fetch en runtime
-      scan: true
+      scan: true,
+      icons: [
+        "lucide:bell",
+        "lucide:home",
+        "lucide:calculator",
+        "lucide:shield",
+        "lucide:file-signature",
+        "lucide:users",
+        "lucide:share-2",
+        "lucide:list",
+        "lucide:bar-chart-3",
+        "lucide:building-2",
+        "lucide:settings",
+        "lucide:file-text",
+        "lucide:user",
+        "lucide:file-plus"
+      ]
     }
   },
 
@@ -174,13 +190,10 @@ export default defineNuxtConfig({
     },
     optimizeDeps: {
       include: [
-        "@vue/devtools-core",
-        "@vue/devtools-kit",
         "@lucide/vue",
         "@heroicons/vue/24/outline",
         "class-variance-authority",
         "clsx",
-        "tailwind-merge",
         "radix-vue",
         "zod"
       ]

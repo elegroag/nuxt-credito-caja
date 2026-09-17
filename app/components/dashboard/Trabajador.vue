@@ -8,7 +8,12 @@
           {{ nombreBienvenida || "Usuario" }}
         </p>
       </div>
-      <UButton to="/dash/simulador/lineas-credito" color="primary" size="lg">
+      <UButton
+        v-if="canCreateSolicitud"
+        to="/dash/simulador/lineas-credito"
+        color="primary"
+        size="lg"
+      >
         <UIcon name="i-lucide-plus" class="w-4 h-4 mr-2" />
         Nueva solicitud
       </UButton>
@@ -73,7 +78,12 @@
             Cuando crees una solicitud, aparecerá aquí
           </p>
         </div>
-        <UButton to="/dash/simulador/lineas-credito" size="sm" color="primary">
+        <UButton
+          v-if="canCreateSolicitud"
+          to="/dash/simulador/lineas-credito"
+          size="sm"
+          color="primary"
+        >
           <UIcon name="i-lucide-plus" class="w-4 h-4 mr-2" />
           Crear solicitud
         </UButton>
@@ -210,6 +220,9 @@ import { useInicioTrabajador } from "@/composables/inicio/useInicioTrabajador";
 import { fmtMoney, fmtDate } from "#shared/utils/generales";
 import { useInicio } from "@/composables/inicio/useInicio";
 import Badge from "@/components/shared/Badge.vue";
+import { usePermissions } from "~/composables/usePermissions";
+
+const { canCreateSolicitud } = usePermissions();
 
 const {
   solicitudes,

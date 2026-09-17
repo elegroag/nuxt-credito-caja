@@ -2,21 +2,7 @@ import { ref, computed } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useSession } from "~/composables/useSession";
 import { usePermissions } from "~/composables/usePermissions";
-
-import {
-  Home,
-  Calculator,
-  FilePlus,
-  FileText,
-  Share2,
-  User,
-  Users,
-  List,
-  Building,
-  Bell,
-  Settings,
-  BarChart3
-} from "@lucide/vue";
+import type { NavItem } from "#shared/types/layout";
 
 // Estado compartido (singleton)
 const sidebarOpen = ref(false);
@@ -45,24 +31,39 @@ export function useDashboardLayout() {
   };
 
   const navItems: NavItem[] = [
-    { label: "Inicio", to: "/dash", abbr: _abbr("Inicio"), icon: Home },
+    { label: "Inicio", to: "/dash", abbr: _abbr("Inicio"), icon: "i-lucide-home" },
     {
       label: "Simulador",
       to: "/dash/simulador/lineas-credito",
       abbr: _abbr("Simulador"),
-      icon: Calculator
+      icon: "i-lucide-calculator",
+      requiredRoles: ["user_trabajador", "administrator", "adviser", "user_empresa", "empleador"]
+    },
+    {
+      label: "Contratos",
+      to: "/dash/responsabilidades",
+      abbr: _abbr("Contratos"),
+      icon: "i-lucide-file-signature",
+      requiredRoles: ["user_codeudor", "user_trabajador"]
+    },
+    {
+      label: "Mis codeudores",
+      to: "/dash/codeudores",
+      abbr: _abbr("Codeudores"),
+      icon: "i-lucide-users",
+      requiredRoles: ["user_trabajador", "administrator"]
     },
     {
       label: "Notificaciones",
       to: "/dash/notify",
       abbr: _abbr("Notificaciones"),
-      icon: Bell
+      icon: "i-lucide-bell"
     },
     {
       label: "Gestión firmas",
       to: "/admin/firmas",
       abbr: _abbr("Gestión firmas"),
-      icon: Share2,
+      icon: "i-lucide-share-2",
       requiredPermissions: ["firmas.view"],
       category: "admin"
     },
@@ -70,7 +71,7 @@ export function useDashboardLayout() {
       label: "Solicitudes",
       to: "/admin/solicitudes",
       abbr: _abbr("Solicitudes"),
-      icon: List,
+      icon: "i-lucide-list",
       requiredPermissions: ["solicitudes.view"],
       category: "admin"
     },
@@ -78,7 +79,7 @@ export function useDashboardLayout() {
       label: "Reportes",
       to: "/admin/reportes",
       abbr: _abbr("Reportes"),
-      icon: BarChart3,
+      icon: "i-lucide-bar-chart-3",
       adminOnly: true,
       category: "admin"
     },
@@ -86,7 +87,7 @@ export function useDashboardLayout() {
       label: "Usuarios",
       to: "/admin/users",
       abbr: _abbr("Usuarios"),
-      icon: Users,
+      icon: "i-lucide-users",
       adminOnly: true,
       category: "admin"
     },
@@ -94,7 +95,7 @@ export function useDashboardLayout() {
       label: "Convenios",
       to: "/admin/convenios",
       abbr: _abbr("Convenios"),
-      icon: Building,
+      icon: "i-lucide-building-2",
       requiredPermissions: ["convenios.view"],
       excludedRoles: ["user_trabajador"],
       category: "admin"
@@ -103,7 +104,7 @@ export function useDashboardLayout() {
       label: "Configuraciones",
       to: "/admin/configuraciones",
       abbr: _abbr("Configuraciones"),
-      icon: Settings,
+      icon: "i-lucide-settings",
       adminOnly: true,
       category: "admin"
     },
@@ -111,22 +112,22 @@ export function useDashboardLayout() {
       label: "CMS",
       to: "/admin/contenido",
       abbr: _abbr("CMS"),
-      icon: FileText,
+      icon: "i-lucide-file-text",
       adminOnly: true,
       category: "admin"
     },
-    { label: "Perfil", to: "/dash/perfil", abbr: _abbr("Perfil"), icon: User },
+    { label: "Perfil", to: "/dash/perfil", abbr: _abbr("Perfil"), icon: "i-lucide-user" },
     {
       label: "Oficinas",
       to: "/dash/oficinas",
       abbr: _abbr("Oficinas"),
-      icon: Building
+      icon: "i-lucide-building-2"
     },
     {
       label: "Terminos",
       to: "/dash/terminos",
       abbr: _abbr("Terminos y condiciones"),
-      icon: FilePlus
+      icon: "i-lucide-file-plus"
     }
   ];
 
@@ -155,6 +156,16 @@ export function useDashboardLayout() {
           hasPermission(permission)
         );
         if (!hasAllPermissions) {
+          return false;
+        }
+      }
+
+      // Si el item requiere roles específicos, al menos uno debe coincidir
+      if (item.requiredRoles && item.requiredRoles.length > 0) {
+        const hasRequiredRole = item.requiredRoles.some(role =>
+          userRoles.value.includes(role)
+        );
+        if (!hasRequiredRole) {
           return false;
         }
       }

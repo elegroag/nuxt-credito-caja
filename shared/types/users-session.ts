@@ -4,6 +4,8 @@ export interface UserSession {
   name: string
   email: string
   roles: string[]
+  permissions?: string[]
+  numero_documento?: string
   trabajador?: {
     nit: string
     estado: string

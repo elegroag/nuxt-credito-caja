@@ -92,6 +92,18 @@ export default defineEventHandler(async (event: H3Event) => {
       return CustomResponse.error("No hay sesión activa", "Error de autenticación");
     }
 
+    const roles = (session.user as { roles?: string[] }).roles || [];
+    const puedeCrear = roles.some(role =>
+      ["administrator", "adviser", "user_trabajador", "user_empresa", "empleador"].includes(role)
+    );
+    if (!puedeCrear) {
+      setResponseStatus(event, 403);
+      return CustomResponse.error(
+        "El rol actual no permite crear solicitudes de crédito",
+        "Acceso denegado"
+      );
+    }
+
     const payload = await readValidatedBody(event, bodySchema.parse);
 
     // Agregar owner_username desde la sesión si no está en el payload

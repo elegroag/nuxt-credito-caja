@@ -196,5 +196,27 @@ export const users = [
     updated_at: "2026-02-25 02:06:14.0",
     pin_verification: "1234",
     password_hardcoded: "Admin123$."
+  },
+  {
+    id: 10,
+    username: "codeudor.demo",
+    email: "codeudor.demo@example.com",
+    full_name: "Codeudor Demo Persona",
+    phone: "3001112233",
+    roles: ["user_codeudor"],
+    disabled: false,
+    is_active: true,
+    tipo_documento: "1",
+    numero_documento: "1098765432",
+    nombres: "Codeudor",
+    apellidos: "Demo Persona",
+    password_hash: null,
+    last_login: null,
+    email_verified_at: "2026-02-25 02:06:14.0",
+    remember_token: null,
+    created_at: "2026-02-25 02:06:14.0",
+    updated_at: "2026-02-25 02:06:14.0",
+    pin_verification: "1234",
+    password_hardcoded: "Admin123$."
   }
 ];

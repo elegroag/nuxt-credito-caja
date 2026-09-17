@@ -1,12 +1,12 @@
-import type { Component } from "vue";
-
 export interface NavItem {
   label: string
   to: string
   abbr: string
-  icon: Component
+  /** Nombre Iconify / Nuxt Icon, p. ej. `i-lucide-bell` */
+  icon: string
   adminOnly?: boolean
   requiredPermissions?: string[]
+  requiredRoles?: string[]
   excludedRoles?: string[]
   category?: "user" | "admin"
 }

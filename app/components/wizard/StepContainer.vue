@@ -16,7 +16,7 @@
 
       <UButton v-if="isLastStep" type="button" :loading="loading" @click="$emit('submit')">
         <Send class="mr-2 h-4 w-4" />
-        Enviar solicitud
+        Guardar solicitud
       </UButton>
 
       <div v-else class="flex flex-col items-end gap-1">

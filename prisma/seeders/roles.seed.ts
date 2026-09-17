@@ -88,9 +88,9 @@ export const roles = [
   },
   {
     id: 6,
-    nombre: "codeudor",
+    nombre: "user_codeudor",
     etiqueta: "Codeudor",
-    descripcion: "Codeudor que firma créditos como garante",
+    descripcion: "Codeudor externo que consulta responsabilidades contractuales y firma como garante",
     permisos: ["solicitudes.read", "firma_digital"],
     color: "#BE185D",
     orden: 6,
