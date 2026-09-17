@@ -417,6 +417,20 @@ const codeudorService = () => {
     return { codigo_enviado: true };
   };
 
+  const eliminarVinculo = async (
+    vinculoId: number,
+    sessionUser: { id: number | string, roles?: string[] }
+  ) => {
+    const vinculo = await getVinculoOwned(vinculoId, sessionUser);
+    await prisma.usuarios_codeudores.delete({
+      where: { id: vinculo.id }
+    });
+    return {
+      id: Number(vinculo.id),
+      eliminado: true
+    };
+  };
+
   const listarResponsabilidades = async (numeroDocumento: string | null | undefined) => {
     if (!numeroDocumento) {
       return { total: 0, valor_total: 0, items: [] };
@@ -540,6 +554,7 @@ const codeudorService = () => {
     listarPorTitular,
     confirmarCodigo,
     reenviarCodigo,
+    eliminarVinculo,
     listarResponsabilidades,
     detalleResponsabilidad
   };

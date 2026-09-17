@@ -246,6 +246,34 @@ export const useGestionCodeudores = (options?: {
     }
   };
 
+  const eliminar = async (vinculoId: number) => {
+    loading.value = true;
+    error.value = null;
+    successMessage.value = null;
+    try {
+      const response = await api.deleteJson<ApiResponse<{ id: number, eliminado: boolean }>>(
+        `/api/codeudores/${vinculoId}`,
+        {},
+        { auth: true }
+      );
+      if (!response.success) {
+        throw new Error(response.error || response.message || "No fue posible eliminar el vínculo");
+      }
+      if (pendingConfirmId.value === vinculoId) {
+        pendingConfirmId.value = null;
+        codigo.value = "";
+      }
+      successMessage.value = "Vínculo con codeudor eliminado.";
+      await listar();
+      return true;
+    } catch (e: unknown) {
+      error.value = extractApiErrorMessage(e, "Error al eliminar vínculo");
+      return false;
+    } finally {
+      loading.value = false;
+    }
+  };
+
   return {
     loading,
     confirming,
@@ -260,6 +288,7 @@ export const useGestionCodeudores = (options?: {
     listar,
     crear,
     confirmar,
-    reenviar
+    reenviar,
+    eliminar
   };
 };

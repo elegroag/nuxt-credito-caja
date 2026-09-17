@@ -590,7 +590,7 @@
                   {{ v.estado }}
                 </UBadge>
               </div>
-              <div class="flex gap-2">
+              <div class="flex flex-wrap gap-2">
                 <UButton
                   v-if="v.estado !== 'autorizado'"
                   variant="soft"
@@ -609,6 +609,15 @@
                   @click="reenviar(v.id)"
                 >
                   Reenviar código
+                </UButton>
+                <UButton
+                  variant="outline"
+                  color="destructive"
+                  size="sm"
+                  icon="i-lucide-unlink"
+                  @click="pedirConfirmarEliminar(v)"
+                >
+                  Eliminar vínculo
                 </UButton>
               </div>
             </div>
@@ -758,6 +767,41 @@
           </div>
         </template>
       </UModal>
+
+      <UModal
+        v-model:open="modalEliminarOpen"
+        title="Eliminar vínculo"
+        description="Se eliminará solo la relación con el codeudor. El usuario codeudor no se borrará."
+        icon="i-lucide-unlink"
+        class="max-w-md"
+      >
+        <template #body>
+          <p class="text-sm text-muted-foreground">
+            ¿Eliminar el vínculo con
+            <span class="font-medium text-foreground">
+              {{ vinculoAEliminar?.codeudor.full_name || vinculoAEliminar?.codeudor.username }}
+            </span>?
+          </p>
+        </template>
+        <template #footer>
+          <div class="flex justify-end gap-2">
+            <UButton
+              variant="ghost"
+              :disabled="loadingCodeudores"
+              @click="modalEliminarOpen = false"
+            >
+              Cancelar
+            </UButton>
+            <UButton
+              color="destructive"
+              :loading="loadingCodeudores"
+              @click="confirmarEliminarVinculo"
+            >
+              Eliminar vínculo
+            </UButton>
+          </div>
+        </template>
+      </UModal>
     </div>
   </div>
 </template>
@@ -765,7 +809,10 @@
 <script setup lang="ts">
 import { computed, onMounted, ref, watch } from "vue";
 import { useShowUser } from "~/composables/admin/useShowUser";
-import { useGestionCodeudores } from "~/composables/codeudor/useGestionCodeudores";
+import {
+  useGestionCodeudores,
+  type CodeudorVinculo
+} from "~/composables/codeudor/useGestionCodeudores";
 
 definePageMeta({
   layout: "dashboard",
@@ -803,7 +850,8 @@ const {
   listar,
   crear,
   confirmar,
-  reenviar
+  reenviar,
+  eliminar
 } = useGestionCodeudores({ titularUserId });
 
 const rolesUsuario = computed(() => {
@@ -823,6 +871,8 @@ const tiposDocumento = [
 
 const modalCodeudorOpen = ref(false);
 const hallazgoAutorizado = ref(false);
+const modalEliminarOpen = ref(false);
+const vinculoAEliminar = ref<CodeudorVinculo | null>(null);
 
 const modalCodeudorTitle = computed(() => {
   if (hallazgoAutorizado.value) return "Codeudor ya vinculado";
@@ -894,6 +944,20 @@ const onConfirmarCodeudor = async () => {
   const ok = await confirmar();
   if (ok) {
     cerrarModalCodeudor();
+  }
+};
+
+const pedirConfirmarEliminar = (v: CodeudorVinculo) => {
+  vinculoAEliminar.value = v;
+  modalEliminarOpen.value = true;
+};
+
+const confirmarEliminarVinculo = async () => {
+  if (!vinculoAEliminar.value) return;
+  const ok = await eliminar(vinculoAEliminar.value.id);
+  if (ok) {
+    modalEliminarOpen.value = false;
+    vinculoAEliminar.value = null;
   }
 };
 
