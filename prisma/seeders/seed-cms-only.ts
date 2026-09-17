@@ -1,5 +1,5 @@
-import prisma from "../lib/prisma.ts";
-import { seedCmsContenido } from "./seeders/cms-contenido.seed.ts";
+import prisma from "../../lib/prisma.ts";
+import { seedCmsContenido } from "./cms-contenido.seed.ts";
 
 async function main() {
   const count = await seedCmsContenido(prisma);
