@@ -80,7 +80,20 @@ const bodySchema = z.object({
   informacion_economica: z.any().optional(),
   propiedades: z.any().optional(),
   deudas: z.any().optional(),
-  referencias: z.any().optional()
+  referencias: z.any().optional(),
+  codeudores_asignados: z
+    .array(
+      z.object({
+        vinculo_id: z.number(),
+        user_id: z.number(),
+        tipo_documento: z.string(),
+        numero_documento: z.string().min(1),
+        nombre_completo: z.string().min(1),
+        email: z.string().email(),
+        telefono: z.string().nullable().optional()
+      })
+    )
+    .optional()
 });
 
 export default defineEventHandler(async (event: H3Event) => {

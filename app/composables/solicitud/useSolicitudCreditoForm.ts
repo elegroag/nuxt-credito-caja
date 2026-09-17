@@ -108,7 +108,8 @@ const createInitialSolicitudCreditoForm = (): SolicitudCreditoPayload => ({
   referencias: {
     familiares: [],
     personales: []
-  }
+  },
+  codeudores_asignados: []
 });
 
 const cloneInitialSolicitudCreditoForm = (): SolicitudCreditoPayload => {
@@ -140,7 +141,11 @@ export const useSolicitudCreditoForm = () => {
       }
 
       const parsed = JSON.parse(stored) as SolicitudCreditoPayload;
-      form.value = parsed;
+      form.value = {
+        ...cloneInitialSolicitudCreditoForm(),
+        ...parsed,
+        codeudores_asignados: parsed.codeudores_asignados ?? []
+      };
     } catch (error) {
       console.error("Error cargando formulario de solicitud desde storage:", error);
       localStorage.removeItem(STORAGE_KEY);

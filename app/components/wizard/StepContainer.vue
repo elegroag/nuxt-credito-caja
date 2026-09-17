@@ -25,7 +25,7 @@
           <ChevronRight class="ml-2 h-4 w-4" />
         </UButton>
         <span v-if="isStepBloqueado" class="text-xs text-destructive font-medium">
-          Complete las referencias requeridas para continuar
+          {{ mensajeBloqueo }}
         </span>
       </div>
     </div>
@@ -36,29 +36,38 @@
 import { computed } from "vue";
 import { ChevronLeft, ChevronRight, Send } from "@lucide/vue";
 import { useConfigurations } from "~/composables/admin/useConfigurations";
+import type { CodeudorAsignado } from "~~/shared/types/payload";
 
-interface ReferenciasProps {
+interface WizardNavForm {
+  referencias?: {
+    familiares: Referencia[];
+    personales: Referencia[];
+  };
+  linea_credito?: {
+    codeudores?: number;
+  };
+  codeudores_asignados?: CodeudorAsignado[];
+}
+
+interface Props {
   currentStep?: number;
   currentStepKey?: string;
   totalSteps?: number;
   isLastStep?: boolean;
   showPrev?: boolean;
   loading?: boolean;
-  form?: {
-    referencias: {
-      familiares: Referencia[];
-      personales: Referencia[];
-    };
-  };
+  codeudoresRequeridos?: number;
+  form?: WizardNavForm;
 }
 
-const props = withDefaults(defineProps<ReferenciasProps>(), {
+const props = withDefaults(defineProps<Props>(), {
   currentStep: 0,
   currentStepKey: "",
   totalSteps: 1,
   isLastStep: false,
   showPrev: true,
   loading: false,
+  codeudoresRequeridos: 0,
   form: undefined
 });
 
@@ -68,16 +77,37 @@ const minimaFamiliares = computed(() => getConfigurationAsNumber("referencias_fa
 const minimaPersonales = computed(() => getConfigurationAsNumber("referencias_personales", 1));
 
 const referenciasValido = computed(() => {
-  if (!props.form) return true;
-  const familiares = props.form?.referencias?.familiares?.length || 0;
-  const personales = props.form?.referencias?.personales?.length || 0;
+  if (!props.form?.referencias) return true;
+  const familiares = props.form.referencias.familiares?.length || 0;
+  const personales = props.form.referencias.personales?.length || 0;
   const familiarOk = minimaFamiliares.value === 0 || familiares >= minimaFamiliares.value;
   const personalOk = minimaPersonales.value === 0 || personales >= minimaPersonales.value;
   return familiarOk && personalOk;
 });
 
 const isStepBloqueado = computed(() => {
-  return props.currentStepKey === "referencias" && !referenciasValido.value;
+  if (props.currentStepKey === "referencias" && !referenciasValido.value) {
+    return true;
+  }
+  if (props.currentStepKey === "codeudores") {
+    const requeridos = Number(
+      props.form?.linea_credito?.codeudores ?? props.codeudoresRequeridos ?? 0
+    );
+    if (requeridos <= 0) return false;
+    const asignados = props.form?.codeudores_asignados?.length ?? 0;
+    return asignados !== requeridos;
+  }
+  return false;
+});
+
+const mensajeBloqueo = computed(() => {
+  if (props.currentStepKey === "referencias") {
+    return "Complete las referencias requeridas para continuar";
+  }
+  if (props.currentStepKey === "codeudores") {
+    return "Asigna la cantidad de codeudores requerida para continuar";
+  }
+  return "";
 });
 
 defineEmits<{

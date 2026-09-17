@@ -86,4 +86,6 @@ export interface GuardarFirmanteParams {
   numero_documento: string;
   email: string;
   rol: string;
+  telefono?: string | null;
+  codigo_pais?: string | null;
 }

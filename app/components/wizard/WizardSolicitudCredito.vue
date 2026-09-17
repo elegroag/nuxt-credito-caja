@@ -89,7 +89,9 @@
 
         <CodeudoresStep
           v-else-if="currentStepKey === 'codeudores'"
+          :form="form"
           :codeudores-requeridos="codeudoresRequeridos"
+          :errors="stepErrors"
         />
 
         <RevisionStep
@@ -107,6 +109,7 @@
         :is-last-step="step === steps.length - 1"
         :loading="loadingFormData"
         :form="form"
+        :codeudores-requeridos="codeudoresRequeridos"
         class="mt-6"
         @prev="prev"
         @next="handleNext"
@@ -188,7 +191,10 @@ const stepErrors = computed(() => {
 });
 
 const handleNext = () => {
-  validateStep(currentStepKey.value, form.value);
+  const result = validateStep(currentStepKey.value, form.value);
+  if (!result.valid) {
+    return;
+  }
   next();
 };
 

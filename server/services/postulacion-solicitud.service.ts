@@ -5,7 +5,8 @@ import type {
   InformacionEconomica,
   Propiedad,
   Deuda,
-  Referencia
+  Referencia,
+  CodeudorAsignado
 } from "~~/shared/types/payload";
 import type { LineaCreditoSimulador } from "~~/shared/types/simulador";
 
@@ -181,7 +182,8 @@ const postulacionSolicitudService = () => {
         propiedades,
         deudas,
         referencias,
-        conyuge: _conyuge
+        conyuge: _conyuge,
+        codeudores_asignados: codeudoresAsignadosRaw
       } = payload;
 
       // Cast payload sections to proper types
@@ -339,10 +341,32 @@ const postulacionSolicitudService = () => {
         automatico: true
       });
 
+      // 6. Guardar codeudores como firmantes_solicitud
+      const codeudoresAsignados = Array.isArray(codeudoresAsignadosRaw)
+        ? (codeudoresAsignadosRaw as CodeudorAsignado[])
+        : [];
+
+      if (codeudoresAsignados.length > 0) {
+        await prisma.firmantes_solicitud.createMany({
+          data: codeudoresAsignados.map((c, index) => ({
+            solicitud_id: numeroSolicitudRadicado,
+            orden: index + 1,
+            tipo: String(c.tipo_documento || "1"),
+            nombre_completo: c.nombre_completo,
+            numero_documento: String(c.numero_documento),
+            email: c.email,
+            rol: "Codeudor",
+            telefono: c.telefono ? String(c.telefono) : null,
+            codigo_pais: "57"
+          }))
+        });
+      }
+
       return {
         numero_solicitud: numeroSolicitudRadicado,
         solicitud: solicitudCredito,
-        payload
+        payload,
+        firmantes_codeudores: codeudoresAsignados.length
       };
     } catch (error: unknown) {
       const err = error as Error;

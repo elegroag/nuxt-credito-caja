@@ -267,10 +267,30 @@ const validateReferencias: ValidatorFn = (form, configs) => {
 };
 
 /**
- * Valida el paso de codeudores (scaffold: sin validaciones aún).
+ * Valida el paso de codeudores: cantidad exacta de asignados autorizados.
  */
-const validateCodeudores: ValidatorFn = (_form, _configs) => {
-  return { valid: true, errors: {} };
+const validateCodeudores: ValidatorFn = (form, _configs) => {
+  const errors: Record<string, string> = {};
+  const requeridos = Number(form.linea_credito?.codeudores ?? 0);
+  if (requeridos <= 0) {
+    return { valid: true, errors };
+  }
+
+  const asignados = form.codeudores_asignados ?? [];
+  if (asignados.length !== requeridos) {
+    errors.codeudores_asignados
+      = `Debes asignar exactamente ${requeridos} codeudor${requeridos === 1 ? "" : "es"} autorizado${requeridos === 1 ? "" : "s"}.`;
+  }
+
+  const sinDocumento = asignados.some(
+    (c) => !c.numero_documento?.trim() || !c.email?.trim() || !c.nombre_completo?.trim()
+  );
+  if (sinDocumento) {
+    errors.codeudores_asignados
+      = "Cada codeudor asignado debe tener nombre, documento y correo.";
+  }
+
+  return { valid: Object.keys(errors).length === 0, errors };
 };
 
 /**

@@ -86,6 +86,17 @@ export interface Referencias {
   personales: Referencia[];
 }
 
+/** Codeudor seleccionado en el wizard para asociar a la solicitud */
+export interface CodeudorAsignado {
+  vinculo_id: number;
+  user_id: number;
+  tipo_documento: string;
+  numero_documento: string;
+  nombre_completo: string;
+  email: string;
+  telefono?: string | null;
+}
+
 export interface SolicitudCreditoPayload {
   solicitud: Solicitud;
   linea_credito: LineaCredito;
@@ -97,4 +108,6 @@ export interface SolicitudCreditoPayload {
   propiedades: Array<Propiedad>;
   deudas: Array<Deuda>;
   referencias: Referencias;
+  /** Codeudores asignados (solo si la línea exige codeudores > 0) */
+  codeudores_asignados?: CodeudorAsignado[];
 }
