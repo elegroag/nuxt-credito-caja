@@ -18,9 +18,11 @@ export const usePermissions = () => {
   };
 
   /**
-     * Verifica si el usuario es administrador
+     * Verifica si el usuario es administrador (rol o permiso system.admin)
      */
-  const isAdministrator = computed(() => hasRole("administrator"));
+  const isAdministrator = computed(
+    () => hasRole("administrator") || userPermissions.value.includes("system.admin")
+  );
 
   /**
      * Verifica si el usuario es asesor
@@ -43,6 +45,17 @@ export const usePermissions = () => {
   const isEmpresa = computed(() => hasRole("user_empresa"));
 
   /**
+     * Verifica si el usuario tiene un permiso específico
+     */
+  const hasPermission = (permission: string): boolean => {
+    if (isAdministrator.value || userPermissions.value.includes("system.admin")) {
+      return true;
+    }
+
+    return userPermissions.value.includes(permission);
+  };
+
+  /**
      * Puede crear solicitudes de crédito (requiere rol trabajador u otros creadores)
      */
   const canCreateSolicitud = computed(() => {
@@ -51,20 +64,9 @@ export const usePermissions = () => {
       || isAdviser.value
       || isTrabajador.value
       || isEmpresa.value
+      || hasPermission("applications.create")
     );
   });
-
-  /**
-     * Verifica si el usuario tiene un permiso específico
-     */
-  const hasPermission = (permission: string): boolean => {
-    // Los administradores tienen todos los permisos
-    if (isAdministrator.value) {
-      return true;
-    }
-
-    return userPermissions.value.includes(permission);
-  };
 
   /**
      * Verifica si el usuario puede acceder a rutas de administración
@@ -119,7 +121,12 @@ export const usePermissions = () => {
      * Verifica si el usuario puede gestionar usuarios
      */
   const canManageUsers = computed(() => {
-    return hasPermission("users.manage") || isAdministrator.value;
+    return (
+      hasPermission("users.edit")
+      || hasPermission("users.create")
+      || hasPermission("users.view")
+      || isAdministrator.value
+    );
   });
 
   /**

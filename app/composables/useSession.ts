@@ -1,5 +1,7 @@
 import { computed, useState } from "#imports";
 import { storage } from "~/composables/useStorage";
+import type { SessionData, SessionUser } from "#shared/types/session";
+import type { Trabajador } from "#shared/types/trabajador";
 
 const STORAGE_KEY_V1 = "comfaca_credito_session";
 const STORAGE_TOKEN_KEY = "comfaca_credito_access_token";
@@ -50,6 +52,15 @@ export const useSession = () => {
             const permissions = Array.isArray(u.permissions)
               ? u.permissions.filter((p: unknown) => typeof p === "string")
               : [];
+            const routeAccess = Array.isArray(u.routeAccess)
+              ? u.routeAccess.filter(
+                (r: unknown) =>
+                  r
+                  && typeof r === "object"
+                  && typeof (r as { path_prefix?: unknown }).path_prefix === "string"
+                  && typeof (r as { permission_key?: unknown }).permission_key === "string"
+              )
+              : [];
             const email = typeof u.email === "string" ? u.email : "";
             const tipo_documento
               = typeof u.tipo_documento === "string" ? u.tipo_documento : "";
@@ -71,6 +82,7 @@ export const useSession = () => {
               username,
               roles,
               permissions,
+              routeAccess,
               email,
               tipo_documento,
               numero_documento,
@@ -102,6 +114,15 @@ export const useSession = () => {
         const permissions = Array.isArray(parsed.user.permissions)
           ? parsed.user.permissions.filter((p: unknown) => typeof p === "string")
           : [];
+        const routeAccess = Array.isArray(parsed.user.routeAccess)
+          ? parsed.user.routeAccess.filter(
+            (r: unknown) =>
+              r
+              && typeof r === "object"
+              && typeof (r as { path_prefix?: unknown }).path_prefix === "string"
+              && typeof (r as { permission_key?: unknown }).permission_key === "string"
+          )
+          : [];
         const email
           = typeof parsed.user.email === "string" ? parsed.user.email : "";
         const tipo_documento
@@ -122,6 +143,7 @@ export const useSession = () => {
           username,
           roles,
           permissions,
+          routeAccess,
           email,
           tipo_documento,
           numero_documento,
@@ -225,6 +247,7 @@ export const useSession = () => {
           user: {
             roles?: unknown
             permissions?: unknown
+            routeAccess?: unknown
             trabajador?: Trabajador | null
           }
         }
@@ -243,6 +266,15 @@ export const useSession = () => {
             : [];
           session.value.user.permissions = Array.isArray(userData.permissions)
             ? userData.permissions.filter(p => typeof p === "string")
+            : [];
+          session.value.user.routeAccess = Array.isArray(userData.routeAccess)
+            ? userData.routeAccess.filter(
+              (r: unknown) =>
+                r
+                && typeof r === "object"
+                && typeof (r as { path_prefix?: unknown }).path_prefix === "string"
+                && typeof (r as { permission_key?: unknown }).permission_key === "string"
+            ) as SessionUser["routeAccess"]
             : [];
 
           if ("trabajador" in userData) {

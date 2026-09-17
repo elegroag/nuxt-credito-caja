@@ -3,6 +3,7 @@ import bcrypt from "bcryptjs";
 import userService from "./user.service";
 import apiSisuweb from "./api-sisuweb";
 import smtpMailerService from "~~/server/services/shared/smtp-mailer.service";
+import rbacService from "~~/server/services/rbac.service";
 import type {
   UserSession,
   LoginCredentials,
@@ -43,73 +44,11 @@ const authService = () => {
   const userSrv = userService();
   const api = apiSisuweb();
   const jwt = jwtManager();
+  const rbac = rbacService();
 
-  const permissionsData = (roles: string[]) => {
-    const permissions: string[] = [];
-
-    // Handle null or empty roles
-    if (roles.length === 0) {
-      return permissions;
-    }
-
-    // Define role permissions
-    const rolePermissions = {
-      administrator: [
-        "users.create",
-        "users.edit",
-        "users.delete",
-        "users.view",
-        "applications.create",
-        "applications.edit",
-        "applications.delete",
-        "applications.view_all",
-        "roles.manage",
-        "system.admin"
-      ],
-      adviser: [
-        "applications.create",
-        "applications.edit",
-        "applications.delete",
-        "applications.view_all",
-        "applications.approve",
-        "applications.reject",
-        "solicitudes.manage",
-        "solicitudes.view",
-        "convenios.manage",
-        "convenios.view",
-        "firmas.manage",
-        "firmas.view",
-        "system.admin"
-      ],
-      user_empresa: [
-        "applications.create",
-        "applications.edit",
-        "applications.delete",
-        "applications.view_own"
-      ],
-      user_trabajador: [
-        "applications.create",
-        "applications.edit",
-        "applications.delete",
-        "applications.view_own"
-      ],
-      user_codeudor: [
-        "applications.view_own",
-        "responsabilidades.view",
-        "firma_digital"
-      ]
-    };
-
-    const allPermissions: string[] = [];
-    // Get permissions for each role
-    for (const role of roles) {
-      if (rolePermissions[role as keyof typeof rolePermissions]) {
-        allPermissions.push(
-          ...rolePermissions[role as keyof typeof rolePermissions]
-        );
-      }
-    }
-    return allPermissions;
+  const permissionsData = async (roles: string[]) => {
+    if (!roles?.length) return [] as string[];
+    return rbac.getPermissionsForRoles(roles);
   };
 
   const createToken = async (user: UserWithPassword) => {
@@ -189,23 +128,26 @@ const authService = () => {
     });
   };
 
-  const createUserSession = (
+  const createUserSession = async (
     user: UserWithPassword,
     trabajador: TrabajadorData | null,
     adviser: AdviserData | null
-  ): UserSession => {
+  ): Promise<UserSession> => {
+    const permissions = await permissionsData(user.roles as string[]);
+    const routeAccess = await rbac.getRouteAccessRules();
     const session = {
       id: user.id.toString(),
       username: user.username,
       name: user.full_name || "",
       email: user.email || "",
       roles: user.roles as string[],
-      permissions: permissionsData(user.roles as string[]),
+      permissions,
+      routeAccess,
       numero_documento: user.numero_documento || "",
       trabajador: trabajador || null,
       adviser: adviser || null
     };
-    return session;
+    return session as UserSession;
   };
 
   const login = async (event: H3Event, credentials: LoginCredentials) => {
@@ -257,7 +199,7 @@ const authService = () => {
       }
     }
 
-    const userSession = createUserSession(user, trabajadorSesion, null);
+    const userSession = await createUserSession(user, trabajadorSesion, null);
 
     await setUserSession(event, {
       user: userSession,
@@ -329,6 +271,9 @@ const authService = () => {
       }
     }
 
+    const permissions = await permissionsData(roles);
+    const routeAccess = await rbac.getRouteAccessRules();
+
     return {
       message: "Verification successful",
       valid: true,
@@ -346,7 +291,8 @@ const authService = () => {
         numero_documento: user.numero_documento,
         nombres: user.nombres,
         apellidos: user.apellidos,
-        permissions: permissionsData(user.roles as string[]),
+        permissions,
+        routeAccess,
         trabajador: trabajadorData
       }
     };
@@ -455,7 +401,7 @@ const authService = () => {
       }
     }
 
-    const userSession = createUserSession(
+    const userSession = await createUserSession(
       user,
       trabajadorSesion,
       adviserSesion
@@ -598,7 +544,7 @@ const authService = () => {
       numero_documento: verifiedUser.numero_documento
     };
 
-    const userSession = createUserSession(userForToken, null, null);
+    const userSession = await createUserSession(userForToken, null, null);
 
     await setUserSession(event, {
       user: userSession,

@@ -1,3 +1,9 @@
+export interface RouteAccessRule {
+  path_prefix: string
+  permission_key: string
+  ordering: number
+}
+
 export interface UserSession {
   id: string
   username: string
@@ -5,6 +11,7 @@ export interface UserSession {
   email: string
   roles: string[]
   permissions?: string[]
+  routeAccess?: RouteAccessRule[]
   numero_documento?: string
   trabajador?: {
     nit: string

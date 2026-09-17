@@ -233,7 +233,9 @@ export function useAdminUsers() {
       adviser: "Asesor",
       user_trabajador: "Trabajador",
       user_codeudor: "Codeudor",
-      user_empresa: "Empresa"
+      user_empresa: "Empresa",
+      empleador: "Empleador",
+      director: "Director"
     };
     return roles[rol] || rol;
   };

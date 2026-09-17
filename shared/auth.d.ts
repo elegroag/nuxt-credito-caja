@@ -7,6 +7,13 @@ declare module "#auth-utils" {
     name: string
     roles: string[]
     username: string
+    permissions?: string[]
+    routeAccess?: Array<{
+      path_prefix: string
+      permission_key: string
+      ordering: number
+    }>
+    numero_documento?: string
     trabajador?: {
       nit: string
       estado: string

@@ -1,10 +1,12 @@
 import type { Trabajador } from "./trabajador";
 import type { PuntoAsesoria } from "./adviser";
+import type { RouteAccessRule } from "./users-session";
 
 export type SessionUser = {
   username: string
   roles: string[]
   permissions: string[]
+  routeAccess?: RouteAccessRule[]
   email: string
   tipo_documento: string
   numero_documento: string

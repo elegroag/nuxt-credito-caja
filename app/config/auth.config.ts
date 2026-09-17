@@ -1,9 +1,13 @@
 /**
  * Configuración de autenticación
- * Define las páginas y rutas que requieren o excluyen autenticación
+ * Define las páginas y rutas que requieren o excluyen autenticación.
+ * Los permisos por ruta viven en BD (route_permissions); este archivo
+ * mantiene exclusiones y helpers de cliente con fallback.
  */
 
-// Páginas que no requieren autenticación
+import type { RouteAccessRule } from "~~/shared/types/users-session";
+import { canAccessPathWithRules as evaluatePathAccess } from "~~/shared/utils/rbac-rules";
+
 export const AUTH_EXCLUDED_PAGES = [
   "/login",
   "/register",
@@ -12,8 +16,8 @@ export const AUTH_EXCLUDED_PAGES = [
   "/verify"
 ] as const;
 
-// Páginas que siempre requieren autenticación
 export const AUTH_REQUIRED_PAGES = [
+  "/dash",
   "/dashboard",
   "/profile",
   "/settings",
@@ -21,8 +25,8 @@ export const AUTH_REQUIRED_PAGES = [
   "/verify-email"
 ] as const;
 
-// Patrones de rutas que requieren autenticación
 export const AUTH_REQUIRED_PATTERNS = [
+  "/dash/",
   "/dashboard/",
   "/profile/",
   "/settings/",
@@ -32,81 +36,64 @@ export const AUTH_REQUIRED_PATTERNS = [
   "/documentos/"
 ] as const;
 
-// Configuración de permisos por ruta
-export const ROUTE_PERMISSIONS = {
-  // Rutas de administrador
+/** @deprecated Preferir routeAccess de sesión (BD). Fallback legacy por roles. */
+export const ROUTE_PERMISSIONS: Record<string, string[]> = {
   "/admin/users": ["administrator"],
-  "/admin/users/": ["administrator"],
   "/admin/roles": ["administrator"],
-  "/admin/roles/": ["administrator"],
-
-  // Rutas de firmas (admin y adviser)
   "/admin/firmas": ["administrator", "adviser"],
-  "/admin/firmas/": ["administrator", "adviser"],
-
-  // Rutas de convenios (admin, adviser y trabajador)
-  "/admin/convenios": ["administrator", "adviser", "user_trabajador"],
-  "/admin/convenios/": ["administrator", "adviser", "user_trabajador"],
-
-  // Rutas de solicitudes administrativas (admin y adviser)
+  "/admin/convenios": ["administrator", "adviser"],
   "/admin/solicitudes": ["administrator", "adviser"],
-  "/admin/solicitudes/": ["administrator", "adviser"],
-
-  // Rutas de reportes (solo admin)
   "/admin/reportes": ["administrator"],
-  "/admin/reportes/": ["administrator"],
+  "/admin/configuraciones": ["administrator"],
+  "/admin/contenido": ["administrator"],
+  "/admin/carrusel": ["administrator"]
+};
 
-  // Rutas de aplicaciones (todos los roles autenticados)
-  "/admin/applications": ["administrator", "adviser", "user_trabajador", "user_empresa"],
-  "/admin/applications/": ["administrator", "adviser", "user_trabajador", "user_empresa"]
-} as const;
-
-// Función para verificar si una ruta debe excluirse de autenticación
 export const isAuthExcludedRoute = (path: string): boolean => {
   return AUTH_EXCLUDED_PAGES.some(page => path.startsWith(page));
 };
 
-// Función para verificar si una ruta requiere autenticación
 export const isAuthRequiredRoute = (path: string): boolean => {
   return AUTH_REQUIRED_PAGES.some(page => path.startsWith(page))
     || AUTH_REQUIRED_PATTERNS.some(pattern => path.startsWith(pattern));
 };
 
-// Función para verificar permisos específicos para una ruta
-export const hasPermissionForRoute = (path: string, userRoles: string[]): boolean => {
-  // Si no hay roles definidos, denegar acceso
-  if (!userRoles || userRoles.length === 0) {
-    return false;
+export const canAccessPathWithRules = (
+  path: string,
+  userRoles: string[],
+  permissions: string[] = [],
+  rules: RouteAccessRule[] = []
+): boolean => {
+  if (rules.length > 0) {
+    return evaluatePathAccess(path, userRoles, permissions, rules);
   }
 
-  // Los administradores tienen acceso a todo
-  if (userRoles.includes("administrator")) {
+  if (!userRoles || userRoles.length === 0) return false;
+  if (userRoles.includes("administrator") || permissions.includes("system.admin")) {
     return true;
   }
 
-  // Verificar permisos específicos por ruta
+  const normalized = path.split("?")[0] || path;
   for (const [route, allowedRoles] of Object.entries(ROUTE_PERMISSIONS)) {
-    if (path.startsWith(route)) {
+    if (normalized.startsWith(route)) {
       return allowedRoles.some(role => userRoles.includes(role));
     }
   }
-
-  // Si no hay restricción específica, permitir acceso a usuarios autenticados
   return true;
 };
 
-// Función principal para determinar si se debe aplicar middleware de auth
+/** Compat: firma antigua usada por middleware. */
+export const hasPermissionForRoute = (
+  path: string,
+  userRoles: string[],
+  permissions: string[] = [],
+  rules: RouteAccessRule[] = []
+): boolean => {
+  return canAccessPathWithRules(path, userRoles, permissions, rules);
+};
+
 export const shouldApplyAuthMiddleware = (path: string): boolean => {
-  // Si está en página excluida, no aplicar
-  if (isAuthExcludedRoute(path)) {
-    return false;
-  }
-
-  // Si está en página requerida o coincide con patrón, aplicar
-  if (isAuthRequiredRoute(path)) {
-    return true;
-  }
-
-  // Por defecto, aplicar middleware a todas las páginas excepto las excluidas
+  if (isAuthExcludedRoute(path)) return false;
+  if (isAuthRequiredRoute(path)) return true;
   return true;
 };

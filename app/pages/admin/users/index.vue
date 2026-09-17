@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import { onMounted } from "vue";
+import { onMounted, ref } from "vue";
 import type { TableColumn } from "@nuxt/ui";
 import { useAdminUsers } from "~/composables/admin/useAdminUsers";
+import { useApi } from "~/composables/useApi";
 
 definePageMeta({
   layout: "dashboard",
@@ -30,16 +31,32 @@ const {
   formatDate
 } = useAdminUsers();
 
-onMounted(() => cargarUsuarios());
+const api = useApi();
+const opcionesRol = ref<Array<{ label: string, value: string | null }>>([
+  { label: "Todos los roles", value: null }
+]);
 
-// Opciones selects
-const opcionesRol = [
-  { label: "Todos los roles", value: null },
-  { label: "Administrador", value: "administrator" },
-  { label: "Trabajador", value: "user_trabajador" },
-  { label: "Codeudor", value: "user_codeudor" },
-  { label: "Empresa", value: "user_empresa" }
-];
+onMounted(async () => {
+  cargarUsuarios();
+  try {
+    const response = await api.getJson<{
+      success: boolean
+      data?: Array<{ nombre: string, etiqueta?: string | null }>
+    }>("/api/admin/roles", { auth: true });
+    if (response.success && Array.isArray(response.data)) {
+      opcionesRol.value = [
+        { label: "Todos los roles", value: null },
+        ...response.data.map(r => ({
+          label: r.etiqueta || r.nombre,
+          value: r.nombre
+        }))
+      ];
+    }
+  } catch {
+    // mantener opción "Todos"
+  }
+});
+
 const opcionesEstado = [
   { label: "Todos los estados", value: null },
   { label: "Activo", value: "active" },

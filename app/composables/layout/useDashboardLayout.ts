@@ -1,17 +1,25 @@
-import { ref, computed } from "vue";
+import { ref, computed, onMounted, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useSession } from "~/composables/useSession";
-import { usePermissions } from "~/composables/usePermissions";
-import type { NavItem } from "#shared/types/layout";
+import type { NavItem, NavSectionGroup } from "#shared/types/layout";
 
 // Estado compartido (singleton)
 const sidebarOpen = ref(false);
 const sidebarCollapsed = ref(false);
 const userMenuOpen = ref(false);
+const menuSections = ref<NavSectionGroup[]>([]);
+const menuLoading = ref(false);
+const menuLoaded = ref(false);
+let menuLoadPromise: Promise<void> | null = null;
+
+const SECTION_TITLE: Record<string, string> = {
+  General: "GENERAL",
+  Administración: "ADMINISTRACIÓN",
+  Parametrización: "PARAMETRIZACIÓN"
+};
 
 export function useDashboardLayout() {
   const { session, clearSession } = useSession();
-  const { hasPermission, isAdministrator, userRoles } = usePermissions();
   const route = useRoute();
   const router = useRouter();
 
@@ -30,177 +38,121 @@ export function useDashboardLayout() {
     return abbr || (label.trim()[0] || "").toUpperCase() || "·";
   };
 
-  const navItems: NavItem[] = [
-    { label: "Inicio", to: "/dash", abbr: _abbr("Inicio"), icon: "i-lucide-home" },
-    {
-      label: "Simulador",
-      to: "/dash/simulador/lineas-credito",
-      abbr: _abbr("Simulador"),
-      icon: "i-lucide-calculator",
-      requiredRoles: ["user_trabajador", "administrator", "adviser", "user_empresa", "empleador"]
-    },
-    {
-      label: "Contratos",
-      to: "/dash/responsabilidades",
-      abbr: _abbr("Contratos"),
-      icon: "i-lucide-file-signature",
-      requiredRoles: ["user_codeudor", "user_trabajador"]
-    },
-    {
-      label: "Mis codeudores",
-      to: "/dash/codeudores",
-      abbr: _abbr("Codeudores"),
-      icon: "i-lucide-users",
-      requiredRoles: ["user_trabajador", "administrator"]
-    },
-    {
-      label: "Notificaciones",
-      to: "/dash/notify",
-      abbr: _abbr("Notificaciones"),
-      icon: "i-lucide-bell"
-    },
-    {
-      label: "Gestión firmas",
-      to: "/admin/firmas",
-      abbr: _abbr("Gestión firmas"),
-      icon: "i-lucide-share-2",
-      requiredPermissions: ["firmas.view"],
-      category: "admin"
-    },
-    {
-      label: "Solicitudes",
-      to: "/admin/solicitudes",
-      abbr: _abbr("Solicitudes"),
-      icon: "i-lucide-list",
-      requiredPermissions: ["solicitudes.view"],
-      category: "admin"
-    },
-    {
-      label: "Reportes",
-      to: "/admin/reportes",
-      abbr: _abbr("Reportes"),
-      icon: "i-lucide-bar-chart-3",
-      adminOnly: true,
-      category: "admin"
-    },
-    {
-      label: "Usuarios",
-      to: "/admin/users",
-      abbr: _abbr("Usuarios"),
-      icon: "i-lucide-users",
-      adminOnly: true,
-      category: "admin"
-    },
-    {
-      label: "Convenios",
-      to: "/admin/convenios",
-      abbr: _abbr("Convenios"),
-      icon: "i-lucide-building-2",
-      requiredPermissions: ["convenios.view"],
-      excludedRoles: ["user_trabajador"],
-      category: "admin"
-    },
-    {
-      label: "Configuraciones",
-      to: "/admin/configuraciones",
-      abbr: _abbr("Configuraciones"),
-      icon: "i-lucide-settings",
-      adminOnly: true,
-      category: "admin"
-    },
-    {
-      label: "CMS",
-      to: "/admin/contenido",
-      abbr: _abbr("CMS"),
-      icon: "i-lucide-file-text",
-      adminOnly: true,
-      category: "admin"
-    },
-    { label: "Perfil", to: "/dash/perfil", abbr: _abbr("Perfil"), icon: "i-lucide-user" },
-    {
-      label: "Oficinas",
-      to: "/dash/oficinas",
-      abbr: _abbr("Oficinas"),
-      icon: "i-lucide-building-2"
-    },
-    {
-      label: "Terminos",
-      to: "/dash/terminos",
-      abbr: _abbr("Terminos y condiciones"),
-      icon: "i-lucide-file-plus"
+  const loadMenu = async (force = false): Promise<void> => {
+    if (!import.meta.client) return;
+    if (!session.value.accessToken) return;
+    if (menuLoaded.value && !force) return;
+    if (menuLoadPromise && !force) return menuLoadPromise;
+
+    menuLoadPromise = (async () => {
+      menuLoading.value = true;
+      try {
+        const { useApi } = await import("~/composables/useApi");
+        const api = useApi();
+        const response = await api.getJson<{
+          success: boolean
+          data?: {
+            sections?: Array<{ name: string, items: Array<{
+              key?: string
+              label: string
+              to: string
+              abbr?: string
+              icon?: string
+              section?: string
+              ordering?: number
+              requiredPermissions?: string[]
+              requiredRoles?: string[]
+              excludedRoles?: string[]
+            }> }>
+            items?: Array<{
+              key?: string
+              label: string
+              to: string
+              abbr?: string
+              icon?: string
+              section?: string
+              ordering?: number
+            }>
+          }
+        }>("/api/nav/menu", { auth: true });
+
+        if (!response.success || !response.data) {
+          menuSections.value = [];
+          menuLoaded.value = false;
+          return;
+        }
+
+        const sections = response.data.sections || [];
+        menuSections.value = sections.map(section => ({
+          name: section.name,
+          items: (section.items || []).map(item => ({
+            key: item.key,
+            label: item.label,
+            to: item.to,
+            abbr: item.abbr || _abbr(item.label),
+            icon: item.icon || "i-lucide-circle",
+            section: item.section || section.name,
+            ordering: item.ordering,
+            requiredPermissions: item.requiredPermissions,
+            requiredRoles: item.requiredRoles,
+            excludedRoles: item.excludedRoles
+          }))
+        }));
+        menuLoaded.value = true;
+      } catch {
+        menuSections.value = [];
+        menuLoaded.value = false;
+      } finally {
+        menuLoading.value = false;
+        menuLoadPromise = null;
+      }
+    })();
+
+    return menuLoadPromise;
+  };
+
+  onMounted(() => {
+    void loadMenu(true);
+  });
+
+  // Si aún no hay token al montar, cargar cuando la sesión esté lista
+  watch(
+    () => session.value.accessToken,
+    (token, prev) => {
+      if (!token) {
+        menuLoaded.value = false;
+        menuSections.value = [];
+        return;
+      }
+      if (token !== prev) {
+        void loadMenu(true);
+      }
     }
-  ];
+  );
 
   const isActive = (to: string) => {
-    if (to === "/dash")
+    if (to === "/dash") {
       return (
         route.path === "/dash"
         || route.path === "/"
         || route.path === "/index"
         || route.name === "index"
       );
+    }
     return route.path.startsWith(to);
   };
 
-  // Filtrar items de navegación según los permisos del usuario
   const filteredNavItems = computed(() => {
-    return navItems.filter((item) => {
-      // Si el item es solo para administrator y el usuario no es administrator, ocultarlo
-      if (item.adminOnly && !isAdministrator.value) {
-        return false;
-      }
-
-      // Si el item requiere permisos específicos, verificarlos
-      if (item.requiredPermissions && item.requiredPermissions.length > 0) {
-        const hasAllPermissions = item.requiredPermissions.every(permission =>
-          hasPermission(permission)
-        );
-        if (!hasAllPermissions) {
-          return false;
-        }
-      }
-
-      // Si el item requiere roles específicos, al menos uno debe coincidir
-      if (item.requiredRoles && item.requiredRoles.length > 0) {
-        const hasRequiredRole = item.requiredRoles.some(role =>
-          userRoles.value.includes(role)
-        );
-        if (!hasRequiredRole) {
-          return false;
-        }
-      }
-
-      // Si el item tiene roles excluidos, verificar que el usuario no tenga esos roles
-      if (item.excludedRoles && item.excludedRoles.length > 0) {
-        const hasExcludedRole = item.excludedRoles.some(role =>
-          userRoles.value.includes(role)
-        );
-        if (hasExcludedRole) {
-          return false;
-        }
-      }
-
-      // Si no hay restricciones, mostrar el item
-      return true;
-    });
+    return menuSections.value.flatMap(section => section.items);
   });
 
-  // Agrupar items por categoría para mostrar separadores
   const groupedNavItems = computed(() => {
-    const items = filteredNavItems.value;
-    const grouped: { [key: string]: NavItem[] } = {
-      user: [],
-      admin: []
-    };
-
-    items.forEach((item) => {
-      const category = item.category || "user";
-      if (!grouped[category]) {
-        grouped[category] = [];
-      }
-      grouped[category].push(item);
-    });
-
+    const grouped: Record<string, NavItem[]> = {};
+    for (const section of menuSections.value) {
+      if (!section.items.length) continue;
+      const title = SECTION_TITLE[section.name] || section.name.toUpperCase();
+      grouped[title] = section.items;
+    }
     return grouped;
   });
 
@@ -211,6 +163,8 @@ export function useDashboardLayout() {
 
   const logout = async () => {
     userMenuOpen.value = false;
+    menuLoaded.value = false;
+    menuSections.value = [];
     clearSession();
     await router.push("/login");
   };
@@ -222,9 +176,12 @@ export function useDashboardLayout() {
     userMenuOpen,
     navItems: filteredNavItems,
     groupedNavItems,
+    menuSections,
+    menuLoading,
     sectionTitle,
     isActive,
     logout,
+    loadMenu,
     _abbr
   };
 }

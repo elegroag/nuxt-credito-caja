@@ -11,6 +11,11 @@ interface LoginResponseData {
     username?: string
     roles?: string[]
     permissions?: string[]
+    routeAccess?: Array<{
+      path_prefix: string
+      permission_key: string
+      ordering: number
+    }>
     email?: string
     tipo_documento?: string
     numero_documento?: string
@@ -189,6 +194,7 @@ export function useLogin() {
             typeof user?.username === "string" ? user.username : username.value,
           roles: Array.isArray(user?.roles) ? user.roles : [],
           permissions: Array.isArray(user?.permissions) ? user.permissions : [],
+          routeAccess: Array.isArray(user?.routeAccess) ? user.routeAccess : [],
           email: typeof user?.email === "string" ? user.email : "",
           tipo_documento:
             typeof user?.tipo_documento === "string" ? user.tipo_documento : "",

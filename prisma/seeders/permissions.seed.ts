@@ -1,0 +1,118 @@
+/** Catálogo canónico de permisos (vocabulario UI/sesión). */
+export const permissions = [
+  { key: "system.admin", etiqueta: "Administración del sistema", descripcion: "Acceso total de administración" },
+  { key: "roles.manage", etiqueta: "Gestionar roles", descripcion: "Administrar roles del sistema" },
+  { key: "users.view", etiqueta: "Ver usuarios", descripcion: "Listar y ver usuarios" },
+  { key: "users.create", etiqueta: "Crear usuarios", descripcion: "Crear usuarios" },
+  { key: "users.edit", etiqueta: "Editar usuarios", descripcion: "Editar usuarios" },
+  { key: "users.delete", etiqueta: "Eliminar usuarios", descripcion: "Eliminar usuarios" },
+  { key: "applications.create", etiqueta: "Crear solicitudes", descripcion: "Crear solicitudes propias" },
+  { key: "applications.edit", etiqueta: "Editar solicitudes", descripcion: "Editar solicitudes propias" },
+  { key: "applications.delete", etiqueta: "Eliminar solicitudes", descripcion: "Eliminar solicitudes propias" },
+  { key: "applications.view_own", etiqueta: "Ver solicitudes propias", descripcion: "Ver solicitudes del usuario" },
+  { key: "applications.view_all", etiqueta: "Ver todas las solicitudes", descripcion: "Ver solicitudes de todos" },
+  { key: "applications.approve", etiqueta: "Aprobar solicitudes", descripcion: "Aprobar solicitudes" },
+  { key: "applications.reject", etiqueta: "Rechazar solicitudes", descripcion: "Rechazar solicitudes" },
+  { key: "solicitudes.view", etiqueta: "Ver solicitudes admin", descripcion: "Ver módulo admin de solicitudes" },
+  { key: "solicitudes.manage", etiqueta: "Gestionar solicitudes admin", descripcion: "Gestionar solicitudes en admin" },
+  { key: "firmas.view", etiqueta: "Ver firmas", descripcion: "Ver gestión de firmas" },
+  { key: "firmas.manage", etiqueta: "Gestionar firmas", descripcion: "Gestionar proceso de firmas" },
+  { key: "convenios.view", etiqueta: "Ver convenios", descripcion: "Ver convenios empresariales" },
+  { key: "convenios.manage", etiqueta: "Gestionar convenios", descripcion: "Gestionar convenios" },
+  { key: "reportes.view", etiqueta: "Ver reportes", descripcion: "Acceso a reportes" },
+  { key: "configuraciones.view", etiqueta: "Ver configuraciones", descripcion: "Acceso a configuraciones" },
+  { key: "cms.view", etiqueta: "Ver CMS", descripcion: "Acceso a contenido CMS" },
+  { key: "carrusel.view", etiqueta: "Ver carrusel", descripcion: "Gestionar carrusel" },
+  { key: "responsabilidades.view", etiqueta: "Ver contratos", descripcion: "Ver responsabilidades/contratos" },
+  { key: "codeudores.manage", etiqueta: "Gestionar codeudores", descripcion: "Administrar vínculos de codeudores" },
+  { key: "firma_digital", etiqueta: "Firma digital", descripcion: "Participar en firma digital" },
+  { key: "simulador.view", etiqueta: "Ver simulador", descripcion: "Acceso al simulador de crédito" }
+] as const;
+
+/** Asignación rol → keys de permiso (vocabulario unificado). */
+export const rolePermissionMap: Record<string, string[]> = {
+  administrator: [
+    "system.admin",
+    "roles.manage",
+    "users.view",
+    "users.create",
+    "users.edit",
+    "users.delete",
+    "applications.create",
+    "applications.edit",
+    "applications.delete",
+    "applications.view_all",
+    "applications.view_own",
+    "applications.approve",
+    "applications.reject",
+    "solicitudes.view",
+    "solicitudes.manage",
+    "firmas.view",
+    "firmas.manage",
+    "convenios.view",
+    "convenios.manage",
+    "reportes.view",
+    "configuraciones.view",
+    "cms.view",
+    "carrusel.view",
+    "responsabilidades.view",
+    "codeudores.manage",
+    "firma_digital",
+    "simulador.view"
+  ],
+  adviser: [
+    "applications.create",
+    "applications.edit",
+    "applications.delete",
+    "applications.view_all",
+    "applications.approve",
+    "applications.reject",
+    "solicitudes.view",
+    "solicitudes.manage",
+    "firmas.view",
+    "firmas.manage",
+    "convenios.view",
+    "convenios.manage",
+    "simulador.view"
+  ],
+  user_empresa: [
+    "applications.create",
+    "applications.edit",
+    "applications.delete",
+    "applications.view_own",
+    "simulador.view"
+  ],
+  user_trabajador: [
+    "applications.create",
+    "applications.edit",
+    "applications.delete",
+    "applications.view_own",
+    "responsabilidades.view",
+    "codeudores.manage",
+    "simulador.view"
+  ],
+  empleador: [
+    "applications.create",
+    "applications.edit",
+    "applications.delete",
+    "applications.view_own",
+    "firma_digital",
+    "simulador.view"
+  ],
+  user_codeudor: [
+    "applications.view_own",
+    "responsabilidades.view",
+    "firma_digital"
+  ],
+  director: [
+    "system.admin",
+    "users.view",
+    "applications.view_all",
+    "solicitudes.view",
+    "reportes.view",
+    "firmas.view",
+    "convenios.view",
+    "firma_digital",
+    "simulador.view"
+  ]
+};

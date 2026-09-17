@@ -13,12 +13,12 @@
     </div>
 
     <nav class="flex-1 overflow-y-auto px-3 py-4">
-      <template v-for="(group, categoryName) in groupedNavItems" :key="categoryName">
+      <template v-for="(group, sectionName) in groupedNavItems" :key="sectionName">
         <div
           v-show="!sidebarCollapsed && group.length > 0"
           class="mb-2 mt-2 px-3 text-xs font-semibold uppercase tracking-wider text-sidebar-foreground/60"
         >
-          {{ categoryName === "admin" ? "ADMINISTRACIÓN" : "MENÚ" }}
+          {{ sectionName }}
         </div>
         <div class="space-y-1">
           <NuxtLink
@@ -86,12 +86,12 @@
     </div>
 
     <nav class="overflow-y-auto px-3 py-4">
-      <template v-for="(group, categoryName) in groupedNavItems" :key="categoryName">
+      <template v-for="(group, sectionName) in groupedNavItems" :key="sectionName">
         <div
           v-show="group.length > 0"
           class="mb-2 mt-2 px-3 text-xs font-semibold uppercase tracking-wider text-sidebar-foreground/60"
         >
-          {{ categoryName === "admin" ? "ADMINISTRACIÓN" : "MENÚ" }}
+          {{ sectionName }}
         </div>
         <div class="space-y-1">
           <NuxtLink
@@ -114,17 +114,21 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from "vue";
+import { computed, onMounted } from "vue";
 import { X } from "@lucide/vue";
 import { cn } from "@/lib/utils";
 
 import { useDashboardLayout } from "~/composables/layout/useDashboardLayout";
 import { usePermissions } from "~/composables/usePermissions";
 
-const { session, sidebarOpen, sidebarCollapsed, groupedNavItems, isActive, _abbr } =
+const { session, sidebarOpen, sidebarCollapsed, groupedNavItems, isActive, loadMenu, _abbr } =
   useDashboardLayout();
 
 const { getPrimaryRoleDisplay } = usePermissions();
+
+onMounted(() => {
+  void loadMenu();
+});
 
 const sidebarDesktopClasses = computed(() => {
   const baseClasses =

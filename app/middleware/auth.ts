@@ -38,10 +38,13 @@ export default defineNuxtRouteMiddleware(
     }
 
     // Verificar permisos específicos para la ruta
+    const user = useSession().session.value.user;
     if (
       !hasPermissionForRoute(
         to.path,
-        useSession().session.value.user?.roles || []
+        user?.roles || [],
+        user?.permissions || [],
+        user?.routeAccess || []
       )
     ) {
       return navigateTo("/dash");

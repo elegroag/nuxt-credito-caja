@@ -1,5 +1,7 @@
 <script setup lang="ts">
+import { onMounted, ref } from "vue";
 import { useCreateUser } from "~/composables/admin/useCreateUser";
+import { useApi } from "~/composables/useApi";
 
 definePageMeta({
   layout: "dashboard",
@@ -7,13 +9,26 @@ definePageMeta({
 });
 
 const { loading, errors, form, handleSubmit, goBack } = useCreateUser();
+const api = useApi();
 
-const opcionesRoles = [
-  { label: "Administrador", value: "administrator" },
-  { label: "Asesor", value: "adviser" },
-  { label: "Trabajador", value: "user_trabajador" },
-  { label: "Codeudor", value: "user_codeudor" }
-];
+const opcionesRoles = ref<{ label: string, value: string }[]>([]);
+
+onMounted(async () => {
+  try {
+    const response = await api.getJson<{
+      success: boolean
+      data?: Array<{ nombre: string, etiqueta?: string | null }>
+    }>("/api/admin/roles", { auth: true });
+    if (response.success && Array.isArray(response.data)) {
+      opcionesRoles.value = response.data.map(r => ({
+        label: r.etiqueta || r.nombre,
+        value: r.nombre
+      }));
+    }
+  } catch {
+    opcionesRoles.value = [];
+  }
+});
 
 const opcionesEstado = [
   { label: "Activo", value: false },

@@ -3,12 +3,13 @@ import { estadosSolicitud } from "./estados-solicitud.seed";
 import { users } from "./users.seed";
 import { documentosPostulantes } from "./documentos-postulantes.seed";
 import { empresasConvenio } from "./empresas-convenio.seed";
-import { modules } from "./modules.seed";
+import { modulesSeed, routePermissionsSeed } from "./modules.seed";
 import { notifications } from "./notifications.seed";
 import { numeroSolicitudes } from "./numero-solicitudes.seed";
 import { pdfsGenerados } from "./pdfs-generados.seed";
 import { personalAccessTokens } from "./personal-access-tokens.seed";
 import { roles } from "./roles.seed";
+import { permissions, rolePermissionMap } from "./permissions.seed";
 import { sessions } from "./sessions.seed";
 import { solicitudDocumentos } from "./solicitud-documentos.seed";
 import { solicitudPayload } from "./solicitud-payload.seed";
@@ -26,7 +27,11 @@ async function main() {
 
   await seedEstadosSolicitud();
   await seedRoles();
+  await seedPermissions();
+  await seedRolePermissions();
   await seedModules();
+  await seedModulePermissions();
+  await seedRoutePermissions();
   await seedTipoDocumentos();
   await seedEmpresasConvenio();
   await seedUsers();
@@ -141,7 +146,6 @@ async function resetUsersAndSolicitudes() {
 async function seedRoles() {
   console.log("Seeding roles...");
 
-  // Renombrar rol legacy codeudor -> user_codeudor si existe
   await prisma.roles.updateMany({
     where: { nombre: "codeudor" },
     data: {
@@ -149,48 +153,197 @@ async function seedRoles() {
       etiqueta: "Codeudor",
       descripcion:
         "Codeudor externo que consulta responsabilidades contractuales y firma como garante",
+      tipo: "sistema",
       updated_at: new Date().toISOString()
     }
   });
 
-  const countRoles = await prisma.roles.count();
-  if (countRoles == 0) {
-    const rolesData = roles.map((role) => {
-      return {
-        ...role,
+  for (const role of roles) {
+    await prisma.roles.upsert({
+      where: { nombre: role.nombre },
+      create: {
+        nombre: role.nombre,
+        etiqueta: role.etiqueta,
+        descripcion: role.descripcion,
+        tipo: role.tipo,
+        permisos: role.permisos,
+        color: role.color,
+        orden: role.orden,
+        activo: role.activo,
         created_at: new Date(role.created_at).toISOString(),
         updated_at: new Date(role.updated_at).toISOString()
-      };
+      },
+      update: {
+        etiqueta: role.etiqueta,
+        descripcion: role.descripcion,
+        tipo: role.tipo,
+        color: role.color,
+        orden: role.orden,
+        activo: role.activo,
+        updated_at: new Date().toISOString()
+      }
     });
-
-    await prisma.roles.createMany({
-      data: rolesData as unknown[]
-    });
-    console.log("✅ Roles seeded");
-  } else {
-    console.log("⏭️  Roles already seeded");
   }
+  console.log("✅ Roles seeded (upsert)");
+}
+
+async function seedPermissions() {
+  console.log("Seeding permissions...");
+  const now = new Date().toISOString();
+  for (const perm of permissions) {
+    await prisma.permissions.upsert({
+      where: { key: perm.key },
+      create: {
+        key: perm.key,
+        etiqueta: perm.etiqueta,
+        descripcion: perm.descripcion,
+        activo: true,
+        created_at: now,
+        updated_at: now
+      },
+      update: {
+        etiqueta: perm.etiqueta,
+        descripcion: perm.descripcion,
+        activo: true,
+        updated_at: now
+      }
+    });
+  }
+  console.log("✅ Permissions seeded");
+}
+
+async function seedRolePermissions() {
+  console.log("Seeding role_permissions...");
+  const allPerms = await prisma.permissions.findMany({ select: { id: true, key: true } });
+  const permByKey = new Map(allPerms.map((p) => [p.key, p.id]));
+  const allRoles = await prisma.roles.findMany({
+    where: { tipo: "sistema" },
+    select: { id: true, nombre: true }
+  });
+
+  await prisma.role_permissions.deleteMany({});
+
+  const rows: Array<{ role_id: bigint, permission_id: bigint }> = [];
+  for (const role of allRoles) {
+    const keys = rolePermissionMap[role.nombre] || [];
+    for (const key of keys) {
+      const permissionId = permByKey.get(key);
+      if (!permissionId) continue;
+      rows.push({ role_id: role.id, permission_id: permissionId });
+    }
+  }
+  if (rows.length > 0) {
+    await prisma.role_permissions.createMany({ data: rows, skipDuplicates: true });
+  }
+  console.log(`✅ Role permissions seeded (${rows.length})`);
 }
 
 async function seedModules() {
   console.log("Seeding modules...");
+  const now = new Date().toISOString();
+  const keepKeys = modulesSeed.map((m) => m.key);
 
-  const countModules = await prisma.modules.count();
-  if (countModules == 0) {
-    const modulesData = modules.map((module) => {
-      return {
-        ...module,
-        created_at: new Date(module.created_at).toISOString(),
-        updated_at: new Date(module.updated_at).toISOString()
-      };
+  // Desactivar módulos legacy que no estén en el seed canónico
+  await prisma.modules.updateMany({
+    where: { key: { notIn: keepKeys } },
+    data: { active: "N", updated_at: now }
+  });
+
+  for (const mod of modulesSeed) {
+    await prisma.modules.upsert({
+      where: { key: mod.key },
+      create: {
+        key: mod.key,
+        title: mod.title,
+        href: mod.href,
+        icon: mod.icon,
+        abbr: mod.abbr || null,
+        section: mod.section,
+        ordering: mod.ordering,
+        active: "S",
+        description: mod.description || null,
+        required_roles: mod.requiredRoles || null,
+        excluded_roles: mod.excludedRoles || null,
+        permissions_required: mod.permissionKeys || null,
+        created_at: now,
+        updated_at: now
+      },
+      update: {
+        title: mod.title,
+        href: mod.href,
+        icon: mod.icon,
+        abbr: mod.abbr || null,
+        section: mod.section,
+        ordering: mod.ordering,
+        active: "S",
+        description: mod.description || null,
+        required_roles: mod.requiredRoles || null,
+        excluded_roles: mod.excludedRoles || null,
+        permissions_required: mod.permissionKeys || null,
+        updated_at: now
+      }
     });
-    await prisma.modules.createMany({
-      data: modulesData as unknown[]
-    });
-    console.log("✅ Modules seeded");
-  } else {
-    console.log("⏭️  Modules already seeded");
   }
+  console.log("✅ Modules seeded (upsert)");
+}
+
+async function seedModulePermissions() {
+  console.log("Seeding module_permissions...");
+  const allPerms = await prisma.permissions.findMany({ select: { id: true, key: true } });
+  const permByKey = new Map(allPerms.map((p) => [p.key, p.id]));
+  const mods = await prisma.modules.findMany({
+    where: { key: { in: modulesSeed.map((m) => m.key) } },
+    select: { id: true, key: true }
+  });
+  const modByKey = new Map(mods.map((m) => [m.key, m.id]));
+
+  await prisma.module_permissions.deleteMany({
+    where: { module_id: { in: mods.map((m) => m.id) } }
+  });
+
+  const rows: Array<{ module_id: bigint, permission_id: bigint }> = [];
+  for (const mod of modulesSeed) {
+    const moduleId = modByKey.get(mod.key);
+    if (!moduleId || !mod.permissionKeys?.length) continue;
+    for (const key of mod.permissionKeys) {
+      const permissionId = permByKey.get(key);
+      if (!permissionId) continue;
+      rows.push({ module_id: moduleId, permission_id: permissionId });
+    }
+  }
+  if (rows.length > 0) {
+    await prisma.module_permissions.createMany({ data: rows, skipDuplicates: true });
+  }
+  console.log(`✅ Module permissions seeded (${rows.length})`);
+}
+
+async function seedRoutePermissions() {
+  console.log("Seeding route_permissions...");
+  const allPerms = await prisma.permissions.findMany({ select: { id: true, key: true } });
+  const permByKey = new Map(allPerms.map((p) => [p.key, p.id]));
+  const now = new Date().toISOString();
+
+  await prisma.route_permissions.deleteMany({});
+
+  const rows = routePermissionsSeed
+    .map((r) => {
+      const permissionId = permByKey.get(r.permissionKey);
+      if (!permissionId) return null;
+      return {
+        path_prefix: r.path_prefix,
+        permission_id: permissionId,
+        activo: true,
+        ordering: r.ordering,
+        created_at: now,
+        updated_at: now
+      };
+    })
+    .filter((r): r is NonNullable<typeof r> => r !== null);
+
+  if (rows.length > 0) {
+    await prisma.route_permissions.createMany({ data: rows });
+  }
+  console.log(`✅ Route permissions seeded (${rows.length})`);
 }
 
 async function seedTipoDocumentos() {

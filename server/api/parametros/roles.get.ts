@@ -5,14 +5,12 @@ import { CustomResponse } from "~~/server/utils/customResponse";
 
 export default defineEventHandler(async (event: H3Event) => {
   try {
-    // Consultar roles activos desde la BD
     const rolesRaw = await prisma.roles.findMany({
-      where: { activo: true },
+      where: { activo: true, tipo: "firmante" },
       orderBy: { orden: "asc" },
       select: { id: true, nombre: true, descripcion: true, etiqueta: true }
     });
 
-    // Convertir BigInt a string para serialización JSON
     const roles = rolesRaw.map((r) => ({
       id: Number(r.id),
       nombre: r.nombre,

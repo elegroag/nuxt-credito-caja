@@ -97,22 +97,26 @@ model firmantes_solicitud {
 }
 
 model modules {
-  id                   BigInt    @id @default(autoincrement()) @db.UnsignedBigInt
-  parent_id            BigInt?   @db.UnsignedBigInt
-  key                  String    @unique(map: "modules_key_unique") @db.VarChar(100)
-  title                String    @db.VarChar(200)
-  route_name           String?   @db.VarChar(200)
-  href                 String?   @db.VarChar(500)
-  icon                 String?   @db.VarChar(100)
-  section              String    @default("General") @db.VarChar(100)
-  ordering             Int       @default(0)
-  active               String    @default("S") @db.Char(1)
-  description          String?   @db.Text
+  id                   BigInt               @id @default(autoincrement()) @db.UnsignedBigInt
+  parent_id            BigInt?              @db.UnsignedBigInt
+  key                  String               @unique(map: "modules_key_unique") @db.VarChar(100)
+  title                String               @db.VarChar(200)
+  route_name           String?              @db.VarChar(200)
+  href                 String?              @db.VarChar(500)
+  icon                 String?              @db.VarChar(100)
+  abbr                 String?              @db.VarChar(10)
+  section              String               @default("General") @db.VarChar(100)
+  ordering             Int                  @default(0)
+  active               String               @default("S") @db.Char(1)
+  description          String?              @db.Text
   permissions_required Json?
-  created_at           DateTime? @db.Timestamp(0)
-  updated_at           DateTime? @db.Timestamp(0)
-  modules              modules?  @relation("modulesTomodules", fields: [parent_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "modules_parent_id_foreign")
-  other_modules        modules[] @relation("modulesTomodules")
+  required_roles       Json?
+  excluded_roles       Json?
+  created_at           DateTime?            @db.Timestamp(0)
+  updated_at           DateTime?            @db.Timestamp(0)
+  modules              modules?             @relation("modulesTomodules", fields: [parent_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "modules_parent_id_foreign")
+  other_modules        modules[]            @relation("modulesTomodules")
+  module_permissions   module_permissions[]
 
   @@index([active, section, ordering], map: "modules_active_section_ordering_index")
   @@index([key], map: "modules_key_index")
@@ -183,20 +187,74 @@ model personal_access_tokens {
 }
 
 model roles {
-  id          BigInt    @id @default(autoincrement()) @db.UnsignedBigInt
-  nombre      String    @unique(map: "roles_nombre_unique") @db.VarChar(50)
-  descripcion String?   @db.VarChar(255)
-  permisos    Json?
-  color       String    @default("#6B7280") @db.VarChar(7)
-  orden       Int       @default(0)
-  activo      Boolean   @default(true)
-  created_at  DateTime? @db.Timestamp(0)
-  updated_at  DateTime? @db.Timestamp(0)
-  etiqueta    String?   @db.VarChar(45)
+  id               BigInt             @id @default(autoincrement()) @db.UnsignedBigInt
+  nombre           String             @unique(map: "roles_nombre_unique") @db.VarChar(50)
+  descripcion      String?            @db.VarChar(255)
+  permisos         Json?
+  color            String             @default("#6B7280") @db.VarChar(7)
+  orden            Int                @default(0)
+  activo           Boolean            @default(true)
+  tipo             String             @default("sistema") @db.VarChar(20)
+  created_at       DateTime?          @db.Timestamp(0)
+  updated_at       DateTime?          @db.Timestamp(0)
+  etiqueta         String?            @db.VarChar(45)
+  role_permissions role_permissions[]
 
   @@index([activo], map: "roles_activo_index")
   @@index([nombre], map: "roles_nombre_index")
   @@index([orden], map: "roles_orden_index")
+  @@index([tipo], map: "roles_tipo_index")
+}
+
+model permissions {
+  id                 BigInt               @id @default(autoincrement()) @db.UnsignedBigInt
+  key                String               @unique(map: "permissions_key_unique") @db.VarChar(100)
+  etiqueta           String               @db.VarChar(150)
+  descripcion        String?              @db.VarChar(255)
+  activo             Boolean              @default(true)
+  created_at         DateTime?            @db.Timestamp(0)
+  updated_at         DateTime?            @db.Timestamp(0)
+  role_permissions   role_permissions[]
+  module_permissions module_permissions[]
+  route_permissions  route_permissions[]
+
+  @@index([activo], map: "permissions_activo_index")
+  @@index([key], map: "permissions_key_index")
+}
+
+model role_permissions {
+  role_id       BigInt      @db.UnsignedBigInt
+  permission_id BigInt      @db.UnsignedBigInt
+  roles         roles       @relation(fields: [role_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "role_permissions_role_id_foreign")
+  permissions   permissions @relation(fields: [permission_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "role_permissions_permission_id_foreign")
+
+  @@id([role_id, permission_id])
+  @@index([permission_id], map: "role_permissions_permission_id_index")
+}
+
+model module_permissions {
+  module_id     BigInt      @db.UnsignedBigInt
+  permission_id BigInt      @db.UnsignedBigInt
+  modules       modules     @relation(fields: [module_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "module_permissions_module_id_foreign")
+  permissions   permissions @relation(fields: [permission_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "module_permissions_permission_id_foreign")
+
+  @@id([module_id, permission_id])
+  @@index([permission_id], map: "module_permissions_permission_id_index")
+}
+
+model route_permissions {
+  id            BigInt      @id @default(autoincrement()) @db.UnsignedBigInt
+  path_prefix   String      @db.VarChar(255)
+  permission_id BigInt      @db.UnsignedBigInt
+  activo        Boolean     @default(true)
+  ordering      Int         @default(0)
+  created_at    DateTime?   @db.Timestamp(0)
+  updated_at    DateTime?   @db.Timestamp(0)
+  permissions   permissions @relation(fields: [permission_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "route_permissions_permission_id_foreign")
+
+  @@index([activo, ordering], map: "route_permissions_activo_ordering_index")
+  @@index([path_prefix], map: "route_permissions_path_prefix_index")
+  @@index([permission_id], map: "route_permissions_permission_id_index")
 }
 
 model configurations {

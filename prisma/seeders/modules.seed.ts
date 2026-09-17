@@ -1,130 +1,199 @@
-export const modules = [
+export type ModuleSeed = {
+  key: string
+  title: string
+  href: string
+  icon: string
+  abbr?: string
+  section: "General" | "Administración" | "Parametrización"
+  ordering: number
+  description?: string
+  permissionKeys?: string[]
+  requiredRoles?: string[]
+  excludedRoles?: string[]
+};
+
+/** Menú canónico alineado al sidebar actual. */
+export const modulesSeed: ModuleSeed[] = [
   {
-    id: 1,
-    parent_id: null,
-    key: "dashboard",
-    title: "Dashboard",
-    route_name: "dashboard",
-    href: "/dashboard",
-    icon: "LayoutDashboard",
+    key: "dash.inicio",
+    title: "Inicio",
+    href: "/dash",
+    icon: "i-lucide-home",
+    abbr: "IN",
     section: "General",
-    ordering: 1,
-    active: "S",
-    description: "Panel principal del sistema",
-    permissions_required: null,
-    created_at: "2026-02-25 02:06:11.0",
-    updated_at: "2026-02-25 02:06:11.0"
+    ordering: 10,
+    description: "Panel principal"
   },
   {
-    id: 2,
-    parent_id: null,
-    key: "solicitudes",
+    key: "dash.simulador",
+    title: "Simulador",
+    href: "/dash/simulador/lineas-credito",
+    icon: "i-lucide-calculator",
+    abbr: "SI",
+    section: "General",
+    ordering: 20,
+    permissionKeys: ["simulador.view"],
+    requiredRoles: ["user_trabajador", "administrator", "adviser", "user_empresa", "empleador"]
+  },
+  {
+    key: "dash.contratos",
+    title: "Contratos",
+    href: "/dash/responsabilidades",
+    icon: "i-lucide-file-signature",
+    abbr: "CO",
+    section: "General",
+    ordering: 30,
+    permissionKeys: ["responsabilidades.view"],
+    requiredRoles: ["user_codeudor", "user_trabajador"]
+  },
+  {
+    key: "dash.codeudores",
+    title: "Mis codeudores",
+    href: "/dash/codeudores",
+    icon: "i-lucide-users",
+    abbr: "MC",
+    section: "General",
+    ordering: 40,
+    permissionKeys: ["codeudores.manage"],
+    requiredRoles: ["user_trabajador", "administrator"]
+  },
+  {
+    key: "dash.notify",
+    title: "Notificaciones",
+    href: "/dash/notify",
+    icon: "i-lucide-bell",
+    abbr: "NO",
+    section: "General",
+    ordering: 50
+  },
+  {
+    key: "dash.perfil",
+    title: "Perfil",
+    href: "/dash/perfil",
+    icon: "i-lucide-user",
+    abbr: "PE",
+    section: "General",
+    ordering: 60
+  },
+  {
+    key: "dash.oficinas",
+    title: "Oficinas",
+    href: "/dash/oficinas",
+    icon: "i-lucide-map-pin",
+    abbr: "OF",
+    section: "General",
+    ordering: 70
+  },
+  {
+    key: "dash.terminos",
+    title: "Terminos",
+    href: "/dash/terminos",
+    icon: "i-lucide-file-text",
+    abbr: "TE",
+    section: "General",
+    ordering: 80
+  },
+  {
+    key: "admin.firmas",
+    title: "Gestión firmas",
+    href: "/admin/firmas",
+    icon: "i-lucide-share-2",
+    abbr: "GF",
+    section: "Administración",
+    ordering: 10,
+    permissionKeys: ["firmas.view"]
+  },
+  {
+    key: "admin.solicitudes",
     title: "Solicitudes",
-    route_name: "solicitudes.index",
-    href: "/solicitudes",
-    icon: "FileText",
-    section: "Créditos",
-    ordering: 2,
-    active: "S",
-    description: "Gestión de solicitudes de crédito",
-    permissions_required: ["solicitudes.read"],
-    created_at: "2026-02-25 02:06:11.0",
-    updated_at: "2026-02-25 02:06:11.0"
-  },
-  {
-    id: 3,
-    parent_id: 2,
-    key: "solicitudes.create",
-    title: "Nueva Solicitud",
-    route_name: "solicitudes.create",
-    href: "/solicitudes/create",
-    icon: "Plus",
-    section: "Créditos",
-    ordering: 1,
-    active: "S",
-    description: "Crear nueva solicitud de crédito",
-    permissions_required: ["solicitudes.create"],
-    created_at: "2026-02-25 02:06:11.0",
-    updated_at: "2026-02-25 02:06:11.0"
-  },
-  {
-    id: 4,
-    parent_id: null,
-    key: "trabajadores",
-    title: "Trabajadores",
-    route_name: "trabajadores.index",
-    href: "/trabajadores",
-    icon: "Users",
-    section: "Recursos",
-    ordering: 3,
-    active: "S",
-    description: "Gestión de trabajadores",
-    permissions_required: ["trabajadores.read"],
-    created_at: "2026-02-25 02:06:11.0",
-    updated_at: "2026-02-25 02:06:11.0"
-  },
-  {
-    id: 5,
-    parent_id: null,
-    key: "empresas",
-    title: "Empresas",
-    route_name: "empresas.index",
-    href: "/empresas",
-    icon: "Building2",
-    section: "Recursos",
-    ordering: 4,
-    active: "S",
-    description: "Gestión de empresas convenio",
-    permissions_required: ["empresas.read"],
-    created_at: "2026-02-25 02:06:11.0",
-    updated_at: "2026-02-25 02:06:11.0"
-  },
-  {
-    id: 6,
-    parent_id: null,
-    key: "users",
-    title: "Usuarios",
-    route_name: "users.index",
-    href: "/users",
-    icon: "UserCog",
+    href: "/admin/solicitudes",
+    icon: "i-lucide-list",
+    abbr: "SO",
     section: "Administración",
-    ordering: 5,
-    active: "S",
-    description: "Gestión de usuarios del sistema",
-    permissions_required: ["users.read"],
-    created_at: "2026-02-25 02:06:11.0",
-    updated_at: "2026-02-25 02:06:11.0"
+    ordering: 20,
+    permissionKeys: ["solicitudes.view"]
   },
   {
-    id: 7,
-    parent_id: null,
-    key: "reports",
+    key: "admin.convenios",
+    title: "Convenios",
+    href: "/admin/convenios",
+    icon: "i-lucide-building-2",
+    abbr: "CV",
+    section: "Administración",
+    ordering: 25,
+    permissionKeys: ["convenios.view"],
+    excludedRoles: ["user_trabajador"]
+  },
+  {
+    key: "admin.reportes",
     title: "Reportes",
-    route_name: "reports.index",
     href: "/admin/reportes",
-    icon: "BarChart3",
-    section: "Reportes",
-    ordering: 6,
-    active: "S",
-    description: "Reportes y estadísticas",
-    permissions_required: ["reports.read"],
-    created_at: "2026-02-25 02:06:11.0",
-    updated_at: "2026-02-25 02:06:11.0"
+    icon: "i-lucide-bar-chart-3",
+    abbr: "RE",
+    section: "Administración",
+    ordering: 30,
+    permissionKeys: ["reportes.view"]
   },
   {
-    id: 8,
-    parent_id: null,
-    key: "settings",
-    title: "Configuración",
-    route_name: "settings.index",
-    href: "/settings",
-    icon: "Settings",
+    key: "admin.users",
+    title: "Usuarios",
+    href: "/admin/users",
+    icon: "i-lucide-users",
+    abbr: "US",
     section: "Administración",
-    ordering: 7,
-    active: "S",
-    description: "Configuración del sistema",
-    permissions_required: ["system.admin"],
-    created_at: "2026-02-25 02:06:11.0",
-    updated_at: "2026-02-25 02:06:11.0"
+    ordering: 40,
+    permissionKeys: ["users.view"]
+  },
+  {
+    key: "admin.configuraciones",
+    title: "Configuraciones",
+    href: "/admin/configuraciones",
+    icon: "i-lucide-settings",
+    abbr: "CF",
+    section: "Parametrización",
+    ordering: 10,
+    permissionKeys: ["configuraciones.view"]
+  },
+  {
+    key: "admin.contenido",
+    title: "CMS",
+    href: "/admin/contenido",
+    icon: "i-lucide-file-text",
+    abbr: "CM",
+    section: "Parametrización",
+    ordering: 20,
+    permissionKeys: ["cms.view"]
+  },
+  {
+    key: "admin.carrusel",
+    title: "Carrusel",
+    href: "/admin/carrusel",
+    icon: "i-lucide-images",
+    abbr: "CA",
+    section: "Parametrización",
+    ordering: 30,
+    permissionKeys: ["carrusel.view"]
   }
+];
+
+/** Reglas de ruta (páginas y API admin) → permiso requerido. */
+export const routePermissionsSeed: Array<{ path_prefix: string, permissionKey: string, ordering: number }> = [
+  { path_prefix: "/admin/users", permissionKey: "users.view", ordering: 10 },
+  { path_prefix: "/api/admin/users", permissionKey: "users.view", ordering: 11 },
+  { path_prefix: "/admin/firmas", permissionKey: "firmas.view", ordering: 20 },
+  { path_prefix: "/api/admin/firmas", permissionKey: "firmas.view", ordering: 21 },
+  { path_prefix: "/admin/solicitudes", permissionKey: "solicitudes.view", ordering: 30 },
+  { path_prefix: "/api/admin/solicitudes", permissionKey: "solicitudes.view", ordering: 31 },
+  { path_prefix: "/admin/convenios", permissionKey: "convenios.view", ordering: 40 },
+  { path_prefix: "/api/admin/convenios", permissionKey: "convenios.view", ordering: 41 },
+  { path_prefix: "/admin/reportes", permissionKey: "reportes.view", ordering: 50 },
+  { path_prefix: "/api/admin/reportes", permissionKey: "reportes.view", ordering: 51 },
+  { path_prefix: "/admin/configuraciones", permissionKey: "configuraciones.view", ordering: 60 },
+  { path_prefix: "/api/admin/configurations", permissionKey: "configuraciones.view", ordering: 61 },
+  { path_prefix: "/admin/contenido", permissionKey: "cms.view", ordering: 70 },
+  { path_prefix: "/api/admin/cms", permissionKey: "cms.view", ordering: 71 },
+  { path_prefix: "/admin/carrusel", permissionKey: "carrusel.view", ordering: 80 },
+  { path_prefix: "/api/admin/carrusel", permissionKey: "carrusel.view", ordering: 81 },
+  { path_prefix: "/admin", permissionKey: "system.admin", ordering: 100 },
+  { path_prefix: "/api/admin", permissionKey: "system.admin", ordering: 101 }
 ];
