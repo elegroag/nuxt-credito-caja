@@ -121,6 +121,21 @@ export const useRevisionStep = (props: RevisionProps) => {
     return data.referencias?.personales || [];
   };
 
+  const getResumenCodeudores = () => {
+    const data = parsePayload();
+    const asignados = Array.isArray(data.codeudores_asignados)
+      ? data.codeudores_asignados
+      : [];
+
+    return asignados.map((c: Record<string, unknown>) => ({
+      nombre_completo: c.nombre_completo || "",
+      tipo_documento: c.tipo_documento || "",
+      numero_documento: c.numero_documento || "",
+      email: c.email || "",
+      telefono: c.telefono || ""
+    }));
+  };
+
   return {
     // Estado
     mostrarPayload,
@@ -141,6 +156,7 @@ export const useRevisionStep = (props: RevisionProps) => {
     getResumenPropiedades,
     getResumenDeudas,
     getResumenReferenciasFamiliares,
-    getResumenReferenciasPersonales
+    getResumenReferenciasPersonales,
+    getResumenCodeudores
   };
 };

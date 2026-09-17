@@ -174,6 +174,31 @@
             </div>
           </div>
         </div>
+
+        <!-- Codeudores -->
+        <div
+          v-if="getResumenCodeudores().length > 0"
+          class="border-l-4 border-sky-200 pl-4"
+        >
+          <h4 class="font-semibold text-sky-700 mb-2">
+            Codeudores ({{ getResumenCodeudores().length }})
+          </h4>
+          <div
+            v-for="(codeudor, index) in getResumenCodeudores()"
+            :key="index"
+            class="mb-3"
+          >
+            <div class="text-xs font-medium text-sky-600 mb-1">
+              Codeudor {{ formatRevisionIndex(index) }}
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-2 text-xs ml-2">
+              <div v-for="(value, key) in codeudor" :key="String(key)">
+                <span class="font-medium">{{ formatRevisionKey(String(key)) }}:</span>
+                {{ formatValue(value) }}
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </UCard>
 
@@ -243,6 +268,7 @@ const {
   getResumenPropiedades,
   getResumenDeudas,
   getResumenReferenciasFamiliares,
-  getResumenReferenciasPersonales
+  getResumenReferenciasPersonales,
+  getResumenCodeudores
 } = useRevisionStep(props);
 </script>

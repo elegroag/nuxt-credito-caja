@@ -2,13 +2,21 @@ interface ApiResponse<T> {
   success: boolean
   data?: T
   message: string
+  error?: string
 }
+
+export type CodeudorHallazgo
+  = "YA_VINCULADO_AUTORIZADO"
+    | "YA_VINCULADO_PENDIENTE"
+    | null
 
 export interface CodeudorVinculo {
   id: number
   estado: string
   autorizado_at?: string | null
   created_at?: string | null
+  hallazgo?: CodeudorHallazgo
+  mensaje?: string
   codeudor: {
     id: number
     username: string
@@ -30,12 +38,57 @@ export interface CrearCodeudorPayload {
   titular_user_id?: number
 }
 
+export interface CrearCodeudorResult {
+  vinculo: CodeudorVinculo | null
+  hallazgo: CodeudorHallazgo
+  mensaje: string | null
+}
+
+const extractApiErrorMessage = (e: unknown, fallback: string): string => {
+  if (!e || typeof e !== "object") return fallback;
+
+  const err = e as {
+    data?: {
+      error?: string
+      message?: string
+      data?: { mensaje?: string, hallazgo?: string }
+    }
+    statusMessage?: string
+    message?: string
+  };
+
+  const fromBody
+    = err.data?.error
+      || err.data?.data?.mensaje
+      || err.data?.message;
+
+  if (typeof fromBody === "string" && fromBody.trim()) {
+    if (
+      !/^\s*\[(POST|GET|PUT|DELETE|PATCH)\]/i.test(fromBody)
+      && !/^\d{3}\s+Conflict/i.test(fromBody)
+    ) {
+      return fromBody;
+    }
+  }
+
+  if (
+    typeof err.statusMessage === "string"
+    && err.statusMessage.trim()
+    && err.statusMessage !== "Conflict"
+  ) {
+    return err.statusMessage;
+  }
+
+  return fallback;
+};
+
 export const useGestionCodeudores = () => {
   const api = useApi();
   const loading = ref(false);
   const confirming = ref(false);
   const error = ref<string | null>(null);
   const successMessage = ref<string | null>(null);
+  const infoMessage = ref<string | null>(null);
   const vinculos = ref<CodeudorVinculo[]>([]);
   const pendingConfirmId = ref<number | null>(null);
   const codigo = ref("");
@@ -62,16 +115,17 @@ export const useGestionCodeudores = () => {
       }
       vinculos.value = response.data;
     } catch (e: unknown) {
-      error.value = e instanceof Error ? e.message : "Error al listar codeudores";
+      error.value = extractApiErrorMessage(e, "Error al listar codeudores");
     } finally {
       loading.value = false;
     }
   };
 
-  const crear = async () => {
+  const crear = async (): Promise<CrearCodeudorResult> => {
     loading.value = true;
     error.value = null;
     successMessage.value = null;
+    infoMessage.value = null;
     try {
       const payload: CrearCodeudorPayload = {
         tipo_documento: form.tipo_documento,
@@ -87,17 +141,42 @@ export const useGestionCodeudores = () => {
         { auth: true }
       );
       if (!response.success || !response.data) {
-        throw new Error(response.message || "No fue posible registrar el codeudor");
+        throw new Error(
+          response.error || response.message || "No fue posible registrar el codeudor"
+        );
       }
+
+      const hallazgo = response.data.hallazgo ?? null;
+      const mensaje
+        = response.data.mensaje || response.message || null;
+
+      await listar();
+
+      if (hallazgo === "YA_VINCULADO_AUTORIZADO") {
+        infoMessage.value = mensaje;
+        pendingConfirmId.value = null;
+        codigo.value = "";
+        return { vinculo: response.data, hallazgo, mensaje };
+      }
+
+      if (hallazgo === "YA_VINCULADO_PENDIENTE") {
+        infoMessage.value = mensaje;
+        pendingConfirmId.value = response.data.id;
+        codigo.value = "";
+        return { vinculo: response.data, hallazgo, mensaje };
+      }
+
       pendingConfirmId.value = response.data.id;
       codigo.value = "";
       successMessage.value
         = "Se envió un código al correo del codeudor. Ingrésalo para autorizar el vínculo.";
-      await listar();
-      return response.data;
+      return { vinculo: response.data, hallazgo: null, mensaje: successMessage.value };
     } catch (e: unknown) {
-      error.value = e instanceof Error ? e.message : "Error al registrar codeudor";
-      return null;
+      error.value = extractApiErrorMessage(
+        e,
+        "No fue posible registrar el codeudor. Verifica los datos e intenta de nuevo."
+      );
+      return { vinculo: null, hallazgo: null, mensaje: null };
     } finally {
       loading.value = false;
     }
@@ -116,7 +195,7 @@ export const useGestionCodeudores = () => {
         { auth: true }
       );
       if (!response.success) {
-        throw new Error(response.message || "Código inválido");
+        throw new Error(response.error || response.message || "Código inválido");
       }
       successMessage.value = "Codeudor autorizado correctamente.";
       pendingConfirmId.value = null;
@@ -124,7 +203,7 @@ export const useGestionCodeudores = () => {
       await listar();
       return true;
     } catch (e: unknown) {
-      error.value = e instanceof Error ? e.message : "Error al confirmar código";
+      error.value = extractApiErrorMessage(e, "Error al confirmar código");
       return false;
     } finally {
       confirming.value = false;
@@ -142,13 +221,13 @@ export const useGestionCodeudores = () => {
         { auth: true }
       );
       if (!response.success) {
-        throw new Error(response.message || "No fue posible reenviar el código");
+        throw new Error(response.error || response.message || "No fue posible reenviar el código");
       }
       pendingConfirmId.value = vinculoId;
       successMessage.value = "Código reenviado al correo del codeudor.";
       return true;
     } catch (e: unknown) {
-      error.value = e instanceof Error ? e.message : "Error al reenviar código";
+      error.value = extractApiErrorMessage(e, "Error al reenviar código");
       return false;
     } finally {
       loading.value = false;
@@ -160,6 +239,7 @@ export const useGestionCodeudores = () => {
     confirming,
     error,
     successMessage,
+    infoMessage,
     vinculos,
     pendingConfirmId,
     codigo,

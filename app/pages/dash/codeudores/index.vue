@@ -22,6 +22,14 @@
       @update:open="(open: boolean) => { if (!open) error = null }"
     />
     <UAlert
+      v-if="infoMessage"
+      color="info"
+      variant="subtle"
+      :title="infoMessage"
+      close
+      @update:open="(open: boolean) => { if (!open) infoMessage = null }"
+    />
+    <UAlert
       v-if="successMessage"
       color="success"
       variant="subtle"
@@ -214,6 +222,7 @@ const {
   confirming,
   error,
   successMessage,
+  infoMessage,
   vinculos,
   pendingConfirmId,
   codigo,

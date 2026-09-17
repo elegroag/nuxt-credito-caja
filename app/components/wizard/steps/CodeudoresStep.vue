@@ -27,18 +27,6 @@
     </UCard>
 
     <UAlert
-      v-if="gestionError"
-      color="error"
-      variant="subtle"
-      :title="gestionError"
-    />
-    <UAlert
-      v-if="gestionSuccess"
-      color="success"
-      variant="subtle"
-      :title="gestionSuccess"
-    />
-    <UAlert
       v-if="errors?.['codeudores_asignados']"
       color="error"
       variant="subtle"
@@ -164,12 +152,37 @@
     <UModal
       v-model:open="modalNuevoOpen"
       :dismissible="false"
-      :title="pendingConfirmId ? 'Autorizar codeudor' : 'Agregar nuevo codeudor'"
-      description="Se enviará un código al correo. Debes autorizarlo antes de poder asignarlo."
+      :title="modalTitle"
+      :description="modalDescription"
     >
       <template #body>
         <div class="space-y-4">
-          <template v-if="!pendingConfirmId">
+          <UAlert
+            v-if="gestionError"
+            color="error"
+            variant="subtle"
+            :title="gestionError"
+          />
+          <UAlert
+            v-if="infoMessage"
+            color="info"
+            variant="subtle"
+            :title="infoMessage"
+          />
+          <UAlert
+            v-if="gestionSuccess"
+            color="success"
+            variant="subtle"
+            :title="gestionSuccess"
+          />
+
+          <template v-if="hallazgoAutorizado">
+            <p class="text-sm text-muted-foreground">
+              Puedes asignarlo desde la lista de codeudores autorizados del paso.
+            </p>
+          </template>
+
+          <template v-else-if="!pendingConfirmId">
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <UFormField label="Tipo documento">
                 <USelect
@@ -233,29 +246,47 @@
       <template #footer>
         <div class="flex justify-end gap-3 w-full">
           <UButton
-            variant="outline"
-            color="neutral"
-            :disabled="loading || confirming"
-            @click="cerrarModalNuevo"
-          >
-            Cancelar
-          </UButton>
-          <UButton
-            v-if="!pendingConfirmId"
+            v-if="hallazgoAutorizado"
             color="primary"
-            :loading="loading"
-            @click="onCrear"
+            @click="cerrarModalHallazgo"
           >
-            Registrar y enviar código
+            Entendido
           </UButton>
-          <UButton
-            v-else
-            color="primary"
-            :loading="confirming"
-            @click="onConfirmar"
-          >
-            Confirmar autorización
-          </UButton>
+          <template v-else>
+            <UButton
+              variant="outline"
+              color="neutral"
+              :disabled="loading || confirming"
+              @click="cerrarModalNuevo"
+            >
+              Cancelar
+            </UButton>
+            <UButton
+              v-if="!pendingConfirmId"
+              color="primary"
+              :loading="loading"
+              @click="onCrear"
+            >
+              Registrar y enviar código
+            </UButton>
+            <UButton
+              v-else
+              color="primary"
+              :loading="confirming"
+              @click="onConfirmar"
+            >
+              Confirmar autorización
+            </UButton>
+            <UButton
+              v-if="pendingConfirmId"
+              variant="outline"
+              color="neutral"
+              :loading="loading"
+              @click="reenviar(pendingConfirmId)"
+            >
+              Reenviar código
+            </UButton>
+          </template>
         </div>
       </template>
     </UModal>
@@ -284,19 +315,22 @@ const tiposDocumento = [
 ];
 
 const modalNuevoOpen = ref(false);
+const hallazgoAutorizado = ref(false);
 
 const {
   loading,
   confirming,
   error: gestionError,
   successMessage: gestionSuccess,
+  infoMessage,
   vinculos,
   pendingConfirmId,
   codigo,
   form: formNuevo,
   listar,
   crear,
-  confirmar
+  confirmar,
+  reenviar
 } = useGestionCodeudores();
 
 const seleccionados = computed(() => props.form.codeudores_asignados ?? []);
@@ -313,6 +347,22 @@ const puedeAgregarMas = computed(
   () => seleccionados.value.length < props.codeudoresRequeridos
 );
 
+const modalTitle = computed(() => {
+  if (hallazgoAutorizado.value) return "Codeudor ya vinculado";
+  if (pendingConfirmId.value) return "Autorizar codeudor";
+  return "Agregar nuevo codeudor";
+});
+
+const modalDescription = computed(() => {
+  if (hallazgoAutorizado.value) {
+    return "Se encontró un vínculo existente con este codeudor.";
+  }
+  if (pendingConfirmId.value) {
+    return "Ingresa el código de autorización enviado por correo.";
+  }
+  return "Se enviará un código al correo. Debes autorizarlo antes de poder asignarlo.";
+});
+
 const resetFormNuevo = () => {
   formNuevo.tipo_documento = "1";
   formNuevo.numero_documento = "";
@@ -322,18 +372,28 @@ const resetFormNuevo = () => {
   formNuevo.phone = "";
   codigo.value = "";
   pendingConfirmId.value = null;
+  hallazgoAutorizado.value = false;
 };
 
 const abrirModalNuevo = () => {
   resetFormNuevo();
   gestionError.value = null;
   gestionSuccess.value = null;
+  infoMessage.value = null;
   modalNuevoOpen.value = true;
 };
 
 const cerrarModalNuevo = () => {
   modalNuevoOpen.value = false;
   resetFormNuevo();
+  infoMessage.value = null;
+  gestionError.value = null;
+  gestionSuccess.value = null;
+};
+
+const cerrarModalHallazgo = async () => {
+  await listar();
+  cerrarModalNuevo();
 };
 
 const asignar = (v: CodeudorVinculo) => {
@@ -361,18 +421,37 @@ const quitar = (vinculoId: number) => {
 };
 
 const onCrear = async () => {
-  const created = await crear();
-  // Si se creó, pendingConfirmId queda activo y el modal muestra el OTP
-  if (!created) return;
+  const result = await crear();
+  if (!result.vinculo) return;
+
+  if (result.hallazgo === "YA_VINCULADO_AUTORIZADO") {
+    hallazgoAutorizado.value = true;
+    await listar();
+    return;
+  }
+
+  if (result.hallazgo === "YA_VINCULADO_PENDIENTE") {
+    // Mantener modal en modo OTP; el infoMessage queda visible dentro del modal
+    return;
+  }
 };
 
 const onConfirmar = async () => {
+  const vinculoId = pendingConfirmId.value;
   const ok = await confirmar();
-  if (ok) {
-    await listar();
-    modalNuevoOpen.value = false;
-    resetFormNuevo();
+  if (!ok || !vinculoId) return;
+
+  await listar();
+
+  const vinculo = vinculos.value.find(
+    (v) => v.id === vinculoId && v.estado === "autorizado"
+  );
+  if (vinculo && puedeAgregarMas.value) {
+    asignar(vinculo);
   }
+
+  modalNuevoOpen.value = false;
+  resetFormNuevo();
 };
 
 onMounted(() => {

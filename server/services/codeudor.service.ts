@@ -124,16 +124,21 @@ const codeudorService = () => {
     });
 
     if (byDoc) {
+      // Usuario existente: solo asegurar rol user_codeudor (no pisar perfil)
       const roles = ensureRole(byDoc.roles, CODEUDOR_ROLE);
+      const rolesActuales = Array.isArray(byDoc.roles) ? byDoc.roles.map(String) : [];
+      const rolesChanged
+        = roles.length !== rolesActuales.length
+          || roles.some((r) => !rolesActuales.includes(r));
+
+      if (!rolesChanged) {
+        return { user: byDoc, created: false };
+      }
+
       const updated = await prisma.users.update({
         where: { id: byDoc.id },
         data: {
           roles,
-          email: input.email || byDoc.email,
-          phone: input.phone ?? byDoc.phone,
-          nombres: input.nombres,
-          apellidos: input.apellidos,
-          full_name: `${input.nombres} ${input.apellidos}`,
           updated_at: new Date().toISOString()
         }
       });
@@ -144,9 +149,39 @@ const codeudorService = () => {
       where: { email: input.email }
     });
     if (byEmail) {
+      // Mismo documento: reutilizar (solo rol), sin pisar perfil
+      const mismoDocumento
+        = String(byEmail.numero_documento || "") === String(input.numero_documento)
+          && (
+            !byEmail.tipo_documento
+            || String(byEmail.tipo_documento) === String(input.tipo_documento)
+          );
+
+      if (mismoDocumento) {
+        const roles = ensureRole(byEmail.roles, CODEUDOR_ROLE);
+        const rolesActuales = Array.isArray(byEmail.roles) ? byEmail.roles.map(String) : [];
+        const rolesChanged
+          = roles.length !== rolesActuales.length
+            || roles.some((r) => !rolesActuales.includes(r));
+
+        if (!rolesChanged) {
+          return { user: byEmail, created: false };
+        }
+
+        const updated = await prisma.users.update({
+          where: { id: byEmail.id },
+          data: {
+            roles,
+            updated_at: new Date().toISOString()
+          }
+        });
+        return { user: updated, created: false };
+      }
+
       throw createError({
         statusCode: 409,
-        message: "Ya existe un usuario con ese correo electrónico"
+        message:
+          "Ya existe un usuario con ese correo electrónico. Verifica el documento ingresado o utiliza otro correo."
       });
     }
 
@@ -210,10 +245,35 @@ const codeudorService = () => {
       }
     });
 
+    const codeudorPayload = {
+      id: Number(codeudor.id),
+      username: codeudor.username,
+      email: codeudor.email,
+      full_name: codeudor.full_name,
+      tipo_documento: codeudor.tipo_documento,
+      numero_documento: codeudor.numero_documento,
+      phone: codeudor.phone
+    };
+
     if (existing?.estado === "autorizado") {
-      throw createError({
-        statusCode: 409,
-        message: "Este codeudor ya está autorizado para el titular"
+      return serialize({
+        hallazgo: "YA_VINCULADO_AUTORIZADO" as const,
+        id: Number(existing.id),
+        estado: "autorizado",
+        codeudor: codeudorPayload,
+        mensaje:
+          "Este usuario ya es codeudor y ya está autorizado contigo. Puedes asignarlo a la solicitud desde la lista de autorizados."
+      });
+    }
+
+    if (existing?.estado === "pendiente") {
+      return serialize({
+        hallazgo: "YA_VINCULADO_PENDIENTE" as const,
+        id: Number(existing.id),
+        estado: "pendiente",
+        codeudor: codeudorPayload,
+        mensaje:
+          "Ya existe un vínculo pendiente con este codeudor. Ingresa el código enviado a su correo o solicita un reenvío."
       });
     }
 
@@ -234,16 +294,10 @@ const codeudorService = () => {
     await applyOtpToVinculo(Number(vinculo.id), codeudor.email, titularNombre);
 
     return serialize({
+      hallazgo: null,
       id: Number(vinculo.id),
       estado: "pendiente",
-      codeudor: {
-        id: Number(codeudor.id),
-        username: codeudor.username,
-        email: codeudor.email,
-        full_name: codeudor.full_name,
-        tipo_documento: codeudor.tipo_documento,
-        numero_documento: codeudor.numero_documento
-      }
+      codeudor: codeudorPayload
     });
   };
 
