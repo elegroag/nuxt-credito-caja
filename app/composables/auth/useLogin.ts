@@ -3,6 +3,7 @@ import { ref } from "vue";
 import { useRoute } from "vue-router";
 import { useApi } from "~/composables/useApi";
 import { useSession } from "~/composables/useSession";
+import { clearDashboardMenu } from "~/composables/layout/useDashboardLayout";
 
 interface LoginResponseData {
   access_token?: string
@@ -185,6 +186,8 @@ export function useLogin() {
               : 0
         };
       }
+
+      clearDashboardMenu();
 
       setSession({
         accessToken,

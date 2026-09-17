@@ -14,14 +14,9 @@ export default defineEventHandler(async (event) => {
   const roles = session.user.roles || [];
   const rbac = rbacService();
 
-  let permissions = (session.user as { permissions?: string[] }).permissions || [];
-  if (!permissions.length) {
-    permissions = await rbac.getPermissionsForRoles(roles);
-  }
-
-  const rules
-    = (session.user as { routeAccess?: Array<{ path_prefix: string, permission_key: string, ordering: number }> }).routeAccess
-      || (await rbac.getRouteAccessRules());
+  // Sesión Nitro es liviana: permisos y reglas siempre desde BD
+  const permissions = await rbac.getPermissionsForRoles(roles);
+  const rules = await rbac.getRouteAccessRules();
 
   const allowed = rbac.canAccessPath(event.path, roles, permissions, rules);
   if (!allowed) {

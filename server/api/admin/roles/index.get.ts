@@ -12,19 +12,15 @@ export default defineEventHandler(async (event: H3Event) => {
     }
 
     const roles = (session.user as { roles?: string[] }).roles || [];
+    const perms = await rbacService().getPermissionsForRoles(roles);
     if (
       !roles.includes("administrator")
-      && !(session.user as { permissions?: string[] }).permissions?.includes("system.admin")
-      && !(session.user as { permissions?: string[] }).permissions?.includes("roles.manage")
+      && !perms.includes("system.admin")
+      && !perms.includes("roles.manage")
+      && !perms.includes("users.view")
     ) {
-      // Permitir lectura de roles sistema a admin users UI; fallback: cualquier autenticado admin-only check soft
-      const perms
-        = (session.user as { permissions?: string[] }).permissions
-          || (await rbacService().getPermissionsForRoles(roles));
-      if (!perms.includes("users.view") && !perms.includes("system.admin") && !roles.includes("administrator")) {
-        setResponseStatus(event, 403);
-        return CustomResponse.error("Sin permiso", "Acceso denegado");
-      }
+      setResponseStatus(event, 403);
+      return CustomResponse.error("Sin permiso", "Acceso denegado");
     }
 
     const data = await rbacService().listSystemRoles();

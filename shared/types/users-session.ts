@@ -10,7 +10,9 @@ export interface UserSession {
   name: string
   email: string
   roles: string[]
+  /** Presente en respuestas login/verify; no se guarda en cookie Nitro. */
   permissions?: string[]
+  /** Presente en respuestas login/verify; no se guarda en cookie Nitro. */
   routeAccess?: RouteAccessRule[]
   numero_documento?: string
   trabajador?: {

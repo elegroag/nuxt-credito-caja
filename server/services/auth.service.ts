@@ -128,26 +128,37 @@ const authService = () => {
     });
   };
 
+  /**
+   * Sesión Nitro liviana (cookie). No incluir permissions/routeAccess:
+   * el cookie cifrado supera ~4KB y el browser lo descarta → verify falla.
+   */
   const createUserSession = async (
     user: UserWithPassword,
     trabajador: TrabajadorData | null,
     adviser: AdviserData | null
   ): Promise<UserSession> => {
-    const permissions = await permissionsData(user.roles as string[]);
-    const routeAccess = await rbac.getRouteAccessRules();
-    const session = {
+    return {
       id: user.id.toString(),
       username: user.username,
       name: user.full_name || "",
       email: user.email || "",
       roles: user.roles as string[],
-      permissions,
-      routeAccess,
       numero_documento: user.numero_documento || "",
       trabajador: trabajador || null,
       adviser: adviser || null
     };
-    return session as UserSession;
+  };
+
+  /** Payload de auth para el cliente (login/verify): permisos y reglas de ruta desde BD. */
+  const buildAuthUserPayload = async (sessionUser: UserSession) => {
+    const roles = sessionUser.roles || [];
+    const permissions = await permissionsData(roles);
+    const routeAccess = await rbac.getRouteAccessRules();
+    return {
+      ...sessionUser,
+      permissions,
+      routeAccess
+    };
   };
 
   const login = async (event: H3Event, credentials: LoginCredentials) => {
@@ -209,10 +220,11 @@ const authService = () => {
     await userSrv.updateLastLogin(user.id);
 
     const token = await createToken(user);
+    const authUser = await buildAuthUserPayload(userSession);
 
     return {
       message: "Login successful",
-      user: userSession,
+      user: authUser,
       trabajador: trabajadorData,
       access_token: token,
       token_type: "bearer"
@@ -432,10 +444,11 @@ const authService = () => {
     const puntosAsesor = dataPuntos.data || null;
 
     const token = await createToken(user);
+    const authUser = await buildAuthUserPayload(userSession);
 
     return {
       message: "Login successful",
-      user: userSession,
+      user: authUser,
       adviser: adviserData,
       trabajador: trabajadorData,
       puntos_asesorias: puntosAsesor,
@@ -552,10 +565,11 @@ const authService = () => {
     });
 
     const token = await createToken(userForToken);
+    const authUser = await buildAuthUserPayload(userSession);
 
     return {
       message: "Verificación exitosa",
-      user: verifiedUser,
+      user: authUser,
       access_token: token,
       token_type: "bearer"
     };
@@ -603,6 +617,7 @@ const authService = () => {
     login,
     validateCredentials,
     createUserSession,
+    buildAuthUserPayload,
     verify,
     adviser,
     _recovery,

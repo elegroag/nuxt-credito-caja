@@ -12,6 +12,13 @@ const menuLoading = ref(false);
 const menuLoaded = ref(false);
 let menuLoadPromise: Promise<void> | null = null;
 
+/** Limpia caché de menú (llamar en login/logout para no mezclar roles). */
+export function clearDashboardMenu() {
+  menuLoaded.value = false;
+  menuSections.value = [];
+  menuLoadPromise = null;
+}
+
 const SECTION_TITLE: Record<string, string> = {
   General: "GENERAL",
   Administración: "ADMINISTRACIÓN",
@@ -115,16 +122,21 @@ export function useDashboardLayout() {
     void loadMenu(true);
   });
 
-  // Si aún no hay token al montar, cargar cuando la sesión esté lista
+  // Recargar menú si cambian roles (p.ej. tras verify) o el token
   watch(
-    () => session.value.accessToken,
-    (token, prev) => {
+    () => [
+      session.value.accessToken,
+      (session.value.user?.roles || []).join(",")
+    ] as const,
+    ([token, roles], prev) => {
+      const prevToken = prev?.[0];
+      const prevRoles = prev?.[1];
       if (!token) {
-        menuLoaded.value = false;
-        menuSections.value = [];
+        clearDashboardMenu();
         return;
       }
-      if (token !== prev) {
+      if (token !== prevToken || roles !== prevRoles) {
+        clearDashboardMenu();
         void loadMenu(true);
       }
     }
@@ -163,8 +175,7 @@ export function useDashboardLayout() {
 
   const logout = async () => {
     userMenuOpen.value = false;
-    menuLoaded.value = false;
-    menuSections.value = [];
+    clearDashboardMenu();
     clearSession();
     await router.push("/login");
   };

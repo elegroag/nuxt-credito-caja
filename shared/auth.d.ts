@@ -1,13 +1,15 @@
 // auth.d.ts
 declare module "#auth-utils" {
-  // Define the structure of your user object
+  // Cookie Nitro: solo datos livianos (sin permissions/routeAccess).
   interface User {
     id: string
     email: string
     name: string
     roles: string[]
     username: string
+    /** Solo en respuestas login/verify al cliente; no persistir en cookie. */
     permissions?: string[]
+    /** Solo en respuestas login/verify al cliente; no persistir en cookie. */
     routeAccess?: Array<{
       path_prefix: string
       permission_key: string
@@ -30,17 +32,12 @@ declare module "#auth-utils" {
     } | null
   }
 
-  // Define any additional data you want to store in the session
   interface UserSession {
     loggedInAt: Date
-    // Add other session-specific data here if needed
   }
 
-  // Define secure session data if you have any server-side only data
   // eslint-disable-next-line @typescript-eslint/no-empty-object-type
-  interface SecureSessionData extends Record<string, never> {
-    // Add your own fields for server-side only data
-  }
+  interface SecureSessionData extends Record<string, never> {}
 }
 
 export {};
