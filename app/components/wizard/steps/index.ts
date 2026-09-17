@@ -7,4 +7,5 @@ export { default as EconomicaStep } from "./EconomicaStep.vue";
 export { default as PropiedadesStep } from "./PropiedadesStep.vue";
 export { default as DeudasStep } from "./DeudasStep.vue";
 export { default as ReferenciasStep } from "./ReferenciasStep.vue";
+export { default as CodeudoresStep } from "./CodeudoresStep.vue";
 export { default as RevisionStep } from "./RevisionStep.vue";

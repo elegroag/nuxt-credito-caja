@@ -194,6 +194,12 @@
                 {{ lineaSeleccionada.pagseg === "S" ? "Requerido" : "No requerido" }}
               </dd>
             </div>
+            <div>
+              <dt class="text-xs font-medium text-muted-foreground uppercase">Codeudores</dt>
+              <dd class="text-sm font-semibold mt-1">
+                {{ lineaSeleccionada.codeudores ?? 0 }}
+              </dd>
+            </div>
           </dl>
 
           <USeparator />

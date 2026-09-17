@@ -87,6 +87,11 @@
           :errors="stepErrors"
         />
 
+        <CodeudoresStep
+          v-else-if="currentStepKey === 'codeudores'"
+          :codeudores-requeridos="codeudoresRequeridos"
+        />
+
         <RevisionStep
           v-else-if="currentStepKey === 'revision'"
           :pretty-payload="prettyPayload"
@@ -97,6 +102,7 @@
 
       <StepContainer
         :current-step="step"
+        :current-step-key="currentStepKey"
         :total-steps="steps.length"
         :is-last-step="step === steps.length - 1"
         :loading="loadingFormData"
@@ -126,6 +132,7 @@ import SuccessModal from "./SuccessModal.vue";
 import WizardHeader from "./WizardHeader.vue";
 import StepContainer from "./StepContainer.vue";
 import {
+  CodeudoresStep,
   ConyugeStep,
   DeudasStep,
   EconomicaStep,
@@ -148,6 +155,7 @@ const {
   addReferencia,
   autocalcularIngresos,
   closeSuccessModal,
+  codeudoresRequeridos,
   createdSolicitudId,
   currentStep,
   currentStepKey,

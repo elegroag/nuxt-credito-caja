@@ -39,6 +39,7 @@ import { useConfigurations } from "~/composables/admin/useConfigurations";
 
 interface ReferenciasProps {
   currentStep?: number;
+  currentStepKey?: string;
   totalSteps?: number;
   isLastStep?: boolean;
   showPrev?: boolean;
@@ -53,6 +54,7 @@ interface ReferenciasProps {
 
 const props = withDefaults(defineProps<ReferenciasProps>(), {
   currentStep: 0,
+  currentStepKey: "",
   totalSteps: 1,
   isLastStep: false,
   showPrev: true,
@@ -61,8 +63,6 @@ const props = withDefaults(defineProps<ReferenciasProps>(), {
 });
 
 const { getConfigurationAsNumber } = useConfigurations();
-
-const REFERENCIAS_STEP_INDEX = 8;
 
 const minimaFamiliares = computed(() => getConfigurationAsNumber("referencias_familiares", 1));
 const minimaPersonales = computed(() => getConfigurationAsNumber("referencias_personales", 1));
@@ -77,7 +77,7 @@ const referenciasValido = computed(() => {
 });
 
 const isStepBloqueado = computed(() => {
-  return props.currentStep === REFERENCIAS_STEP_INDEX && !referenciasValido.value;
+  return props.currentStepKey === "referencias" && !referenciasValido.value;
 });
 
 defineEmits<{

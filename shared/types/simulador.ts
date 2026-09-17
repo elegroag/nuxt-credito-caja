@@ -16,6 +16,9 @@ export interface LineaCreditoSimulador {
   auxest: string
   estado: string
   codcen: string
+  valmax?: number
+  /** Cantidad de codeudores requeridos por la línea de crédito */
+  codeudores?: number
   documentos?: LineaCreditoDocumento[]
   categorias?: LineaCreditoCategoria[]
 }

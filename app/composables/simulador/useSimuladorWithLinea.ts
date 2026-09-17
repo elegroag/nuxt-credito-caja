@@ -14,6 +14,7 @@ export interface LineaCreditoApiResponse {
   codcre?: string
   auxest?: string
   codcen?: string
+  codeudores?: number
   categorias?: Array<Record<string, unknown>>
 }
 
@@ -29,6 +30,7 @@ export interface LineaCreditoData {
   codcre?: string
   auxest?: string
   codcen?: string
+  codeudores?: number
   categorias?: Array<Record<string, unknown>>
   // ... otras propiedades de la línea
 }

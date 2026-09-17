@@ -267,6 +267,13 @@ const validateReferencias: ValidatorFn = (form, configs) => {
 };
 
 /**
+ * Valida el paso de codeudores (scaffold: sin validaciones aún).
+ */
+const validateCodeudores: ValidatorFn = (_form, _configs) => {
+  return { valid: true, errors: {} };
+};
+
+/**
  * Valida el paso de revisión (sin validaciones).
  */
 const validateRevision: ValidatorFn = (_form, _configs) => {
@@ -283,6 +290,7 @@ export const stepValidators: Record<string, ValidatorFn> = {
   propiedades: validatePropiedades,
   deudas: validateDeudas,
   referencias: validateReferencias,
+  codeudores: validateCodeudores,
   revision: validateRevision
 };
 

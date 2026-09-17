@@ -11,7 +11,7 @@ export type { WizardStep, WizardProps };
 
 const WIZARD_STEP_STORAGE_KEY = "comfaca_credito_solicitud_current_step";
 
-export const WIZARD_STEPS: WizardStep[] = [
+export const WIZARD_STEPS_BASE: WizardStep[] = [
   { key: "solicitud", title: "Solicitud", short: "Solicitud" },
   { key: "solicitante", title: "Datos del solicitante", short: "Solicitante" },
   { key: "conyuge", title: "Datos del cónyuge (opcional)", short: "Cónyuge" },
@@ -24,7 +24,31 @@ export const WIZARD_STEPS: WizardStep[] = [
   { key: "revision", title: "Revisión y generación", short: "Revisión" }
 ];
 
-export const DEFAULT_WIZARD_STEP_KEY = WIZARD_STEPS[0]?.key ?? "solicitud";
+export const CODEUDORES_WIZARD_STEP: WizardStep = {
+  key: "codeudores",
+  title: "Codeudores",
+  short: "Codeudores"
+};
+
+/** Lista estática legada (incluye todos los pasos posibles en orden base). */
+export const WIZARD_STEPS: WizardStep[] = [
+  ...WIZARD_STEPS_BASE.slice(0, -1),
+  CODEUDORES_WIZARD_STEP,
+  WIZARD_STEPS_BASE[WIZARD_STEPS_BASE.length - 1]!
+];
+
+export const DEFAULT_WIZARD_STEP_KEY = WIZARD_STEPS_BASE[0]?.key ?? "solicitud";
+
+export const buildWizardSteps = (codeudoresRequeridos: number): WizardStep[] => {
+  if (codeudoresRequeridos > 0) {
+    return [
+      ...WIZARD_STEPS_BASE.slice(0, -1),
+      CODEUDORES_WIZARD_STEP,
+      WIZARD_STEPS_BASE[WIZARD_STEPS_BASE.length - 1]!
+    ];
+  }
+  return [...WIZARD_STEPS_BASE];
+};
 
 export const isWizardStepKey = (value: string): boolean => {
   return WIZARD_STEPS.some((step) => step.key === value);
@@ -75,14 +99,27 @@ export function useWizardSolicitud(_props?: WizardProps) {
     clearPersistedForm
   } = useSolicitudCreditoForm();
 
+  const codeudoresRequeridos = computed(() => {
+    const fromForm = Number(form.value.linea_credito?.codeudores ?? 0);
+    if (Number.isFinite(fromForm) && fromForm > 0) {
+      return fromForm;
+    }
+
+    const datosSimulador = getDatosParaSolicitud();
+    const fromSimulador = Number(datosSimulador?.lineaCredito?.codeudores ?? 0);
+    return Number.isFinite(fromSimulador) ? Math.max(fromSimulador, 0) : 0;
+  });
+
+  const steps = computed(() => buildWizardSteps(codeudoresRequeridos.value));
+
   const currentStepKey = computed(() => {
-    const stepKey = WIZARD_STEPS[currentStepIndex.value]?.key ?? DEFAULT_WIZARD_STEP_KEY;
+    const stepKey = steps.value[currentStepIndex.value]?.key ?? DEFAULT_WIZARD_STEP_KEY;
     return stepKey;
   });
 
   const step = computed(() => currentStepIndex.value);
 
-  const currentStep = computed(() => WIZARD_STEPS[currentStepIndex.value] ?? WIZARD_STEPS[0]);
+  const currentStep = computed(() => steps.value[currentStepIndex.value] ?? steps.value[0]);
 
   const prettyPayload = computed(() => JSON.stringify(form.value, null, 2));
 
@@ -97,20 +134,20 @@ export function useWizardSolicitud(_props?: WizardProps) {
   };
 
   const goToStep = (stepKey: string) => {
-    const index = WIZARD_STEPS.findIndex((s) => s.key === stepKey);
+    const index = steps.value.findIndex((s) => s.key === stepKey);
     if (index >= 0) {
       currentStepIndex.value = index;
     }
   };
 
   const goToStepByIndex = (index: number) => {
-    if (index >= 0 && index < WIZARD_STEPS.length) {
+    if (index >= 0 && index < steps.value.length) {
       currentStepIndex.value = index;
     }
   };
 
   const next = () => {
-    if (currentStepIndex.value < WIZARD_STEPS.length - 1) {
+    if (currentStepIndex.value < steps.value.length - 1) {
       currentStepIndex.value++;
     }
   };
@@ -200,7 +237,8 @@ export function useWizardSolicitud(_props?: WizardProps) {
             tipfin: datosSimulador.lineaCredito.tipfin,
             tasa_interes: datosSimulador.tasaInteres,
             total_intereses: datosSimulador.totalIntereses,
-            total_pagar: datosSimulador.totalPagar
+            total_pagar: datosSimulador.totalPagar,
+            codeudores: Number(datosSimulador.lineaCredito.codeudores ?? 0)
           };
 
           form.value.solicitud.tipcre = datosSimulador.lineaCredito.tipcre;
@@ -448,7 +486,8 @@ export function useWizardSolicitud(_props?: WizardProps) {
             estcre: simuladorData.lineaCredito.estcre,
             pagseg: simuladorData.lineaCredito.pagseg,
             repdcr: simuladorData.lineaCredito.repdcr,
-            tipfin: simuladorData.lineaCredito.tipfin
+            tipfin: simuladorData.lineaCredito.tipfin,
+            codeudores: Number(simuladorData.lineaCredito.codeudores ?? 0)
           }
         })
       };
@@ -501,6 +540,24 @@ export function useWizardSolicitud(_props?: WizardProps) {
     { immediate: true }
   );
 
+  watch(
+    steps,
+    (nextSteps) => {
+      const key = currentStepKey.value;
+      const index = nextSteps.findIndex((s) => s.key === key);
+      if (index < 0) {
+        // Paso omitido (p. ej. codeudores=0): ir a revisión o último disponible
+        const revisionIndex = nextSteps.findIndex((s) => s.key === "revision");
+        currentStepIndex.value = revisionIndex >= 0 ? revisionIndex : Math.max(nextSteps.length - 1, 0);
+        return;
+      }
+      if (index !== currentStepIndex.value) {
+        currentStepIndex.value = index;
+      }
+    },
+    { immediate: true }
+  );
+
   onMounted(() => {
     loadDataWizard();
     iniciarConsultaRecurrente();
@@ -523,7 +580,8 @@ export function useWizardSolicitud(_props?: WizardProps) {
     successModalOpen,
     pdfGenerado,
     mensajeProgreso,
-    steps: WIZARD_STEPS,
+    steps,
+    codeudoresRequeridos,
     prettyPayload,
     fechaRadicado,
     next,

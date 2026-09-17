@@ -17,6 +17,8 @@ export interface LineaCredito {
   estcre?: number
   repdcr?: string
   tipfin?: string
+  /** Cantidad de codeudores requeridos por la línea */
+  codeudores?: number
   tasa_interes: number
   total_intereses: number
   total_pagar: number
