@@ -1,8 +1,8 @@
 export interface ReporteSolicitantesFiltros {
   fecha_desde?: string
   fecha_hasta?: string
-  tipo_documento?: string
-  estado_solicitud?: string
+  tipo_documento?: string | null
+  estado_solicitud?: string | null
 }
 
 export interface ReporteSolicitanteRow {

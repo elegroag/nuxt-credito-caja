@@ -11,7 +11,7 @@ interface ApiResponse<T> {
   message: string
 }
 
-const cleanValue = (value?: string) => value?.trim() || "";
+const cleanValue = (value?: string | null) => value?.trim() || "";
 
 export const useReporteSolicitantes = () => {
   const api = useApi();
@@ -30,8 +30,8 @@ export const useReporteSolicitantes = () => {
   const filtros = ref<ReporteSolicitantesFiltros>({
     fecha_desde: "",
     fecha_hasta: "",
-    tipo_documento: "",
-    estado_solicitud: ""
+    tipo_documento: null,
+    estado_solicitud: null
   });
 
   const buildQueryString = () => {
@@ -179,8 +179,8 @@ export const useReporteSolicitantes = () => {
     filtros.value = {
       fecha_desde: "",
       fecha_hasta: "",
-      tipo_documento: "",
-      estado_solicitud: ""
+      tipo_documento: null,
+      estado_solicitud: null
     };
     await cargarPreview();
   };

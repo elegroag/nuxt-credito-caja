@@ -45,6 +45,13 @@ export default defineNuxtConfig({
     }
   },
 
+  icon: {
+    clientBundle: {
+      // Empaqueta iconos con nombre literal (p. ej. lucide:bell) para evitar fetch en runtime
+      scan: true
+    }
+  },
+
   runtimeConfig: {
     public: {
       environment: env.NODE_ENV || "development"

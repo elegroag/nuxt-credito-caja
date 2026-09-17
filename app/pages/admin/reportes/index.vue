@@ -30,7 +30,7 @@ const {
 } = useReporteSolicitantes();
 
 const tiposDocumento = [
-  { label: "Todos", value: "" },
+  { label: "Todos", value: null },
   { label: "Cédula de Ciudadanía", value: "CC" },
   { label: "Cédula de Extranjería", value: "CE" },
   { label: "Tarjeta de Identidad", value: "TI" },
@@ -39,7 +39,7 @@ const tiposDocumento = [
 ];
 
 const estadosSolicitud = [
-  { label: "Todos", value: "" },
+  { label: "Todos", value: null },
   ...ESTADOS_DISPONIBLES.map(estado => ({
     label: estado,
     value: estado
