@@ -5,8 +5,8 @@ export default defineEventHandler(async (event) => {
     return;
   }
 
-  // Roles de sistema (lectura) permitido con users.view — no bloquear aquí
-  if (event.path.startsWith("/api/admin/roles")) {
+  // Lectura liviana de roles para formularios de usuarios (no el CRUD RBAC)
+  if (event.path === "/api/admin/roles" || event.path === "/api/admin/roles/") {
     return;
   }
 

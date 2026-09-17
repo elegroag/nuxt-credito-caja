@@ -2,6 +2,8 @@
 export const permissions = [
   { key: "system.admin", etiqueta: "Administración del sistema", descripcion: "Acceso total de administración" },
   { key: "roles.manage", etiqueta: "Gestionar roles", descripcion: "Administrar roles del sistema" },
+  { key: "permissions.manage", etiqueta: "Gestionar permisos", descripcion: "Administrar catálogo de permisos" },
+  { key: "modules.manage", etiqueta: "Gestionar módulos", descripcion: "Administrar menú y módulos del sistema" },
   { key: "users.view", etiqueta: "Ver usuarios", descripcion: "Listar y ver usuarios" },
   { key: "users.create", etiqueta: "Crear usuarios", descripcion: "Crear usuarios" },
   { key: "users.edit", etiqueta: "Editar usuarios", descripcion: "Editar usuarios" },
@@ -34,6 +36,8 @@ export const rolePermissionMap: Record<string, string[]> = {
   administrator: [
     "system.admin",
     "roles.manage",
+    "permissions.manage",
+    "modules.manage",
     "users.view",
     "users.create",
     "users.edit",

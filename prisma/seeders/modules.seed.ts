@@ -155,6 +155,36 @@ export const modulesSeed: ModuleSeed[] = [
     permissionKeys: ["configuraciones.view"]
   },
   {
+    key: "admin.roles",
+    title: "Roles",
+    href: "/admin/roles",
+    icon: "i-lucide-shield",
+    abbr: "RL",
+    section: "Parametrización",
+    ordering: 15,
+    permissionKeys: ["roles.manage"]
+  },
+  {
+    key: "admin.permisos",
+    title: "Permisos",
+    href: "/admin/permisos",
+    icon: "i-lucide-key-round",
+    abbr: "PM",
+    section: "Parametrización",
+    ordering: 16,
+    permissionKeys: ["permissions.manage"]
+  },
+  {
+    key: "admin.modulos",
+    title: "Módulos",
+    href: "/admin/modulos",
+    icon: "i-lucide-layout-list",
+    abbr: "MD",
+    section: "Parametrización",
+    ordering: 17,
+    permissionKeys: ["modules.manage"]
+  },
+  {
     key: "admin.contenido",
     title: "CMS",
     href: "/admin/contenido",
@@ -190,6 +220,13 @@ export const routePermissionsSeed: Array<{ path_prefix: string, permissionKey: s
   { path_prefix: "/api/admin/reportes", permissionKey: "reportes.view", ordering: 51 },
   { path_prefix: "/admin/configuraciones", permissionKey: "configuraciones.view", ordering: 60 },
   { path_prefix: "/api/admin/configurations", permissionKey: "configuraciones.view", ordering: 61 },
+  { path_prefix: "/admin/roles", permissionKey: "roles.manage", ordering: 62 },
+  { path_prefix: "/admin/permisos", permissionKey: "permissions.manage", ordering: 63 },
+  { path_prefix: "/admin/modulos", permissionKey: "modules.manage", ordering: 64 },
+  { path_prefix: "/api/admin/rbac/roles", permissionKey: "roles.manage", ordering: 65 },
+  { path_prefix: "/api/admin/rbac/permissions", permissionKey: "permissions.manage", ordering: 66 },
+  { path_prefix: "/api/admin/rbac/modules", permissionKey: "modules.manage", ordering: 67 },
+  { path_prefix: "/api/admin/rbac", permissionKey: "roles.manage", ordering: 68 },
   { path_prefix: "/admin/contenido", permissionKey: "cms.view", ordering: 70 },
   { path_prefix: "/api/admin/cms", permissionKey: "cms.view", ordering: 71 },
   { path_prefix: "/admin/carrusel", permissionKey: "carrusel.view", ordering: 80 },
