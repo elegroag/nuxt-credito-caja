@@ -341,31 +341,68 @@ const postulacionSolicitudService = () => {
         automatico: true
       });
 
-      // 6. Guardar codeudores como firmantes_solicitud
+      // 6. Guardar solicitante como firmante (orden 1) + codeudores (desde orden 2)
       const codeudoresAsignados = Array.isArray(codeudoresAsignadosRaw)
         ? (codeudoresAsignadosRaw as CodeudorAsignado[])
         : [];
 
-      if (codeudoresAsignados.length > 0) {
-        await prisma.firmantes_solicitud.createMany({
-          data: codeudoresAsignados.map((c, index) => ({
-            solicitud_id: numeroSolicitudRadicado,
-            orden: index + 1,
-            tipo: String(c.tipo_documento || "1"),
-            nombre_completo: c.nombre_completo,
-            numero_documento: String(c.numero_documento),
-            email: c.email,
-            rol: "Codeudor",
-            telefono: c.telefono ? String(c.telefono) : null,
-            codigo_pais: "57"
-          }))
+      const firmantesData: Array<{
+        solicitud_id: string
+        orden: number
+        tipo: string
+        nombre_completo: string
+        numero_documento: string
+        email: string
+        rol: string
+        telefono: string | null
+        codigo_pais: string
+      }> = [];
+
+      if (solicitante) {
+        const s = solicitante as PayloadSolicitante;
+        const nombreCompleto = [s.nombres, s.apellidos]
+          .filter(Boolean)
+          .join(" ")
+          .trim()
+          || s.razon_social
+          || "";
+
+        firmantesData.push({
+          solicitud_id: numeroSolicitudRadicado,
+          orden: 1,
+          tipo: String(s.tipo_documento || normalizeValue(s.tipo_persona) || "1"),
+          nombre_completo: nombreCompleto,
+          numero_documento: String(s.numero_documento || s.nit || ""),
+          email: s.email || "",
+          rol: "Trabajador",
+          telefono: s.celular || s.telefono_movil || s.telefono || s.telefono_fijo || null,
+          codigo_pais: "57"
         });
+      }
+
+      for (const [index, c] of codeudoresAsignados.entries()) {
+        firmantesData.push({
+          solicitud_id: numeroSolicitudRadicado,
+          orden: index + 2,
+          tipo: String(c.tipo_documento || "1"),
+          nombre_completo: c.nombre_completo,
+          numero_documento: String(c.numero_documento),
+          email: c.email,
+          rol: "Codeudor",
+          telefono: c.telefono ? String(c.telefono) : null,
+          codigo_pais: "57"
+        });
+      }
+
+      if (firmantesData.length > 0) {
+        await prisma.firmantes_solicitud.createMany({ data: firmantesData });
       }
 
       return {
         numero_solicitud: numeroSolicitudRadicado,
         solicitud: solicitudCredito,
         payload,
+        firmantes_solicitante: solicitante ? 1 : 0,
         firmantes_codeudores: codeudoresAsignados.length
       };
     } catch (error: unknown) {

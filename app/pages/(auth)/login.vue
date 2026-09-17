@@ -47,23 +47,25 @@
         </div>
 
         <!-- Submit -->
-        <UButton
-          type="submit"
-          color="primary"
-          size="lg"
-          class="w-full"
-          :loading="loading"
-          :disabled="!isConnected"
-        >
-          <template #leading>
-            <UIcon
-              v-if="!loading"
-              name="i-lucide-arrow-right"
-              class="w-4 h-4"
-            />
-          </template>
-          {{ loading ? "Ingresando..." : "Ingresar" }}
-        </UButton>
+        <div class="flex justify-center pt-2">
+          <UButton
+            type="submit"
+            color="primary"
+            size="lg"
+            class="min-w-40 sm:min-w-48 justify-center"
+            :loading="loading"
+            :disabled="!isConnected"
+          >
+            <template #leading>
+              <UIcon
+                v-if="!loading"
+                name="i-lucide-arrow-right"
+                class="w-4 h-4"
+              />
+            </template>
+            {{ loading ? "Ingresando..." : "Ingresar" }}
+          </UButton>
+        </div>
       </form>
 
       <!-- Links -->

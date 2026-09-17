@@ -51,7 +51,7 @@ export function useShowUser() {
       await ready;
 
       const nuevoEstado
-        = usuario.value.estado === "active" ? "inactive" : "active";
+        = usuario.value.is_active ? "inactive" : "active";
 
       const response = await putJson<{
         success: boolean
@@ -59,7 +59,7 @@ export function useShowUser() {
       }>(`/api/admin/users/${usuario.value.id}/estado`, {}, { auth: true });
 
       if (response.success) {
-        // Actualizar el usuario localmente
+        usuario.value.is_active = nuevoEstado === "active";
         usuario.value.estado = nuevoEstado;
       } else {
         error.value = response.message || "No se pudo cambiar el estado";
@@ -85,6 +85,11 @@ export function useShowUser() {
   // Utilidades
   const getRolLabel = (rol: string) => {
     const roles: Record<string, string> = {
+      administrator: "Administrador",
+      adviser: "Asesor",
+      user_trabajador: "Trabajador",
+      user_codeudor: "Codeudor",
+      user_empresa: "Empresa",
       admin: "Administrador",
       user: "Usuario",
       trabajador: "Trabajador",
@@ -95,17 +100,19 @@ export function useShowUser() {
 
   const getRolVariant = (
     rol: string
-  ): "default" | "destructive" | "outline" | "secondary" => {
-    const variants: Record<
-      string,
-      "default" | "destructive" | "outline" | "secondary"
-    > = {
-      admin: "destructive",
-      user: "default",
-      trabajador: "secondary",
+  ): "solid" | "outline" | "soft" | "subtle" => {
+    const variants: Record<string, "solid" | "outline" | "soft" | "subtle"> = {
+      administrator: "solid",
+      adviser: "outline",
+      user_trabajador: "soft",
+      user_codeudor: "subtle",
+      user_empresa: "outline",
+      admin: "solid",
+      user: "soft",
+      trabajador: "soft",
       empresa: "outline"
     };
-    return variants[rol] || "default";
+    return variants[rol] || "soft";
   };
 
   const getEstadoLabel = (estado: string) => {
@@ -119,16 +126,13 @@ export function useShowUser() {
 
   const getEstadoVariant = (
     estado: string
-  ): "default" | "destructive" | "outline" | "secondary" => {
-    const variants: Record<
-      string,
-      "default" | "destructive" | "outline" | "secondary"
-    > = {
-      active: "default",
-      inactive: "secondary",
-      suspended: "destructive"
+  ): "solid" | "outline" | "soft" | "subtle" => {
+    const variants: Record<string, "solid" | "outline" | "soft" | "subtle"> = {
+      active: "soft",
+      inactive: "outline",
+      suspended: "solid"
     };
-    return variants[estado] || "default";
+    return variants[estado] || "soft";
   };
 
   const getTipoDocumentoLabel = (tipo: string) => {

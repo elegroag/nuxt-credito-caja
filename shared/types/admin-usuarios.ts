@@ -1,12 +1,14 @@
 export interface Usuario {
   id: string
   username: string
+  full_name?: string
   nombres: string
   apellidos: string
   email: string
   tipo_documento: string
   numero_documento: string
   rol: string
+  roles?: string[]
   estado: string
   ultimo_acceso: string
   fecha_creacion: string
@@ -24,6 +26,11 @@ export interface Usuario {
   nombre?: string
   apellido?: string
   tipo_identificacion?: string
+  disabled?: boolean
+  is_active?: boolean
+  created_at?: string
+  updated_at?: string
+  phone?: string
 }
 
 export interface Paginacion {

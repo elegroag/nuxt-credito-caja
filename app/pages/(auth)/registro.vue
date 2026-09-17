@@ -1,8 +1,8 @@
 <template>
-  <div class="w-full max-w-xl mx-auto">
-    <div class="bg-card rounded-3xl border border-border/50 p-8 sm:p-10">
+  <div class="w-full max-w-2xl sm:max-w-3xl lg:max-w-4xl mx-auto px-1 sm:px-0">
+    <div class="bg-card rounded-2xl sm:rounded-3xl border border-border/50 p-5 sm:p-8 lg:p-10">
       <!-- Stepper -->
-      <div class="relative flex justify-between items-center mb-8 px-4">
+      <div class="relative flex justify-between items-center mb-8 px-2 sm:px-4">
         <div class="absolute left-0 top-1/2 -z-10 h-0.5 w-full bg-muted" />
         <div
           class="absolute left-0 top-1/2 -z-10 h-0.5 bg-primary transition-all duration-300"
@@ -46,7 +46,7 @@
           v-if="pasoActual === 1"
           class="space-y-4"
         >
-          <div class="grid grid-cols-2 gap-4">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div class="space-y-2">
               <label class="text-sm font-medium text-foreground p-2">Documento</label>
               <USelectMenu
@@ -79,7 +79,7 @@
               >
             </div>
           </div>
-          <div class="grid grid-cols-2 gap-4">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div class="space-y-2">
               <label class="text-sm font-medium text-foreground p-2">Nombres</label>
               <input
@@ -169,7 +169,7 @@
               Este será tu nombre de usuario para iniciar sesión
             </p>
           </div>
-          <div class="grid grid-cols-2 gap-4">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div class="space-y-2">
               <label class="text-sm font-medium text-foreground p-2">Contraseña</label>
               <div class="relative">
@@ -233,13 +233,14 @@
         </div>
 
         <!-- Navigation Buttons -->
-        <div class="flex gap-3 pt-2">
+        <div class="flex flex-wrap items-center justify-center gap-3 pt-4">
           <UButton
             v-if="pasoActual > 1"
             type="button"
             color="neutral"
             variant="soft"
-            class="flex-1"
+            size="lg"
+            class="min-w-36 sm:min-w-40 justify-center"
             @click="pasoAnterior"
           >
             <UIcon
@@ -253,7 +254,8 @@
             v-if="pasoActual < 3"
             type="button"
             color="primary"
-            class="flex-1"
+            size="lg"
+            class="min-w-40 sm:min-w-48 justify-center"
             :disabled="
               (pasoActual === 1 && !validarPaso1)
                 || (pasoActual === 2 && !validarPaso2)
@@ -271,7 +273,8 @@
             v-else
             type="submit"
             color="primary"
-            class="flex-1"
+            size="lg"
+            class="min-w-40 sm:min-w-48 justify-center"
             :loading="loading"
             :disabled="!validarPaso3"
           >

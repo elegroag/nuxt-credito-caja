@@ -82,7 +82,9 @@ const extractApiErrorMessage = (e: unknown, fallback: string): string => {
   return fallback;
 };
 
-export const useGestionCodeudores = () => {
+export const useGestionCodeudores = (options?: {
+  titularUserId?: MaybeRefOrGetter<number | string | null | undefined>
+}) => {
   const api = useApi();
   const loading = ref(false);
   const confirming = ref(false);
@@ -92,6 +94,12 @@ export const useGestionCodeudores = () => {
   const vinculos = ref<CodeudorVinculo[]>([]);
   const pendingConfirmId = ref<number | null>(null);
   const codigo = ref("");
+
+  const titularId = computed(() => {
+    const raw = toValue(options?.titularUserId);
+    const n = Number(raw);
+    return Number.isFinite(n) && n > 0 ? n : undefined;
+  });
 
   const form = reactive({
     tipo_documento: "1",
@@ -106,8 +114,11 @@ export const useGestionCodeudores = () => {
     loading.value = true;
     error.value = null;
     try {
+      const qs = titularId.value
+        ? `?titular_user_id=${titularId.value}`
+        : "";
       const response = await api.getJson<ApiResponse<CodeudorVinculo[]>>(
-        "/api/codeudores",
+        `/api/codeudores${qs}`,
         { auth: true }
       );
       if (!response.success || !response.data) {
@@ -133,7 +144,8 @@ export const useGestionCodeudores = () => {
         nombres: form.nombres.trim(),
         apellidos: form.apellidos.trim(),
         email: form.email.trim(),
-        phone: form.phone.trim() || null
+        phone: form.phone.trim() || null,
+        ...(titularId.value ? { titular_user_id: titularId.value } : {})
       };
       const response = await api.postJson<ApiResponse<CodeudorVinculo>>(
         "/api/codeudores",
@@ -244,6 +256,7 @@ export const useGestionCodeudores = () => {
     pendingConfirmId,
     codigo,
     form,
+    titularId,
     listar,
     crear,
     confirmar,

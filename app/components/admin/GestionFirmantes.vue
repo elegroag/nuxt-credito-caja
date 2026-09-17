@@ -1,9 +1,20 @@
 <template>
   <!-- Lista de Firmantes Actuales -->
   <div v-if="firmantes.length > 0" class="mb-6">
-    <h3 class="text-sm font-medium text-foreground mb-3">
-      Firmantes Registrados ({{ firmantes.length }})
-    </h3>
+    <div class="flex items-center justify-between gap-3 mb-3">
+      <h3 class="text-sm font-medium text-foreground">
+        Firmantes Registrados ({{ firmantes.length }})
+      </h3>
+      <UButton
+        color="primary"
+        variant="soft"
+        size="sm"
+        @click="abrirModalAgregarFirmante"
+      >
+        <UIcon name="i-lucide-user-plus" class="w-4 h-4 mr-1.5" />
+        Agregar firmante
+      </UButton>
+    </div>
     <div class="space-y-3">
       <div
         v-for="(firmante, index) in firmantes"
@@ -32,7 +43,13 @@
                   Pendiente
                 </UBadge>
               </div>
-              <UBadge v-if="firmante.rol" color="secondary" variant="subtle" size="xs">
+              <UBadge
+                v-if="firmante.rol"
+                color="secondary"
+                variant="subtle"
+                size="lg"
+                class="text-sm font-semibold tracking-wide"
+              >
                 {{ firmante.rol }}
               </UBadge>
             </div>
@@ -68,7 +85,7 @@
     </div>
   </div>
 
-  <div v-else class="mb-6">
+  <div v-else class="mb-6 space-y-3">
     <UAlert color="primary" variant="subtle">
       <template #icon>
         <UIcon name="i-lucide-alert-triangle" class="w-4 h-4" />
@@ -78,99 +95,17 @@
         Agregue al menos un firmante para poder iniciar el proceso de firma digital.
       </template>
     </UAlert>
-  </div>
-
-  <!-- Formulario para Agregar Nuevo Firmante -->
-  <UCard class="mt-4">
-    <template #header>
-      <h3 class="font-medium text-foreground flex items-center gap-2">
-        <UIcon name="i-lucide-user-plus" class="w-4 h-4 text-primary" />
-        Agregar Nuevo Firmante
-      </h3>
-    </template>
-
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-      <UFormField label="Nombre Completo" required>
-        <UInput
-          v-model="nuevoFirmante.nombre_completo"
-          placeholder="Nombre completo del firmante"
-          icon="i-lucide-user"
-          class="w-full"
-        />
-      </UFormField>
-
-      <UFormField label="Email" required>
-        <UInput
-          v-model="nuevoFirmante.email"
-          type="email"
-          placeholder="correo@ejemplo.com"
-          icon="i-lucide-mail"
-          class="w-full"
-        />
-      </UFormField>
-
-      <UFormField label="Tipo de Documento">
-        <USelectMenu
-          v-model="nuevoFirmante.tipo"
-          :items="tipoDocumentoOptions"
-          value-key="value"
-          label-key="label"
-          placeholder="Seleccionar tipo"
-          class="w-full"
-        />
-      </UFormField>
-
-      <UFormField label="Número de Documento" required>
-        <UInput
-          v-model="nuevoFirmante.numero_documento"
-          type="number"
-          placeholder="Mínimo 6 dígitos"
-          icon="i-lucide-hash"
-          class="w-full"
-        />
-      </UFormField>
-
-      <UFormField label="Rol">
-        <USelectMenu
-          v-model="nuevoFirmante.rol"
-          :items="rolOptions"
-          value-key="value"
-          label-key="label"
-          placeholder="Seleccionar rol"
-          class="w-full"
-        />
-      </UFormField>
-
-      <UFormField label="Teléfono" class="flex-1">
-        <div class="flex gap-2">
-          <USelectMenu
-            v-model="nuevoFirmante.codigo_pais"
-            :items="paisOptions"
-            value-key="value"
-            label-key="label"
-            placeholder="Código"
-            class="w-28 shrink-0"
-          />
-          <UInput
-            v-model="nuevoFirmante.telefono"
-            type="number"
-            placeholder="3001234567"
-            icon="i-lucide-phone"
-            class="w-full"
-          />
-        </div>
-      </UFormField>
+    <div class="flex justify-end">
+      <UButton
+        color="primary"
+        size="sm"
+        @click="abrirModalAgregarFirmante"
+      >
+        <UIcon name="i-lucide-user-plus" class="w-4 h-4 mr-1.5" />
+        Agregar firmante
+      </UButton>
     </div>
-
-    <template #footer>
-      <div class="flex justify-end">
-        <UButton type="button" variant="outline" @click="handleAgregarFirmante">
-          <UIcon name="i-lucide-user-plus" class="w-4 h-4 mr-2" />
-          Agregar Firmante
-        </UButton>
-      </div>
-    </template>
-  </UCard>
+  </div>
 
   <!-- Botón de Envío para Firma -->
   <div class="border-t mt-6 pt-6">
@@ -190,6 +125,101 @@
       Se enviará el documento a todos los firmantes registrados para su firma digital.
     </p>
   </div>
+
+  <!-- Modal: Agregar Nuevo Firmante -->
+  <UModal
+    v-model:open="agregarFirmanteModalOpen"
+    title="Agregar Nuevo Firmante"
+    description="Complete los datos del firmante a asociar a la solicitud."
+    icon="i-lucide-user-plus"
+    class="max-w-2xl"
+  >
+    <template #body>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <UFormField label="Nombre Completo" required>
+          <UInput
+            v-model="nuevoFirmante.nombre_completo"
+            placeholder="Nombre completo del firmante"
+            icon="i-lucide-user"
+            class="w-full"
+          />
+        </UFormField>
+
+        <UFormField label="Email" required>
+          <UInput
+            v-model="nuevoFirmante.email"
+            type="email"
+            placeholder="correo@ejemplo.com"
+            icon="i-lucide-mail"
+            class="w-full"
+          />
+        </UFormField>
+
+        <UFormField label="Tipo de Documento">
+          <USelectMenu
+            v-model="nuevoFirmante.tipo"
+            :items="tipoDocumentoOptions"
+            value-key="value"
+            label-key="label"
+            placeholder="Seleccionar tipo"
+            class="w-full"
+          />
+        </UFormField>
+
+        <UFormField label="Número de Documento" required>
+          <UInput
+            v-model="nuevoFirmante.numero_documento"
+            type="number"
+            placeholder="Mínimo 6 dígitos"
+            icon="i-lucide-hash"
+            class="w-full"
+          />
+        </UFormField>
+
+        <UFormField label="Rol">
+          <USelectMenu
+            v-model="nuevoFirmante.rol"
+            :items="rolOptions"
+            value-key="value"
+            label-key="label"
+            placeholder="Seleccionar rol"
+            class="w-full"
+          />
+        </UFormField>
+
+        <UFormField label="Teléfono" class="flex-1">
+          <div class="flex gap-2">
+            <USelectMenu
+              v-model="nuevoFirmante.codigo_pais"
+              :items="paisOptions"
+              value-key="value"
+              label-key="label"
+              placeholder="Código"
+              class="w-28 shrink-0"
+            />
+            <UInput
+              v-model="nuevoFirmante.telefono"
+              type="number"
+              placeholder="3001234567"
+              icon="i-lucide-phone"
+              class="w-full"
+            />
+          </div>
+        </UFormField>
+      </div>
+    </template>
+    <template #footer>
+      <div class="flex justify-end gap-2">
+        <UButton variant="ghost" @click="agregarFirmanteModalOpen = false">
+          Cancelar
+        </UButton>
+        <UButton color="primary" @click="handleAgregarFirmante">
+          <UIcon name="i-lucide-user-plus" class="w-4 h-4 mr-2" />
+          Agregar Firmante
+        </UButton>
+      </div>
+    </template>
+  </UModal>
 
   <!-- Modal de Error de Validación -->
   <UModal
@@ -220,10 +250,10 @@
   <!-- Modal de Éxito -->
   <UModal
     v-model:open="successModalOpen"
-    title="Envío Exitoso"
+    :title="successRedirectOnAccept ? 'Envío Exitoso' : 'Firmante agregado'"
     icon="i-lucide-check-circle"
     class="max-w-md"
-    :dismissible="false"
+    :dismissible="!successRedirectOnAccept"
   >
     <template #body>
       <UAlert color="primary" variant="soft">
@@ -325,6 +355,7 @@ watch(
 );
 
 const loadingFirmado = ref(false);
+const agregarFirmanteModalOpen = ref(false);
 const nuevoFirmante = ref<NuevoFirmante>({
   tipo: "1",
   nombre_completo: "",
@@ -347,7 +378,25 @@ const errorModalOpen = ref(false);
 const errorModalMessage = ref("");
 const successModalOpen = ref(false);
 const successModalMessage = ref("");
+const successRedirectOnAccept = ref(false);
 const confirmFirmaModalOpen = ref(false);
+
+const resetNuevoFirmante = () => {
+  nuevoFirmante.value = {
+    tipo: "1",
+    nombre_completo: "",
+    email: "",
+    numero_documento: "",
+    rol: "Firmante",
+    telefono: "",
+    codigo_pais: "57"
+  };
+};
+
+const abrirModalAgregarFirmante = () => {
+  resetNuevoFirmante();
+  agregarFirmanteModalOpen.value = true;
+};
 
 const isValidEmail = (email: string | undefined) => {
   if (!email) return false;
@@ -367,6 +416,8 @@ const isValidDocument = (documento: string | undefined) => {
 const handleAgregarFirmante = () => {
   const resultado = agregarFirmante();
   if (resultado.success) {
+    agregarFirmanteModalOpen.value = false;
+    successRedirectOnAccept.value = false;
     successModalMessage.value = resultado.message || "Firmante agregado exitosamente";
     successModalOpen.value = true;
   } else {
@@ -400,9 +451,9 @@ const eliminarFirmante = async (index: number) => {
 
 const agregarFirmante = () => {
   if (
-    !nuevoFirmante.value.nombre_completo ||
-    !nuevoFirmante.value.email ||
-    !nuevoFirmante.value.numero_documento
+    !nuevoFirmante.value.nombre_completo
+    || !nuevoFirmante.value.email
+    || !nuevoFirmante.value.numero_documento
   ) {
     return {
       success: false,
@@ -446,15 +497,7 @@ const agregarFirmante = () => {
     updated_at: null
   };
   firmantes.value.push(nuevo);
-
-  nuevoFirmante.value = {
-    tipo: "1",
-    nombre_completo: "",
-    email: "",
-    numero_documento: "",
-    rol: "Firmante",
-    telefono: ""
-  };
+  resetNuevoFirmante();
 
   return { success: true, message: "Firmante agregado exitosamente." };
 };
@@ -507,6 +550,7 @@ const confirmarEnvioFirma = async () => {
   const resultado = await iniciarProcesoDeFirmado();
 
   if (resultado.success) {
+    successRedirectOnAccept.value = true;
     successModalMessage.value = resultado.message || "Documento enviado para firma digital exitosamente.";
     successModalOpen.value = true;
   } else {
@@ -517,6 +561,8 @@ const confirmarEnvioFirma = async () => {
 
 const handleSuccessModalAccept = () => {
   successModalOpen.value = false;
-  navigateTo("/admin/solicitudes");
+  if (successRedirectOnAccept.value) {
+    navigateTo("/admin/solicitudes");
+  }
 };
 </script>
