@@ -1,5 +1,6 @@
 import { useRuntimeConfig } from "#imports";
 import { ofetch } from "ofetch";
+import { loggerService } from "~~/server/utils/logger.service";
 
 interface FetchError {
   statusCode?: number
@@ -10,6 +11,7 @@ interface FetchError {
 
 const apiFlaskPdf = () => {
   const config = useRuntimeConfig();
+  const Log = loggerService();
   const env = config.apiFLASKPDF.env;
   const basic_user = config.apiFLASKPDF.basic_user;
   const basic_password = config.apiFLASKPDF.basic_password;
@@ -74,7 +76,15 @@ const apiFlaskPdf = () => {
     }
 
     const url = env === "pro" ? baseUrl.pro : baseUrl.dev;
-    const response = await ofetch<T>(`${url}/${path}`, {
+    const fullUrl = `${url}/${path}`;
+
+    await Log.info("Flask PDF: enviando POST", {
+      env,
+      url: fullUrl,
+      body
+    });
+
+    const response = await ofetch<T>(fullUrl, {
       method: "POST",
       headers,
       body
