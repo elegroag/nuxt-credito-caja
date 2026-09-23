@@ -18,6 +18,7 @@ import type {
   TipoContratoParam
 } from "~~/shared/types/parametros";
 import pdfPayloadService from "~~/server/services/pdf/pdf-payload.service";
+import { adaptPayloadForFlaskV2 } from "~~/server/services/pdf/pdf-flask-v2-adapter.service";
 import pdfStorageService from "~~/server/services/pdf/pdf-storage.service";
 
 const Log = loggerService();
@@ -149,9 +150,12 @@ export default defineEventHandler(async (event: H3Event) => {
 
     await Log.debug("Payload construido para Flask PDF", payload);
 
+    // ---- 4b. Adaptar al contrato templates_creditos_v2 ----
+    const payloadV2 = adaptPayloadForFlaskV2(payload, catalogosParam);
+
     // ---- 5. Enviar a Flask PDF ----
     const flaskPdf = apiFlaskPdf();
-    const response = await flaskPdf.generatePdf<FlaskPdfResponse>(payload);
+    const response = await flaskPdf.generatePdf<FlaskPdfResponse>(payloadV2);
 
     await Log.info("Respuesta de Flask PDF", {
       solicitudId,
