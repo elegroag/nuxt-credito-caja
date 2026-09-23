@@ -36,13 +36,24 @@
             />
             <UInput
               v-model="password"
-              type="password"
+              :type="mostrarPassword ? 'text' : 'password'"
               size="xl"
               placeholder="••••••••"
-              class="w-full pl-11 pr-4 py-3 bg-muted/50 rounded-xl border-0 text-foreground placeholder:text-muted-foreground focus:ring-2 focus:ring-primary/20 focus:bg-card transition-all"
+              class="w-full pl-11 pr-11 py-3 bg-muted/50 rounded-xl border-0 text-foreground placeholder:text-muted-foreground focus:ring-2 focus:ring-primary/20 focus:bg-card transition-all"
               :class="{ 'ring-2 ring-red-500/20': errorMsg }"
               required
             />
+            <button
+              type="button"
+              class="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-muted-foreground hover:text-foreground transition-colors"
+              :aria-label="mostrarPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'"
+              @click="mostrarPassword = !mostrarPassword"
+            >
+              <UIcon
+                :name="mostrarPassword ? 'i-lucide-eye-off' : 'i-lucide-eye'"
+                class="w-4 h-4"
+              />
+            </button>
           </div>
         </div>
 
@@ -156,6 +167,7 @@ const {
 } = useHealthCheck();
 
 const isModalOpen = ref(false);
+const mostrarPassword = ref(false);
 
 watch(errorMsg, (newVal) => {
   if (newVal) {

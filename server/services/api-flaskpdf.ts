@@ -84,7 +84,7 @@ const apiFlaskPdf = () => {
   };
 
   const generatePdf = async <T>(data: Record<string, unknown>): Promise<T> => {
-    return await postJson<T>("creditos/generate-pdf", data, { auth: true });
+    return await postJson<T>("creditos/v2/generate-pdf", data, { auth: true });
   };
 
   return {
