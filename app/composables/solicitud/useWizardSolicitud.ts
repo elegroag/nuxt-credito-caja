@@ -435,6 +435,9 @@ export function useWizardSolicitud(_props?: WizardProps) {
 
   const clearWizardProgress = () => {
     clearPersistedForm();
+    // useState sobrevive a la navegación SPA: reiniciar para que la próxima solicitud arranque en el primer paso
+    currentStepIndex.value = 0;
+    wizardBootstrapped.value = false;
 
     if (!import.meta.client) {
       return;
