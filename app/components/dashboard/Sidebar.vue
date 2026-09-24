@@ -114,21 +114,17 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted } from "vue";
+import { computed } from "vue";
 import { X } from "@lucide/vue";
 import { cn } from "@/lib/utils";
 
 import { useDashboardLayout } from "~/composables/layout/useDashboardLayout";
 import { usePermissions } from "~/composables/usePermissions";
 
-const { session, sidebarOpen, sidebarCollapsed, groupedNavItems, isActive, loadMenu, _abbr } =
+const { session, sidebarOpen, sidebarCollapsed, groupedNavItems, isActive, _abbr } =
   useDashboardLayout();
 
 const { getPrimaryRoleDisplay } = usePermissions();
-
-onMounted(() => {
-  void loadMenu();
-});
 
 const sidebarDesktopClasses = computed(() => {
   const baseClasses =

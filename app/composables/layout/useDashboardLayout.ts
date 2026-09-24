@@ -1,4 +1,4 @@
-import { ref, computed, onMounted, watch } from "vue";
+import { ref, computed, onMounted, onUnmounted, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useSession } from "~/composables/useSession";
 import type { NavItem, NavSectionGroup } from "#shared/types/layout";
@@ -11,6 +11,8 @@ const menuSections = ref<NavSectionGroup[]>([]);
 const menuLoading = ref(false);
 const menuLoaded = ref(false);
 let menuLoadPromise: Promise<void> | null = null;
+// Layout, Sidebar y Header usan el composable: la carga y el watch se registran solo en la primera instancia
+let menuLifecycleRegistered = false;
 
 /** Limpia caché de menú (llamar en login/logout para no mezclar roles). */
 export function clearDashboardMenu() {
@@ -118,29 +120,37 @@ export function useDashboardLayout() {
     return menuLoadPromise;
   };
 
-  onMounted(() => {
-    void loadMenu(true);
-  });
+  if (import.meta.client && !menuLifecycleRegistered) {
+    menuLifecycleRegistered = true;
 
-  // Recargar menú si cambian roles (p.ej. tras verify) o el token
-  watch(
-    () => [
-      session.value.accessToken,
-      (session.value.user?.roles || []).join(",")
-    ] as const,
-    ([token, roles], prev) => {
-      const prevToken = prev?.[0];
-      const prevRoles = prev?.[1];
-      if (!token) {
-        clearDashboardMenu();
-        return;
+    onMounted(() => {
+      void loadMenu(true);
+    });
+
+    onUnmounted(() => {
+      menuLifecycleRegistered = false;
+    });
+
+    // Recargar menú si cambian roles (p.ej. tras verify) o el token
+    watch(
+      () => [
+        session.value.accessToken,
+        (session.value.user?.roles || []).join(",")
+      ] as const,
+      ([token, roles], prev) => {
+        const prevToken = prev?.[0];
+        const prevRoles = prev?.[1];
+        if (!token) {
+          clearDashboardMenu();
+          return;
+        }
+        if (token !== prevToken || roles !== prevRoles) {
+          clearDashboardMenu();
+          void loadMenu(true);
+        }
       }
-      if (token !== prevToken || roles !== prevRoles) {
-        clearDashboardMenu();
-        void loadMenu(true);
-      }
-    }
-  );
+    );
+  }
 
   const isActive = (to: string) => {
     if (to === "/dash") {
