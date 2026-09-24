@@ -23,6 +23,10 @@
       <UInput v-model="form.solicitante.numero_documento" disabled />
     </FormField>
 
+    <FormField label="Fecha expedición documento" :error="errors && errors['solicitante.fecha_expedicion']">
+      <UInput v-model="form.solicitante.fecha_expedicion" type="date" />
+    </FormField>
+
     <FormField label="Nombres" :error="errors && errors['solicitante.nombres']">
       <UInput v-model="form.solicitante.nombres" />
     </FormField>

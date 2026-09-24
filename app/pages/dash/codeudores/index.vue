@@ -191,15 +191,64 @@
             >
               Reenviar código
             </UButton>
+            <UButton
+              variant="ghost"
+              color="error"
+              size="sm"
+              icon="i-lucide-trash-2"
+              aria-label="Eliminar vínculo"
+              @click="askDelete(v)"
+            />
           </div>
         </div>
       </div>
     </UPageCard>
+
+    <UModal
+      v-model:open="deleteOpen"
+      title="Eliminar codeudor vinculado"
+    >
+      <template #body>
+        <UAlert
+          v-if="error"
+          color="error"
+          variant="subtle"
+          :title="error"
+          class="mb-3"
+        />
+        <p class="text-sm text-muted-foreground">
+          ¿Eliminar el vínculo con
+          <strong class="text-foreground">{{ deleting?.codeudor.full_name || deleting?.codeudor.username }}</strong>
+          ({{ deleting?.codeudor.numero_documento }})?
+          Ya no podrás asignarlo en nuevas solicitudes; las solicitudes existentes no se modifican.
+        </p>
+      </template>
+      <template #footer>
+        <div class="flex justify-end gap-2 w-full">
+          <UButton
+            variant="ghost"
+            @click="deleteOpen = false"
+          >
+            Cancelar
+          </UButton>
+          <UButton
+            color="error"
+            :loading="loading"
+            @click="confirmDelete"
+          >
+            Eliminar
+          </UButton>
+        </div>
+      </template>
+    </UModal>
   </div>
 </template>
 
 <script setup lang="ts">
-import { useGestionCodeudores } from "~/composables/codeudor/useGestionCodeudores";
+import {
+  useGestionCodeudores,
+  type CodeudorVinculo
+} from "~/composables/codeudor/useGestionCodeudores";
 import { usePermissions } from "~/composables/usePermissions";
 
 definePageMeta({
@@ -230,8 +279,26 @@ const {
   listar,
   crear,
   confirmar,
-  reenviar
+  reenviar,
+  eliminar
 } = useGestionCodeudores();
+
+const deleteOpen = ref(false);
+const deleting = ref<CodeudorVinculo | null>(null);
+
+const askDelete = (v: CodeudorVinculo) => {
+  deleting.value = v;
+  deleteOpen.value = true;
+};
+
+const confirmDelete = async () => {
+  if (!deleting.value) return;
+  const ok = await eliminar(deleting.value.id);
+  if (ok) {
+    deleteOpen.value = false;
+    deleting.value = null;
+  }
+};
 
 onMounted(() => {
   if (!isTrabajador.value && !isAdministrator.value) {

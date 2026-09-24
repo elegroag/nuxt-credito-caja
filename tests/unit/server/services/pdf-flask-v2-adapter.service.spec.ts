@@ -45,7 +45,8 @@ describe("adaptPayloadForFlaskV2", () => {
         nombre_completo: "EDWIN ANDRES LEGRO AGUDELO"
       },
       laboral: {
-        nombre_pagador: "GUILLERMO ALFONSO PERDOMO ROJAS"
+        nombre_pagador: "GUILLERMO ALFONSO PERDOMO ROJAS",
+        fecha_ingreso: "2026-01-13"
       },
       ingresos: {
         total_neto_recibido: 4656079
@@ -81,12 +82,12 @@ describe("adaptPayloadForFlaskV2", () => {
     expect(solicitante.tipo_vivienda).toBe("arrendada");
     expect(solicitante.telefono_fijo).toBe("");
     expect(solicitante.telefono_movil).toBe("");
-    expect(solicitante.fecha_vinculacion).toBe("2020-03-15");
+    expect(solicitante.fecha_vinculacion).toBe("2026-01-13");
     expect(solicitante.ciudad_residencia).toBe("FLORENCIA");
     expect(solicitante.email).toBe("maxedwwin@gmail.com");
 
     expect(solicitud.rol_en_solicitud).toBe("solicitante");
-    expect(solicitud.producto_tipo).toBe("13");
+    expect(solicitud.producto_tipo).toBe("E");
     expect(solicitud.ha_tenido_credito_comfaca).toBe(false);
 
     expect(laboral.nombramiento_o_pagador).toBe("GUILLERMO ALFONSO PERDOMO ROJAS");
@@ -111,7 +112,8 @@ describe("adaptPayloadForFlaskV2", () => {
           nivel_educativo: "11",
           tipo_vivienda: "A",
           fecha_vinculacion: "2019-01-01"
-        }
+        },
+        laboral: { fecha_ingreso: "2018-05-02" }
       },
       catalogosMinimos
     );
@@ -122,7 +124,7 @@ describe("adaptPayloadForFlaskV2", () => {
     expect(solicitante.tipo_documento).toBe("CC");
     expect(solicitante.nivel_educativo).toBe("universitario");
     expect(solicitante.tipo_vivienda).toBe("arrendada");
-    expect(solicitante.fecha_vinculacion).toBe("2019-01-01");
+    expect(solicitante.fecha_vinculacion).toBe("2018-05-02");
     expect(solicitud.rol_en_solicitud).toBe("codeudor");
   });
 
@@ -142,6 +144,70 @@ describe("adaptPayloadForFlaskV2", () => {
         solicitante: { nivel_educativo: "12" }
       }).solicitante as Dict).nivel_educativo
     ).toBe("posgrado");
+  });
+
+  it("normaliza fechas a YYYY-MM-DD y deriva laboral.mes/anio", () => {
+    const out = adaptPayloadForFlaskV2({
+      solicitante: {
+        fecha_vinculacion: "2020-03-15T00:00:00.000Z",
+        fecha_expedicion_documento: "2008-06-01",
+        fecha_nacimiento: "1989-12-19"
+      },
+      laboral: {
+        fecha_ingreso: "2026-01-13"
+      },
+      solicitud: {
+        fecha_radicado: "2026-09-23T00:00:00.000Z"
+      },
+      pdf_metadata: {
+        fecha_generacion: "23/9/2026, 6:00:26 p. m."
+      }
+    });
+    const solicitante = out.solicitante as Dict;
+    const laboral = out.laboral as Dict;
+    const solicitud = out.solicitud as Dict;
+    const meta = out.pdf_metadata as Dict;
+
+    expect(solicitante.fecha_vinculacion).toBe("2026-01-13");
+    expect(solicitante.fecha_expedicion_documento).toBe("2008-06-01");
+    expect(solicitante.fecha_nacimiento).toBe("1989-12-19");
+    expect(laboral.fecha_ingreso).toBe("2026-01-13");
+    expect(laboral.mes).toBe("01");
+    expect(laboral.anio).toBe("2026");
+    expect(solicitud.fecha_radicado).toBe("2026-09-23");
+    expect(meta.fecha_generacion).toBe("2026-09-23");
+  });
+
+  it("deja fecha_vinculacion vacía si no hay laboral.fecha_ingreso", () => {
+    const out = adaptPayloadForFlaskV2({
+      solicitante: { fecha_vinculacion: "2019-01-01" },
+      trabajador: { fecha_afiliacion: "2020-03-15" }
+    });
+    expect((out.solicitante as Dict).fecha_vinculacion).toBe("");
+  });
+
+  it("mapea producto_tipo (tipcre) a opción A-E", () => {
+    const producto = (tipcre: unknown) =>
+      (adaptPayloadForFlaskV2({ solicitud: { producto_tipo: tipcre } }).solicitud as Dict)
+        .producto_tipo;
+
+    expect(producto("02")).toBe("A");
+    expect(producto("014")).toBe("B");
+    expect(producto("06")).toBe("C");
+    expect(producto("01")).toBe("D");
+    expect(producto("13")).toBe("E");
+    expect(producto("e")).toBe("E");
+    expect(producto("10")).toBe("10");
+    expect(producto(null)).toBe("");
+  });
+
+  it("mapea tipo_documento del codeudor a CC/CE", () => {
+    const out = adaptPayloadForFlaskV2(
+      { codeudor: { tipo_documento: "1", numero_documento: "11223344" } },
+      catalogosMinimos
+    );
+    expect((out.codeudor as Dict).tipo_documento).toBe("CC");
+    expect((out.codeudor as Dict).numero_documento).toBe("11223344");
   });
 
   it("no muta el payload original", () => {

@@ -43,6 +43,7 @@ export interface Solicitante extends SolicitanteBasic {
   departamento: string;
   vive_con_nucleo_familiar?: boolean;
   fecha_vinculacion?: string;
+  fecha_expedicion?: string;
   salario: number;
   antiguedad_meses?: number;
   tipo_contrato?: string;

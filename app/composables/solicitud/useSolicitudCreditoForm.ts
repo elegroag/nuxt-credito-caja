@@ -42,6 +42,7 @@ const createInitialSolicitudCreditoForm = (): SolicitudCreditoPayload => ({
     apellidos: "",
     razon_social: "",
     nit: "",
+    fecha_expedicion: "",
     fecha_nacimiento: "",
     genero: "M",
     estado_civil: "",

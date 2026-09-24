@@ -44,6 +44,8 @@ const solicitanteSchema = z
     email: z.string().email().optional().or(z.literal("")),
     telefono_fijo: z.string().optional(),
     telefono_movil: z.string().optional(),
+    telefono: z.string().optional(),
+    celular: z.string().optional(),
     direccion: z.string().optional(),
     barrio: z.string().optional(),
     ciudad: z

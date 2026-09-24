@@ -148,6 +148,29 @@ const mapRolEnSolicitud = (raw: unknown): string => {
   return "solicitante";
 };
 
+/** tipcre SISU → opción de "Producto solicitado" (A-E); sin mapeo, Flask marca "Otros" */
+const PRODUCTO_TIPO_POR_TIPCRE: Record<string, string> = {
+  "02": "A",
+  "03": "A",
+  "014": "B",
+  "06": "C",
+  "07": "C",
+  "08": "C",
+  "01": "D",
+  "04": "D",
+  "09": "D",
+  "05": "E",
+  "13": "E"
+};
+
+const mapProductoTipo = (raw: unknown): string => {
+  const v = asString(raw);
+  if (!v) return "";
+  const upper = v.toUpperCase();
+  if (["A", "B", "C", "D", "E"].includes(upper)) return upper;
+  return PRODUCTO_TIPO_POR_TIPCRE[v] ?? v;
+};
+
 const ensurePhoneKeys = (solicitante: Dict): void => {
   if (solicitante.telefono_fijo === undefined || solicitante.telefono_fijo === null) {
     solicitante.telefono_fijo = "";
@@ -161,13 +184,115 @@ const ensurePhoneKeys = (solicitante: Dict): void => {
   }
 };
 
-const fillFechaVinculacion = (solicitante: Dict, payload: Dict): void => {
-  if (asString(solicitante.fecha_vinculacion)) return;
-  const trabajador = asDict(payload.trabajador);
-  const afiliacion = asString(trabajador.fecha_afiliacion);
-  if (afiliacion) {
-    solicitante.fecha_vinculacion = afiliacion;
+export type DateParts = {
+  day: string
+  month: string
+  year: string
+  /** Alias ES (mismo valor que day/month/year) */
+  dia: string
+  mes: string
+  anio: string
+};
+
+const emptyDateParts = (): DateParts => ({
+  day: "",
+  month: "",
+  year: "",
+  dia: "",
+  mes: "",
+  anio: ""
+});
+
+const pad2 = (n: number): string => String(n).padStart(2, "0");
+
+/**
+ * Parsea ISO, YYYY-MM-DD o fechas locales es-CO y retorna Date en UTC calendar.
+ */
+export const parseDateValue = (raw: unknown): Date | null => {
+  if (raw === null || raw === undefined || raw === "") return null;
+  if (raw instanceof Date && !Number.isNaN(raw.getTime())) return raw;
+
+  if (typeof raw === "object" && !Array.isArray(raw)) {
+    const o = raw as Dict;
+    const day = asString(o.day || o.dia);
+    const month = asString(o.month || o.mes);
+    const year = asString(o.year || o.anio);
+    if (day && month && year) {
+      const d = new Date(`${year}-${pad2(Number(month))}-${pad2(Number(day))}T00:00:00.000Z`);
+      return Number.isNaN(d.getTime()) ? null : d;
+    }
+    return null;
   }
+
+  const v = asString(raw);
+  if (!v) return null;
+
+  // ISO / YYYY-MM-DD
+  const iso = Date.parse(v.includes("T") || v.includes("Z") ? v : `${v}T00:00:00.000Z`);
+  if (!Number.isNaN(iso)) return new Date(iso);
+
+  // dd/mm/yyyy o d/m/yyyy (con o sin hora local)
+  const m = v.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})/);
+  if (m) {
+    const d = new Date(`${m[3]}-${pad2(Number(m[2]))}-${pad2(Number(m[1]))}T00:00:00.000Z`);
+    return Number.isNaN(d.getTime()) ? null : d;
+  }
+
+  return null;
+};
+
+export const toDateParts = (raw: unknown): DateParts => {
+  const d = parseDateValue(raw);
+  if (!d) return emptyDateParts();
+  const day = pad2(d.getUTCDate());
+  const month = pad2(d.getUTCMonth() + 1);
+  const year = String(d.getUTCFullYear());
+  return { day, month, year, dia: day, mes: month, anio: year };
+};
+
+/** Normaliza a YYYY-MM-DD para filtros Flask format_date */
+export const toIsoDate = (raw: unknown): string => {
+  const d = parseDateValue(raw);
+  if (!d) return "";
+  return `${d.getUTCFullYear()}-${pad2(d.getUTCMonth() + 1)}-${pad2(d.getUTCDate())}`;
+};
+
+/** fecha_vinculacion proviene únicamente de laboral.fecha_ingreso */
+const fillFechaVinculacion = (solicitante: Dict, payload: Dict): void => {
+  const laboral = asDict(payload.laboral);
+  solicitante.fecha_vinculacion = parseDateValue(laboral.fecha_ingreso) ? laboral.fecha_ingreso : "";
+};
+
+/** Fechas enviadas a Flask como string YYYY-MM-DD (format_date / date_parts) */
+const ISO_DATE_PATHS: Array<{ section: string, key: string }> = [
+  { section: "solicitante", key: "fecha_vinculacion" },
+  { section: "solicitante", key: "fecha_expedicion_documento" },
+  { section: "solicitante", key: "fecha_nacimiento" },
+  { section: "laboral", key: "fecha_ingreso" },
+  { section: "solicitud", key: "fecha_radicado" },
+  { section: "encabezado", key: "fecha_radicado" },
+  { section: "trabajador", key: "fecha_nacimiento" },
+  { section: "trabajador", key: "fecha_afiliacion" },
+  { section: "trabajador", key: "fecha_salario" },
+  { section: "pdf_metadata", key: "fecha_generacion" },
+  { section: "proceso_firmado", key: "fecha_inicio" }
+];
+
+const applyDateShapes = (payload: Dict): void => {
+  for (const { section, key } of ISO_DATE_PATHS) {
+    const block = asDict(payload[section]);
+    if (!Object.keys(block).length && payload[section] === undefined) continue;
+    if (block[key] === undefined) continue;
+    block[key] = toIsoDate(block[key]);
+    payload[section] = block;
+  }
+
+  // laboral.mes / laboral.anio (cabecera del bloque laboral)
+  const laboral = asDict(payload.laboral);
+  const parts = toDateParts(laboral.fecha_ingreso);
+  if (parts.month && !asString(laboral.mes)) laboral.mes = parts.month;
+  if (parts.year && !asString(laboral.anio)) laboral.anio = parts.year;
+  payload.laboral = laboral;
 };
 
 const applyAliases = (payload: Dict): void => {
@@ -219,6 +344,7 @@ export const adaptPayloadForFlaskV2 = (
 
   const solicitud = asDict(out.solicitud);
   solicitud.rol_en_solicitud = mapRolEnSolicitud(solicitud.rol_en_solicitud);
+  solicitud.producto_tipo = mapProductoTipo(solicitud.producto_tipo);
   out.solicitud = solicitud;
 
   const solicitante = asDict(out.solicitante);
@@ -245,7 +371,14 @@ export const adaptPayloadForFlaskV2 = (
     out.trabajador = trabajador;
   }
 
+  const codeudor = asDict(out.codeudor);
+  if (codeudor.tipo_documento !== undefined) {
+    codeudor.tipo_documento = mapTipoDocumento(codeudor.tipo_documento, catalogos);
+    out.codeudor = codeudor;
+  }
+
   applyAliases(out);
+  applyDateShapes(out);
   return out;
 };
 

@@ -330,7 +330,7 @@ describe("pdfPayloadService.buildPayload", () => {
     expect(trabajador.cargo).toBe("INGENIERO DE SISTEMAS");
   });
 
-  it("incluye firmantes mapeados correctamente", () => {
+  it("no envía firmantes y deja codeudor vacío si no hay codeudores", () => {
     const service = pdfPayloadService();
     const payload = service.buildPayload(
       mockSolicitud as never,
@@ -343,10 +343,108 @@ describe("pdfPayloadService.buildPayload", () => {
       { familiares: [], personales: [] }
     ) as Record<string, unknown>;
 
-    const firmantes = payload.firmantes as Record<string, unknown>[];
-    expect(firmantes).toHaveLength(1);
-    expect(firmantes[0].nombre_completo).toBe("MARÍA LÓPEZ");
-    expect(firmantes[0].numero_documento).toBe("87654321");
+    expect(payload.firmantes).toBeUndefined();
+    expect(payload.codeudor).toEqual({
+      tipo_documento: "",
+      numero_documento: "",
+      nombre_completo: "",
+      email: "",
+      telefono: ""
+    });
+  });
+
+  it("envía documentos_entregados activos después de codeudor", () => {
+    const service = pdfPayloadService();
+    const solicitudConDocumentos = {
+      ...mockSolicitud,
+      solicitud_documentos: [
+        { documento_requerido_id: "01", documento_uuid: "uuid-1", activo: true },
+        { documento_requerido_id: "02", documento_uuid: "uuid-2", activo: false },
+        { documento_requerido_id: "05", documento_uuid: "uuid-3", activo: true }
+      ]
+    };
+    const payload = service.buildPayload(
+      solicitudConDocumentos as never,
+      mockCatalogos,
+      {},
+      {},
+      {},
+      [],
+      [],
+      { familiares: [], personales: [] }
+    ) as Record<string, unknown>;
+
+    expect(payload.documentos_entregados).toEqual([
+      { documento_requerido_id: "01", documento_uuid: "uuid-1" },
+      { documento_requerido_id: "05", documento_uuid: "uuid-3" }
+    ]);
+    const keys = Object.keys(payload);
+    expect(keys.indexOf("documentos_entregados")).toBe(keys.indexOf("codeudor") + 1);
+    expect((payload.solicitud as Record<string, unknown>).solicitud_documentos).toBeUndefined();
+  });
+
+  it("envía documentos_entregados vacío si no hay documentos", () => {
+    const service = pdfPayloadService();
+    const payload = service.buildPayload(
+      mockSolicitud as never,
+      mockCatalogos,
+      {},
+      {},
+      {},
+      [],
+      [],
+      { familiares: [], personales: [] }
+    ) as Record<string, unknown>;
+
+    expect(payload.documentos_entregados).toEqual([]);
+  });
+
+  it("incluye el primer codeudor después de trabajador", () => {
+    const service = pdfPayloadService();
+    const solicitudConCodeudores = {
+      ...mockSolicitud,
+      firmantes_solicitud: [
+        ...(mockSolicitud.firmantes_solicitud as unknown[]),
+        {
+          tipo: "1",
+          rol: "Codeudor",
+          nombre_completo: "PEDRO GÓMEZ",
+          numero_documento: "11223344",
+          email: "pedro@example.com",
+          telefono: "3001234567",
+          orden: 2
+        },
+        {
+          tipo: "1",
+          rol: "Codeudor",
+          nombre_completo: "ANA RUIZ",
+          numero_documento: "55667788",
+          email: "ana@example.com",
+          telefono: null,
+          orden: 3
+        }
+      ]
+    };
+    const payload = service.buildPayload(
+      solicitudConCodeudores as never,
+      mockCatalogos,
+      {},
+      {},
+      {},
+      [],
+      [],
+      { familiares: [], personales: [] }
+    ) as Record<string, unknown>;
+
+    expect(payload.codeudor).toEqual({
+      tipo_documento: "1",
+      numero_documento: "11223344",
+      nombre_completo: "PEDRO GÓMEZ",
+      email: "pedro@example.com",
+      telefono: "3001234567"
+    });
+    const keys = Object.keys(payload);
+    expect(keys.indexOf("codeudor")).toBe(keys.indexOf("trabajador") + 1);
   });
 
   it("incluye referencias familiares y personales", () => {

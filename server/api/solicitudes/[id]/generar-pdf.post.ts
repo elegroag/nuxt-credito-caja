@@ -64,6 +64,10 @@ export default defineEventHandler(async (event: H3Event) => {
         solicitud_payload: {
           orderBy: { created_at: "desc" },
           take: 1
+        },
+        solicitud_documentos: {
+          where: { activo: true },
+          select: { documento_requerido_id: true, documento_uuid: true, activo: true }
         }
       }
     });

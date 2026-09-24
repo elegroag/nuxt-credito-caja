@@ -16,6 +16,10 @@ type SolicitudDB = Prisma.solicitudes_creditoGetPayload<{
     solicitud_solicitante: true;
     firmantes_solicitud: { orderBy: { orden: "asc" } };
     solicitud_payload: { orderBy: { created_at: "desc" }; take: 1 };
+    solicitud_documentos: {
+      where: { activo: true };
+      select: { documento_requerido_id: true; documento_uuid: true; activo: true };
+    };
   };
 }>;
 
@@ -106,9 +110,18 @@ const pdfPayloadService = () => {
   ): Record<string, unknown> => {
     const r = makeResolvers(catalogos);
 
-    const { solicitud_solicitante, firmantes_solicitud, solicitud_payload, ...solicitudData } =
-      solicitud;
+    const {
+      solicitud_solicitante,
+      firmantes_solicitud,
+      solicitud_payload,
+      solicitud_documentos,
+      ...solicitudData
+    } = solicitud;
     const sol = solicitud_solicitante?.[0];
+    // Solo el primer codeudor (menor orden) se envía a Flask
+    const codeudor = (firmantes_solicitud || []).find(
+      (f: FirmanteDB) => f.rol?.toLowerCase() === "codeudor"
+    );
     const _rawPayload = solicitud_payload?.[0] as PayloadData | undefined;
 
     // ---- helper: split full name ----
@@ -132,7 +145,7 @@ const pdfPayloadService = () => {
         tipo_credito: solicitudData.tipo_credito || "01"
       },
       solicitante: {
-        fecha_vinculacion: sol?.created_at?.toISOString().split("T")[0] || "",
+        fecha_vinculacion: (informacionLaboral.fecha_ingreso as string) || "",
         tipo_documento: r.resolveTipoDocumento(sol?.tipo_documento),
         numero_documento: sol?.numero_documento || "",
         fecha_nacimiento: sol?.fecha_nacimiento?.toISOString().split("T")[0] || "",
@@ -217,14 +230,6 @@ const pdfPayloadService = () => {
       },
       deudas: Array.isArray(deudas) ? deudas : [],
       propiedades: Array.isArray(propiedades) ? propiedades : [],
-      firmantes: (firmantes_solicitud || []).map((f: FirmanteDB) => ({
-        tipo: f.tipo,
-        rol: f.rol,
-        nombre_completo: f.nombre_completo,
-        numero_documento: f.numero_documento,
-        email: f.email,
-        orden: f.orden
-      })),
       convenio: {
         representante_documento: (informacionLaboral.representante_documento as string) || "",
         representante_nombre: (informacionLaboral.representante_nombre as string) || "",
@@ -292,7 +297,20 @@ const pdfPayloadService = () => {
         tipo_contrato: r.resolveTipoContrato(sol?.tipo_contrato || ""),
         personas_a_cargo: sol?.personas_a_cargo || 0,
         antiguedad_meses: sol?.antiguedad_meses || 0
-      }
+      },
+      codeudor: {
+        tipo_documento: codeudor?.tipo || "",
+        numero_documento: codeudor?.numero_documento || "",
+        nombre_completo: codeudor?.nombre_completo || "",
+        email: codeudor?.email || "",
+        telefono: codeudor?.telefono || ""
+      },
+      documentos_entregados: (solicitud_documentos || [])
+        .filter((d) => d.activo)
+        .map((d) => ({
+          documento_requerido_id: d.documento_requerido_id,
+          documento_uuid: d.documento_uuid
+        }))
     };
   };
 

@@ -73,7 +73,12 @@ const validateSolicitante: ValidatorFn = (_form, _configs) => {
     errors["solicitante.direccion"] = "La dirección es requerida";
   }
 
-  return { valid: true, errors };
+  // Único campo del paso que bloquea el avance
+  if (!_form.solicitante.fecha_expedicion?.trim()) {
+    errors["solicitante.fecha_expedicion"] = "La fecha de expedición es requerida";
+  }
+
+  return { valid: !errors["solicitante.fecha_expedicion"], errors };
 };
 
 /**
