@@ -17,6 +17,9 @@ importers:
       '@iconify-json/simple-icons':
         specifier: ^1.2.93
         version: 1.2.93
+      '@internationalized/date':
+        specifier: 3.12.3
+        version: 3.12.3
       '@lucide/vue':
         specifier: ^1.28.0
         version: 1.28.0(vue@3.5.41(typescript@6.0.3))

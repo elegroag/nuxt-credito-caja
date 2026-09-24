@@ -24,7 +24,7 @@
     </FormField>
 
     <FormField label="Fecha expedición documento" :error="errors && errors['solicitante.fecha_expedicion']">
-      <UInput v-model="form.solicitante.fecha_expedicion" type="date" />
+      <DatePickerField v-model="form.solicitante.fecha_expedicion" :max="today" />
     </FormField>
 
     <FormField label="Nombres" :error="errors && errors['solicitante.nombres']">
@@ -44,7 +44,7 @@
     </FormField>
 
     <FormField label="Fecha nacimiento">
-      <UInput v-model="form.solicitante.fecha_nacimiento" type="date" />
+      <DatePickerField v-model="form.solicitante.fecha_nacimiento" :max="today" />
     </FormField>
 
     <FormField label="Género">
@@ -210,6 +210,8 @@
 <script setup lang="ts">
 import FormField from "~/components/shared/FormField.vue";
 import CustomSelect from "~/components/shared/CustomSelect.vue";
+import DatePickerField from "~/components/shared/DatePickerField.vue";
+import { getLocalTimeZone, today as todayDate } from "@internationalized/date";
 import { useSolicitanteStep } from "~/composables/solicitud/useSolicitanteStep";
 import { useParametrosDetalles } from "~/composables/useParametrosDetalles";
 import { computed, onMounted } from "vue";
@@ -245,6 +247,8 @@ const {
 } = useSolicitanteStep(props);
 
 const { cargarParametros, buscarCargo } = useParametrosDetalles();
+
+const today = todayDate(getLocalTimeZone()).toString();
 
 const cargoDisplay = computed(() => {
   const cargoCode = props.form?.solicitante?.cargo;
