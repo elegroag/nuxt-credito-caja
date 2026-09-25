@@ -51,7 +51,7 @@ API_FIRMA_BASIC_USER=...
 API_FIRMA_BASIC_PASSWORD=...
 ```
 
-En entorno `dev` (`API_FIRMA_ENV=dev`), FirmaPlus responde con datos mock definidos en `server/services/api-firmaplus.ts`.
+Con `API_FIRMA_SIMULATION=true`, FirmaPlus responde con datos mock definidos en `server/services/api-firmaplus.ts`. Si la variable no está definida, se simula solo cuando `API_FIRMA_ENV=dev`.
 
 ## Ejecución
 

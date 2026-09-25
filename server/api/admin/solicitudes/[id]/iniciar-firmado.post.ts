@@ -128,7 +128,7 @@ export default defineEventHandler(async (event: H3Event) => {
         solicitud_id: id,
         estado: "PENDIENTE_FIRMADO",
         fecha: new Date(),
-        observacion: `Solicitud enviada para firma digital. Transaction ID: ${resultado.data?.transaccion_id || "N/A"}`,
+        detalle: `Solicitud enviada para firma digital. Transaction ID: ${resultado.data?.transaccion_id || "N/A"}`,
         usuario_username: username
       }
     });

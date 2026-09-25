@@ -6,6 +6,7 @@ import { loggerService } from "~~/server/utils/logger.service";
 export interface ApiFirmaRuntimeConfig {
   apiFIRMA: {
     env: string
+    simulation?: boolean
     url_pro: string
     url_dev: string
     type_auth: string
@@ -96,6 +97,7 @@ const getMockResponse = (path: string, body?: Record<string, unknown>): FirmaPlu
 const apiFirmaPlus = (configOverride?: ApiFirmaRuntimeConfig) => {
   const config = configOverride ?? useRuntimeConfig();
   const env = config.apiFIRMA.env;
+  const simulation = config.apiFIRMA.simulation ?? env === "dev";
   const baseUrl = {
     pro: config.apiFIRMA.url_pro,
     dev: config.apiFIRMA.url_dev
@@ -166,7 +168,7 @@ const apiFirmaPlus = (configOverride?: ApiFirmaRuntimeConfig) => {
       headers?: Record<string, string>
     }
   ) => {
-    if (env === "dev") {
+    if (simulation) {
       return getMockResponse(path) as T;
     }
 
@@ -203,7 +205,7 @@ const apiFirmaPlus = (configOverride?: ApiFirmaRuntimeConfig) => {
       headers?: Record<string, string>
     }
   ) => {
-    if (env === "dev") {
+    if (simulation) {
       return getMockResponse(path, body) as T;
     }
 
@@ -243,7 +245,7 @@ const apiFirmaPlus = (configOverride?: ApiFirmaRuntimeConfig) => {
       headers?: Record<string, string>
     }
   ) => {
-    if (env === "dev") {
+    if (simulation) {
       return getMockResponse(path, body) as T;
     }
 

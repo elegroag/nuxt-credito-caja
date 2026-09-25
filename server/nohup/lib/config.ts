@@ -2,9 +2,14 @@ import "dotenv/config";
 import type { ApiFirmaRuntimeConfig } from "~~/server/services/api-firmaplus";
 
 export function loadStandaloneFirmaConfig(): ApiFirmaRuntimeConfig {
+  const env = process.env.API_FIRMA_ENV || "dev";
+  const simulation = process.env.API_FIRMA_SIMULATION;
+
   return {
     apiFIRMA: {
-      env: process.env.API_FIRMA_ENV || "dev",
+      env,
+      // Sin API_FIRMA_SIMULATION se simula solo en entorno dev
+      simulation: simulation ? simulation === "true" : env === "dev",
       url_pro: process.env.API_FIRMA_URL_PRO || "",
       url_dev: process.env.API_FIRMA_URL_DEV || "",
       type_auth: process.env.API_FIRMA_TYPE_AUTH || "Bearer",

@@ -94,6 +94,10 @@ export default defineNuxtConfig({
     },
     apiFIRMA: {
       env: env.API_FIRMA_ENV || "dev",
+      // Sin API_FIRMA_SIMULATION se simula solo en entorno dev
+      simulation: env.API_FIRMA_SIMULATION
+        ? env.API_FIRMA_SIMULATION === "true"
+        : (env.API_FIRMA_ENV || "dev") === "dev",
       url_pro: env.API_FIRMA_URL_PRO || "",
       url_dev: env.API_FIRMA_URL_DEV || "",
       type_auth: env.API_FIRMA_TYPE_AUTH || "Bearer",
