@@ -35,6 +35,23 @@ export default defineEventHandler(async (event: H3Event) => {
       return CustomResponse.error("ID de solicitud no proporcionado", "Error de validación");
     }
 
+    // Debe validarse antes de reemplazar los firmantes
+    const bloqueante = await procesoFirmadoAdm.procesoQueBloqueaEnvio(id);
+    if (bloqueante) {
+      Log.warn("iniciar-firmado: Proceso KIAI activo, envío rechazado", {
+        solicitudId: id,
+        procesoId: bloqueante.proceso_id,
+        estado: bloqueante.estado
+      });
+      setResponseStatus(event, 409);
+      return CustomResponse.error(
+        bloqueante.estado === "COMPLETED"
+          ? "La solicitud ya fue firmada en KIAI"
+          : "La solicitud ya tiene un proceso de firma KIAI en curso",
+        "Envío a firma no permitido"
+      );
+    }
+
     const body = await readBody<IniciarFirmadoBody>(event);
     const firmantesData = body.firmantes;
 
@@ -128,7 +145,7 @@ export default defineEventHandler(async (event: H3Event) => {
         solicitud_id: id,
         estado: "PENDIENTE_FIRMADO",
         fecha: new Date(),
-        detalle: `Solicitud enviada para firma digital. Transaction ID: ${resultado.data?.transaccion_id || "N/A"}`,
+        detalle: `Solicitud enviada para firma digital en ${resultado.data?.proveedor || "KIAI"}. Proceso: ${resultado.data?.transaccion_id || "N/A"}`,
         usuario_username: username
       }
     });

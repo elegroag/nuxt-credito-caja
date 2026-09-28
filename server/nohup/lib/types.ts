@@ -1,17 +1,17 @@
+import type { KiaiProcessDetail } from "~~/server/services/api-kiai";
+
 export interface SolicitudFirmaWorkerData {
   numero_solicitud: string
+  proceso_id: string
   firmantesCount: number
+  accessToken?: string
 }
 
 export interface SolicitudFirmaWorkerResult {
   numero_solicitud: string
+  proceso_id: string
   success: boolean
-  code: string
   message: string
-  data?: {
-    NroSolicitud?: string
-    Fecha?: string
-    Link?: string
-  }
+  detalle?: KiaiProcessDetail
   error?: string
 }

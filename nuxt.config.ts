@@ -107,6 +107,20 @@ export default defineNuxtConfig({
       password: env.API_FIRMA_PASSWORD || "",
       apy_key: env.API_FIRMA_KEY || ""
     },
+    kiai: {
+      env: env.KIAI_ENV || "dev",
+      // Sin KIAI_SIMULATION se simula solo en entorno dev
+      simulation: env.KIAI_SIMULATION
+        ? env.KIAI_SIMULATION === "true"
+        : (env.KIAI_ENV || "dev") === "dev",
+      grant_type: env.KIAI_GRANT_TYPE || "client_credentials",
+      api_url_pro: env.KIAI_API_URL_PRO || "",
+      api_url_dev: env.KIAI_API_URL_DEV || "",
+      client_id_pro: env.KIAI_CLIENT_ID_PRO || "",
+      client_id_dev: env.KIAI_CLIENT_ID_DEV || "",
+      secret_key_pro: env.KIAI_SECRET_KEY_PRO || "",
+      secret_key_dev: env.KIAI_SECRET_KEY_DEV || ""
+    },
     apiFLASKPDF: {
       env: env.API_FLASKPDF_ENV || "dev",
       basic_user: env.API_FLASKPDF_USER || "",

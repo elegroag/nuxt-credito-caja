@@ -198,11 +198,13 @@ export function useEditUser() {
       console.error("Error al actualizar usuario:", error);
 
       // Manejar errores específicos del backend
-      const message = error instanceof Error ? error.message : String(error);
-      if (message.includes("username")) {
-        errors.value.username = "El nombre de usuario ya existe";
-} else if (message.includes("email")) {
-        errors.value.email = "El email ya está registrado";
+      const err = error as { data?: { error?: string, message?: string }, message?: string };
+      const message = err?.data?.error || err?.data?.message || err?.message || "";
+      const lower = message.toLowerCase();
+      if (lower.includes("username")) {
+        errors.value.username = message;
+      } else if (lower.includes("email")) {
+        errors.value.email = message;
       } else {
         errors.value.general = message || "Error al actualizar el usuario";
       }

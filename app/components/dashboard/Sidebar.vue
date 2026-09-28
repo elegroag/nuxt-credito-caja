@@ -3,11 +3,13 @@
   <aside :class="sidebarDesktopClasses">
     <div class="flex h-16 items-center gap-3 border-b border-sidebar-border px-6">
       <div
-        class="flex h-8 w-8 items-center justify-center rounded-md bg-sidebar-primary text-sidebar-primary-foreground font-bold text-sm"
+        class="flex h-7 w-7 shrink-0 items-center justify-center rounded-md bg-sidebar-primary text-sidebar-primary-foreground font-bold text-sm"
       >
         CC
       </div>
-      <span v-if="!sidebarCollapsed" class="text-lg font-semibold text-sidebar-foreground"
+      <span
+        v-if="!sidebarCollapsed"
+        class="min-w-0 truncate whitespace-nowrap text-base font-semibold text-sidebar-foreground"
         >Comfaca Crédito</span
       >
     </div>
@@ -67,13 +69,15 @@
   <!-- Mobile Sidebar -->
   <aside :class="sidebarMobileClasses">
     <div class="flex h-16 items-center justify-between border-b border-sidebar-border px-6">
-      <div class="flex items-center gap-3">
+      <div class="flex min-w-0 items-center gap-3">
         <div
-          class="flex h-8 w-8 items-center justify-center rounded-md bg-sidebar-primary text-sidebar-primary-foreground font-bold text-sm"
+          class="flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-sidebar-primary text-sidebar-primary-foreground font-bold text-sm"
         >
           CC
         </div>
-        <span class="text-lg font-semibold text-sidebar-foreground">Comfaca Crédito</span>
+        <span class="min-w-0 truncate whitespace-nowrap text-base font-semibold text-sidebar-foreground"
+          >Comfaca Crédito</span
+        >
       </div>
       <UButton
         variant="ghost"

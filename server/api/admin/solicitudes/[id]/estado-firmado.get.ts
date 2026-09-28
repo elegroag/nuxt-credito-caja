@@ -2,6 +2,14 @@ import type { H3Event } from "h3";
 import { defineEventHandler, getRouterParam, setResponseStatus } from "h3";
 import prisma from "~~/lib/prisma";
 import { CustomResponse } from "~~/server/utils/customResponse";
+import { procesoFirmadoAdm } from "~~/server/services/admin/proceso-firmado-adm.service";
+import { KIAI_PROVEEDOR, resumirProcesoFirma } from "~~/server/services/firma/kiai-firmado.mapper";
+
+const procesoVigente = (solicitudId: string) =>
+  prisma.procesos_firma.findFirst({
+    where: { solicitud_id: solicitudId, proveedor: KIAI_PROVEEDOR },
+    orderBy: { id: "desc" }
+  });
 
 export default defineEventHandler(async (event: H3Event) => {
   try {
@@ -14,9 +22,7 @@ export default defineEventHandler(async (event: H3Event) => {
 
     const solicitud = await prisma.solicitudes_credito.findUnique({
       where: { numero_solicitud: id },
-      include: {
-        firmantes_solicitud: true
-      }
+      select: { numero_solicitud: true, estado: true, _count: { select: { firmantes_solicitud: true } } }
     });
 
     if (!solicitud) {
@@ -24,28 +30,31 @@ export default defineEventHandler(async (event: H3Event) => {
       return CustomResponse.error("Solicitud no encontrada", "Recurso no encontrado");
     }
 
-    const totalFirmantes = solicitud.firmantes_solicitud.length;
-    const firmantesCompletados = solicitud.firmantes_solicitud.filter(
-      f => f.tipo === "FIRMADO" || f.tipo === "COMPLETADO"
-    ).length;
-    const firmantesPendientes = totalFirmantes - firmantesCompletados;
-
-    let estadoFirmado = "PENDIENTE_FIRMADO";
-    if (firmantesPendientes === 0 && totalFirmantes > 0) {
-      estadoFirmado = "FIRMADO";
-    } else if (totalFirmantes === 0) {
-      estadoFirmado = "SIN_FIRMANTES";
+    let proceso = await procesoVigente(id);
+    if (!proceso) {
+      setResponseStatus(event, 404);
+      return CustomResponse.error("La solicitud no tiene un proceso de firma en KIAI", "Recurso no encontrado");
     }
+
+    // Los procesos simulados no existen en KIAI: se devuelve lo guardado
+    if (!proceso.simulado) {
+      const consulta = await procesoFirmadoAdm.consultarEstado(id);
+      if (!consulta.success) {
+        setResponseStatus(event, 502);
+        return CustomResponse.error(consulta.message, "Error al consultar estado en KIAI.");
+      }
+      proceso = (await procesoVigente(id)) ?? proceso;
+    }
+
+    const resumen = resumirProcesoFirma(proceso, solicitud._count.firmantes_solicitud);
 
     return CustomResponse.success(
       {
         solicitud_id: solicitud.numero_solicitud,
-        transaccion_id: solicitud.numero_solicitud,
-        estado: estadoFirmado,
-        firmantes_completados: firmantesCompletados,
-        firmantes_pendientes: firmantesPendientes
+        estado_solicitud: solicitud.estado,
+        ...resumen
       },
-      "Estado de firmado consultado"
+      proceso.simulado ? "Proceso simulado: estado guardado localmente" : "Estado de firmado consultado en KIAI"
     );
   } catch (e: unknown) {
     const err = e as { statusCode?: number; response?: { status?: number }; data?: { error?: string }; message?: string };

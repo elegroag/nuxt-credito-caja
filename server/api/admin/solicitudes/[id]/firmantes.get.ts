@@ -26,6 +26,8 @@ export default defineEventHandler(async (event: H3Event) => {
       numero_documento: f.numero_documento,
       email: f.email,
       rol: f.rol,
+      telefono: f.telefono ?? undefined,
+      codigo_pais: f.codigo_pais ?? undefined,
       created_at: f.created_at?.toISOString() || null,
       updated_at: f.updated_at?.toISOString() || null
     }));

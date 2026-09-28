@@ -75,6 +75,27 @@ model estados_solicitud {
   @@index([orden], map: "estados_solicitud_orden_index")
 }
 
+/// Procesos de firma creados en el proveedor externo (KIAI). El vigente es el más reciente por solicitud.
+model procesos_firma {
+  id                  BigInt              @id @default(autoincrement()) @db.UnsignedBigInt
+  solicitud_id        String              @db.VarChar(20)
+  proveedor           String              @db.VarChar(30)
+  proceso_id          String              @db.VarChar(64)
+  estado              String              @db.VarChar(30)
+  simulado            Boolean             @default(false)
+  expira_en           DateTime?           @db.Timestamp(0)
+  completado_en       DateTime?           @db.Timestamp(0)
+  ultima_consulta     DateTime?           @db.Timestamp(0)
+  respuesta           Json?
+  created_at          DateTime?           @db.Timestamp(0)
+  updated_at          DateTime?           @db.Timestamp(0)
+  solicitudes_credito solicitudes_credito @relation(fields: [solicitud_id], references: [numero_solicitud], onDelete: Cascade, onUpdate: NoAction, map: "procesos_firma_solicitud_id_foreign")
+
+  @@unique([proveedor, proceso_id], map: "procesos_firma_proveedor_proceso_unique")
+  @@index([solicitud_id], map: "procesos_firma_solicitud_id_index")
+  @@index([estado], map: "procesos_firma_estado_index")
+}
+
 model firmantes_solicitud {
   id                  BigInt              @id @default(autoincrement()) @db.UnsignedBigInt
   solicitud_id        String              @db.VarChar(20)
@@ -412,6 +433,7 @@ model solicitudes_credito {
   documentos_postulantes documentos_postulantes[]
   firmantes_solicitud    firmantes_solicitud[]
   pdfs_generados         pdfs_generados?
+  procesos_firma         procesos_firma[]
   solicitud_documentos   solicitud_documentos[]
   solicitud_payload      solicitud_payload[]
   solicitud_solicitante  solicitud_solicitante[]

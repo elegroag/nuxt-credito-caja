@@ -39,35 +39,105 @@
 
       <!-- Contenido Principal -->
       <div v-else-if="solicitud" class="space-y-6">
-        <!-- Información de la Solicitud -->
+        <!-- Proceso de firma en KIAI -->
         <UPageCard>
           <template #header>
-            <div class="flex items-center gap-3">
-              <div class="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center">
-                <UIcon name="i-lucide-file-text" class="w-5 h-5 text-primary" />
+            <div class="flex flex-wrap items-center justify-between gap-3">
+              <div class="flex items-center gap-3">
+                <div class="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center">
+                  <UIcon name="i-lucide-file-signature" class="w-5 h-5 text-primary" />
+                </div>
+                <h2 class="text-xl font-bold text-foreground">Proceso de firma KIAI</h2>
               </div>
-              <h2 class="text-xl font-bold text-foreground">Información de la Solicitud</h2>
+              <div class="flex items-center gap-2">
+                <UButton
+                  variant="ghost"
+                  color="neutral"
+                  size="sm"
+                  icon="i-lucide-refresh-cw"
+                  :loading="loadingProceso"
+                  @click="cargarProceso"
+                >
+                  Actualizar
+                </UButton>
+                <UButton
+                  v-if="procesoAbierto"
+                  variant="outline"
+                  color="destructive"
+                  size="sm"
+                  icon="i-lucide-ban"
+                  @click="abrirCancelar"
+                >
+                  Cancelar proceso
+                </UButton>
+                <UButton
+                  v-if="procesoAbierto && proceso?.simulado"
+                  variant="outline"
+                  color="neutral"
+                  size="sm"
+                  icon="i-lucide-eraser"
+                  @click="abrirDescartar"
+                >
+                  Descartar simulación
+                </UButton>
+              </div>
             </div>
           </template>
 
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div v-if="loadingProceso && !proceso" class="flex items-center gap-2 text-sm text-muted-foreground">
+            <UIcon name="i-lucide-loader-2" class="w-4 h-4 animate-spin" />
+            Consultando proceso de firma…
+          </div>
+
+          <UAlert
+            v-else-if="errorProceso"
+            color="destructive"
+            variant="subtle"
+            icon="i-lucide-triangle-alert"
+            :title="errorProceso"
+          />
+
+          <div v-else-if="!proceso" class="flex items-center gap-2 text-sm text-muted-foreground">
+            <UIcon name="i-lucide-info" class="w-4 h-4" />
+            La solicitud no tiene un proceso de firma en KIAI.
+          </div>
+
+          <div v-else class="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div class="space-y-2">
-              <p class="text-sm font-medium text-muted-foreground">Número de Solicitud</p>
-              <p class="text-lg font-semibold text-foreground">
-                {{ solicitud.numero_solicitud || "-" }}
+              <p class="text-sm font-medium text-muted-foreground">Estado en KIAI</p>
+              <div class="flex flex-wrap items-center gap-2">
+                <UBadge
+                  :color="getEstadoFirmaBadgeColor(proceso.estado)"
+                  :icon="getEstadoFirmaIcon(proceso.estado)"
+                  variant="subtle"
+                >
+                  {{ getEstadoFirmaLabel(proceso.estado) }}
+                </UBadge>
+                <UBadge
+                  v-if="proceso.simulado"
+                  color="neutral"
+                  variant="outline"
+                  icon="i-lucide-flask-conical"
+                >
+                  Simulado
+                </UBadge>
+              </div>
+            </div>
+            <div class="space-y-2">
+              <p class="text-sm font-medium text-muted-foreground">Firmantes</p>
+              <p class="text-sm text-foreground">
+                <span class="font-semibold text-green-600">{{ proceso.firmantes_completados }}</span> firmados ·
+                <span class="font-semibold text-yellow-600">{{ proceso.firmantes_pendientes }}</span> pendientes
               </p>
             </div>
             <div class="space-y-2">
-              <p class="text-sm font-medium text-muted-foreground">Solicitante</p>
-              <p class="text-lg text-foreground">
-                {{ solicitud.solicitante?.nombres + " " + solicitud.solicitante?.apellidos || "-" }}
-              </p>
+              <p class="text-sm font-medium text-muted-foreground">ID Proceso</p>
+              <p class="text-sm text-foreground break-all">{{ proceso.transaccion_id }}</p>
             </div>
-            <div class="space-y-2">
-              <p class="text-sm font-medium text-muted-foreground">Estado</p>
-              <UBadge :color="getEstadoColor(solicitud.estado)" variant="subtle">
-                {{ getEstadoNombre(solicitud.estado) }}
-              </UBadge>
+            <div class="space-y-1 text-sm text-muted-foreground md:col-span-3">
+              <p>Inicio: {{ formatearFecha(proceso.fecha_inicio) }} · Vence: {{ formatearFecha(proceso.expira_en) }}</p>
+              <p v-if="proceso.fecha_completado">Completado: {{ formatearFecha(proceso.fecha_completado) }}</p>
+              <p>Última consulta a KIAI: {{ formatearFecha(proceso.ultima_consulta) }}</p>
             </div>
           </div>
         </UPageCard>
@@ -83,10 +153,86 @@
             </div>
           </template>
 
-          <GestionFirmantes :solicitud-id="solicitud.numero_solicitud" :firmantes="firmantes" />
+          <GestionFirmantes
+            :solicitud-id="solicitud.numero_solicitud"
+            :firmantes="firmantes"
+            :puede-agregar="puedeAgregarFirmantes"
+            :puede-modificar="puedeAgregarFirmantes"
+            :puede-enviar="puedeEnviarFirma"
+            @iniciar-firmado="cargarProceso"
+          />
         </UPageCard>
       </div>
     </div>
+
+    <UModal
+      v-model:open="cancelarModalOpen"
+      title="Cancelar proceso de firma"
+      :description="proceso?.simulado
+        ? 'El proceso es simulado: se cancelará solo localmente (no se llama a KIAI) y la solicitud quedará en estado CANCELADA. Esta acción no se puede deshacer.'
+        : 'Se cancelará el proceso en KIAI y la solicitud quedará en estado CANCELADA. Esta acción no se puede deshacer.'"
+      icon="i-lucide-ban"
+      class="max-w-lg"
+    >
+      <template #body>
+        <div class="space-y-4">
+          <UAlert
+            v-if="errorCancelar"
+            color="destructive"
+            variant="soft"
+            icon="i-lucide-alert-circle"
+            :title="errorCancelar"
+          />
+          <UFormField label="Motivo (opcional)" :hint="`${motivoCancelacion.length}/500`">
+            <UTextarea
+              v-model="motivoCancelacion"
+              :rows="3"
+              :maxlength="500"
+              placeholder="Ej: firmante incorrecto, datos a corregir…"
+              class="w-full"
+            />
+          </UFormField>
+        </div>
+      </template>
+      <template #footer>
+        <div class="flex w-full justify-end gap-2">
+          <UButton variant="ghost" color="neutral" :disabled="loadingCancelar" @click="cancelarModalOpen = false">
+            Volver
+          </UButton>
+          <UButton color="destructive" icon="i-lucide-ban" :loading="loadingCancelar" @click="confirmarCancelar">
+            Cancelar proceso
+          </UButton>
+        </div>
+      </template>
+    </UModal>
+
+    <UModal
+      v-model:open="descartarModalOpen"
+      title="Descartar simulación de firma"
+      description="El proceso simulado no existe en KIAI. Se descartará localmente y la solicitud volverá a APROBADA para poder reenviarla a firma."
+      icon="i-lucide-eraser"
+      class="max-w-lg"
+    >
+      <template #body>
+        <UAlert
+          v-if="errorDescartar"
+          color="destructive"
+          variant="soft"
+          icon="i-lucide-alert-circle"
+          :title="errorDescartar"
+        />
+      </template>
+      <template #footer>
+        <div class="flex w-full justify-end gap-2">
+          <UButton variant="ghost" color="neutral" :disabled="loadingDescartar" @click="descartarModalOpen = false">
+            Volver
+          </UButton>
+          <UButton color="primary" icon="i-lucide-eraser" :loading="loadingDescartar" @click="confirmarDescartar">
+            Descartar simulación
+          </UButton>
+        </div>
+      </template>
+    </UModal>
   </div>
 </template>
 
@@ -97,49 +243,37 @@ import { useRoute, useRouter } from "vue-router";
 import GestionFirmantes from "@/components/admin/GestionFirmantes.vue";
 import { useApi } from "~/composables/useApi";
 import { useSession } from "~/composables/useSession";
+import {
+  ESTADOS_FIRMA_ABIERTOS,
+  getEstadoFirmaBadgeColor,
+  getEstadoFirmaIcon,
+  getEstadoFirmaLabel
+} from "~/lib/estados_firma_kiai";
 import type { FirmanteDb } from "~~/shared/types/documento";
+
+interface ProcesoFirma {
+  transaccion_id: string;
+  estado: string;
+  proveedor: string;
+  simulado: boolean;
+  fecha_inicio: string | null;
+  expira_en: string | null;
+  fecha_completado: string | null;
+  ultima_consulta: string | null;
+  firmantes_completados: number;
+  firmantes_pendientes: number;
+}
+
+interface ApiError {
+  statusCode?: number;
+  data?: { error?: string; message?: string };
+  message?: string;
+}
 
 const route = useRoute();
 const router = useRouter();
-const { getJson } = useApi();
+const { getJson, postJson } = useApi();
 const { ready } = useSession();
-
-// Función para obtener color del estado
-const getEstadoColor = (
-  estado: string
-): "primary" | "secondary" | "accent" | "destructive" | "muted" | "neutral" => {
-  const estadoColors: Record<
-    string,
-    "primary" | "secondary" | "accent" | "destructive" | "muted" | "neutral"
-  > = {
-    BORRADOR: "muted",
-    DOCUMENTOS_CARGADOS: "primary",
-    POSTULADO: "secondary",
-    ENVIADO_VALIDACION: "accent",
-    EN_FIRMA: "secondary",
-    FIRMADO: "primary",
-    APROBADO: "primary",
-    RECHAZADO: "destructive"
-  };
-  return estadoColors[estado] || "muted";
-};
-
-// Mapeo de estado key -> nombre legible
-const ESTADO_NOMBRES: Record<string, string> = {
-  BORRADOR: "Borrador",
-  DOCUMENTOS_CARGADOS: "Documentos cargados",
-  POSTULADO: "Postulado",
-  ENVIADO_VALIDACION: "En validación",
-  EN_FIRMA: "En firma",
-  FIRMADO: "Firmado",
-  APROBADO: "Aprobado",
-  RECHAZADO: "Rechazado"
-};
-
-// Obtener nombre legible del estado
-const getEstadoNombre = (estado: string): string => {
-  return ESTADO_NOMBRES[estado] || estado;
-};
 
 // Estado
 const solicitud = ref<SolicitudCredito | null>(null);
@@ -194,6 +328,124 @@ const cargarFirmantes = async () => {
   }
 };
 
+// Proceso de firma KIAI vigente
+const proceso = ref<ProcesoFirma | null>(null);
+const loadingProceso = ref(false);
+const errorProceso = ref<string | null>(null);
+
+const procesoAbierto = computed(
+  () => !!proceso.value && ESTADOS_FIRMA_ABIERTOS.includes(proceso.value.estado)
+);
+
+// Debe coincidir con procesoQueBloqueaFirmantes en proceso-firmado-adm.service.ts
+const puedeAgregarFirmantes = computed(
+  () => !procesoAbierto.value && proceso.value?.estado !== "COMPLETED"
+);
+
+const puedeEnviarFirma = computed(
+  () => !procesoAbierto.value && proceso.value?.estado !== "COMPLETED"
+);
+
+const formatearFecha = (fecha: string | null | undefined): string => {
+  if (!fecha) return "-";
+  return new Intl.DateTimeFormat("es-CO", {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit"
+  }).format(new Date(fecha));
+};
+
+const cargarProceso = async () => {
+  loadingProceso.value = true;
+  errorProceso.value = null;
+  try {
+    await ready;
+    const response = await getJson<{
+      success: boolean;
+      data: ProcesoFirma & { estado_solicitud: string };
+    }>(`/api/admin/solicitudes/${solicitudId.value}/estado-firmado`, { auth: true });
+
+    if (response.success) {
+      const { estado_solicitud, ...datos } = response.data;
+      proceso.value = datos;
+      if (solicitud.value) solicitud.value.estado = estado_solicitud as SolicitudCredito["estado"];
+    }
+  } catch (e: unknown) {
+    const err = e as ApiError;
+    if (err?.statusCode === 404) {
+      proceso.value = null;
+    } else {
+      errorProceso.value = err?.data?.error || err?.message || "No se pudo consultar el proceso de firma.";
+    }
+  } finally {
+    loadingProceso.value = false;
+  }
+};
+
+// Cancelación del proceso a decisión del administrador
+const cancelarModalOpen = ref(false);
+const motivoCancelacion = ref("");
+const loadingCancelar = ref(false);
+const errorCancelar = ref<string | null>(null);
+
+const abrirCancelar = () => {
+  motivoCancelacion.value = "";
+  errorCancelar.value = null;
+  cancelarModalOpen.value = true;
+};
+
+const confirmarCancelar = async () => {
+  loadingCancelar.value = true;
+  errorCancelar.value = null;
+  try {
+    await ready;
+    await postJson<{ success: boolean; message: string }>(
+      `/api/admin/solicitudes/${solicitudId.value}/cancelar-firmado`,
+      { motivo: motivoCancelacion.value.trim() || undefined },
+      { auth: true }
+    );
+    cancelarModalOpen.value = false;
+    await Promise.all([cargarSolicitud(), cargarProceso()]);
+  } catch (e: unknown) {
+    const err = e as ApiError;
+    errorCancelar.value = err?.data?.error || err?.message || "No se pudo cancelar el proceso de firma.";
+  } finally {
+    loadingCancelar.value = false;
+  }
+};
+
+// Un proceso simulado no existe en KIAI: se descarta localmente
+const descartarModalOpen = ref(false);
+const loadingDescartar = ref(false);
+const errorDescartar = ref<string | null>(null);
+
+const abrirDescartar = () => {
+  errorDescartar.value = null;
+  descartarModalOpen.value = true;
+};
+
+const confirmarDescartar = async () => {
+  loadingDescartar.value = true;
+  errorDescartar.value = null;
+  try {
+    await ready;
+    await postJson<{ success: boolean; message: string }>(
+      `/api/admin/solicitudes/${solicitudId.value}/descartar-simulacion`,
+      {},
+      { auth: true }
+    );
+    descartarModalOpen.value = false;
+    await Promise.all([cargarSolicitud(), cargarProceso()]);
+  } catch (e: unknown) {
+    const err = e as ApiError;
+    errorDescartar.value = err?.data?.error || err?.message || "No se pudo descartar la simulación.";
+  } finally {
+    loadingDescartar.value = false;
+  }
+};
+
 // Volver a la página anterior
 const volver = () => {
   router.go(-1);
@@ -202,7 +454,7 @@ const volver = () => {
 // Cargar datos al montar el componente
 onMounted(async () => {
   await cargarSolicitud();
-  await cargarFirmantes();
+  await Promise.all([cargarFirmantes(), cargarProceso()]);
 });
 
 definePageMeta({

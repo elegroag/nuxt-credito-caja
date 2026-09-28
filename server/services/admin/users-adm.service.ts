@@ -1,3 +1,4 @@
+import { createError } from "h3";
 import prisma from "~~/lib/prisma";
 import { z } from "zod";
 
@@ -96,13 +97,13 @@ const usersAdmService = () => {
     // Verificar unicidad de username
     const usernameExists = await checkUsernameExists(username);
     if (usernameExists) {
-      throw new Error("El username ya está en uso");
+      throw createError({ statusCode: 409, message: "El username ya está en uso" });
     }
 
     // Verificar unicidad de email
     const emailExists = await checkEmailExists(email);
     if (emailExists) {
-      throw new Error("El email ya está en uso");
+      throw createError({ statusCode: 409, message: "El email ya está en uso" });
     }
 
     // Hashear contraseña
@@ -261,7 +262,7 @@ const usersAdmService = () => {
           }
         });
         if (emailExists) {
-          throw new Error("El email ya está en uso");
+          throw createError({ statusCode: 409, message: "El email ya está en uso" });
         }
       }
       updateData.email = email;

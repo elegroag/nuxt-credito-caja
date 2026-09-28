@@ -83,7 +83,7 @@
               </div>
               <div class="flex items-center gap-2 text-muted-foreground">
                 <UIcon name="i-lucide-calendar" class="w-4 h-4" />
-                <span>Creada: {{ formatearFecha(solicitud.created_at) }}</span>
+                <span>Radicada: {{ formatearFecha(solicitud.created_at || solicitud.fecha_radicado) }}</span>
               </div>
             </div>
           </div>
@@ -98,13 +98,23 @@
                   />
                   <span class="text-sm font-medium text-foreground">Estado de Firma:</span>
                 </div>
-                <UBadge
-                  :color="getEstadoBadgeColor(solicitud.proceso_firmado?.estado || 'primary')"
-                  variant="subtle"
-                  :icon="getEstadoIcon(solicitud.proceso_firmado?.estado || '')"
-                >
-                  {{ solicitud.proceso_firmado?.estado || "DESCONOCIDO" }}
-                </UBadge>
+                <div class="flex flex-wrap items-center gap-2">
+                  <UBadge
+                    :color="getEstadoBadgeColor(solicitud.proceso_firmado?.estado || '')"
+                    variant="subtle"
+                    :icon="getEstadoIcon(solicitud.proceso_firmado?.estado || '')"
+                  >
+                    {{ getEstadoLabel(solicitud.proceso_firmado?.estado || "") }}
+                  </UBadge>
+                  <UBadge
+                    v-if="solicitud.proceso_firmado?.simulado"
+                    color="neutral"
+                    variant="outline"
+                    icon="i-lucide-flask-conical"
+                  >
+                    Simulado
+                  </UBadge>
+                </div>
               </div>
 
               <div class="grid grid-cols-2 gap-3 text-sm">
@@ -124,24 +134,45 @@
 
               <div class="text-xs text-muted-foreground">
                 <p>Inicio: {{ formatearFecha(solicitud.proceso_firmado?.fecha_inicio) }}</p>
-                <p>ID Transacción: {{ solicitud.proceso_firmado?.transaccion_id || "-" }}</p>
+                <p>Vence: {{ formatearFecha(solicitud.proceso_firmado?.expira_en) }}</p>
+                <p>ID Proceso: {{ solicitud.proceso_firmado?.transaccion_id || "-" }}</p>
               </div>
             </div>
           </div>
 
           <div class="lg:col-span-2 flex flex-col gap-2">
             <UButton
-              variant="solid"
-              color="primary"
+              variant="outline"
+              color="neutral"
               size="sm"
               class="w-full gap-2"
               icon="i-lucide-eye"
               @click="verDetalles(solicitud.numero_solicitud)"
             >
-              Ver Detalles
+              Ver solicitud
+            </UButton>
+            <UButton
+              variant="solid"
+              color="primary"
+              size="sm"
+              class="w-full gap-2"
+              icon="i-lucide-file-signature"
+              :to="`/admin/firmas/firmado/${solicitud.numero_solicitud}`"
+            >
+              Gestionar firma
             </UButton>
             <UButton
               variant="outline"
+              color="neutral"
+              size="sm"
+              class="w-full gap-2"
+              icon="i-lucide-history"
+              :to="`/admin/firmas/historial/${solicitud.numero_solicitud}`"
+            >
+              Ver historial
+            </UButton>
+            <UButton
+              variant="ghost"
               color="neutral"
               size="sm"
               class="w-full gap-2"
@@ -218,6 +249,7 @@ const {
   cambiarFiltroEstado,
   verDetalles,
   formatearFecha,
+  getEstadoLabel,
   getEstadoColor: _getEstadoColor,
   getEstadoIcon,
   getEstadoBadgeColor,

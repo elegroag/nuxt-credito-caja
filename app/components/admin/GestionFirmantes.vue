@@ -6,6 +6,7 @@
         Firmantes Registrados ({{ firmantes.length }})
       </h3>
       <UButton
+        v-if="puedeAgregar"
         color="primary"
         variant="soft"
         size="sm"
@@ -15,6 +16,14 @@
         Agregar firmante
       </UButton>
     </div>
+    <UAlert
+      v-if="!puedeModificar"
+      color="neutral"
+      variant="subtle"
+      icon="i-lucide-lock"
+      class="mb-3"
+      description="Los firmantes no se pueden editar ni eliminar mientras exista un proceso de firma con KIAI."
+    />
     <div class="space-y-3">
       <div
         v-for="(firmante, index) in firmantes"
@@ -72,15 +81,26 @@
             </div>
           </div>
         </div>
-        <UButton
-          variant="outline"
-          size="sm"
-          color="destructive"
-          title="Eliminar firmante"
-          @click="eliminarFirmante(index)"
-        >
-          <UIcon name="i-lucide-trash-2" class="w-4 h-4" />
-        </UButton>
+        <div v-if="puedeModificar" class="flex items-center gap-2 shrink-0">
+          <UButton
+            variant="outline"
+            size="sm"
+            color="neutral"
+            title="Editar firmante"
+            @click="abrirModalEditarFirmante(index)"
+          >
+            <UIcon name="i-lucide-pencil" class="w-4 h-4" />
+          </UButton>
+          <UButton
+            variant="outline"
+            size="sm"
+            color="destructive"
+            title="Eliminar firmante"
+            @click="eliminarFirmante(index)"
+          >
+            <UIcon name="i-lucide-trash-2" class="w-4 h-4" />
+          </UButton>
+        </div>
       </div>
     </div>
   </div>
@@ -95,7 +115,7 @@
         Agregue al menos un firmante para poder iniciar el proceso de firma digital.
       </template>
     </UAlert>
-    <div class="flex justify-end">
+    <div v-if="puedeAgregar" class="flex justify-end">
       <UButton
         color="primary"
         size="sm"
@@ -113,7 +133,7 @@
       type="button"
       color="primary"
       size="lg"
-      :disabled="loadingFirmado || firmantes.length === 0"
+      :disabled="loadingFirmado || firmantes.length === 0 || !puedeEnviar"
       class="w-full md:w-auto"
       @click="handleIniciarFirmado"
     >
@@ -121,7 +141,10 @@
       <UIcon v-else name="i-lucide-send" class="w-4 h-4 mr-2" />
       {{ loadingFirmado ? "Enviando..." : "Enviar para Firma Digital" }}
     </UButton>
-    <p class="text-sm text-muted-foreground mt-2">
+    <p v-if="!puedeEnviar" class="text-sm text-muted-foreground mt-2">
+      La solicitud ya está en proceso de firma con KIAI.
+    </p>
+    <p v-else class="text-sm text-muted-foreground mt-2">
       Se enviará el documento a todos los firmantes registrados para su firma digital.
     </p>
   </div>
@@ -216,6 +239,78 @@
         <UButton color="primary" @click="handleAgregarFirmante">
           <UIcon name="i-lucide-user-plus" class="w-4 h-4 mr-2" />
           Agregar Firmante
+        </UButton>
+      </div>
+    </template>
+  </UModal>
+
+  <!-- Modal: Editar Firmante -->
+  <UModal
+    v-model:open="editarFirmanteModalOpen"
+    title="Editar Firmante"
+    description="Actualice los datos de contacto del firmante."
+    icon="i-lucide-pencil"
+    class="max-w-2xl"
+  >
+    <template #body>
+      <div class="space-y-4">
+        <UAlert
+          v-if="editarFirmanteError"
+          color="destructive"
+          variant="soft"
+          icon="i-lucide-alert-circle"
+          :description="editarFirmanteError"
+        />
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <UFormField label="Nombre Completo" required>
+            <UInput
+              v-model="firmanteEditado.nombre_completo"
+              placeholder="Nombre completo del firmante"
+              icon="i-lucide-user"
+              class="w-full"
+            />
+          </UFormField>
+
+          <UFormField label="Email" required>
+            <UInput
+              v-model="firmanteEditado.email"
+              type="email"
+              placeholder="correo@ejemplo.com"
+              icon="i-lucide-mail"
+              class="w-full"
+            />
+          </UFormField>
+
+          <UFormField label="Teléfono" class="md:col-span-2">
+            <div class="flex gap-2">
+              <USelectMenu
+                v-model="firmanteEditado.codigo_pais"
+                :items="paisOptions"
+                value-key="value"
+                label-key="label"
+                placeholder="Código"
+                class="w-28 shrink-0"
+              />
+              <UInput
+                v-model="firmanteEditado.telefono"
+                type="number"
+                placeholder="3001234567"
+                icon="i-lucide-phone"
+                class="w-full"
+              />
+            </div>
+          </UFormField>
+        </div>
+      </div>
+    </template>
+    <template #footer>
+      <div class="flex justify-end gap-2">
+        <UButton variant="ghost" :disabled="loadingEditarFirmante" @click="editarFirmanteModalOpen = false">
+          Cancelar
+        </UButton>
+        <UButton color="primary" :loading="loadingEditarFirmante" @click="handleEditarFirmante">
+          <UIcon name="i-lucide-save" class="w-4 h-4 mr-2" />
+          Guardar cambios
         </UButton>
       </div>
     </template>
@@ -317,18 +412,24 @@ import type { FirmanteDb, NuevoFirmante } from "~~/shared/types/documento";
 interface Props {
   solicitudId: string;
   firmantes: FirmanteDb[];
+  // false cuando la solicitud ya tiene un proceso de firma KIAI abierto o completado
+  puedeAgregar?: boolean;
+  // false cuando el último proceso KIAI está abierto o completado
+  puedeEnviar?: boolean;
+  // false cuando un proceso KIAI impide editar o eliminar firmantes
+  puedeModificar?: boolean;
 }
 
-const _emit = defineEmits<{
+const emit = defineEmits<{
   "agregar-firmante": [];
   "eliminar-firmante": [index: number];
   "iniciar-firmado": [];
 }>();
 
-const props = defineProps<Props>();
+const props = withDefaults(defineProps<Props>(), { puedeAgregar: true, puedeEnviar: true, puedeModificar: true });
 const solicitudId = props.solicitudId;
 
-const { postJson, deleteJson } = useApi();
+const { postJson, putJson, deleteJson } = useApi();
 const { ready } = useSession();
 const { cargarRolesFirmantes, rolesFirmantesOptions } = useRolesFirmantes();
 const { cargarTiposDocumento, tiposDocumentoOptions } = useTiposDocumento();
@@ -444,8 +545,100 @@ const eliminarFirmante = async (index: number) => {
     if (response.success) {
       firmantes.value.splice(index, 1);
     }
-  } catch (err) {
-    console.error("Error al eliminar firmante:", err);
+  } catch (e: unknown) {
+    console.error("Error al eliminar firmante:", e);
+    const err = e as { data?: { error?: string; message?: string }; message?: string };
+    errorModalMessage.value
+      = err?.data?.error || err?.data?.message || err?.message || "Error al eliminar el firmante.";
+    errorModalOpen.value = true;
+  }
+};
+
+const editarFirmanteModalOpen = ref(false);
+const editarFirmanteIndex = ref<number | null>(null);
+const editarFirmanteError = ref("");
+const loadingEditarFirmante = ref(false);
+const firmanteEditado = ref({
+  nombre_completo: "",
+  email: "",
+  telefono: "",
+  codigo_pais: "57"
+});
+
+const abrirModalEditarFirmante = (index: number) => {
+  const firmante = firmantes.value[index];
+  if (!firmante) return;
+
+  editarFirmanteIndex.value = index;
+  editarFirmanteError.value = "";
+  firmanteEditado.value = {
+    nombre_completo: firmante.nombre_completo || "",
+    email: firmante.email || "",
+    telefono: firmante.telefono ? String(firmante.telefono) : "",
+    codigo_pais: firmante.codigo_pais || "57"
+  };
+  editarFirmanteModalOpen.value = true;
+};
+
+const handleEditarFirmante = async () => {
+  const index = editarFirmanteIndex.value;
+  const firmante = index !== null ? firmantes.value[index] : undefined;
+  if (index === null || !firmante) return;
+
+  const datos = {
+    nombre_completo: firmanteEditado.value.nombre_completo.trim(),
+    email: firmanteEditado.value.email.trim(),
+    telefono: String(firmanteEditado.value.telefono ?? "").trim(),
+    codigo_pais: firmanteEditado.value.codigo_pais
+  };
+
+  if (!datos.nombre_completo || !datos.email) {
+    editarFirmanteError.value = "Debe completar el nombre y el email del firmante.";
+    return;
+  }
+  if (!isValidEmail(datos.email)) {
+    editarFirmanteError.value = "El correo electrónico no es válido.";
+    return;
+  }
+  if (!isValidPhone(datos.telefono)) {
+    editarFirmanteError.value = "El teléfono debe ser un número móvil válido (inicia con 3 y tiene 10 dígitos).";
+    return;
+  }
+
+  editarFirmanteError.value = "";
+
+  if (firmante._pending) {
+    firmantes.value[index] = { ...firmante, ...datos };
+    editarFirmanteModalOpen.value = false;
+    return;
+  }
+
+  loadingEditarFirmante.value = true;
+  try {
+    await ready;
+    const response = await putJson<{
+      success: boolean;
+      message?: string;
+      data?: FirmanteDb;
+    }>(
+      `/api/admin/solicitudes/${solicitudId}/firmantes`,
+      { firmanteId: firmante.id, ...datos },
+      { auth: true }
+    );
+
+    if (response.success) {
+      firmantes.value[index] = { ...firmante, ...(response.data ?? datos) };
+      editarFirmanteModalOpen.value = false;
+    } else {
+      editarFirmanteError.value = response.message || "Error al actualizar el firmante.";
+    }
+  } catch (e: unknown) {
+    console.error("Error al actualizar firmante:", e);
+    const err = e as { data?: { error?: string; message?: string }; message?: string };
+    editarFirmanteError.value
+      = err?.data?.error || err?.data?.message || err?.message || "Error al actualizar el firmante.";
+  } finally {
+    loadingEditarFirmante.value = false;
   }
 };
 
@@ -530,7 +723,8 @@ const iniciarProcesoDeFirmado = async () => {
     }
   } catch (e: unknown) {
     console.error("Error al iniciar proceso de firmado:", e);
-    const message = e instanceof Error ? e.message : "Error al iniciar el proceso de firmado.";
+    const apiError = (e as { data?: { error?: string } })?.data?.error;
+    const message = apiError || (e instanceof Error ? e.message : "Error al iniciar el proceso de firmado.");
     return {
       success: false,
       message
@@ -550,6 +744,7 @@ const confirmarEnvioFirma = async () => {
   const resultado = await iniciarProcesoDeFirmado();
 
   if (resultado.success) {
+    emit("iniciar-firmado");
     successRedirectOnAccept.value = true;
     successModalMessage.value = resultado.message || "Documento enviado para firma digital exitosamente.";
     successModalOpen.value = true;

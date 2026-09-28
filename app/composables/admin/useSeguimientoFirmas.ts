@@ -2,21 +2,43 @@ import { ref, computed } from "vue";
 import { useRouter } from "vue-router";
 import { useApi } from "~/composables/useApi";
 import { useSession } from "~/composables/useSession";
+import { getEstadoFirmaBadgeColor, getEstadoFirmaIcon, getEstadoFirmaLabel } from "~/lib/estados_firma_kiai";
 
 interface ProcesoFirmado {
   transaccion_id: string;
   estado: string;
-  fecha_inicio: string;
   proveedor: string;
-  urls_firma?: Record<string, string>;
+  simulado: boolean;
+  fecha_inicio: string | null;
+  expira_en: string | null;
+  fecha_completado: string | null;
+  ultima_consulta: string | null;
   firmantes_completados: number;
   firmantes_pendientes: number;
-  fecha_completado?: string;
 }
 
-interface SolicitudConFirma extends SolicitudCredito {
-  proceso_firmado?: ProcesoFirmado;
+interface SolicitudConFirma {
+  numero_solicitud: string;
+  owner_username: string;
+  estado: string;
+  estado_info: { id: string; nombre: string; color: string | null } | null;
+  fecha_radicado: string | null;
+  created_at: string | null;
+  updated_at: string | null;
+  solicitante: {
+    nombres: string | null;
+    apellidos: string | null;
+    numero_documento: string | null;
+    email: string | null;
+    nombres_apellidos: string;
+  } | null;
+  proceso_firmado: ProcesoFirmado | null;
 }
+
+type EstadoFirmadoResponse = ProcesoFirmado & {
+  solicitud_id: string;
+  estado_solicitud: string;
+};
 
 export function useSeguimientoFirmas() {
   const router = useRouter();
@@ -34,12 +56,13 @@ export function useSeguimientoFirmas() {
   const pageSize = ref(20);
   const estadoFiltro = ref<string>("PENDIENTE_FIRMADO");
 
-  // Estados disponibles para filtrar
+  // Estados de la solicitud; un proceso vencido en KIAI devuelve la solicitud a APROBADA
   const estadosDisponibles = [
     { value: "PENDIENTE_FIRMADO", label: "Pendiente de Firmar" },
     { value: "FIRMADO", label: "Firmado" },
-    { value: "RECHAZADO", label: "Rechazado" },
-    { value: "EXPIRADO", label: "Expirado" },
+    { value: "RECHAZADA", label: "Rechazada" },
+    { value: "CANCELADA", label: "Cancelada" },
+    { value: "APROBADA", label: "Vencido (por reenviar)" },
     { value: "@", label: "Todos con proceso de firma" }
   ];
 
@@ -78,15 +101,12 @@ export function useSeguimientoFirmas() {
           };
         };
         message: string;
-      }>(`/api/admin/solicitudes?${params.toString()}`, {
+      }>(`/api/admin/firmas?${params.toString()}`, {
         auth: true
       });
 
       if (response.success && response.data) {
-        // Filtrar solo las que tienen firmantes
-        solicitudes.value = response.data.collection.filter(
-          (s) => s.firmantes && s.firmantes.length > 0
-        );
+        solicitudes.value = response.data.collection;
         totalSolicitudes.value = response.data.pagination?.total || 0;
       } else {
         throw new Error(response.message || "Error al cargar solicitudes");
@@ -108,28 +128,18 @@ export function useSeguimientoFirmas() {
 
       const response = await getJson<{
         success: boolean;
-        data: {
-          solicitud_id: string;
-          transaccion_id: string;
-          estado: string;
-          firmantes_completados: number;
-          firmantes_pendientes: number;
-        };
+        data: EstadoFirmadoResponse;
         message: string;
       }>(`/api/admin/solicitudes/${solicitudId}/estado-firmado`, {
         auth: true
       });
 
       if (response.success) {
-        // Actualizar localmente
-        const index = solicitudes.value.findIndex((s) => s.numero_solicitud === solicitudId);
-        if (index !== -1 && solicitudes.value[index]) {
-          const solicitud = solicitudes.value[index];
-          if (solicitud?.proceso_firmado) {
-            solicitud.proceso_firmado.estado = response.data.estado;
-            solicitud.proceso_firmado.firmantes_completados = response.data.firmantes_completados;
-            solicitud.proceso_firmado.firmantes_pendientes = response.data.firmantes_pendientes;
-          }
+        const solicitud = solicitudes.value.find((s) => s.numero_solicitud === solicitudId);
+        if (solicitud) {
+          const { solicitud_id: _id, estado_solicitud, ...proceso } = response.data;
+          solicitud.proceso_firmado = proceso;
+          solicitud.estado = estado_solicitud;
         }
 
         return {
@@ -189,7 +199,7 @@ export function useSeguimientoFirmas() {
   };
 
   // Formateo de fechas
-  const formatearFecha = (fecha: string | Date | undefined): string => {
+  const formatearFecha = (fecha: string | Date | null | undefined): string => {
     if (!fecha) return "-";
     const date = typeof fecha === "string" ? new Date(fecha) : fecha;
     return new Intl.DateTimeFormat("es-CO", {
@@ -201,37 +211,20 @@ export function useSeguimientoFirmas() {
     }).format(date);
   };
 
-  // Obtener badge color por estado
+  // Estados del proceso en KIAI (proceso_firmado.estado)
+  const getEstadoLabel = getEstadoFirmaLabel;
+  const getEstadoIcon = getEstadoFirmaIcon;
+  const getEstadoBadgeColor = getEstadoFirmaBadgeColor;
+
   const getEstadoColor = (estado: string): string => {
     const colores: Record<string, string> = {
-      PENDIENTE_FIRMADO: "bg-yellow-100 text-yellow-800 border-yellow-300",
-      FIRMADO: "bg-green-100 text-green-800 border-green-300",
-      RECHAZADO: "bg-red-100 text-red-800 border-red-300",
-      EXPIRADO: "bg-gray-100 text-gray-800 border-gray-300"
+      IN_PROGRESS: "bg-yellow-100 text-yellow-800 border-yellow-300",
+      COMPLETED: "bg-green-100 text-green-800 border-green-300",
+      DECLINED: "bg-red-100 text-red-800 border-red-300",
+      EXPIRED: "bg-gray-100 text-gray-800 border-gray-300",
+      CANCELLED: "bg-gray-100 text-gray-800 border-gray-300"
     };
     return colores[estado] || "bg-gray-100 text-gray-800 border-gray-300";
-  };
-
-  // Obtener icono por estado
-  const getEstadoIcon = (estado: string): string => {
-    const iconos: Record<string, string> = {
-      PENDIENTE_FIRMADO: "i-lucide-clock",
-      FIRMADO: "i-lucide-check-circle",
-      RECHAZADO: "i-lucide-x-circle",
-      EXPIRADO: "i-lucide-alert-circle"
-    };
-    return iconos[estado] || "i-lucide-help-circle";
-  };
-
-  // Obtener color de badge UBadge por estado (Nuxt UI v4 colors)
-  const getEstadoBadgeColor = (estado: string): "primary" | "neutral" | "accent" | "destructive" | "muted" | undefined => {
-    const colores: Record<string, "primary" | "neutral" | "accent" | "destructive" | "muted"> = {
-      PENDIENTE_FIRMADO: "accent",
-      FIRMADO: "primary",
-      RECHAZADO: "destructive",
-      EXPIRADO: "muted"
-    };
-    return colores[estado] || "neutral";
   };
 
   const cargarConvenio = async () => {
@@ -285,6 +278,7 @@ export function useSeguimientoFirmas() {
     cambiarFiltroEstado,
     verDetalles,
     formatearFecha,
+    getEstadoLabel,
     getEstadoColor,
     getEstadoIcon,
     getEstadoBadgeColor

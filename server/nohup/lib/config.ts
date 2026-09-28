@@ -1,22 +1,22 @@
 import "dotenv/config";
-import type { ApiFirmaRuntimeConfig } from "~~/server/services/api-firmaplus";
+import type { KiaiRuntimeConfig } from "~~/server/services/api-kiai";
 
-export function loadStandaloneFirmaConfig(): ApiFirmaRuntimeConfig {
-  const env = process.env.API_FIRMA_ENV || "dev";
-  const simulation = process.env.API_FIRMA_SIMULATION;
+export function loadStandaloneKiaiConfig(): KiaiRuntimeConfig {
+  const env = process.env.KIAI_ENV || "dev";
+  const simulation = process.env.KIAI_SIMULATION;
 
   return {
-    apiFIRMA: {
+    kiai: {
       env,
-      // Sin API_FIRMA_SIMULATION se simula solo en entorno dev
+      // Sin KIAI_SIMULATION se simula solo en entorno dev
       simulation: simulation ? simulation === "true" : env === "dev",
-      url_pro: process.env.API_FIRMA_URL_PRO || "",
-      url_dev: process.env.API_FIRMA_URL_DEV || "",
-      type_auth: process.env.API_FIRMA_TYPE_AUTH || "Bearer",
-      basic_user: process.env.API_FIRMA_BASIC_USER || "",
-      basic_password: process.env.API_FIRMA_BASIC_PASSWORD || "",
-      client_id: process.env.API_FIRMA_CLIENT_ID || null,
-      password: process.env.API_FIRMA_PASSWORD || null
+      grant_type: process.env.KIAI_GRANT_TYPE || "client_credentials",
+      api_url_pro: process.env.KIAI_API_URL_PRO || "",
+      api_url_dev: process.env.KIAI_API_URL_DEV || "",
+      client_id_pro: process.env.KIAI_CLIENT_ID_PRO || "",
+      client_id_dev: process.env.KIAI_CLIENT_ID_DEV || "",
+      secret_key_pro: process.env.KIAI_SECRET_KEY_PRO || "",
+      secret_key_dev: process.env.KIAI_SECRET_KEY_DEV || ""
     }
   };
 }
