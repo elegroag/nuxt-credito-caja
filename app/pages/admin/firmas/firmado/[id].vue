@@ -142,6 +142,23 @@
           </div>
         </UPageCard>
 
+        <!-- Anexos para firma -->
+        <UPageCard>
+          <template #header>
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center">
+                <UIcon name="i-lucide-paperclip" class="w-5 h-5 text-primary" />
+              </div>
+              <h2 class="text-xl font-bold text-foreground">Anexos para firma</h2>
+            </div>
+          </template>
+
+          <GestionAnexos
+            :solicitud-id="solicitud.numero_solicitud"
+            :puede-modificar="puedeEnviarFirma"
+          />
+        </UPageCard>
+
         <!-- Gestión de Firmantes -->
         <UPageCard>
           <template #header>
@@ -240,6 +257,7 @@
 import { ref, onMounted, computed } from "#imports";
 import { useRoute, useRouter } from "vue-router";
 
+import GestionAnexos from "@/components/admin/GestionAnexos.vue";
 import GestionFirmantes from "@/components/admin/GestionFirmantes.vue";
 import { useApi } from "~/composables/useApi";
 import { useSession } from "~/composables/useSession";

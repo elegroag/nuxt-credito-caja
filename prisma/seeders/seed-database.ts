@@ -1,7 +1,6 @@
 import prisma from "../../lib/prisma.ts";
 import { estadosSolicitud } from "./estados-solicitud.seed";
 import { users } from "./users.seed";
-import { documentosPostulantes } from "./documentos-postulantes.seed";
 import { empresasConvenio } from "./empresas-convenio.seed";
 import { modulesSeed, routePermissionsSeed } from "./modules.seed";
 import { notifications } from "./notifications.seed";
@@ -46,7 +45,6 @@ async function main() {
   await seedSolicitudPayload();
   await seedSolicitudTimeline();
   await seedSolicitudDocumentos();
-  await seedDocumentosPostulantes();
   // await seedPdfsGenerados();
   await seedFirmantesSolicitud();
   await seedConfigurations();
@@ -591,27 +589,6 @@ async function seedSolicitudDocumentos() {
     console.log("✅ Solicitud documentos seeded");
   } else {
     console.log("⏭️  Solicitud documentos already seeded");
-  }
-}
-
-async function seedDocumentosPostulantes() {
-  console.log("Seeding documentos_postulantes...");
-
-  const countPostulantes = await prisma.documentos_postulantes.count();
-  if (countPostulantes == 0) {
-    const postulantesData = documentosPostulantes.map((postulante) => {
-      return {
-        ...postulante,
-        created_at: new Date(postulante.created_at).toISOString(),
-        updated_at: new Date(postulante.updated_at).toISOString()
-      };
-    });
-    await prisma.documentos_postulantes.createMany({
-      data: postulantesData as unknown[]
-    });
-    console.log("✅ Documentos postulantes seeded");
-  } else {
-    console.log("⏭️  Documentos postulantes already seeded");
   }
 }
 

@@ -7,29 +7,28 @@ datasource db {
   provider = "mysql"
 }
 
-model documentos_postulantes {
+/// Anexos (pagarés, cartas de instrucciones, oficios...) que el asesor envía a firmar junto con la solicitud
+model firmar_anexos {
   id                  BigInt              @id @default(autoincrement()) @db.UnsignedBigInt
   username            String              @db.VarChar(100)
-  tipo_documento      String              @db.VarChar(50)
+  tipo_anexo          String              @db.VarChar(50)
   nombre_original     String              @db.VarChar(255)
   saved_filename      String              @db.VarChar(255)
   tipo_mime           String?             @db.VarChar(100)
   tamano_bytes        Int?
   ruta_archivo        String?             @db.VarChar(500)
-  api_path            String?             @db.VarChar(500)
-  api_filename        String?             @db.VarChar(255)
+  orden               Int                 @default(0)
   solicitud_id        String              @db.VarChar(20)
   activo              Boolean             @default(true)
   created_at          DateTime?           @db.Timestamp(0)
   updated_at          DateTime?           @db.Timestamp(0)
-  solicitudes_credito solicitudes_credito @relation(fields: [solicitud_id], references: [numero_solicitud], onDelete: Cascade, onUpdate: NoAction, map: "documentos_postulantes_solicitud_id_foreign")
-  users               users               @relation(fields: [username], references: [username], onDelete: Cascade, onUpdate: NoAction, map: "documentos_postulantes_username_foreign")
+  solicitudes_credito solicitudes_credito @relation(fields: [solicitud_id], references: [numero_solicitud], onDelete: Cascade, onUpdate: NoAction, map: "firmar_anexos_solicitud_id_foreign")
+  users               users               @relation(fields: [username], references: [username], onDelete: Cascade, onUpdate: NoAction, map: "firmar_anexos_username_foreign")
 
-  @@index([activo], map: "documentos_postulantes_activo_index")
-  @@index([api_path], map: "documentos_postulantes_api_path_index")
-  @@index([solicitud_id], map: "documentos_postulantes_solicitud_id_index")
-  @@index([tipo_documento], map: "documentos_postulantes_tipo_documento_index")
-  @@index([username], map: "documentos_postulantes_username_index")
+  @@index([activo], map: "firmar_anexos_activo_index")
+  @@index([solicitud_id], map: "firmar_anexos_solicitud_id_index")
+  @@index([tipo_anexo], map: "firmar_anexos_tipo_anexo_index")
+  @@index([username], map: "firmar_anexos_username_index")
 }
 
 model empresas_convenio {
@@ -430,7 +429,7 @@ model solicitudes_credito {
   updated_at             DateTime?                @db.Timestamp(0)
   rol_en_solicitud       rol_en_solicitud         @default(T)
   numero_comprobante     String?                  @db.VarChar(20)
-  documentos_postulantes documentos_postulantes[]
+  firmar_anexos          firmar_anexos[]
   firmantes_solicitud    firmantes_solicitud[]
   pdfs_generados         pdfs_generados?
   procesos_firma         procesos_firma[]
@@ -480,7 +479,7 @@ model users {
   created_at             DateTime?                @db.Timestamp(0)
   updated_at             DateTime?                @db.Timestamp(0)
   pin_verification       String?                  @db.VarChar(4)
-  documentos_postulantes documentos_postulantes[]
+  firmar_anexos          firmar_anexos[]
   notifications          notifications[]
   solicitud_timeline     solicitud_timeline[]
   solicitudes_credito    solicitudes_credito[]

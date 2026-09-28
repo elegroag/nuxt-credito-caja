@@ -193,7 +193,7 @@ Located in `server/services/`:
 | `firmantes_solicitud` | Signers for applications |
 | `estados_solicitud` | Status definitions with order and color |
 | `empresas_convenio` | Companies with active agreements |
-| `documentos_postulantes` | User-uploaded documents |
+| `firmar_anexos` | Annexes the advisor sends for signature with the application (pagarés, cartas de instrucciones, oficios) |
 | `configurations` | Key-value system configuration |
 | `notifications` | User notifications |
 | `roles` | Role definitions with JSON permissions |

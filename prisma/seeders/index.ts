@@ -1,5 +1,4 @@
-/* export { documentosPostulantes } from './documentos-postulantes.seed';
-export { empresasConvenio } from './empresas-convenio.seed';
+/* export { empresasConvenio } from './empresas-convenio.seed';
 export { estadosSolicitud } from './estados-solicitud.seed';
 export { firmantesSolicitud } from './firmantes-solicitud.seed';
 export { modules } from './modules.seed';
