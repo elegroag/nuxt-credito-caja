@@ -79,7 +79,7 @@
             <div class="space-y-1 text-sm">
               <div class="flex items-center gap-2 text-muted-foreground">
                 <UIcon name="i-lucide-building" class="w-4 h-4" />
-                <span>{{ convenioActivo?.razon_social || "Sin convenio" }}</span>
+                <span>{{ solicitud.convenio?.razon_social || "Sin convenio" }}</span>
               </div>
               <div class="flex items-center gap-2 text-muted-foreground">
                 <UIcon name="i-lucide-calendar" class="w-4 h-4" />
@@ -252,9 +252,7 @@ const {
   getEstadoLabel,
   getEstadoColor: _getEstadoColor,
   getEstadoIcon,
-  getEstadoBadgeColor,
-  convenioActivo,
-  cargarConvenio
+  getEstadoBadgeColor
 } = useSeguimientoFirmas();
 
 const handleConsultarEstado = async (solicitudId: string) => {
@@ -268,6 +266,5 @@ const handleConsultarEstado = async (solicitudId: string) => {
 
 onMounted(() => {
   cargarSolicitudes();
-  cargarConvenio();
 });
 </script>

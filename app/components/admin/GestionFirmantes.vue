@@ -48,7 +48,13 @@
                 <p class="font-semibold text-foreground truncate">
                   {{ firmante.nombre_completo }}
                 </p>
-                <UBadge v-if="firmante._pending" color="secondary" variant="subtle" size="xs">
+                <UBadge
+                  v-if="firmante._pending"
+                  color="secondary"
+                  variant="subtle"
+                  size="xs"
+                  class="bg-amber-100 text-amber-800 ring-amber-300 dark:bg-secondary/10 dark:text-secondary dark:ring-secondary/25"
+                >
                   Pendiente
                 </UBadge>
               </div>
@@ -57,7 +63,7 @@
                 color="secondary"
                 variant="subtle"
                 size="lg"
-                class="text-sm font-semibold tracking-wide"
+                class="text-sm font-semibold tracking-wide bg-amber-100 text-amber-800 ring-amber-300 dark:bg-secondary/10 dark:text-secondary dark:ring-secondary/25"
               >
                 {{ firmante.rol }}
               </UBadge>

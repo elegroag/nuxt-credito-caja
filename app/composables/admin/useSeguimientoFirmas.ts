@@ -32,6 +32,7 @@ interface SolicitudConFirma {
     email: string | null;
     nombres_apellidos: string;
   } | null;
+  convenio: { nit: string; razon_social: string; estado: string } | null;
   proceso_firmado: ProcesoFirmado | null;
 }
 
@@ -49,7 +50,6 @@ export function useSeguimientoFirmas() {
   const loading = ref(false);
   const error = ref<string | null>(null);
   const totalSolicitudes = ref(0);
-  const convenioActivo = ref<ConvenioActivo | null>(null);
 
   // Paginación
   const currentPage = ref(1);
@@ -227,29 +227,6 @@ export function useSeguimientoFirmas() {
     return colores[estado] || "bg-gray-100 text-gray-800 border-gray-300";
   };
 
-  const cargarConvenio = async () => {
-    try {
-      const response = await getJson<{
-        success: boolean;
-        data: EmpresaConvenio | null;
-        message: string;
-      }>("/api/convenios/activo", {
-        auth: true
-      });
-
-      if (response.success) {
-        convenioActivo.value = response.data;
-      } else {
-        throw new Error(response.message || "Error al cargar convenio activo");
-      }
-    } catch (e: unknown) {
-      console.error("Error al cargar convenio activo:", e);
-      const message = e instanceof Error ? e.message : String(e);
-      error.value = message || "Error al cargar convenio activo";
-      convenioActivo.value = null;
-    }
-  };
-
   return {
     // Estado
     solicitudes,
@@ -260,7 +237,6 @@ export function useSeguimientoFirmas() {
     pageSize,
     estadoFiltro,
     estadosDisponibles,
-    convenioActivo,
 
     // Computadas
     totalPages,
@@ -269,7 +245,6 @@ export function useSeguimientoFirmas() {
 
     // Funciones
     cargarSolicitudes,
-    cargarConvenio,
     consultarEstado,
     refrescarTodos,
     irAPagina,

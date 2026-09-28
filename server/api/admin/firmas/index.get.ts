@@ -36,15 +36,40 @@ export default defineEventHandler(async (event: H3Event) => {
             where: { proveedor: KIAI_PROVEEDOR },
             orderBy: { id: "desc" },
             take: 1
+          },
+          solicitud_payload: {
+            select: { informacion_laboral: true },
+            orderBy: { id: "desc" },
+            take: 1
           }
         }
       }),
       prisma.solicitudes_credito.count({ where })
     ]);
 
+    // No hay relación entre solicitud y convenio: se cruza por el NIT de la empresa del trabajador
+    const nitPorSolicitud = new Map<string, string>();
+    for (const s of solicitudes) {
+      const laboral = s.solicitud_payload[0]?.informacion_laboral as { empresa_nit?: unknown } | null;
+      const nit = String(laboral?.empresa_nit ?? "").replace(/\D/g, "");
+      if (nit) nitPorSolicitud.set(s.numero_solicitud, nit);
+    }
+
+    const nits = [...new Set(nitPorSolicitud.values())];
+    const convenios = nits.length
+      ? await prisma.empresas_convenio.findMany({
+          where: { nit: { in: nits.map((n) => BigInt(n)) } },
+          select: { nit: true, razon_social: true, estado: true }
+        })
+      : [];
+    const convenioPorNit = new Map(
+      convenios.map((c) => [String(c.nit), { nit: String(c.nit), razon_social: c.razon_social, estado: c.estado }])
+    );
+
     const collection = solicitudes.map((s) => {
       const solicitante = s.solicitud_solicitante?.[0] ?? null;
       const proceso = s.procesos_firma[0];
+      const nit = nitPorSolicitud.get(s.numero_solicitud);
       return {
         numero_solicitud: s.numero_solicitud,
         owner_username: s.owner_username,
@@ -59,6 +84,7 @@ export default defineEventHandler(async (event: H3Event) => {
               nombres_apellidos: [solicitante.nombres, solicitante.apellidos].filter(Boolean).join(" ")
             }
           : null,
+        convenio: (nit && convenioPorNit.get(nit)) || null,
         proceso_firmado: proceso ? resumirProcesoFirma(proceso, s.firmantes_solicitud.length) : null
       };
     });
