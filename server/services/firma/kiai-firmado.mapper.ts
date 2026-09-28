@@ -147,7 +147,7 @@ export const mapEstadoSolicitud = (
     case "DECLINED":
       return { estado: "RECHAZADA", detalle: "Un firmante rechazó la firma del documento en KIAI." };
     case "CANCELLED":
-      return { estado: "CANCELADA", detalle: "El proceso de firma fue cancelado en KIAI." };
+      return { estado: "APROBADA", detalle: "El proceso de firma fue cancelado en KIAI; puede reenviarse a firma." };
     case "EXPIRED":
       return { estado: "APROBADA", detalle: "El proceso de firma venció en KIAI sin completarse; puede reenviarse a firma." };
     default:

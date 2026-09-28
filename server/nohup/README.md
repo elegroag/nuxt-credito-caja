@@ -15,7 +15,7 @@ Cuando un administrador inicia el firmado (`POST /api/admin/solicitudes/:id/inic
 |-------------|------------------------|
 | `COMPLETED` | `FIRMADO` |
 | `DECLINED` | `RECHAZADA` |
-| `CANCELLED` | `CANCELADA` |
+| `CANCELLED` | `APROBADA` (puede reenviarse a firma) |
 | `EXPIRED` | `APROBADA` (permite reenviar a firma) |
 
 Solo cambia la solicitud si sigue en `PENDIENTE_FIRMADO`. Se omiten sin consultar a KIAI:

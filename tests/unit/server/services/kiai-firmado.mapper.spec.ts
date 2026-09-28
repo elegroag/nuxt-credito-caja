@@ -157,7 +157,7 @@ describe("mapEstadoSolicitud", () => {
   it("traduce los estados finales de KIAI", () => {
     expect(mapEstadoSolicitud("COMPLETED")?.estado).toBe("FIRMADO");
     expect(mapEstadoSolicitud("DECLINED")?.estado).toBe("RECHAZADA");
-    expect(mapEstadoSolicitud("CANCELLED")?.estado).toBe("CANCELADA");
+    expect(mapEstadoSolicitud("CANCELLED")?.estado).toBe("APROBADA");
     expect(mapEstadoSolicitud("EXPIRED")?.estado).toBe("APROBADA");
   });
 

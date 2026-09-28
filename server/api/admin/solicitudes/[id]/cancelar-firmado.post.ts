@@ -38,17 +38,18 @@ export default defineEventHandler(async (event: H3Event) => {
     const now = new Date();
     const procesoId = resultado.data?.transaccion_id || "N/A";
 
+    // Cancelar la firma no cancela el crédito: la solicitud vuelve a APROBADA para poder reenviarse
     await prisma.$transaction([
       prisma.solicitudes_credito.update({
         where: { numero_solicitud: id },
-        data: { estado: "CANCELADA", updated_at: now }
+        data: { estado: "APROBADA", updated_at: now }
       }),
       prisma.solicitud_timeline.create({
         data: {
           solicitud_id: id,
-          estado: "CANCELADA",
+          estado: "APROBADA",
           fecha: now,
-          detalle: `Proceso de firma KIAI cancelado por el administrador. Proceso: ${procesoId}.${motivo ? ` Motivo: ${motivo}` : ""}`,
+          detalle: `Proceso de firma KIAI cancelado por el administrador. Proceso: ${procesoId}. La solicitud puede reenviarse a firma.${motivo ? ` Motivo: ${motivo}` : ""}`,
           usuario_username: username
         }
       })
@@ -57,8 +58,8 @@ export default defineEventHandler(async (event: H3Event) => {
     Log.info("cancelar-firmado: Proceso cancelado", { solicitudId: id, procesoId, username });
 
     return CustomResponse.success(
-      { solicitud_id: id, estado_solicitud: "CANCELADA", transaccion_id: procesoId },
-      "Proceso de firma cancelado. La solicitud quedó en estado CANCELADA."
+      { solicitud_id: id, estado_solicitud: "APROBADA", transaccion_id: procesoId },
+      "Proceso de firma cancelado. La solicitud volvió a estado APROBADA y puede reenviarse a firma."
     );
   } catch (e: unknown) {
     const err = e as { statusCode?: number; data?: { error?: string }; message?: string };

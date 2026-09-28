@@ -186,8 +186,8 @@
       v-model:open="cancelarModalOpen"
       title="Cancelar proceso de firma"
       :description="proceso?.simulado
-        ? 'El proceso es simulado: se cancelará solo localmente (no se llama a KIAI) y la solicitud quedará en estado CANCELADA. Esta acción no se puede deshacer.'
-        : 'Se cancelará el proceso en KIAI y la solicitud quedará en estado CANCELADA. Esta acción no se puede deshacer.'"
+        ? 'El proceso es simulado: se cancelará solo localmente (no se llama a KIAI). La solicitud de crédito no se cancela: vuelve a APROBADA para poder reenviarla a firma.'
+        : 'Se cancelará el proceso en KIAI. La solicitud de crédito no se cancela: vuelve a APROBADA para poder reenviarla a firma.'"
       icon="i-lucide-ban"
       class="max-w-lg"
     >
